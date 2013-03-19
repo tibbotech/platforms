@@ -1,0 +1,144 @@
+'===========================================================================
+'					tables library
+''	depending libraries:
+'		time
+'	required device specific properties and methods:
+'		sub lcd_clear(x as byte, y as byte, width as byte, height as byte)
+'		sub device_ib_key_proc(key_event as pl_kp_event_codes, key_code as byte,byref key_asc as byte,byref done_action as no_yes)
+'
+'Following constants are project dependant, please define them in your global.tbh
+'const MAX_TBL_NAME_LEN=9
+'const MAX_NUM_TABLES=3
+'const MAX_FLD_NAME_LEN=8
+'const MAX_NUM_FIELD=6	
+'===========================================================================
+
+#ifndef MAX_TBL_NAME_LEN
+#define MAX_TBL_NAME_LEN  9
+#endif
+
+#ifndef MAX_NUM_TABLES
+#define MAX_NUM_TABLES  3
+#endif
+
+#ifndef MAX_FLD_NAME_LEN
+#define MAX_FLD_NAME_LEN 8	
+#endif
+
+#ifndef MAX_NUM_FIELD
+#define MAX_NUM_FIELD 7	
+#endif
+
+#ifndef NULL
+#define NULL 0
+#endif
+
+#ifndef CR
+#define CR 13
+#endif
+
+#ifndef ELEMENT_START
+#define ELEMENT_START 28
+#endif
+
+#ifndef ELEMENT_END
+#define ELEMENT_END 29
+#endif
+
+#ifndef ELEMENT_NAME_VALUE_SEPARATOR
+#define ELEMENT_NAME_VALUE_SEPARATOR 30
+#endif
+
+
+const TBL_START_FNUM = 0
+const TBL_END_OF_LINE = 13
+const TBL_FIELD_SEPARATOR=9
+
+'Status codes for table-related operations
+const DELETE_FLAG=chr(val("&hFF"))
+const ACTIVE_FLAG=chr(val("&hFE"))
+
+enum en_tbl_search_direction
+	EN_TBL_SEARCH_DOWN
+	EN_TBL_SEARCH_UP
+end enum
+
+enum en_tbl_rdwr
+	EN_TBL_GET,			'Read operation
+	EN_TBL_SET			'Write operation
+end enum
+
+enum en_tbl_status	
+	EN_TBL_STATUS_OK,				'Operation completed successfully
+	EN_TBL_STATUS_FAILURE,			'Low-level failure (for example fd. error) or record checksum error
+	EN_TBL_STATUS_UNKNOWN_TABLE,	'Unknown table
+	EN_TBL_STATUS_UNKNOWN_FIELD,	'Unknown field
+	EN_TBL_STATUS_INVALID			'Invalid field value
+	EN_TBL_STATUS_FULL				'max record number reached or disk is full
+	EN_TBL_STATUS_EOT				'end of table has been reached
+	EN_TBL_STATUS_NOT_FOUND			'record not found
+	EN_TBL_STATUS_KEY_VIOLATION		'key field violation
+	EN_TBL_STATUS_DELETED			'this record is deleted (not active)
+end enum
+
+enum en_tbl_struct
+	EN_TBL_STRUCT_LIST
+	EN_TBL_STRUCT_TABLE
+end enum
+
+type fld_type
+	FieldName as string(MAX_FLD_NAME_LEN)
+	FieldType as byte
+	p1 as dword
+	p2 as dword
+	key as no_yes
+	romaddr_def as word
+end type
+
+type tbl_type
+	TableName as string(MAX_TBL_NAME_LEN)
+	Minrecs as word
+	Maxrecs	as word
+	Numkeyf	as byte
+	Struct as en_tbl_struct
+	RecPointer as word
+	RecSize as byte
+	fnum as byte
+	hash as no_yes
+	Fields(MAX_NUM_FIELD) as fld_type
+end type
+
+type struct_tbl_timestamp
+	ts_daycount as word
+	ts_mincount as word
+	ts_seconds as byte
+	ts_milsec as word
+end type
+
+declare tbl_record_string as string(128)
+
+declare function tbl_init as en_tbl_status
+declare function tbl_field_sg(byref field_name as string,byref field_value as string,op as en_tbl_rdwr) as en_tbl_status
+declare function tbl_record_add() as en_tbl_status
+declare function tbl_field_get_def(byref field_name as string, byref def_value as string) as en_tbl_status
+declare function tbl_get_field_size(tbl_index as byte, fld_index as byte) as byte
+declare function tbl_record_find(include_deleted as no_yes, search_data as string, starting_field as string, byref num_records as word, direction as en_tbl_search_direction, find_method as pl_fd_find_modes) as en_tbl_status
+declare function tbl_find(tbl_name as string(MAX_TBL_NAME_LEN)) as en_tbl_status
+declare function tbl_get_rec_size(tbl_name as string(MAX_TBL_NAME_LEN)) as byte
+declare function tbl_record_ptr_sg(byref record_num as word,op as en_tbl_rdwr) as en_tbl_status
+declare function tbl_record_sg(op as en_tbl_rdwr) as en_tbl_status
+declare function tbl_record_delete() as en_tbl_status
+declare function tbl_record_number_get(byref num_of_records as word, include_deleted as no_yes) as en_tbl_status
+declare function tbl_delete() as en_tbl_status
+declare function tbl_adjust_size() as en_tbl_status
+declare function tbl_timestamp_sg(byref timestamp as struct_tbl_timestamp,op as en_tbl_rdwr) as en_tbl_status
+declare function tbl_get_tbl_info(byref tbl as tbl_type) as en_tbl_status
+declare function tbl_get_hash() as string(10)
+declare function tbl_record_edit() as en_tbl_status
+declare function tbl_replace(old_tbl_name as string(MAX_TBL_NAME_LEN), new_tbl_name as string(MAX_TBL_NAME_LEN) ) as en_tbl_status
+declare function tbl_select(tbl_name as string(MAX_TBL_NAME_LEN)) as en_tbl_status
+
+declare sub tbl_mod_HASH(byref d as dword)
+declare sub tbl_gen_UID()
+declare function tbl_set_md5 as dword
+declare function tbl_copy_info(source_tbl_name as string(MAX_TBL_NAME_LEN), target_tbl_name as string(MAX_TBL_NAME_LEN) ) as en_tbl_status

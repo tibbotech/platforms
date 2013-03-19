@@ -1,0 +1,313 @@
+'**************************************************************************************************
+'		KP (keypad) object
+'**************************************************************************************************
+
+#if OBJECT_KP=KP_ENABLED
+
+#define KP_AVAILABLE 1
+
+object kp
+'Depending on the kp.mode property, the keypad object works with a "matrix" keypad of up to 64 keys (8 scan lines by 8 return lines) or
+'"binary output" keypad of up to 255 keys that sends key codes through up to 8 data lines.
+
+'--------------------------------------------------------------------
+enum pl_kp_modes 
+	PL_KP_MODE_MATRIX,	'<b>PLATFORM CONSTANT. The keypad is of matrix type. </b><br><br>
+	PL_KP_MODE_BINARY	'<b>PLATFORM CONSTANT. The keypad is of binary output type. </b><br><br>
+end enum
+
+property kp.mode
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_KP_MODE_MATRIX (matrix type).</b><br><br>
+'Specifies the type of the keypad attached to your device.
+'<br><br>
+'Matrix keypads
+'(<font color="maroon"><b>kp.mode</b></font>= <font color="olive"><b>0- PL_KP_MODE_MATRIX</b></font>)
+'are defined by a number of scan and return lines
+'(see <font color="maroon"><b>kp.scanlinesmapping</b></font> and
+'<font color="maroon"><b>kp.returnlinesmapping</b></font>).
+'<br><br>
+'Keypads with binary output
+'(<font color="maroon"><b>kp.mode</b></font>= <font color="olive"><b>1- PL_KP_MODE_BINARY</b></font>)
+'only have return lines and receive the binary code of the key pressed. The
+'<font color="maroon"><b>kp.idlecode </b></font>property defines which code is present on the return lines when no key is pressed.
+	get = syscall(545,"68.TDL"+) as pl_kp_modes
+	set = syscall(546,"68.TDL"+) (value as pl_kp_modes)
+end property
+
+'--------------------------------------------------------------------
+property kp.idlecode
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 0.</b><br><br>
+'Specifies the code that will be present on the output of a "binary" keypad when no key is pressed.
+'<br><br>
+'This property is only relevant when the
+'<font color="maroon"><b>kp.mode</b></font>= <font color="olive"><b>1- PL_KP_MODE_BINARY</b></font>.
+'<br><br>
+'See also: <font color="maroon"><b>kp.returnlinesmapping</b></font>.
+	get = syscall(547,"68.TDL"+) as byte
+	set = syscall(548,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.autodisablecodes
+'<b>PROPERTY (STRING), DEFAULT VALUE= "".</b><br><br>
+'Defines up to 4 key event/code combinations that will disable the keypad.
+'<br><br>
+'This property should contain a comma-separated list of event codes and key codes, for example: "2,15,0,20".
+'In this example, two event/code pairs are set: "2,15" and "0,20". Event "2" is 
+'<font color="olive"><b>2- PL_KP_EVENT_PRESSED</b></font>, and event "0" is 
+'<font color="olive"><b>0- PL_KP_EVENT_LONGRELEASED</b></font>. "15" and "20" are key codes.  So, the keypad will be disabled (<font color="maroon"><b>kp.enabled </b></font> set to 
+'<font color="olive"><b>0- NO</b></font>) when the key with code 15 is detected to be "pressed", or the key with code 20 is detected to be "longreleased".
+'<br><br>
+'The <font color="maroon"><b>kp.autodisablecodes </b></font>string should only contain a list of decimal numbers. That is, use "2" and not "
+'<font color="olive"><b>2- PL_KP_EVENT_PRESSED</b></font>". Only numerical characters are processed anyway -- writing "
+'<font color="olive"><b>2- PL_KP_EVENT_PRESSED</b></font>,15,
+'<font color="olive"><b>0- PL_KP_EVENT_LONGRELEASED</b></font>,20" will set this property to "2,15,0,20" anyway.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to "" means that no event and key combination will disable the keypad automatically.
+	get = syscall(445,"68.TDL"+) as string
+	set = syscall(446,"68.TDL"+) (byref mapping as string)
+end property
+
+'--------------------------------------------------------------------
+property kp.enabled
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (disabled).</b><br><br>
+'Enables or disables the keypad.
+'<br><br>
+'The keypad matrix is being scanned and your application receives the 
+'<font color="teal"><b>on_kp </b></font> and <font color="teal"><b>on_kp_overflow </b></font> events only when the keypad is enabled (
+'<font color="maroon"><b>kp.enabled</b></font>= <font color="olive"><b>1- YES</b></font>).
+'<br><br>
+'The following properties can be changed only when the keypad is disabled (<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>):<br>
+'<font color="maroon"><b>kp.autodisablecodes</b></font>,<br>
+'<font color="maroon"><b>kp.longreleasedelay</b></font>,<br>
+'<font color="maroon"><b>kp.longpressdelay</b></font>,<br>
+'<font color="maroon"><b>kp.pressdelay</b></font>,<br>
+'<font color="maroon"><b>kp.repeatdelay</b></font>,<br>
+'<font color="maroon"><b>kp.returnlinesmapping</b></font>, and<br>
+'<font color="maroon"><b>kp.scanlinesmapping</b></font>
+'<br><br>
+'The keypad will be auto-disabled if an overflow is detected (see 
+'<font color="teal"><b>on_kp_overflow </b></font> event), or if one of the conditions for automatic keypad disablement is met (see 
+'<font color="maroon"><b>kp.autodisablecodes</b></font>).
+'<br><br>
+'Every time the keypad is enabled, each key's state is set to 
+'<font color="olive"><b>0- PL_KP_EVENT_LONGRELEASED </b></font> and the keypad event buffer is cleared.
+	get = syscall(429,"68.TDL"+) as no_yes
+	set = syscall(430,"68.TDL"+) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property kp.longpressdelay
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 100 (100ms).</b><br><br>
+'Defines (in 10ms increments) the amount of time a key should remain pressed for the key state to transition from "pressed" into "longpressed". Value range is 0-254.
+'<br><br>
+'The <font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>3- PL_KP_EVENT_LONGPRESSED </b></font> event code will be generated once the key transitions into the "longpressed" state.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the key will never transition into the "longpressed" state.
+	get = syscall(433,"68.TDL"+) as byte
+	set = syscall(434,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.longreleasedelay
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 100 (100ms).</b><br><br>
+'Defines (in 10ms increments) the amount of time a key should remain released for the key state to transition from "released" into "longreleased". Value range is 0-254.
+'<br><br>
+'The <font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>0- PL_KP_EVENT_LONGRELEASED </b></font> event code will be generated once the key transitions into the "longreleased" state.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the key will never transition into the "longreleased" state.
+	get = syscall(439,"68.TDL"+) as byte
+	set = syscall(440,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+enum pl_kp_event_codes 
+	PL_KP_EVENT_LONGRELEASED,	'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "longreleased" state.
+	PL_KP_EVENT_RELEASED,		'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "released" state.
+	PL_KP_EVENT_PRESSED,		'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "pressed" state.
+	PL_KP_EVENT_LONGPRESSED,	'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "longpressed" state.
+	PL_KP_EVENT_REPEATPRESSED	'<b>PLATFORM CONSTANT.</b><br><br> Auto-repeat for the key.
+end enum
+
+event(20) on_kp(key_event as pl_kp_event_codes, key_code as byte)
+'<b>EVENT of the kp object. </b><br><br>
+'Generated whenever a key transitions to another state.
+'<br><br>
+'Pressing and releasing any key on the keypad can generate up to five different events.
+'Scan lines and return lines are numbered as they are listed in 
+'<font color="maroon"><b>kp.returnlinesmapping </b></font> and 
+'<font color="maroon"><b>kp.scanlinesmapping</b></font>.
+'<br><br>
+'This event can only be generated when the keypad is enabled (
+'<font color="maroon"><b>kp.enabled</b></font>= <font color="olive"><b>1- YES</b></font>).
+'<br><br>
+'Another <font color="teal"><b>on_kp </b></font>
+'event is never generated until the previous one is processed.
+
+'--------------------------------------------------------------------
+event(21) on_kp_overflow()
+'<b>EVENT of the kp object. </b><br><br>
+'Indicates that the keypad buffer has overflown and some key events may have been lost.
+'<br><br>
+'The keypad buffer stores up to 16 keypad events. Each such event causes the 
+'<font color="teal"><b>on_kp </b></font> generation. If your application is slow to process the keypad events, it is possible to overflow the keypad 
+'by pressing the keys in rapid succession. Once the buffer overflows, the keypad is disabled automatically (
+'<font color="maroon"><b>kp.enabled </b></font>is set to 
+'<font color="olive"><b>0- NO</b></font>). You can re-enable the keypad by setting 
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>1- YES </b></font> (this will clear the keypad buffer).
+'<br><br>
+'Another <font color="teal"><b>on_kp_overflow </b></font>
+'event is never generated until the previous one is processed.
+
+'--------------------------------------------------------------------
+property kp.pressdelay
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 3 (30ms).</b><br><br>
+'Defines (in 10ms increments) the amount of time a key should remain pressed for the key state to transition from "released" into "pressed".
+'<br><br>
+'The <font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>2- PL_KP_EVENT_PRESSED </b></font> event code will be generated once the key transitions into the "pressed" state.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= <font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the key will never transition into the "pressed" state.
+	get = syscall(431,"68.TDL"+) as byte
+	set = syscall(432,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.releasedelay
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 3 (30ms).</b><br><br>
+'Defines (in 10ms increments) the amount of time a key should remain released for the key state to transition from "pressed" or "longpressed" into "released". Value range is 0-254.
+'<br><br>
+'The <font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>1- PL_KP_EVENT_RELEASED </b></font> event code will be generated once the key transitions into the "released" state.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the key will never transition into the "released" state.
+	get = syscall(437,"68.TDL"+) as byte
+	set = syscall(438,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.repeatdelay
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 50 (500ms).</b><br><br>
+'Defines (in 10ms increments) the time period at which the 
+'<font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>4- PL_KP_EVENT_REPEATPRESSED </b></font> event code will be generated once the key reaches the
+'"longpressed" state and remains pressed. Value range is 0-254.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the 
+'<font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>4- PL_KP_EVENT_REPEATPRESSED </b></font> event code will never be generated.
+	get = syscall(435,"68.TDL"+) as byte
+	set = syscall(436,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.returnlinesmapping
+'<b>PROPERTY (STRING), DEFAULT VALUE= "".</b><br><br>
+'Defines the list of up to 8 I/O lines that will serve as return lines of the keypad.
+'<br><br>
+'This property should contain a comma-separated list of I/O lines numbers, for example: "24, 26, 27". Line numbers correspond to those of the pl_io_num enum.
+'<br><br>
+'The <font color="maroon"><b>kp.returnlinesmapping </b></font> string should only contain a list of decimal numbers. That is, use "24" and not "
+'<font color="olive"><b>24- PL_IO_NUM_24</b></font>".  Only numerical characters are processed anyway -- writing "
+'<font color="olive"><b>24- PL_IO_NUM_24</b></font>,
+'<font color="olive"><b>25-PL_IO_NUM_25</b></font>" will set this property to "24,25".
+'The order in which you list the return lines does matter! 
+'<br><br>
+'On platforms with output buffer control, all intended return lines should be configured as inputs by your application (see 
+'<font color="maroon"><b>io.num</b></font>, 
+'<font color="maroon"><b>io.enabled</b></font>).
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>).
+'Setting the property to "" means that the keypad will have no return lines. A keypad must have at least one return line to be able to work.
+'<br><br>
+'Return lines are used in both keypad modes (<font color="maroon"><b>kp.mode</b></font>).
+'When the
+'<font color="maroon"><b>kp.mode</b></font>= <font color="olive"><b>0- PL_KP_MODE_MATRIX</b></font>,
+'a number of scan lines
+'(<font color="maroon"><b>kp.scanlinesmapping</b></font>)
+'may have to be defined as well. These scan lines must be separate from the return lines.
+	get = syscall(443,"68.TDL"+) as string
+	set = syscall(444,"68.TDL"+) (byref mapping as string)
+end property
+
+'--------------------------------------------------------------------
+property kp.scanlinesmapping
+'<b>PROPERTY (STRING), DEFAULT VALUE= "".</b><br><br>
+'Defines the list of up to 8 I/O lines that will serve as scan lines of the keypad matrix.
+'<br><br>
+'This property is only relevant in the matrix mode
+'(<font color="maroon"><b>kp.mode</b></font>= <font color="olive"><b>0- PL_KP_MODE_MATRIX</b></font>) 
+'and should contain a comma-separated list of I/O lines numbers, for example: "28, 30, 31". Line numbers correspond to those of the pl_io_num enum.
+'<br><br>
+'The <font color="maroon"><b>kp.scanlinesmapping </b></font> string should only contain a list of decimal numbers. That is, use "28" and not "
+'<font color="olive"><b>28- PL_IO_NUM_28</b></font>". Only numerical characters are processed anyway -- writing "
+'<font color="olive"><b>28- PL_IO_NUM_28</b></font>,
+'<font color="olive"><b>30-PL_IO_NUM_30</b></font>" will set this property to "28,30".
+'<br><br>
+'The order in which you list the scan lines does matter -- this is the order in which the lines will be numbered.
+'All keys connected to the first scan line will have their scan field (bits 7-4) of the key code set to 0.
+'For keys connected to the second line this field will contain 1, third line -- 2, and so on. 
+'<br><br>
+'On platforms with output buffer control, all intended scan lines should be configured as outputs by your application (see 
+'<font color="maroon"><b>io.num</b></font>, 
+'<font color="maroon"><b>io.enabled</b></font>).
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to "" means that the keypad will have no scan lines, which is also a valid keypad configuration.
+'<br><br>
+'Scan lines of the keypad should be separate from the return lines (see 
+'<font color="maroon"><b>kp.returnlinesmapping</b></font>).
+	get = syscall(441,"68.TDL"+) as string
+	set = syscall(442,"68.TDL"+) (byref mapping as string)
+end property
+
+'--------------------------------------------------------------------
+syscall(417) kp.getkey(byref key_event as pl_kp_event_codes, byref key_code as byte) as ok_ng
+'<b>METHOD. </b><br><br> 
+'---PRELIMINARY---<br><br>
+'Use this to poll for incoming key data (set kp.genkeyevent= 0- NO).
+'This is an alternative method of working with the keypad.
+
+'--------------------------------------------------------------------
+property kp.genkpevent
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- YES (event will be generated).</b><br><br>
+'---PRELIMINARY---<br><br>
+'Use this to disable on_kp event generation (then use kp.getkey to poll for incoming key data).
+'This is an alternative method of working with the keypad.
+	get = syscall(425,"68.TDL"+) as no_yes
+	set = syscall(426,"68.TDL"+) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property kp.overflow
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (no overflow).</b><br><br>
+'---PRELIMINARY---<br><br>
+'Can be used to check if overflow have occurred.
+'This is an alternative to using the on_kp_overflow event.
+	get = syscall(418,"68.TDL"+) as no_yes
+end property
+
+'--------------------------------------------------------------------
+syscall(450,"68.TDL") kp.clearbuffer()
+'<b>METHOD. </b><br><br>
+'---PRELIMINARY---<br><br>
+
+#endif

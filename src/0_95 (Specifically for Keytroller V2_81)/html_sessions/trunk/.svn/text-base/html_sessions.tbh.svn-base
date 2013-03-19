@@ -1,0 +1,38 @@
+'===========================================================================
+'					HTML_SESSIONS.TBS
+'	depending libraries:
+'		html_commons
+'		login_control
+'===========================================================================
+
+#ifndef HTTP_LOGIN_TIMEOUT			'360 * 0.5seconds / 60seconds = 3minutes
+#define HTTP_LOGIN_TIMEOUT 360	
+#endif
+
+#ifndef SESSION_LEN
+#define SESSION_LEN 5
+#endif
+
+enum html_login_messages
+	HLM_NONE,
+	HLM_LOGGED_OUT,
+	HLM_INVALID_PASSWORD,
+	HLM_INVALID_SESSION,
+	HLM_PRIORITY_REJECTED,
+	HLM_NOT_LOGGED_IN
+end enum
+
+declare html_login_message as html_login_messages
+
+declare sub html_session_init
+declare sub print_login_state
+declare sub html_login
+declare function html_login_verify(print_redir as no_yes) as ok_ng
+declare function password_verify as ok_ng
+
+const MSG_HTML_LOGGED_OUT = "<b>Logged out.</b>"
+const MSG_HTML_INVALID_LOGIN = "<b>Invalid password. Please try again.</b>"
+const MSG_HTML_INVALID_SESSION = "<b>Invalid session ID, or other user is currently logged in, please log in again.</b>"
+const MSG_HTML_NO_PRIORITY = "<b>Another user is currently logged in from a client with higher priority.</b>"
+const MSG_HTML_NOT_LOGGED_IN = "<b>You are not logged in. This could be because your login session has expired OR because another session with higher priority has started</b>"
+const MSG_HTML_LOWER_PRIO_INPROC = "Another session with lower priority is in progress, proceed and interupt the low-priority session?"

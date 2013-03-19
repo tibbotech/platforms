@@ -1,0 +1,309 @@
+include "global.tbh"
+
+public dim TimeZoneOffSet as string(2) '<--- Time Zone Off Set, You will need to change this according to your time zone
+dim hour_off_set as byte
+dim min_off_set as byte
+
+'=============================================================
+sub TZOffset	
+	select case TimeZoneOffSet
+	case 0:
+		hour_off_set = 12
+		min_off_set = 0
+	case 1:
+		hour_off_set = 11
+		min_off_set = 0
+	case 2: 
+		hour_off_set = 10
+		min_off_set = 0
+	case 3:
+		hour_off_set = 9
+		min_off_set = 0
+	case 4:
+		hour_off_set = 8
+		min_off_set = 0
+	case 5:
+		hour_off_set = 7
+		min_off_set = 0
+	case 6:
+		hour_off_set = 6
+		min_off_set = 0
+	case 7:
+		hour_off_set = 5
+		min_off_set = 0
+	case 8:
+		hour_off_set = 4
+		min_off_set = 30
+	case 9:
+		hour_off_set = 4
+		min_off_set = 0
+	case 10:
+		hour_off_set = 3 
+		min_off_set = 30
+	case 11:
+		hour_off_set = 3
+		min_off_set = 0
+	case 12:
+		hour_off_set = 2
+		min_off_set = 0
+	case 13:
+		hour_off_set = 1
+		min_off_set = 0
+	case 14:
+		hour_off_set = 0
+		min_off_set = 0
+	case 15:
+		hour_off_set = 1
+		min_off_set = 0
+	case 16:
+		hour_off_set = 2
+		min_off_set = 0
+	case 17:
+		hour_off_set = 3
+		min_off_set = 0
+	case 18:
+		hour_off_set = 3
+		min_off_set = 30
+	case 19:
+		hour_off_set = 4
+		min_off_set = 0
+	case 20:
+		hour_off_set = 4 
+		min_off_set = 30
+	case 21:
+		hour_off_set = 5
+		min_off_set = 0
+	case 22:
+		hour_off_set = 5
+		min_off_set = 30
+	case 23:
+		hour_off_set = 5
+		min_off_set = 45
+	case 24:
+		hour_off_set = 6
+		min_off_set = 0
+	case 25:
+		hour_off_set = 6
+		min_off_set = 30
+	case 26:
+		hour_off_set = 7
+		min_off_set = 0
+	case 27:
+		hour_off_set = 8 
+		min_off_set = 0
+	case 28:
+		hour_off_set = 9
+		min_off_set = 0
+	case 29:
+		hour_off_set = 9
+		min_off_set = 30
+	case 30:
+		hour_off_set = 10
+		min_off_set = 0
+	case 31:
+		hour_off_set = 11	
+		min_off_set = 0
+	case 32:
+		hour_off_set = 12
+		min_off_set = 0
+	case 33:
+		hour_off_set = 13
+		min_off_set = 0
+	end select
+end sub
+
+'=============================================================
+public sub CovertTimeType(
+	byref ts_str as string(14),		
+	byref wDaycount as word,
+	byref wMincount as word,
+	byref bSec as byte, 
+	convert_dir as time_convert_dir	
+	)
+'Convert time format, between string(YYYYMMDDhhmmss), and values(daycount, mincout and sec), and value string(values in a 5 bytes asciix string)
+'Ex. BYTESTR_TO_TIME: user have to supply Daycount, MinCount, and second, the function returns 5 bytes time value (2bytes of daycounts, 2bytes of mincounts, and 1byte of second in ts_str.
+'TIME_TO_BYTESTR: reverse of BYTESTR_TO_TIME
+'STR_TO_TIME: convert a time string in ts_str, to daycounts, mincounts and seconds
+'TIME_TO_STR: reverse of STR_TIME
+
+	dim sYear, sMonth, sDate, sHour, sMin, sSec as string(4)
+	dim bYear, bMonth,bDate,bHour,bMin as byte
+	dim msb, lsb as byte
+	select case convert_dir
+	case TIME_TO_STR:	
+		sYear = str(year(wDaycount) + 2000)
+		sMonth = str(month(wDaycount))
+		sDate = str(date(wDaycount))
+		sHour = str(hours(wMincount))
+		sMin = str(minutes(wMincount))
+		sSec = str(bSec)
+	
+		if len(sHour) < 2 then 
+			sHour = "0"+sHour 
+		end if
+		if len(sMin) < 2 then 
+			sMin = "0"+sMin 
+		end if
+		if len(sSec) < 2 then 
+			sSec = "0"+sSec 
+		end if
+		if len(sDate) < 2 then 
+			sDate = "0"+sDate 
+		end if
+		if len(sMonth) < 2 then 
+			sMonth = "0"+sMonth 
+		end if
+		ts_str = sYear+sMonth+sDate+sHour+sMin+sSec
+	case STR_TO_TIME:
+		sYear = left(ts_str,4)
+		sMonth = mid(ts_str,5,2)
+		sDate = mid(ts_str,7,2)
+		sHour = mid(ts_str,9,2)
+		sMin = mid(ts_str,11,2)
+		sSec = mid(ts_str,13,2)
+	
+		bYear = val(sYear)-2000
+		bMonth = val(sMonth)
+		bDate = val(sDate)
+		wDaycount = daycount(bYear,bMonth,bDate)	
+	
+		bHour = val(sHour)
+		bMin = val(sMin)
+		wMincount = mincount(bHour,bMin)
+	
+		bSec = val(sSec)
+	case TIME_TO_BYTESTR:
+		ts_str=chr(wDaycount/256)
+		ts_str=ts_str+chr(wDaycount and &hFF)
+		ts_str=ts_str+chr(wMincount/256)
+		ts_str=ts_str+chr(wMincount and &hFF)
+		ts_str=ts_str+chr(bSec)				
+	case BYTESTR_TO_TIME:
+		wDaycount=256*asc(mid(ts_str,1,1))+asc(mid(ts_str,2,1))
+		wMincount=256*asc(mid(ts_str,3,1))+asc(mid(ts_str,4,1))
+		bSec=asc(mid(ts_str,5,1))
+	end select
+end sub
+
+'=========================================================== 
+public function clock_set_time(sYear as string(4), sMonth as string(2), sDate as string(2), sHour as string(2), sMin as string(2), sSec as string(2), TZ_time as no_yes) as boolean
+'Set the rtc value according to the function parameters
+	dim bSysSec,bYear,bMonth,bDate,bHour,bMin as byte
+	dim wSysDaycount, wSysMincount as word
+	rtc.getdata(wSysDaycount,wSysMincount,bSysSec)
+	if len(sYear) = 0 then sYear = str(year(wSysDaycount)+2000)
+	if len(sMonth) = 0 then sMonth = str(month(wSysDaycount))
+	if len(sDate) = 0 then sDate = str(date(wSysDaycount))
+	if len(sHour) = 0 then sHour = str(hours(wSysMincount))
+	if len(sMin) = 0 then sMin = str(hours(wSysMincount))
+	if len(sSec) = 0 then sSec = str(bSysSec)
+
+	if val(sYear) < 2000 or val(sYear) > 2099 then
+		goto fail
+	else
+		bYear = val(sYear)-2000
+	end if
+	bMonth = val(sMonth)
+	bDate = val(sDate)
+	wSysDaycount = daycount(bYear,bMonth,bDate)	
+	
+	bHour = val(sHour)
+	bMin = val(sMin)
+	wSysmincount = mincount(bHour,bMin)
+	
+	bSysSec = val(sSec)
+
+	if wSysDaycount = 65535 or wSysmincount = 65535 or bSysSec > 59 then
+fail:		
+		clock_set_time = false
+		exit function
+	else
+		if TZ_time = no then
+			rtc.setdata(wSysDaycount,wSysMincount,bSysSec)
+		else
+			SetRealTime(wSysDaycount,wSysMincount,bSysSec)
+		end if
+		clock_set_time = true
+	end if
+end function
+
+'============================================================= 
+public sub GetRealTime(byref wRTCDays as word, byref wRTCMinutes as word, byref wRTCSecs as byte) 
+	dim wTemp, wTemp1 as word
+	rtc.getdata(wRTCDays,wRTCMinutes,wRTCSecs)
+	
+	wTemp = (hour_off_set * 60) + min_off_set
+	if val(TimeZoneOffSet) < 14 then
+		if wRTCMinutes < wTemp then
+			wRTCDays = wRTCDays - 1 
+			wTemp1 = 1439 - wTemp
+			wRTCMinutes = wRTCMinutes + wTemp1 + 1
+		else
+ 			wRTCMinutes = wRTCMinutes-wTemp
+ 		end if	
+	end if
+	if val(TimeZoneOffSet) > 14 then
+		wTemp1 = 1439 - wTemp
+		if wRTCMinutes > wTemp1 then
+			wRTCDays = wRTCDays + 1
+			wRTCMinutes = wRTCMinutes - wTemp1 - 1
+		else 
+			wRTCMinutes = wRTCMinutes + wTemp
+		end if 
+	end if	
+	
+end sub
+'============================================================= 
+public sub SetRealTime(byref wRTCDays as word, byref wRTCMinutes as word, byref wRTCSecs as byte) 
+'The function convert the time back to
+	dim wTemp, wTemp1 as word
+	TZOffset
+	wTemp = (hour_off_set * 60) + min_off_set
+	
+	if val(TimeZoneOffSet) > 14 then
+		wTemp1 = 1439 - wTemp
+		if wRTCMinutes > wTemp1 then
+			wRTCDays = wRTCDays + 1
+			wRTCMinutes = wRTCMinutes - wTemp1 - 1
+		else 
+			wRTCMinutes = wRTCMinutes + wTemp
+		end if 
+	end if
+	if val(TimeZoneOffSet) < 14 then
+		if wRTCMinutes < wTemp then
+			wRTCDays = wRTCDays - 1 
+			wTemp1 = 1439 - wTemp
+			wRTCMinutes = wRTCMinutes + wTemp1 + 1
+		else
+ 			wRTCMinutes = wRTCMinutes-wTemp
+ 		end if
+	end if
+	rtc.setdata(wRTCDays,wRTCMinutes,wRTCSecs)
+end sub
+
+'==================================================================
+public sub TimeFormatStyle(byref sDeviceTimeString as string(23), style as byte, op as en_device_rdwr)
+'add separaters into a consequtive time string (ex. 20000101000000 -> 2000-01-01 00:00:00)
+	dim syear as string(4)
+	dim smonth, sdate, shour, smin, ssec as string(2)
+	select case style
+	case 0:
+		if op = DEVICE_GET then
+			syear = left(sDeviceTimeString,4)
+			smonth = mid(sDeviceTimeString,5,2)
+			sdate = mid(sDeviceTimeString,7,2)
+			shour = mid(sDeviceTimeString,9,2)
+			smin = mid(sDeviceTimeString,11,2)
+			ssec = right(sDeviceTimeString,2)
+			sDeviceTimeString = syear+"-"+smonth+"-"+sdate+" "+shour+":"+smin+":"+ssec
+		else
+			syear = left(sDeviceTimeString,4)
+			smonth = mid(sDeviceTimeString,6,2)
+			sdate = mid(sDeviceTimeString,9,2)
+			shour = mid(sDeviceTimeString,12,2)
+			smin = mid(sDeviceTimeString,15,2)
+			ssec = mid(sDeviceTimeString,18,2)
+			sDeviceTimeString = syear+smonth+sdate+shour+smin+ssec
+		end if
+	end select
+end sub

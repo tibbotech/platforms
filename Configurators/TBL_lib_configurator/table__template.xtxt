@@ -1,0 +1,49 @@
+  TableName Maxrecs	TableStruct	Numkeyf(number of key field)
+==dima		255		T					0
+
+  FieldName		Type 	Param1	Param2	Defval
+>>f1			S		0		16		^
+>>f2			S		0		16		^
+>>f3			S		0		16		^
+
+-------------------------------------------------------
+  TableName	Maxrecs	TableStruct	Numkeyf
+==user		1024	T			1
+
+  FieldName		Type 	Param1	Param2	Defval
+>>user_id		S		1		14		11111111111111
+>>name			S		0		31		^
+>>category		B		0		2		0
+>>exp_date		T		0		0		20150101
+
+
+-------------------------------------------------------
+  TableName Maxrecs	TableStruct	Numkeyf
+==shift		8		T			0
+
+  FieldName		Type 	Param1	Param2	Defval
+>>time			T		2		0		000000
+
+
+-------------------------------------------------------
+  TableName Maxrecs	TableStruct	Numkeyf
+==time		48		T			0
+
+  FieldName		Type 	Param1	Param2	Defval
+>>f_date		T		0		0		20000101
+>>f_time		T		1		0		0000
+>>t_date		T		0		0		20000101
+>>t_time		T		1		0		0000
+
+
+-------------------------------------------------------
+  TableName Maxrecs	TableStruct	Numkeyf
+==log		8000	L			0
+
+  FieldName		Type 	Param1	Param2	Defval
+>>event_id		B		0		157			0
+>>date			T		0		0			20000101
+>>time			T		0		2			000000
+>>user_id		S		0		14			0
+>>mach_num		S		1		2			0
+>>value			W		0		65535		0

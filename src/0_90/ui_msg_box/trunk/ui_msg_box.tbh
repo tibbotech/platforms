@@ -1,0 +1,63 @@
+'*********************************************************************************
+'          ON SCREEN MESSAGE BOX CONTROL
+'*********************************************************************************
+
+'===========================================================================
+'
+'	required device specific properties and methods:
+'		sub lcd_clear(x as word, y as word, width as word, height as word)
+'		sub device_msg_box_pre(
+'			byref msg as string(MB_MSG_LEN), 			'message to be displayed in the Message Box
+'			x as word, 							'x coordination
+'			y as word, 							'y coordination
+'			w as word, 							'width of the msgbox
+'			h as word, 							'height of the msgbox
+'			align as pl_lcd_text_alignment, 	'alignment of the text in the msgbox
+'			byref keycode_str as string(20),	'this string contains the characters which ASCII is correspond to the keycode of keys on the keypad that msgbox responds to 
+'			bolder as no_yes, 					'if the msgbox is wrap with a visible bolder line
+'			timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the msgbox and return to the previous screen. If timeout = 0, no time out applies
+'			)
+'		sub device_msg_box_post(
+'			byref msg as string(MB_MSG_LEN), 			'message to be displayed in the Message Box
+'			x as word, 							'x coordination
+'			y as word, 							'y coordination
+'			w as word, 							'width of the msgbox
+'			h as word, 							'height of the msgbox
+'			align as pl_lcd_text_alignment, 	'alignment of the text in the msgbox
+'			byref keycode_str as string(20),	'this string contains the characters which ASCII is correspond to the keycode of keys on the keypad that msgbox responds to 
+'			bolder as no_yes, 					'if the msgbox is wrap with a visible bolder line
+'			timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the msgbox and return to the previous screen. If timeout = 0, no time out applies
+'			)
+'
+'		sub device_mb_key_proc(key_event as pl_kp_event_codes, key_code as byte, byref current_state as byte)
+'
+'===========================================================================
+
+'--------------------------------------------------------------------------------
+#ifndef LCD_STD_FONT 
+#define LCD_STD_FONT "Tibbo-5x7(VP).bin"
+#endif
+
+#ifndef MB_MSG_LEN 
+#define MB_MSG_LEN 60
+#endif
+
+#ifndef MSB_VER_SPACING
+#define MSB_VER_SPACING 1
+#endif
+
+#ifndef MSB_HOR_SPACING
+#define MSB_HOR_SPACING 1
+#endif
+
+#ifndef MSG_BOX_BOLDER
+#define MSG_BOX_BOLDER 2
+#endif
+
+#ifndef MSB_BOLDER_PADDING
+#define MSB_BOLDER_PADDING 5
+#endif
+
+
+'--------------------------------------------------------------------------------
+declare function ui_msg_box(byref msg as string(60),x as word, y as word, w as word, h as word,align as pl_lcd_text_alignment, byref keycode_str as string(20), bolder as no_yes, timeout as byte) as byte

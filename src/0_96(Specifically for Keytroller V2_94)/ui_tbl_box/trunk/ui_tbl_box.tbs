@@ -1,0 +1,768 @@
+'*********************************************************************************
+'           ON SCREEN TABLE CONTROL
+'	Contains basic controls through on screen setup for tables.
+'	The controls includes, scrolling through records, add a new record, delete a 
+'	record, remove all records, edit a record, and search records using the key field.  
+'
+'	'device_load_tbl_record()' function is used to load table records. by making it
+'	device specific function, user can apply some device specific rules for searching
+'	records. Such as, some search criteria is only applied when certain flag is set.
+'*********************************************************************************
+
+include "global.tbh"
+
+declare sub ui_tbl_box_key_proc(key_event as pl_kp_event_codes, byref key_code as byte, byref cursor as byte, byref state as ui_tbl_box_states,byref key_action as byte, byref repaint as no_yes)
+declare sub ui_tbl_box_display(x as word, y as word, w as word, h as word, s1 as string,s2 as string,offset as word)
+declare sub ui_tbl_box_cursor_display(x as word, y as word,w as word,h as word,pi as byte, index as byte,color as word)
+declare sub ui_tbl_box_move_cursor(byref pre_cursor as byte, byref cursor as byte, tbl_field_num as byte)
+declare sub ui_tbl_box_reload_table(x_coord as word, y_coord as word,width as word, height as word, tbl_display_file as string(25), byref state as ui_tbl_box_states, byref tbl_box_item_data as item_data_type(MAX_DISPLAY_NUM_FIELD), byref tbl_field_num as byte, byref cursor as byte, byref pre_cursor as byte, byref s1 as string, byref s2 as string, offset as word)
+declare function ui_tbl_box_print_menu(tbl_menu_file as string(25),byref cmd as string(3),byref item_data as string(50))as ui_list_box_results
+declare function ui_tbl_box_call_ib(byref item_data as item_data_type) as ui_input_box_results
+declare function ui_tbl_box_call_lb(byref item_data as item_data_type) as ui_list_box_results
+
+'=============================================================
+public function ui_tbl_box(
+	x_coord as word,		'x coordination
+	y_coord as word,		'y coordination
+	width as word,			'width of the on screen setup control
+	height as word,			'width of the on screen setup control
+	item_data as string(60)
+	) as ui_tbl_box_results
+
+	dim tbl_field_num as byte	
+	dim cursor,pre_cursor as byte
+	dim kp_event as pl_kp_event_codes
+	dim kp_code as byte
+	dim repaint, state_changed as no_yes
+	dim state as ui_tbl_box_states
+	dim tbl_display_file, tbl_menu_file as string(25)
+	dim ib_result as ui_input_box_results
+	dim lb_result as ui_list_box_results
+	dim tbl_box_item_data as item_data_type(MAX_DISPLAY_NUM_FIELD)
+	dim pos1,pos2,index as byte
+	dim i, line_end as word
+	dim s1,s2 as string(70)
+	dim total_rec_num,actual_rec_count, current_rec, record_num, rec_temp as word
+	dim editable as no_yes
+	dim keycode_yes, keycode_no as string(2)
+	dim tbl_result as en_tbl_status
+	dim offset, wtemp as word
+	dim key_normal_op as ui_tbl_normal_op
+	dim key_add_op as ui_tbl_add_op
+	dim key_edit_op as ui_tbl_edit_op
+	dim add_init as no_yes
+	dim tbl_item_string as string(50)
+	
+	device_tbl_box_pre(x_coord,y_coord,width,height,item_data)
+
+	if kp.genkpevent=YES then
+		kp.enabled=NO
+		kp.genkpevent=NO
+		kp.enabled=YES
+	end if
+	
+	kp_code=255
+	add_init=YES
+	cursor=0
+	pre_cursor=0
+	tbl_field_num=0	
+	repaint=YES
+	state_changed=YES
+	offset=0
+	tbl_item_string=""
+	key_normal_op=TBL_BOX_NORMAL_NONE
+	key_add_op=TBL_BOX_ADD_NONE
+	key_edit_op=TBL_BOX_EDIT_NONE
+	current_rec=1
+	record_num=1	
+	pos1=instr(1,item_data,chr(COMMA),2)
+	pos2=instr(1,item_data,chr(COMMA),3)
+	if mid(item_data,pos1+1, pos2-pos1-1)="Y" then 
+		editable=YES
+	else
+		editable=NO
+	end if
+	pos1=instr(1,item_data,chr(COMMA),3)
+	pos2=instr(1,item_data,chr(COMMA),4)
+	s1=mid(item_data,pos1+1, pos2-pos1-1)
+	pos1=instr(1,item_data,chr(COMMA),4)
+	pos2=instr(1,item_data,chr(COMMA),5)
+	tbl_display_file=mid(item_data,pos1+1, pos2-pos1-1)
+	pos1=instr(1,item_data,chr(COMMA),5)
+	tbl_menu_file=right(item_data,len(item_data)-pos1)
+	
+	if tbl_select(s1)<>EN_TBL_STATUS_OK then 
+		state=TBL_BOX_STATE_FAIL
+		goto states
+	end if
+	
+	romfile.open(tbl_display_file)
+	i=romfile.find(romfile.pointer,">>",1)
+	do
+		line_end=romfile.find(i,chr(CR),1)
+		romfile.pointer=i+2
+		do 
+			i=romfile.find(romfile.pointer,chr(TAB),1) 			
+			s1=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+		loop while s1="" 		
+		tbl_box_item_data(tbl_field_num).field_name=s1
+
+		do 
+			i=romfile.find(romfile.pointer,chr(TAB),1) 			
+			s1=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+		loop while s1=""		
+		tbl_box_item_data(tbl_field_num).field_display_name=s1
+		wtemp=lcd.getprintwidth(s1+": ")
+		if wtemp > offset then offset=wtemp
+		do 
+			i=romfile.find(romfile.pointer,chr(TAB),1) 			
+			s1=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+		loop while s1="" 		
+		tbl_box_item_data(tbl_field_num).field_description=s1
+		
+		do 
+			i=romfile.find(romfile.pointer,chr(TAB),1)
+			if i=0 then i=line_end
+			if i < line_end then romfile.pointer=romfile.pointer+1
+		loop while i < line_end
+		wtemp=romfile.pointer+2
+		s1=romfile.getdata(line_end-romfile.pointer)
+		tbl_box_item_data(tbl_field_num).field_input_type=left(s1,1)
+		if tbl_box_item_data(tbl_field_num).field_input_type="C" then
+			tbl_box_item_data(tbl_field_num).field_input_data=str(wtemp)
+		else
+			tbl_box_item_data(tbl_field_num).field_input_data=right(s1,len(s1)-2)
+		end if
+		tbl_box_item_data(tbl_field_num).field_value=""
+		
+		if tbl_field_num>=MAX_DISPLAY_NUM_FIELD and i<>0 then
+			state=TBL_BOX_STATE_FAIL
+			goto states
+		end if
+		
+		i=romfile.find(line_end,">>",1)
+		tbl_field_num=tbl_field_num+1		
+	loop while i<>0
+	
+	for i=0 to tbl_field_num-1
+		tbl_item_string=tbl_item_string+tbl_box_item_data(i).field_display_name+":`"
+	next i
+	
+	tbl_record_number_get(total_rec_num,yes)	
+	tbl_record_number_get(actual_rec_count,no)
+	if actual_rec_count=0 then
+		state=TBL_BOX_STATE_EMPTY
+	else
+		current_rec=actual_rec_count
+		record_num=total_rec_num
+		state=TBL_BOX_STATE_NORMAL
+		if device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_UP,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_FAILURE then
+			state=TBL_BOX_STATE_FAIL
+		end if
+		tbl_record_sg(EN_TBL_GET)
+	end if
+	goto states
+
+wait: 
+	device_tb_interrupt()	'allow user to executes other procedures while inside the table box
+	if kp.enabled=NO then kp.enabled=YES
+	if kp.getkey(kp_event,kp_code)=OK then
+		ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,0,repaint)
+	end if
+	if repaint=NO then goto wait
+states:
+	select case state
+	case TBL_BOX_STATE_EMPTY:
+		if editable=YES then
+			keycode_yes=device_mb_get_key(MBK_YES)
+			keycode_no=device_mb_get_key(MBK_NO)
+			kp_code=ui_msg_box(EDITABLE_EMPTY,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,keycode_yes+keycode_no,no,0)
+			if kp_code=asc(keycode_no) then 
+				state=TBL_BOX_STATE_EXIT
+			else
+				state=TBL_BOX_STATE_ADD
+				state_changed=YES
+			end if
+			goto states
+		else
+			ui_msg_box(UNEDITABLE_EMPTY,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+			state=TBL_BOX_STATE_EXIT
+			goto states
+		end if
+		
+	case TBL_BOX_STATE_NORMAL:
+		key_normal_op=TBL_BOX_NORMAL_NONE
+		for i=0 to tbl_field_num-1
+			tbl_result=tbl_field_sg(tbl_box_item_data(i).field_name,s2,EN_TBL_GET)
+			if tbl_result=EN_TBL_STATUS_INVALID then s2=INVALID_FLAG
+			tbl_box_item_data(i).field_value=s2
+			device_mod_table_item(tbl_box_item_data(i),DEVICE_GET)
+		next i
+		ui_tbl_box_reload_table(x_coord,y_coord,width,height,tbl_display_file,state,tbl_box_item_data,tbl_field_num,cursor,pre_cursor,tbl_item_string,s2,offset)
+		if state_changed=YES then device_print_tbl(state)
+		
+		while key_normal_op=TBL_BOX_NORMAL_NONE
+			if kp.enabled=NO then kp.enabled=YES
+			if kp.getkey(kp_event,kp_code)=OK then
+				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_normal_op,repaint)
+			end if
+		wend
+		select case key_normal_op
+		case TBL_BOX_NORMAL_CLOSE: 
+			state=TBL_BOX_STATE_EXIT
+		case TBL_BOX_NORMAL_PREV:
+			s1=""
+			state_changed=NO
+			rec_temp=record_num
+			if record_num>1 then record_num=record_num-1
+			if device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_UP,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_OK then
+				if current_rec>1 then current_rec=current_rec-1
+				if record_num=rec_temp then
+					ui_msg_box(TABLE_TOP,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+					state_changed=YES
+				else
+					tbl_record_sg(EN_TBL_GET)
+				end if
+			else
+				ui_msg_box(TABLE_TOP,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+				state_changed=YES
+				record_num=rec_temp
+			end if
+		case TBL_BOX_NORMAL_NEXT:
+			s1=""
+			state_changed=NO
+			rec_temp=record_num
+			if record_num<total_rec_num then record_num=record_num+1
+			if device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_OK then
+				if current_rec<actual_rec_count then current_rec=current_rec+1
+				if record_num=rec_temp then
+					ui_msg_box(TABLE_BOTTOM,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+					state_changed=YES
+				else
+					tbl_record_sg(EN_TBL_GET)
+				end if
+			else
+				ui_msg_box(TABLE_BOTTOM,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+				state_changed=YES				
+				record_num=rec_temp
+			end if
+		case TBL_BOX_NORMAL_MORE:
+			state=TBL_BOX_STATE_MENU
+		end select
+		goto states
+	case TBL_BOX_STATE_ADD:
+		key_add_op=TBL_BOX_ADD_NONE
+		for i=0 to tbl_field_num-1
+			if add_init=YES then
+				tbl_field_get_def(tbl_box_item_data(i).field_name,tbl_box_item_data(i).field_value)
+			end if
+			device_mod_table_item(tbl_box_item_data(i),DEVICE_GET)
+		next i
+		add_init=NO	
+		ui_tbl_box_reload_table(x_coord,y_coord,width,height,tbl_display_file,state,tbl_box_item_data,tbl_field_num,cursor,pre_cursor,tbl_item_string,s2,offset)	
+		if state_changed=YES then device_print_tbl(state)
+add_op_wait:		
+		while key_add_op=TBL_BOX_ADD_NONE
+			if kp.enabled=NO then kp.enabled=YES
+			if kp.getkey(kp_event,kp_code)=OK then
+				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_add_op,repaint)
+			end if
+		wend
+		select case key_add_op
+		case TBL_BOX_ADD_CANCEL:
+			add_init=YES
+			state_changed=YES
+			if actual_rec_count=0 then
+				state=TBL_BOX_STATE_EXIT
+			else
+				current_rec=1
+				record_num=1
+				device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+				tbl_record_sg(EN_TBL_GET)
+				pre_cursor=cursor
+				cursor=0
+				s1=""
+				state=TBL_BOX_STATE_NORMAL
+			end if
+			goto states
+		case TBL_BOX_ADD_NEXT:
+			ui_tbl_box_move_cursor(pre_cursor,cursor, tbl_field_num)
+			ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_CURSORCOLOR)
+			key_add_op=TBL_BOX_ADD_NONE
+			state_changed=NO
+			goto add_op_wait
+		case TBL_BOX_ADD_EDIT:
+			lcd.forecolor=LCD_DISABLE_FORECOLOR
+			ui_tbl_box_display(x_coord+6,y_coord,width-6,height,tbl_item_string,s2,offset)
+			ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_DISABLE_FORECOLOR)
+			lcd.forecolor=LCD_FORECOLOR
+			select case tbl_box_item_data(cursor).field_input_type
+			case "I","D","T":
+				if ui_tbl_box_call_ib(tbl_box_item_data(cursor))=INPUT_BOX_RESULT_OK then 
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if
+			case "L":
+				if ui_tbl_box_call_lb(tbl_box_item_data(cursor))=LIST_BOX_RESULT_OK then 
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if
+			case "C":
+				if device_customized_input(tbl_display_file,tbl_box_item_data(cursor))=OK then
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if
+			end select
+			state_changed=YES
+			key_add_op=TBL_BOX_ADD_NONE
+			ui_tbl_box_reload_table(x_coord,y_coord,width,height,tbl_display_file,state,tbl_box_item_data,tbl_field_num,cursor,pre_cursor,tbl_item_string,s2,offset)
+			device_print_tbl(state)
+			goto add_op_wait
+		case TBL_BOX_ADD_SAVE:
+			state_changed=YES
+			pre_cursor=cursor
+			for i=0 to tbl_field_num-1
+				device_mod_table_item(tbl_box_item_data(i),DEVICE_SET)
+				tbl_result=tbl_field_sg(tbl_box_item_data(i).field_name,tbl_box_item_data(i).field_value,EN_TBL_SET)
+				if tbl_result<>EN_TBL_STATUS_OK then
+					cursor=i
+					goto fail_to_add
+				end if
+			next i
+			if tbl_result=EN_TBL_STATUS_OK then
+				tbl_result=tbl_record_add("")
+				if tbl_result<>EN_TBL_STATUS_OK then goto fail_to_add
+				table_data_change()
+				add_init=YES
+				state=TBL_BOX_STATE_NORMAL
+				tbl_record_number_get(total_rec_num,yes)
+				tbl_record_number_get(actual_rec_count,no)
+				current_rec=1
+				record_num=1
+				device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+				tbl_record_sg(EN_TBL_GET)
+				cursor=0
+				s1=""
+				goto states
+			end if
+fail_to_add:		
+		if tbl_result <> EN_TBL_STATUS_OK then
+			select case tbl_result
+			case EN_TBL_STATUS_FULL: s2=TABLE_FULL
+			case EN_TBL_STATUS_INVALID: s2=TABLE_INVALID_FIELD
+			case EN_TBL_STATUS_KEY_VIOLATION: s2=TABLE_KEY_VIOLATION
+			case else
+				s2=tbl_get_tbl_name()
+				set_disk_error("ui_tbl_box(ADD)",s2)
+				s2=TABLE_SYS_ERROR
+				
+			end select
+			ui_msg_box(s2,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+			state=TBL_BOX_STATE_ADD
+			state_changed=YES
+		end if
+		goto states
+		end select
+	case TBL_BOX_STATE_EDIT:
+		key_edit_op=TBL_BOX_EDIT_NONE
+		ui_tbl_box_reload_table(x_coord,y_coord,width,height,tbl_display_file,state,tbl_box_item_data,tbl_field_num,cursor,pre_cursor,tbl_item_string,s2,offset)
+		if state_changed=YES then device_print_tbl(state)
+edit_op_wait:		
+		while key_edit_op=TBL_BOX_EDIT_NONE
+			if kp.enabled=NO then kp.enabled=YES
+			if kp.getkey(kp_event,kp_code)=OK then
+				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_edit_op,repaint)
+			end if
+		wend
+		select case key_edit_op
+		case TBL_BOX_EDIT_CANCEL:
+			state_changed=YES
+			state=TBL_BOX_STATE_NORMAL
+			pre_cursor=cursor
+			cursor=0
+			s1=""
+			goto states
+		case TBL_BOX_EDIT_NEXT:
+			state_changed=NO
+			ui_tbl_box_move_cursor(pre_cursor,cursor, tbl_field_num)
+			ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_CURSORCOLOR)
+			key_edit_op=TBL_BOX_EDIT_NONE
+			goto edit_op_wait
+		case TBL_BOX_EDIT_EDIT:
+			state_changed=YES
+			lcd.forecolor=LCD_DISABLE_FORECOLOR
+			ui_tbl_box_display(x_coord+6,y_coord,width-6,height,tbl_item_string,s2,offset)
+			ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_DISABLE_FORECOLOR)
+			lcd.forecolor=LCD_FORECOLOR
+			select case tbl_box_item_data(cursor).field_input_type
+			case "I","D","T":
+				if ui_tbl_box_call_ib(tbl_box_item_data(cursor))=INPUT_BOX_RESULT_OK then 
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if
+			case "L":
+				if ui_tbl_box_call_lb(tbl_box_item_data(cursor))=LIST_BOX_RESULT_OK then 
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if
+			case "C":
+				if device_customized_input(tbl_display_file,tbl_box_item_data(cursor))=OK then
+					ui_tbl_box_move_cursor(pre_cursor, cursor, tbl_field_num)
+				end if			
+			end select
+			key_edit_op=TBL_BOX_EDIT_NONE
+			goto states
+		case TBL_BOX_EDIT_SAVE:
+			state_changed=YES
+			pre_cursor=cursor
+			for i=0 to tbl_field_num-1
+				device_mod_table_item(tbl_box_item_data(i),DEVICE_SET)
+				tbl_result=tbl_field_sg(tbl_box_item_data(i).field_name,tbl_box_item_data(i).field_value,EN_TBL_SET)
+				if tbl_result <>EN_TBL_STATUS_OK then 
+					cursor=i
+					goto fail_to_edit
+				end if
+			next i
+			if tbl_result=EN_TBL_STATUS_OK then
+				tbl_result=tbl_record_edit()
+				if tbl_result <> EN_TBL_STATUS_OK then goto fail_to_edit
+				table_data_change()
+				state=TBL_BOX_STATE_NORMAL
+				tbl_record_number_get(total_rec_num,yes)
+				tbl_record_number_get(actual_rec_count,no)
+				device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+				tbl_record_sg(EN_TBL_GET)
+				cursor=0
+				s1=""
+				goto states
+			end if
+fail_to_edit:
+		for i=0 to tbl_field_num-1
+			device_mod_table_item(tbl_box_item_data(i),DEVICE_GET)
+		next i
+		if tbl_result<>EN_TBL_STATUS_OK then
+			select case tbl_result
+			case EN_TBL_STATUS_FULL: s2=TABLE_FULL
+			case EN_TBL_STATUS_INVALID: s2=TABLE_INVALID_FIELD
+			case EN_TBL_STATUS_KEY_VIOLATION: s2=TABLE_KEY_VIOLATION
+			case else 
+				s2=tbl_get_tbl_name()
+				set_disk_error("ui_tbl_box(EDIT)",s2)
+				s2=TABLE_SYS_ERROR
+			end select
+			ui_msg_box(s2,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+			state=TBL_BOX_STATE_EDIT		
+		end if
+		goto states		
+		end select
+	case TBL_BOX_STATE_MENU:
+		dim cmd as string(3)
+		lcd.forecolor=LCD_DISABLE_FORECOLOR
+		ui_tbl_box_display(x_coord+6,y_coord,width-6,height,tbl_item_string,s2,offset)
+		lcd.forecolor=LCD_FORECOLOR
+		if ui_tbl_box_print_menu(tbl_menu_file,cmd,s1)=LIST_BOX_RESULT_OK then
+			state_changed=YES
+			select case cmd
+			case "E":
+				state=TBL_BOX_STATE_EDIT
+				goto states
+			case "D":
+				keycode_yes=device_mb_get_key(MBK_COMMAND_CONFIRM)
+				keycode_no=device_mb_get_key(MBK_COMMAND_CANCEL)
+				kp_code=ui_msg_box(MSG_PROCEED,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,keycode_yes+keycode_no,no,0)		
+				if instr(1,keycode_no,chr(kp_code),1)>0 then
+					state=TBL_BOX_STATE_NORMAL
+					goto states
+				end if
+				tbl_result=tbl_record_delete()
+				if tbl_result=EN_TBL_STATUS_OK then
+					tbl_record_number_get(total_rec_num,yes)
+					tbl_record_number_get(actual_rec_count,no)
+					table_data_change()
+					if actual_rec_count=0 then
+						state=TBL_BOX_STATE_EXIT
+					else
+						state=TBL_BOX_STATE_NORMAL
+						current_rec=1
+						record_num=1
+						device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+						tbl_record_sg(EN_TBL_GET)
+					end if
+				end if
+				if tbl_result=EN_TBL_STATUS_FAILURE then 
+					s2=tbl_get_tbl_name()
+					set_disk_error("ui_tbl_box(DELETE)",s2)
+				end if
+				goto states
+			case "A":
+				for i=0 to tbl_field_num - 1
+					tbl_box_item_data(i).field_value=""
+				next i
+				state=TBL_BOX_STATE_ADD
+			case "S":
+				dim search_item as item_data_type
+				pos1=instr(1,s1,chr(COMMA),1)
+				s2=left(s1,pos1-1)
+				s1=right(s1,len(s1)-pos1)
+				for i=0 to tbl_field_num-1
+					if tbl_box_item_data(i).field_name=s2 then 
+						search_item=tbl_box_item_data(i)
+						search_item.field_value=""
+						lcd_clear(x_coord,y_coord,width,height)
+						lcd_print_msg(s1,x_coord,y_coord,width,height,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,no)
+						if ui_tbl_box_call_ib(search_item)=INPUT_BOX_RESULT_OK then
+							lcd_clear(x_coord,y_coord,width,height)
+							current_rec=1
+							record_num=1
+							s1=search_item.field_value
+							if device_load_tbl_record(no,s1,s2,record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_OK then
+								tbl_record_sg(EN_TBL_GET)
+								state=TBL_BOX_STATE_NORMAL
+								goto states
+							else
+							ui_msg_box(NO_MATCH_FOUND,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+							end if
+						end if
+					end if
+					current_rec=1
+					record_num=1
+					device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+					tbl_record_sg(EN_TBL_GET)
+					state=TBL_BOX_STATE_NORMAL
+					goto states
+				next i
+			case "T":
+				state=TBL_BOX_STATE_NORMAL
+				current_rec=1
+				record_num=1 
+				device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+				tbl_record_sg(EN_TBL_GET)
+				goto states
+			case "B"
+				state=TBL_BOX_STATE_NORMAL
+				current_rec=actual_rec_count
+				record_num=total_rec_num
+				device_load_tbl_record(no,"","",record_num,EN_TBL_SEARCH_UP,PL_FD_FIND_EQUAL)
+				tbl_record_sg(EN_TBL_GET)
+				goto states
+			case else
+				device_custom_tbl_op(cmd, state,record_num,current_rec)
+			end select
+		else
+			state=TBL_BOX_STATE_NORMAL
+			state_changed=YES
+		end if
+		goto states
+	case TBL_BOX_STATE_EXIT:
+		ui_tbl_box=TBL_BOX_OK
+		device_tbl_box_post(x_coord,y_coord,width,height,item_data)
+		kp.enabled=no
+		exit function
+	case TBL_BOX_STATE_FAIL
+		ui_msg_box(DISK_ERROR,MSG_BOX_X,MSG_BOX_Y,MSG_BOX_W,MSG_BOX_H,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,device_mb_get_key(MBK_OK),no,0)
+		ui_tbl_box=TBL_BOX_DISK_ERROR
+		device_tbl_box_post(x_coord,y_coord,width,height,item_data)
+		kp.enabled=no
+		exit function
+	end select
+goto wait
+
+end function
+
+'----------------------------------------------------------------------------
+sub ui_tbl_box_key_proc(key_event as pl_kp_event_codes, byref key_code as byte, byref cursor as byte, byref state as ui_tbl_box_states, byref key_action as byte, byref repaint as no_yes)
+	device_tb_key_proc(key_event, key_code, state, key_action, repaint)
+end sub
+
+'----------------------------------------------------------------------------
+sub ui_tbl_box_cursor_display(tbl_x as word, tbl_y as word, tbl_width as word, tbl_height as word, previous_display_index as byte, index as byte, color as word)
+	dim x, y as word
+#if MENU_CURSOR_STYLE=0
+	romfile.open(SMALL_ICON_FILE)
+	lcd_clear(tbl_x, tbl_y, SCROLL_CURSOR_WIDTH, tbl_height)
+	x=tbl_x+ 1
+	y=tbl_y+index * (lcd.fontheight + UTB_VER_SPACING)+(lcd.fontheight/2)-3
+	lcd.bmp(romfile.offset,x,y,19,0,5,8)
+#else
+	x=tbl_x+ 1
+	lcd.linewidth=SCROLL_BORDER
+	if index <> previous_display_index then 
+		lcd.forecolor=LCD_BACKCOLOR
+		y=tbl_y+(previous_display_index)*(lcd.fontheight+UTB_VER_SPACING)-UTB_VER_SPACING/2-3
+		lcd.rectangle(x,y,x+tbl_width-SCROLL_CURSOR_WIDTH-CURSOR_BAR_LEN_OFFSET,y+lcd.fontheight+UTB_VER_SPACING)
+	end if
+	lcd.forecolor=color
+	y=tbl_y+index * (lcd.fontheight+UTB_VER_SPACING)-UTB_VER_SPACING/2-3
+	lcd.rectangle(x,y,x+tbl_width-SCROLL_CURSOR_WIDTH-CURSOR_BAR_LEN_OFFSET,y+lcd.fontheight+UTB_VER_SPACING)
+	lcd.forecolor=LCD_FORECOLOR
+#endif
+end sub
+
+'----------------------------------------------------------------------------
+sub ui_tbl_box_display(x as word, y as word, w as word, h as word, s1 as string, s2 as string, offset as word)
+	lcd.textalignment=PL_LCD_TEXT_ALIGNMENT_TOP_LEFT
+	romfile.open(LCD_STD_FONT)
+	lcd.setfont(romfile.offset)
+	lcd.textverticalspacing=UTB_VER_SPACING
+	lcd.texthorizontalspacing=UTB_HOR_SPACING
+	x=x+SCROLL_CURSOR_WIDTH+CURSOR_BAR_LEN_OFFSET
+	if s1 <> "" then lcd.printaligned(s1, x, y, offset, h)
+	x=x+SCROLL_CURSOR_WIDTH+offset
+	w=w-SCROLL_CURSOR_WIDTH-CURSOR_BAR_LEN_OFFSET*2-offset
+	if s2 <> "" then lcd.printaligned(s2, x, y, w, h)
+end sub
+
+'----------------------------------------------------------------------------
+function ui_tbl_box_call_ib(byref item_data as item_data_type) as ui_input_box_results
+'This function prepares all necessary variables for the input box, and invoke ui_input_box() function.
+	dim mask_str as string(IB_MAX_LEN)
+	dim char_range as input_box_char_ranges
+	dim pos1, pos2, input_length as byte
+	
+	pos1=instr(1,item_data.field_input_data,chr(COMMA),1)
+	mask_str=left(item_data.field_input_data,pos1-1)
+	if item_data.field_input_type= "D" then
+		char_range=INPUT_BOX_CHAR_RANGE_09
+		select case right(item_data.field_input_data,1)
+		case "7","8":
+			input_length=8
+		case "5":
+			input_length=6
+		case "4":
+			input_length=4
+		end select
+	else
+		pos2=instr(1,item_data.field_input_data,chr(COMMA),2)
+		select case mid(item_data.field_input_data,pos1+1,pos2-pos1-1)
+		case "D": char_range=INPUT_BOX_CHAR_RANGE_09
+		case "A": char_range=INPUT_BOX_CHAR_RANGE_AZ
+		case "B": char_range=INPUT_BOX_CHAR_RANGE_09AZ
+		end select
+		pos1=instr(1,item_data.field_input_data,chr(COMMA),3)
+		input_length=val(mid(item_data.field_input_data,pos2+1,pos1-pos2-1))
+	end if
+	if item_data.field_value=INVALID_FLAG then item_data.field_value=""
+	ui_tbl_box_call_ib=ui_input_box(mask_str,item_data.field_value,char_range,no,MENU_IB_INSERT,len(item_data.field_value),STD_INPUT_WAIT_TIME,input_length)
+end function
+
+'----------------------------------------------------------------------------
+function ui_tbl_box_call_lb(byref item_data as item_data_type) as ui_list_box_results
+'This function prepares all necessary variables for the List box, and invoke ui_list_box() function.
+	dim pos1 as byte
+	pos1=instr(1,item_data.field_input_data,",",3)
+	'adjust list box position
+	if item_data.field_value=INVALID_FLAG then item_data.field_value="0"
+	ui_tbl_box_call_lb=ui_list_box(LIST_BOX_X, LIST_BOX_Y, LIST_BOX_W, LIST_BOX_H, mid(item_data.field_input_data,pos1+1,len(item_data.field_input_data)-pos1-1), item_data.field_value, STD_INPUT_WAIT_TIME)
+end function
+
+'----------------------------------------------------------------------------
+function ui_tbl_box_print_menu(tbl_menu_file as string(25),byref cmd as string(3),byref item_data as string(50)) as ui_list_box_results
+	dim list_data as string
+	dim item_str as string(50)
+	dim option as string(3)
+	dim i, j, k as word
+	
+	romfile.open(tbl_menu_file)
+	i=romfile.find(romfile.pointer,">>",1)
+	
+	while i<>0
+		romfile.pointer=i+2
+		do
+			i=romfile.find(romfile.pointer,chr(TAB),1)
+			ui_tbl_box_print_menu=LIST_BOX_RESULT_FAIL
+			if i=0 then exit function
+			option=romfile.getdata(i-romfile.pointer) 
+			romfile.pointer=i+1
+		loop while option="" 		
+		
+		do
+			i=romfile.find(romfile.pointer,chr(TAB),1) 
+			ui_tbl_box_print_menu=LIST_BOX_RESULT_FAIL
+			if i=0 then exit function
+			item_str=romfile.getdata(i-romfile.pointer) 
+			romfile.pointer=i+1
+		loop while item_str="" 
+
+		list_data=list_data + option+"-"+item_str+";"
+		i=romfile.find(romfile.pointer,">>",1)	
+	wend
+	ui_tbl_box_print_menu=ui_list_box(LIST_BOX_X, LIST_BOX_Y, LIST_BOX_W, LIST_BOX_H,list_data,cmd,0)
+	
+	select case cmd
+	case "S":
+		romfile.open(tbl_menu_file)
+		i=romfile.find(romfile.pointer,">>S",1)
+		k=romfile.find(i,chr(CR),1)
+		romfile.pointer=i+3			
+		do 
+			i=romfile.find(romfile.pointer,chr(TAB),1)
+			j=romfile.find(i+1,chr(TAB),1)
+			romfile.pointer=i+1
+			if j <> i+1 and j > k then item_data=romfile.getdata(k-romfile.pointer)
+		loop while j < k
+	end select
+end function
+
+'----------------------------------------------------------------------------
+sub ui_tbl_box_move_cursor(byref pre_cursor as byte, byref cursor as byte, tbl_field_num as byte)
+	pre_cursor=cursor
+	if cursor < tbl_field_num-1 then
+		cursor=cursor+1
+	else
+		cursor=0
+	end if
+end sub
+
+'----------------------------------------------------------------------------
+sub ui_tbl_box_reload_table(x_coord as word, y_coord as word,width as word, height as word,tbl_display_file as string(25), byref state as ui_tbl_box_states, byref tbl_box_item_data as item_data_type(MAX_DISPLAY_NUM_FIELD), byref tbl_field_num as byte, byref cursor as byte, byref pre_cursor as byte, byref s1 as string, byref s2 as string, offset as word)
+	dim i, pos1, pos2 as word
+	dim stemp as string
+	dim value_width, wtemp as word
+	dim value_too_long as no_yes
+	s2=""
+	value_width=width-SCROLL_CURSOR_WIDTH-offset
+	for i=0 to tbl_field_num-1
+		value_too_long=NO
+		if tbl_box_item_data(i).field_value=INVALID_FLAG then 
+			stemp="<INVALID>"
+		else
+			select case tbl_box_item_data(i).field_input_type
+			case "I","D","T": stemp=tbl_box_item_data(i).field_value
+			case "L": 
+				if tbl_box_item_data(i).field_value<>"" then
+					pos1=instr(1,tbl_box_item_data(i).field_input_data,tbl_box_item_data(i).field_value+"-",1)+len(tbl_box_item_data(i).field_value)+1
+					pos2=instr(pos1,tbl_box_item_data(i).field_input_data,";",1)
+					stemp=mid(tbl_box_item_data(i).field_input_data,pos1,pos2-pos1)
+				else 
+					stemp=""
+				end if
+			case "C":
+				romfile.open(tbl_display_file)
+				pos1=val(tbl_box_item_data(i).field_input_data)
+				romfile.pointer=pos1
+				stemp=romfile.getdata(2)			
+				stemp=device_customized_item(stemp,tbl_display_file,tbl_box_item_data(i).field_value)
+			end select
+		end if
+		romfile.open(LCD_STD_FONT)
+		lcd.setfont(romfile.offset)
+		lcd.texthorizontalspacing=UTB_HOR_SPACING
+		do	
+			wtemp=lcd.getprintwidth(stemp+" ...")+SCROLL_CURSOR_WIDTH+CURSOR_BAR_LEN_OFFSET
+			if wtemp > value_width then
+				stemp=left(stemp,len(stemp)-1)
+				value_too_long=YES
+			end if
+		loop while wtemp > value_width
+		if stemp="" then stemp="<EMPTY>"
+		if value_too_long=YES then 
+			stemp=left(stemp,len(stemp)-1)+"..."
+		end if
+		s2=s2+stemp+"`"
+	next i
+	ui_tbl_box_display(x_coord+6,y_coord,width-6,height,s1,s2,offset)
+	if state <>TBL_BOX_STATE_NORMAL then 
+		ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_CURSORCOLOR)
+	else
+		ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, pre_cursor,LCD_BACKCOLOR)
+	end if
+end sub
+

@@ -1,0 +1,19 @@
+[platform]
+description=DS1100 Device
+version=DS1100-3.33
+rom=327680
+ram=17920
+codebits=24
+sector=65536
+
+[transport1]
+name=udp_winpcap
+description=Taiko WinPCap (UDP non-broadcast) Transport
+device=taiko.winpcapdevice
+browsedlg=em202ui.browsedlg
+
+[transport2]
+name=udp_broadcast
+description=Taiko UDP Broadcast Transport
+device=taiko.udpdevice
+browsedlg=em202ui.browsedlg

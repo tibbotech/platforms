@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif;}
+		td 		{font-size: 15px;}
+		button {width: 75px;}
+		th 		{background-color:yellow;	text-align: center;} /*#FFD700 */
+
+		
+		table.selection
+		{	text-align: left;
+		font-size: 14px;
+		color: black;
+		background-color: #fafafa;
+		/*border: 1px black solid;*/
+		border-collapse: collapse;
+		border-spacing: 0px;}
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2">
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADER START---------------------------------------- -->
+<div id="tab_header" >
+<!-- 
+		<ul>
+			<li id="selected"><a href="#" onclick="javascript:refresh_tab(0);">Options</a></li>
+		</ul>
+ -->
+</div>
+<div id="tab_content" ><br>
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+			<table> 
+			<!-- --------------------------------------------------------------------- -->
+			<!--List Table-->
+			<tr>
+				<td colspan=2 align=center>
+						<div id="scroll_div" style="height:120px;overflow:scroll;OVERFLOW-X: hidden; border: 1px black solid;">
+						
+									<table border="1"  id ="list_table" class="selection" >
+											<tr>
+											<th style="width:23px;">&nbsp;</th><th  style="width:150px">Name</th><th  style="width:50px">Value</th>
+											</tr>
+									</table>
+						</div>
+				</td>
+			</tr>
+			<tr><td colspan=2 align=center>
+			&nbsp
+			</td></tr>
+			<!-- -------------------------------------------------------------------- -->
+			<!-- Command Button -->
+			<tr>
+			<td colspan=2 align=center><p>  
+				<button   onclick="add_record();">Add</button>  
+			 	<button   onclick="insert_record();">Insert</button> 
+			 	<button   onclick="delete_record(SelectedRow)">Delete</button> 
+			</p></td>
+			</tr>
+			<!-- -------------------------------------------------------------------- -->
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB END(div tab_content)----------------------------------- -->
+
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+<div id="esc_div" style="display:block;"></div>
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+//ret value to html object
+load_data();														//load data on start
+var SelectedRow;												//for field table
+point_on_first();
+var already_generate=new Boolean();already_generate=false; //this flag is for td_inputter.
+
+//=================================================1.General Operation===================================================
+//load data record
+function load_data()
+{
+	var list_obj=external.Context.Target;
+	var list_table =document.getElementById("list_table");
+
+	
+	for (var i=0;i<list_obj.length;i++)
+	{
+		var Row = list_table.insertRow();
+		Row.onmousedown = function() {Select(this)};
+		Row.insertCell(0).innerHTML = '&nbsp;';
+		Row.insertCell(1).innerHTML = list_obj[i].LIST_NAME;
+		Row.cells(1).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+		Row.insertCell(2).innerHTML = list_obj[i].LIST_VALUE;
+		Row.cells(2).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+	}
+}
+
+//table selection pointer
+function Select(Row)
+{
+	if (SelectedRow)
+	{
+		SelectedRow.bgColor = 0xfafafa;
+		SelectedRow.cells[0].innerHTML='&nbsp;';
+	}
+	Row.bgColor = 0xff9080;
+	Row.cells[0].innerHTML='<b>\>\></b>';
+	SelectedRow = Row;
+	//load_field_details(SelectedRow.rowIndex);
+}
+
+//point on first record
+function point_on_first()
+{
+	var table =document.getElementById("list_table");
+	var rows = Number(table.rows.length)-1;
+	if (rows!=0)
+	{
+		var Row=table.rows[1];
+		Select(Row);
+	}
+}
+
+//add a new row to the last of the record set.
+function add_record()
+{
+		var list_table =document.getElementById("list_table");
+		var Row = list_table.insertRow();
+		Row.onmousedown = function() {Select(this)};
+		
+		Row.insertCell(0).innerHTML = '&nbsp;';
+		Row.insertCell(1).innerHTML = '';
+		Row.cells(1).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+		Row.insertCell(2).innerHTML = '';
+		Row.cells(2).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+		Select(Row);
+		scroll_div.scrollTop = scroll_div.scrollHeight;
+}
+
+//add before
+function insert_record()
+{
+		if(!SelectedRow) return;
+		var list_table =document.getElementById("list_table");
+		var Row = list_table.insertRow(SelectedRow.rowIndex);
+		Row.onmousedown = function() {Select(this);};
+		
+		Row.insertCell(0).innerHTML = '&nbsp;';
+		Row.insertCell(1).innerHTML = '';
+		Row.cells(1).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+		Row.insertCell(2).innerHTML = '';
+		Row.cells(2).onclick=function() {td_inputter('INPUT',this,{type:'text',name:'td_input_text'});}
+		Select(Row);
+}
+
+//delete selected record
+function delete_record(Row)
+{
+	if (!Row) return;
+	if (Row == SelectedRow)
+		SelectedRow = null;
+	document.getElementById('list_table').deleteRow(Row.rowIndex);
+	point_on_first();
+}
+
+//process td input sequence
+function td_inputter(tag_type, par_target, parameters) 
+{
+	//Because it's triggered in onmousedown Event, we should check if it has already existed.
+	//1.get	target scale
+	//2.get and remove parent innerHTML value
+	//3.retrieve the value of the input text to TD from lost_focus event.
+	if (already_generate==true) return;
+	already_generate=true;
+
+	//if (par_target.childNodes.length>1) alert(par_target.childNodes.length);
+  var newElement = document.createElement(tag_type);
+  if (typeof parameters != 'undefined') 
+  {
+    for (parameter_name in parameters) 
+    {
+    	if (parameter_name=='onblur')  {}
+      else {newElement.setAttribute(parameter_name, parameters[parameter_name]);}
+    }
+  }
+  newElement.onblur=function () {lost_focus(this);}
+	newElement.style.border='none';
+  newElement.style.backgroundcolor='white';//background='transparent';
+  var tmp_num=Number(par_target.offsetWidth);
+  if (tmp_num>2) tmp_num-=3;
+  newElement.style.width=tmp_num.toString();
+  var tmp_num=Number(par_target.offsetHeight);
+  if (tmp_num>4) tmp_num-=5;
+  newElement.style.height=tmp_num.toString();
+  
+	//tmp_str=tmp_str.replace(/\xA0+/g,"");
+  newElement.value=HTMLDecode(par_target.innerHTML); //decode
+  par_target.innerHTML='';               //remove all
+  par_target.appendChild(newElement);
+  newElement.focus();
+	newElement.select();
+	par_target.value='';
+}
+
+//complete the input sequence when lost focus.
+function lost_focus(txt_obj)
+{
+	already_generate=false;
+	txt_obj.parentNode.innerHTML=HTMLEncode(txt_obj.value);
+}
+
+//unique checking (value field in this case)
+function unique_check(compare_str,cell_num)
+{
+	var occur_num=0;
+	var list_table =document.getElementById("list_table");	
+	for (var i=1;i<list_table.rows.length;i++)
+	{
+		var Row=list_table.rows[i];
+		var cell_str=HTMLDecode(Row.cells(cell_num).innerHTML)
+		cell_str=cell_str.replace(/^\s+|\s+$/g,"");//trim
+		if (compare_str==cell_str) occur_num+=1;
+	}
+	return occur_num;
+}
+
+//ON OK
+function OnOK()
+{
+	//validation
+	var list_table =document.getElementById("list_table");
+	var sel_obj = new Array();	
+	for (var i=1;i<list_table.rows.length;i++)
+	{
+		var Row=list_table.rows[i];
+		var tmp_obj=new Object();
+		tmp_obj.LIST_NAME=HTMLDecode(Row.cells(1).innerHTML);
+		tmp_obj.LIST_VALUE=HTMLDecode(Row.cells(2).innerHTML);
+		//tmp_obj.LIST_NAME=tmp_obj.LIST_NAME.replace(/\s+/g,"");//.replace(/^\s+|\s+$/g,"");//trim
+		tmp_obj.LIST_NAME=tmp_obj.LIST_NAME.replace(/^\s+|\s+$/g,"");			//trim
+		tmp_obj.LIST_VALUE=tmp_obj.LIST_VALUE.replace(/^\s+|\s+$/g,"");		//trim
+
+		if (tmp_obj.LIST_NAME=='') 
+			{alert('Row\('+i+'\):Option Name cannot be null.'); Select(Row); return;}
+		if (tmp_obj.LIST_NAME.indexOf("<")!=-1) 
+			{alert('Row\('+i+'\):Option Name cannot have "<" character in the value.'); Select(Row); return;}
+		if (tmp_obj.LIST_NAME.indexOf(">")!=-1) 
+			{alert('Row\('+i+'\):Option Name cannot have ">" character in the value.'); Select(Row); return;}			
+		//if(tmp_obj.LIST_NAME!=tmp_obj.LIST_NAME.replace(/(^[0-9]*)/g, ""))																//Mark this line, cuz selection description can start with a digit.
+			//{alert('Row\('+i+'\):Option Name cannot start with a digit.'); Select(Row); return;}
+			
+		if (tmp_obj.LIST_VALUE=='')
+			{alert('Row\('+i+'\):Option Value cannot be null.'); Select(Row); return;}
+			
+			
+		if (tmp_obj.LIST_VALUE.indexOf("<")!=-1)
+			{alert('Row\('+i+'\):Option Value cannot have "<" character in it.'); Select(Row); return;}	
+		if (tmp_obj.LIST_VALUE.indexOf(">")!=-1) 
+			{alert('Row\('+i+'\):Option Value cannot have ">" character in it.'); Select(Row); return;}			
+		if (tmp_obj.LIST_VALUE.indexOf(" ")!=-1) 
+			{alert('Row\('+i+'\):Option Value cannot have white space in it.'); Select(Row); return;}						
+/*	
+We cancel this, because Victor said that the selection value can be string type.
+		if (isNaN(tmp_obj.LIST_VALUE))
+			{alert('Row\('+i+'\):Option Value must be a number.'); Select(Row); return;}
+*/
+		if (unique_check(tmp_obj.LIST_VALUE,2)>1)
+			{alert('Row\('+i+'\):Option Value must be unique.'); Select(Row); return;}
+		sel_obj.push(tmp_obj);
+	}
+	
+	//all ok, retrieve only string form.
+	var recover_str=new String();
+	recover_str=''; //assign defval for the codition of no record.
+	for (var k=0;k<sel_obj.length;k++)
+	{
+		recover_str+='\<';
+		recover_str+=sel_obj[k].LIST_NAME;
+		recover_str+='=';
+		recover_str+=sel_obj[k].LIST_VALUE;
+		recover_str+='\>';
+	}
+	external.Context.Result = recover_str;
+	external.EndDialog(1);
+}
+//========================================================2. validation ======================================================================================
+//========================================================3. input control ===================================================================================
+//========================================================4. the rest of the functions =======================================================================
+//show real value on web page, for example, <> sign.
+function HTMLEncode(str) 
+{
+	var esc_div_obj = document.getElementById('esc_div');
+	var text = document.createTextNode(str);
+	esc_div_obj.appendChild(text);
+	text =esc_div_obj.innerHTML;
+	var children = esc_div_obj.childNodes;
+
+	for(var i=0;i<children.length;i++)
+	{
+		esc_div_obj.removeChild(children[i]);
+	}
+	//alert(HTMLDecode(text));
+	return text;
+}
+
+//Decode web encoded content to the real value.
+function HTMLDecode(str) 
+{
+		var ta = document.createElement("textarea");
+		ta.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&middot;/g, "{*}");
+		toReturn = ta.value;
+		ta = null;																																		 //release ta;
+		return toReturn.replace("/<br\s*\/?>/mg", "\n");
+}
+
+//refresh tab
+function refresh_tab(li_index)
+{
+	//var all_tab_content=document.getElementsByID('div');
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+//tmp_obj.LIST_NAME=tmp_obj.LIST_NAME.replace(/\xA0+/g,"");
+//tmp_obj.LIST_VALUE=tmp_obj.LIST_VALUE.replace(/\xA0+/g,"");
+</script>
+
+
+</BODY>
+</HTML>

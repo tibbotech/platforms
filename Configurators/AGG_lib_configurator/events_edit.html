@@ -1,0 +1,2409 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif;}
+		th 		{background-color:yellow; text-align: center;} 
+		td 		{font-size: 15px;}
+		button {width: 75px;} 
+
+
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2" >
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADERs START---------------------------------------- -->
+<div id="tab_header" >
+		
+		<ul>
+						<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">General</a></li>
+						<li><a href="#" onclick="javascript:refresh_tab(1)">Advanced</a></li>
+		</ul>
+</div>
+<div id="tab_content" ><br>
+<!-- ------------------------------------------------------------------------------------ -->
+
+	<div class="posttext">
+			<table>
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Dummy -->
+				<tr style="height:2px;">
+					<td >	<div style="width:100px;height:2px;"></div></td>
+					<td >	<div style="width:223px;height:2px;"></div></td>
+				</tr>
+			<!-- ------------------------Fields Display Section---------------------- -->
+			<!-- Entity -->		
+										<!-- Leave ir empty for now -->
+			<!-- -------------------------------------------------------------------- -->
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Event Type: -->
+				<tr> 
+				<td><p><span title="header=[Event Type:] body=[Event Type.]">Event Type:</span> </td>
+				<td><select ID="edit_EVE_TYPE" style="width: 175px" onChange="edit_EVE_TYPE_onchange();">
+								<option value="S">Stored Event</option>
+								<option value="I">Instant Event</option>								
+						</select></p>
+				</td>
+				</tr> 
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Event Name 1:  (textbox) -->
+				<tr name="tr_EVE_NAME" id="tr_EVE_NAME"> 
+				<td><p><span title="header=[Event Name:] body=[Name of the Event.]">Event Name:</span> </td>
+				<td><input type="text" ID="edit_EVE_NAME" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr> 
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Event Name 2:  (dropdown list) -->
+				<tr name="tr_EVE_NAME" id="tr_EVE_NAME"> 
+				<td><p>
+					<span title="header=[Event Name:] body=[Name of the Event.]">Event Name:</span> 
+				</td>
+				<td><select ID="edit_EVE_NAME_DROPDOWN" style="width: 175px" onChange="load_data_from_TBL_lib();"> <!-- edit_EVE_NAME_SELECTION -->
+							<option value="0">0- IMPORT-1 </option>
+							<option value="1">1- IMPORT-2 </option> 
+							<option value="2">2- IMPORT-3 </option> 
+							<option value="3">3- IMPORT-4 </option> 
+							<option value="4">4- IMPORT-5 </option> 
+							<option value="5">5- IMPORT-6 </option>							 
+						</select></p>
+				</td>
+				</tr> 
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Default Level(Event Level): -->
+				<tr> 
+				<td><p><span title="header=[Event Level:] body=[Level of the event.]">Default Level:</span> </td>
+				<td><select ID="edit_EVE_LEVEL" style="width: 175px" onChange=""> 
+							<option value="0">0- None </option>
+							<option value="1">1- Notice</option> 
+							<option value="2">2- Info</option> 
+							<option value="3">3- Warning</option> 
+							<option value="4">4- Error</option> 
+							<option value="5">5- Fatal</option>							 
+						</select></p></td>
+				</tr> 
+				<!-- --------------------------------------------------------------------- -->
+				<!-- AEL informer: -->
+				<tr> 
+				<td colspan=2 align="left" >
+					<div id='div_AEL_informer' style='position:relative;'>&nbsp</div>
+				</td>
+				</tr> 
+				
+				<tr><td>&nbsp</td><td>&nbsp</td></tr> 
+				<tr><td>&nbsp</td><td>&nbsp</td></tr> 
+				<!-- --------------------------------------------------------------------- -->
+				<!--Divider2 -->
+				<tr><td colspan=2 align=left>
+				<p>
+					<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+				</p>
+				</td></tr>
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Event Description(Table Description): -->
+				<tr>
+				<td><p><span title="header=[Description:] body=[The human-readable description of this event.]">Description:</span></td>
+				<td><input type="text" ID="edit_DESCRIPTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr>	
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Help: -->
+				<tr>
+				<td><p><span title="header=[Help:] body=[Detailed event description. The field can be null.]">Help:</span></td>
+				<td><input type="text" ID="edit_HELP" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr>
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Group: -->
+				<tr>
+				<td><p><span title="header=[Group:] body=[Event group.]">Group:</span></td>
+				<td><input type="text" ID="edit_GROUP" value="remote" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px;" disabled="disabled"> </p></td>
+				</tr>	
+				<!-- --------------------------------------------------------------------- -->
+				<tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>
+			</table>	
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB1 END(div tab_content)----------------------------------- -->
+<div id="tab_content" ><br> <!-- TAB2 Advance-->
+<!-- ------------------------------------------------------------------------------------ -->
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+
+			<table> 
+			<!-- --------------------------------------------------------------------- -->
+			<!-- check box (input) reservered-->			
+			</table>
+			
+			<div id="div_enable_3">
+			<table>
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Dummy -->
+				<tr style="height:2px;">
+					<td >	<div style="width:100px;height:2px;font-size: 0em;"></div></td>
+					<td >	<div style="width:220px;height:2px;font-size: 0em;"></div></td>
+				</tr>
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider -->
+			<tr><td colspan=2 align=center>
+			<div class="Divider" style="background-color:#8FBC8F;height:20px;"><b>Event Data Format Configuration</b></div>
+			<!--<div class="Divider" style="background-color: green;height:0px;font-size: 0em;"></div>-->
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->
+			<!--Advance field(s) settings table-->
+			<tr>
+				<td colspan=2 align=center>
+						<div id="scroll_div_output" style="height:100px;overflow:scroll; OVERFLOW-X: hidden" >
+									<table border="1"  id ="advance_table"  class="selection">
+											<tr>
+																					<th>Field Name</th>
+																					<th>Type</th>
+																					<span title="header=[Flags] body=[]">  <th>F</th> </span>
+																					<span title="header=[Default Value] body=[]">  <th>A</th> </span>
+																					<span title="header=[Field Description] body=[]">  <th>D</th> </span>
+																					<span title="header=[Help] body=[]">  <th>H</th> </span>
+																					<span title="header=[Selection Values] body=[]">  <th>S</th> </span>
+																					<span title="header=[Validator] body=[]">  <th>V</th> </span>
+																					<span title="header=[Editor/Renderer] body=[]">  <th>E</th> </span>
+																					<span title="header=[Editor Options] body=[]">  <th>O</th> </span>
+											</tr>
+									</table>
+						</div>
+				</td>
+			</tr>
+
+			<tr><td colspan="2" align="center">
+				&nbsp
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->
+			
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Field Info&nbsp;(Optional Flag)</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Field Infooooo: (input)-->
+			<tr> 
+				<td  colspan=2 align=left>
+						<table id="tbl_flag_2" class="related_field_info" >  
+								<tr><td>Flags</td><td></td></tr> 
+								<tr><td>Default Value</td><td></td></tr> 
+								<tr><td>Description</td><td></td></tr> 
+								<tr><td>Help</td><td></td></tr> 
+								<tr><td>Selection Values</td><td></td></tr> 
+								<tr><td>Limitation</td><td></td></tr>
+								<tr><td>Editor/Renderer</td><td></td></tr> 
+								<tr><td>Editor Options</td><td></td></tr> 
+						</table>
+				</td>
+			
+			
+			</tr> 
+			
+			<!-- ---------------------------------------------------------------------aa -->
+			<tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr> <tr><td>&nbsp</td><td>&nbsp</td></tr>		
+			<tr>
+				<td colspan="2" align="right">
+						<!--not now -->
+						
+						<div id="btn_panel_div">
+							<button name="btn_input"   style="width:55px;height:20px;" onclick="functions_Add_SFFS();">Add</button> 
+							<button name="btn_input"   style="width:55px;height:20px;" onclick="functions_Edit_SFFS(SelectedRow);">Edit</button> 
+							<button name="btn_input"   style="width:55px;height:20px;" onclick="delete_SFFS(SelectedRow);">Delete</button> 
+						</div>
+				</td>
+			</tr>
+						
+			<!-- --------------------------------------------------------------------- -->
+			<!-- --------------------------------------------------------------------- -->
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Min Record count(C_Script): -->
+			<tr style="display:none;">
+			<td><p></td>
+			<td><input type="text" ID="edit_MIN" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px;" > </p></td>
+			</tr>
+			<!-- Max Record count(C_Script): -->
+			<tr style="display:none;">
+			<td><p></td>
+			<td><input type="text" ID="edit_MAX" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px;" > </p></td>
+			</tr>				 				
+			<!-- --------------------------------------------------------------------- -->
+			<tr><td>&nbsp</td><td>&nbsp</td></tr> 
+			</table>
+			</div>	<!--the div belong to id="div_enable_3"-->
+	</div>
+	
+</div>
+<!-- ---------------------------TAB2 END(div tab_content)----------------------------------- -->
+<!-- --------------------------------------------------------------------------------------- -->
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp; &nbsp;&nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+<div id="esc_div" style="display:block;"></div>
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+cDivs = new Array();    								//for disable elements.(must before refresh_tab)
+var disabled_area= new Object;
+disabled_area.TAB_0=new Array;
+disabled_area.TAB_1=new Array;
+disabled_area.TAB_2=new Array;
+//define_disabled_area();								//we don't need this for now.
+
+var HTML_EVE_NAME=document.getElementById('edit_EVE_NAME');    	//global web elements
+var HTML_EVE_NAME_DROPDOWN=document.getElementById('edit_EVE_NAME_DROPDOWN');    	//global web elements 
+var HTML_EVE_TYPE=document.getElementById('edit_EVE_TYPE');    
+var HTML_EVE_LEVEL=document.getElementById('edit_EVE_LEVEL');   //lib and script share the same field
+var HTML_DESCRIPTION=document.getElementById("edit_DESCRIPTION");
+var HTML_HELP=document.getElementById('edit_HELP');
+var HTML_GROUP=document.getElementById('edit_GROUP');
+var HTML_MIN=document.getElementById('edit_MIN');
+var HTML_MAX=document.getElementById('edit_MAX');
+
+refresh_tab(0); 												//must be executed on start.
+var current_tab_index=0;
+var SelectedRow;									//for output table(output structure).
+var c_script_structure = new Object(); 	//global customized script structure(events).
+var TBL_Path=external.Context.Ref_Path.TBL;
+var STG_Path=external.Context.Ref_Path.STG;
+
+load_data();
+init_colon();														//not important
+point_on_first();
+
+//=================================================1.General Operation===================================================
+//load data sequence.
+function load_data()
+{
+	//1.load the variable data from agg_lib.(name, script, and no type in function.)
+	HTML_EVE_NAME.value =external.Context.Target.VAR_NAME;	
+	var tmp_obj=extract_type_n_level(external.Context.Target.VAR_TYPE);	
+	HTML_EVE_TYPE.value=tmp_obj.event_type;
+	HTML_EVE_LEVEL.value=tmp_obj.event_level;
+	var script_object=decode_events_script(external.Context.Target.C_SCRIPT);             //tmpobj= decode agg.c_script to object.
+	show_button_panel(tmp_obj.event_type);																								//*-*-* newly add.
+	show_right_EventName_style(tmp_obj.event_type, external.Context.Target.VAR_NAME);			//*-*-* newly add.
+	if (tmp_obj.event_type=='S')
+		show_AEL_informer(external.Context.Target.VAR_NAME); 																//*-*-* newly add.
+	else
+		hide_AEL_informer();																																//add this cuz restore sequence will calll this function, too. Not just on_load.					
+	
+	//2.decode the script in to object respectively and display them.
+	var srcFORMTYPE=external.Context.srcFORMTYPE;
+	if (srcFORMTYPE=='EDIT')
+	{
+		if (script_object==null)	{alert('Invalid script format.');script_object=create_empty_c_object();}	//@@ 1.check if script_object==null? 2.add recreate script seqence. 
+		else
+			{	
+				show_c_script(script_object);
+			}		
+	}
+	else
+	{
+		script_object=create_empty_c_object(); //when add new
+	}
+	c_script_structure=script_object;
+}
+
+//Create empty C_script_Structure.
+function create_empty_c_object()
+{
+	var Cscript_object=new Object;
+	Cscript_object.name='';
+	Cscript_object.format=new Object;
+	Cscript_object.format.original_string='';                											//record format(=field format set)
+	
+	Cscript_object.description='';
+	Cscript_object.help='';
+	Cscript_object.level='';
+	Cscript_object.group='remote';
+	                                
+	Cscript_object.format.field_format_set=new Array;
+	Cscript_object.format.field_format_set_flag=new Array;
+	return Cscript_object;
+}
+
+//load customize_script to html elements.
+function show_c_script(script_obj)
+{
+	if (!script_obj) return;
+	if (script_obj==null) return;
+	
+//Tab1
+
+	//get
+	var tmp_var_description=script_obj.description;													//must exist.
+	var tmp_help=script_obj.help;																						//must exist.
+	if (tmp_help=='^') tmp_help='';																					//must exist, deal with '^'.
+	var tmp_group=script_obj.group;																					//must exist.
+	//assign
+	document.getElementById("edit_DESCRIPTION").value=tmp_var_description;
+	document.getElementById("edit_HELP").value=tmp_help;
+	document.getElementById("edit_GROUP").value=tmp_group;									//group must be 'remote' in function 'for now'.	
+	
+	
+//Tab2(Format) 
+	//a.table flag(we don't need "table rule" here.)
+		//get
+		var tmp_table_M=get_flag_value(script_obj.format.field_format_set_flag,'M');												//must exist, min record count.
+		var tmp_table_X=get_flag_value(script_obj.format.field_format_set_flag,'X');												//must exist, max record count.
+		//assign
+		//output will allow user to define their own limitation of the record count.
+		if (tmp_table_M!=null) {document.getElementById("edit_MIN").value=tmp_table_M;}else{} 							//@@ else means nothing.
+		if (tmp_table_X!=null) {document.getElementById("edit_MAX").value=tmp_table_X;}else{} 							//@@ else means nothing.
+		
+	//b.show fields 
+		var tmp_field_format = new Array();
+		var adv_output_table =document.getElementById("advance_table");
+		if ( adv_output_table.rows.length > 1) 																																	//clear all if in case we may reload it.
+		{
+				var tmp_length =adv_output_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					adv_output_table.deleteRow(1);
+				}
+		}
+		//second layer(every thing in the "ouputformat")
+		//show_IO_enabled('output',script_obj.format.field_format_set);  //Dima
+		for (var i=0;i<script_obj.format.field_format_set.length;i++)
+		{
+				var Row = adv_output_table.insertRow();
+				var tmp_fld_name=script_obj.format.field_format_set[i].fld_name;//fixed
+				var tmp_fld_type=script_obj.format.field_format_set[i].fld_type;//fixed
+				var tmp_field_format_flag=script_obj.format.field_format_set[i].field_format_flag;//not fixed
+				//show content in the "Format", and get rid of "<>".
+				for (var k=0;k<script_obj.format.field_format_set[i].field_format_flag.length;k++)
+				{
+					tmp_field_format_flag[k]=script_obj.format.field_format_set[i].field_format_flag[k];
+				}
+				//create fields' flag status on the table.(first load)
+				Row.onmousedown = function() {Select(this);}
+				Row.ondblclick = function() {functions_Edit_SFFS(this);}
+				Row.insertCell(0).innerHTML = tmp_fld_name;		
+				Row.insertCell(1).innerHTML = tmp_fld_type;
+				var flag_item=new Array();
+				flag_item=["0","0","F","A","D","H","S","V","E","O"];
+				for (var k=2;k<10;k++)
+				{
+					var chkbox = document.createElement('input');chkbox.type = "checkbox";
+					Row.insertCell(k).appendChild(chkbox);
+					var tmp_fld_flag=get_flag_value(tmp_field_format_flag,flag_item[k]);
+					if (tmp_fld_flag!=null) chkbox.checked= true;chkbox.disabled = true;		
+				}
+		}
+}
+
+//extract type n level with object form.(event)
+function extract_type_n_level(str)
+{
+	var tmp_obj= new Object();
+	tmp_obj.event_type=new String();
+	tmp_obj.event_level=new String();
+	tmp_obj.event_type=str.substr(0, 1);
+	tmp_obj.event_level=str.substr(1, 1);
+	return tmp_obj;
+}
+
+//reload "field Format set" to html table.
+//but not other stuff except table.
+function refresh_adv_format_table(script_obj)
+{
+	if (!script_obj) return;
+	if (script_obj==null) return;
+	
+//Tab1
+//Tab2
+//Tab3 
+	//a.table flag(we don't need "table rule" here.)
+		//we don't refresh this here.
+	//b.show fields
+		var tmp_field_format = new Array();
+		var adv_output_table =document.getElementById("advance_table");
+		if ( adv_output_table.rows.length > 1) 																																	//clear all if in case we may reload it.
+		{
+				var tmp_length =adv_output_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					adv_output_table.deleteRow(1);
+				}
+		}
+		//second layer(every thing in the "ouputformat")
+		//show_IO_enabled('output',script_obj.format.field_format_set);  //Dima
+		for (var i=0;i<script_obj.format.field_format_set.length;i++)
+		{
+				var Row = adv_output_table.insertRow();
+				var tmp_fld_name=script_obj.format.field_format_set[i].fld_name;//fixed
+				var tmp_fld_type=script_obj.format.field_format_set[i].fld_type;//fixed
+				var tmp_field_format_flag=script_obj.format.field_format_set[i].field_format_flag;//not fixed
+				//show content in the "Format", and get rid of "<>".
+				for (var k=0;k<script_obj.format.field_format_set[i].field_format_flag.length;k++)
+				{
+					tmp_field_format_flag[k]=script_obj.format.field_format_set[i].field_format_flag[k];
+				}
+				//create fields' flag status on the table.(first load)
+				Row.onmousedown = function() {Select(this);}
+				Row.ondblclick = function() {functions_Edit_SFFS(this);}
+				Row.insertCell(0).innerHTML = tmp_fld_name;		
+				Row.insertCell(1).innerHTML = tmp_fld_type;
+				var flag_item=new Array();
+				flag_item=["0","0","F","A","D","H","S","V","E","O"];
+				for (var k=2;k<10;k++)
+				{
+					var chkbox = document.createElement('input');chkbox.type = "checkbox";
+					Row.insertCell(k).appendChild(chkbox);
+					var tmp_fld_flag=get_flag_value(tmp_field_format_flag,flag_item[k]);
+					if (tmp_fld_flag!=null) chkbox.checked= true;chkbox.disabled = true;			
+				}
+		}
+}
+
+//check if input or output format is empty. If so, then disable the tab.
+//this function is for showing tabs is enabled or not.
+function show_IO_enabled(format,ffs)
+{//1.check 2.show 3.update
+	
+	var chk_obj=document.getElementsByName("chkb_format_enable");	
+
+	if (ffs.length==0)
+		{
+			disabled_area.TAB_2[0].Enabled=false; //div_enable_3
+			chk_obj[0].checked=false;
+		}
+	else
+		{
+			disabled_area.TAB_2[0].Enabled=true;	//div_enable_3
+			chk_obj[0].checked=true;
+		}
+	process_disabled_area(current_tab_index);
+}
+
+//set IO enabled when checked.
+function syn_IO_on_changes()
+{
+	var chk_obj=document.getElementsByName("chkb_format_enable");	
+
+	//Tab (Advance)
+	if (chk_obj[0].checked == true) 
+		{
+			disabled_area.TAB_2[0].Enabled=true;	//div_enable_2
+		}
+	else
+		{
+			disabled_area.TAB_2[0].Enabled=false;	//div_enable_2
+		}	
+	process_disabled_area(current_tab_index);
+}
+
+//output table pointer
+function Select(Row)
+{
+	if (SelectedRow)
+		SelectedRow.bgColor = 0xfafafa;
+	Row.bgColor = 0xff9080;
+	SelectedRow = Row;
+	//load field details
+	load_field_details_output(SelectedRow.rowIndex); 
+}
+
+//Load data
+function load_field_details_output(selected_rowIndex)
+{	
+	//only show field_details in functions.
+	//1.start to load current selected fff record.
+	
+	var fff_obj=c_script_structure.format.field_format_set[selected_rowIndex-1].field_format_flag;			//get only flag data
+	var chk_obj=document.getElementsByName("chkb_style");																								//get style chk box array	
+	
+
+	//check empty
+	if (fff_obj=='undefined') return;
+	if (fff_obj==null) return;
+	
+	
+	//get values
+	var tmp_F=get_flag_value(fff_obj,'F');
+	var tmp_D=get_flag_value(fff_obj,'D');
+	var tmp_H=get_flag_value(fff_obj,'H');
+	//---------------Flag SEO------------------
+	var tmp_S=get_flag_value(fff_obj,'S');
+	var tmp_E=get_flag_value(fff_obj,'E');	
+	var tmp_O=get_flag_value(fff_obj,'O');
+	//---------------Flag AV-------------------	
+	var tmp_A=get_flag_value(fff_obj,'A');
+	var tmp_V=get_flag_value(fff_obj,'V');
+	
+	//if null, set value as ''
+	if (tmp_F==null) tmp_F='*';//'F';
+	if (tmp_D==null) tmp_D='*';//'D';
+	if (tmp_H==null) tmp_H='*';//'H';
+	if (tmp_E==null) tmp_E='*';//'E';
+	if (tmp_O==null) tmp_O='*';//'O';
+	if (tmp_A==null) tmp_A='*';//'A';
+	if (tmp_V==null){	tmp_V='*';}//'V';
+	else 
+		{
+			tmp_V=tmp_V.replace(/(<L=)|([>]?$)/g, "");
+			tmp_V=tmp_V.replace(/\s/g, " ~ ")
+		}
+	if (tmp_S==null) {tmp_S='*';}//'S';
+	else
+		{
+				var sel_arr = tmp_S.match(/<[^<>\s]+=[^<>\s]+>/g);							 							//parse the field value and push the result into array.
+				var sel_obj = new Array();
+				tmp_S='';
+				if (sel_arr!=null)
+				{
+						for (var i=0;i<sel_arr.length;i++)
+						{
+							var tmp_str=sel_arr[i].replace(/(^[<]?)|([>]?$)/g, "");									//get rid of "<>" once.
+							tmp_S+=tmp_str;
+							if (tmp_S.length > 22) {tmp_S=tmp_S.substr(0,22);tmp_S+='...';break;}		//control the string length
+							if (i!=sel_arr.length-1) tmp_S+=', ';
+						}
+				}
+				
+		}
+
+	//show values
+	var flags_obj=new Object();
+	flags_obj.F=ret_flag_alias('F',tmp_F);
+	flags_obj.D=tmp_D;
+	flags_obj.H=tmp_H;
+	flags_obj.S=tmp_S;
+	flags_obj.E=ret_flag_alias('E',tmp_E);
+	flags_obj.O=ret_flag_alias('O',tmp_O);
+	flags_obj.A=tmp_A;
+	flags_obj.V=tmp_V;
+	
+	show_optional_flag(flags_obj);
+}
+
+//show flag on page
+function show_optional_flag(obj)
+{
+			var tbl_flag_info=document.getElementById("tbl_flag_2");
+			tbl_flag_info.rows[0].cells[1].innerHTML=HTMLEncode(': '+obj.F);
+			tbl_flag_info.rows[1].cells[1].innerHTML=HTMLEncode(': '+obj.A);
+			tbl_flag_info.rows[2].cells[1].innerHTML=HTMLEncode(': '+obj.D);
+			tbl_flag_info.rows[3].cells[1].innerHTML=HTMLEncode(': '+obj.H);
+			tbl_flag_info.rows[4].cells[1].innerHTML=HTMLEncode(': '+obj.S);
+			tbl_flag_info.rows[5].cells[1].innerHTML=HTMLEncode(': '+obj.V);
+			tbl_flag_info.rows[6].cells[1].innerHTML=HTMLEncode(': '+obj.E);
+			tbl_flag_info.rows[7].cells[1].innerHTML=HTMLEncode(': '+obj.O);
+} 
+
+//set default appearance
+function init_colon()
+{
+			var tbl_flag_info=document.getElementById("tbl_flag_2");
+			tbl_flag_info.rows[0].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[1].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[2].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[3].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[4].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[5].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[6].cells[1].innerHTML=HTMLEncode(': *');
+			tbl_flag_info.rows[7].cells[1].innerHTML=HTMLEncode(': *');
+}
+
+//return alias of field flags
+function ret_flag_alias(flag_str,value_str) //retrieve alias 
+{
+		var tmp_value=value_str.replace(/^\s+|\s+$/g,"");
+		switch (flag_str) 
+		{
+		case 'F':
+			switch(value_str)
+			{
+				case "0": return 'Disabled';
+				case "N":	return 'Nullable';
+				case "O":	return 'Optional';
+				case "E":	return 'Extendable selection value';
+				case "R":	return 'Read Only';
+				case "C":	return 'Not Replicated';
+				case "H":	return 'Hidden';
+							
+				default:
+					return value_str;
+			}
+			break;
+			//<E=period><O=0>		
+		case 'E':
+			switch(value_str)
+			{
+				case "period": return 'period';
+				default:
+					return value_str;
+			}
+			break;	
+		case 'O':
+			switch(value_str)
+			{
+				case "0": return 'Base type 0';
+				case "1": return 'Base type 1';
+				case "2": return 'Base type 2';
+				case "3": return 'Base type 3';
+				case "4": return 'Base type 4';
+				case "5": return 'Base type 5';
+				case "6": return 'Base type 6';
+				case "7": return 'Base type 7';
+				case "8": return 'Base type 8';
+				default:
+					return value_str;
+			}
+			break;			
+		default: 
+			return value_str;
+			break;
+		}
+}
+
+
+//set pointer to the first(input)
+function point_on_first()
+{
+			var table =document.getElementById("advance_table");
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0) 
+			{
+				var Row=table.rows[1]
+				Select(Row);
+			}
+}
+
+//not yet
+function point_on_index(p_index)
+{
+	if (isNaN(p_index)) return;
+	var table =document.getElementById("advance_table");
+	var rows = Number(table.rows.length)-1;
+	if ((rows!=0)&&(p_index<rows+1))
+		{
+				var Row=table.rows[p_index+1]
+				Select(Row);
+		}
+}
+
+//---------------------------------------------
+//change the order of the record  in the table
+//move_to_next(which table, up/down)
+//SelectedRow
+//---------------------------------------------
+function move_to_next(Dir)
+{
+		if (!Dir) return;
+		
+
+		//0.check eof
+		var dir_offset= new Number();
+		var Row=SelectedRow;
+		if (!Row) return;																																											//It means no pointer in the table. Nothing to move.
+		if (!c_script_structure) return;																																			//if the entity not exists, exit function.
+		if (Dir=='up'){
+			if ((Row.rowIndex)<=1) return;																																			//Avoid that the index is out of the range.
+			dir_offset=-1;
+		}
+		else{
+			if (c_script_structure.format.field_format_set.length<=(Row.rowIndex)) return;											//Avoid that the index is out of the range.	
+			dir_offset=1;
+		}
+		//1.get the selected record. then delete it. then insert it.
+		if (Row == SelectedRow)  SelectedRow = null;
+		var tmp_record_obj=c_script_structure.format.field_format_set[Row.rowIndex-1];												//get the whole record(single).
+		var tmp_Row_Index=Row.rowIndex-1;
+		c_script_structure.format.field_format_set.splice(tmp_Row_Index, 1); 																	//1. delete it first
+		c_script_structure.format.field_format_set.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 				//2. then insert																																				//Mark this line temporarily. Cuz the user here still could discard the changes.	
+		//2.refresh(reload) the HTML Table of the "Entity Variables".
+		refresh_adv_format_table(c_script_structure);																												
+		//3.Set the pointer to the record that we just moved. 
+		var cur_fld_index=tmp_Row_Index+dir_offset;																														//tmp_Row_Index+(dir_offset+1)
+		point_on_index(cur_fld_index);								 
+		
+}
+
+
+
+//refresh format table
+//Before execute this function, make sure u have already "update" the web element value to the C_script object before u execte this function.
+function refresh_all()
+{
+	show_c_script(c_script_structure); //reload
+	init_colon();											 
+	point_on_first();
+}
+
+
+//delete outputformat record
+//Note that: for instant event only
+function delete_SFFS(Row)
+{
+	if (!Row)			return;
+	
+	if (Row == SelectedRow)  SelectedRow = null;
+	var cur_fld_index=(Row.rowIndex-1);
+	var ffs=c_script_structure.format.field_format_set; 											//this is for unique checking in Edit Dialog box.
+	ffs.splice(Row.rowIndex-1, 1);
+			
+	//update the table
+	refresh_adv_format_table(c_script_structure); //reload
+	init_colon();											 //prevent deleting to the last one that cause the....
+	point_on_first();
+	
+}
+
+
+
+//addnew(output)
+//Note that: for instant event only.
+function functions_Add_SFFS()
+{
+	//0.Create 'single' 'field_format_set' Structure.
+	var single_ffs=new Object();
+	single_ffs.original_string='';
+	single_ffs.fld_name='';
+	single_ffs.fld_type='S';
+	single_ffs.field_format_flag=new Array();
+	
+	var Context = new Object();
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.Target=single_ffs; 																											//entity index + C_script index under entity = the record we want.
+	Context.CS_ffs=c_script_structure.format.field_format_set; 											//this is for unique checking in Edit Dialog box.
+	Context.srcFORMTYPE = 'ADD';																										//Dialog Type
+	
+	//2.Open Add New
+	var Result = external.ModalDialog("InstantEvent_format_edit.html", "Add New  (Instant Events field)", Context);
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements 
+	//a.save value.
+	//b.update the table.
+	//c.set pointer to the original record.
+	Context.CS_ffs.push(Context.Target)
+	var cur_fld_index=Context.CS_ffs.length-1;
+	refresh_adv_format_table(c_script_structure); //reload
+	point_on_index(cur_fld_index);
+	
+	scroll_div_output.scrollTop = scroll_div_output.scrollHeight;
+}
+
+
+//addnew(output)
+//Note that: for instant event only.
+function functions_Insert_SFFS()
+{
+	//0.Create 'single' 'field_format_set' Structure.
+	var single_ffs=new Object();
+	single_ffs.original_string='';
+	single_ffs.fld_name='';
+	single_ffs.fld_type='S';
+	single_ffs.field_format_flag=new Array();
+	
+	var Context = new Object();
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.Target=single_ffs; 																											//entity index + C_script index under entity = the record we want.
+	Context.CS_ffs=c_script_structure.format.field_format_set; 											//this is for unique checking in Edit Dialog box.
+	Context.srcFORMTYPE = 'ADD';																										//Dialog Type
+	
+	//2.Open Add New
+	var Result = external.ModalDialog("InstantEvent_format_edit.html", "Insert Before  (Instant Events field)", Context);
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements 
+	//a.save value.
+	//b.update the table.
+	//c.set pointer to the original record.
+	
+	//Start inserting sequence(a.).
+	var Row=SelectedRow;
+	if (!Row)	
+	{
+			var tmp_Row_Index= document.getElementById("advance_table").rows.length-1;
+			Context.CS_ffs.push(Context.Target);
+			external.SetModified(true);		
+	}	
+	else
+	{
+			var tmp_Row_Index=Row.rowIndex-1;
+			Context.CS_ffs.splice(tmp_Row_Index, 0,Context.Target); 																												//insert
+			external.SetModified(true);	
+	}
+	refresh_adv_format_table(c_script_structure); //reload
+	point_on_index(tmp_Row_Index);
+}
+
+//edit dialog box(output) for Instant Event.
+//Note that: for both instant and stored event.
+function functions_Edit_SFFS(Row)
+{	
+	if (!Row)			return;
+	var cur_EventType=HTML_EVE_TYPE.value; 	//get event type first. It's for tell which kind of sub edit dialog box we should open.
+		
+	var Context = new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	var cur_fld_index=(Row.rowIndex-1);
+	Context.Target=c_script_structure.format.field_format_set[cur_fld_index]; 				//entity index + C_script index under entity = the record we want.
+	Context.CS_ffs=c_script_structure.format.field_format_set; 											//this is for unique checking in Edit Dialog box.
+	Context.srcFORMTYPE = 'EDIT';																													//Dialog Type
+	
+	//2.Open EDIT
+	if (cur_EventType != 'S')
+		var Result = external.ModalDialog("InstantEvent_format_edit.html", "Edit  (Instant Events field)", Context);	//InstantEvent_format_edit.html
+	else
+		var Result = external.ModalDialog("StoredEvent_format_edit.html", "Edit  (Stored Events field)", Context);		//StoredEvent_format_edit.html
+		
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements 
+	//a.update the table
+	//b.set pointer to the original record
+	refresh_adv_format_table(c_script_structure); //reload
+	point_on_index(cur_fld_index);
+}
+
+//save sequence
+//1.Save to c_script_structure(Only First Layer)
+//2.refresh all Dom elements 	(Update all changes)
+function save_data_to_obj(obj)
+{	
+// save all data value to c_script_structure
+	
+	c_script_structure.name=obj.EVE_NAME;
+	c_script_structure.description=obj.DESCRIPTION;
+	c_script_structure.help=obj.HELP;
+	c_script_structure.level=obj.EVE_LEVEL;
+	c_script_structure.group=obj.GROUP;
+	if (c_script_structure.help=='') c_script_structure.help='^';
+	c_script_structure.group='remote';
+	
+	
+//format
+			if (c_script_structure.format.field_format_set.length>0)
+			{
+				c_script_structure.format.field_format_set_flag.length=0;
+				c_script_structure.format.field_format_set_flag.push('M=1');
+				c_script_structure.format.field_format_set_flag.push('X=1');		
+			}
+			else
+			{
+				c_script_structure.format.field_format_set_flag.length=0;
+				c_script_structure.format.field_format_set_flag.push('M=0');
+				c_script_structure.format.field_format_set_flag.push('X=0');	
+			}
+			refresh_all(); //imporatant: need to refresh table here. There is one more validation to go and it could be invalid, so ... refresh is necessary.
+}
+
+//ON OK
+function OnOK()
+{	
+	var EVE_NAME=new String();    	//global web elements
+	var EVE_TYPE=new String();  
+	var EVE_LEVEL=new String();
+	var DESCRIPTION=new String();
+	var HELP=new String();
+	var GROUP=new String();
+	var MIN=new String();
+	var MAX=new String();
+
+	EVE_NAME=HTML_EVE_NAME.value;
+	EVE_TYPE=HTML_EVE_TYPE.value;
+	EVE_LEVEL=HTML_EVE_LEVEL.value;
+	DESCRIPTION=HTML_DESCRIPTION.value;
+	HELP=HTML_HELP.value;
+	GROUP=HTML_GROUP.value;
+	MIN=HTML_MIN.value;		//MIN=HTML_MIN.value;//Dima want the field to be 1 now. Therefore, make it 1.
+	MAX=HTML_MAX.value;;	//MAX=HTML_MAX.value;//Dima want the field to be 1 now. Therefore, make it 1.
+
+//Cuz now we have two DomElements(text/DropDown) to represent the data so... need to control that.
+			switch(EVE_TYPE)
+			{
+				case 'S':		//Stored Event
+					EVE_NAME=HTML_EVE_NAME_DROPDOWN.value;
+					break;		
+				case 'I':		//Instant Event
+					EVE_NAME=HTML_EVE_NAME.value;
+					break;
+			}
+	
+//Save data to tmporary object.
+	var data_object=new Object(); 	
+	data_object.EVE_NAME=EVE_NAME.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.EVE_TYPE=EVE_TYPE.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.EVE_LEVEL=EVE_LEVEL.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.DESCRIPTION=DESCRIPTION.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.HELP=HELP.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.GROUP=GROUP.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.MIN=MIN.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.MAX=MAX.replace(/(^\s*)|(\s*$)/g, "");
+	
+	if (validate_event_all(data_object)==false) return;
+	save_data_to_obj(data_object);  																					//save to object.
+	
+// Final validation (C_Script length)
+	//encode the structure, if all ok. Check the length of the encoded String then push values.
+	var tmp_C_SCRIPT=encode_events_script(c_script_structure);
+	if (tmp_C_SCRIPT==null)	{alert('Encoding SCRIPT error.');return;}
+
+
+
+//save
+	external.Context.Target.VAR_NAME=data_object.EVE_NAME;
+	external.Context.Target.VAR_TYPE=data_object.EVE_TYPE+data_object.EVE_LEVEL;														
+	external.Context.Target.C_SCRIPT=tmp_C_SCRIPT;										//encode_events_script(c_script_structure);
+
+	external.EndDialog(1);
+}
+
+//========================================================2. validation ======================================================================================
+//validate_variable- it checks only c_script and except variables.format part in c_script(import).
+function validate_event_all(obj)
+{
+//event name
+		if (obj.EVE_NAME=='')
+		{
+				refresh_tab(0);
+				alert('Field \'Event Name\' cannot be null.');
+				set_focus(HTML_EVE_NAME);	
+				return false; 
+		}
+		if (obj.EVE_NAME.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Event Name\' cannot have "<" character in the value.');
+				set_focus(HTML_EVE_NAME);	
+				return false; 										
+		}
+		if (obj.EVE_NAME.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Event Name\' cannot have ">" character in the value.');
+				set_focus(HTML_EVE_NAME);	
+				return false; 												
+		}
+    if(obj.EVE_NAME!=obj.EVE_NAME.replace(/(^[0-9]*)/g, "")) //means can't start with a digit
+    {    
+    		refresh_tab(0);  
+    		alert('Field \'Event Name\' cannot start with a digit.');
+    		set_focus(HTML_EVE_NAME);
+    		return false;
+    }
+    if(obj.EVE_NAME!=obj.EVE_NAME.replace(/\s/g, "")) 			//means can't have any white space.
+    {
+    		refresh_tab(0);  
+    		alert('Field \'Event Name\' cannot have any whitespace.');
+    		set_focus(HTML_EVE_NAME);
+    		return false;    	  
+    }
+		if (chk_if_name_unique(obj.EVE_NAME)==false)							//unique checking
+		{
+				refresh_tab(0);
+				alert('Field \'Event Name\' must be unique.\r\nYou have already had a the same field name in the Events table.');
+				set_focus(HTML_EVE_NAME);	
+				return false; 			
+		}
+//event type
+		if (obj.EVE_TYPE=='')
+		{
+				refresh_tab(0);
+				alert('Field \'Event Type\' cannot be null.');
+				HTML_EVE_TYPE.focus();	
+				return false; 
+		}
+		
+//event level
+		if (obj.EVE_LEVEL=='')
+		{
+				refresh_tab(0);
+				alert('Field \'Event Level\' cannot be null.');
+				HTML_EVE_LEVEL.focus();	
+				return false; 
+		}
+
+//description
+		if (obj.DESCRIPTION=='') 
+		{
+			refresh_tab(0);
+			alert('Field \'Description\' cannot be null.');
+			set_focus(HTML_DESCRIPTION);			
+			return false; 
+		}
+		if (obj.DESCRIPTION.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Description\' cannot have "<" character in the value.');
+				set_focus(HTML_DESCRIPTION);	
+				return false; 										
+		}
+		if (obj.DESCRIPTION.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Description\' cannot have ">" character in the value.');
+				set_focus(HTML_DESCRIPTION);	
+				return false; 												
+		}		
+//help
+		if (obj.HELP=='') obj.HELP='^'; //it seems not...
+		if (obj.HELP.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Help\' cannot have "<" character in the value.');
+				set_focus(HTML_HELP);	
+				return false; 										
+		}
+		if (obj.HELP.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Help\' cannot have ">" character in the value.');
+				set_focus(HTML_HELP);	
+				return false; 												
+		}			
+//group (group always be 'remote' no need to check)
+		obj.GROUP='remote'; //always 'remote' in event
+		
+//MX
+
+	return true;
+}
+
+//check if the field name is nique.
+function chk_if_name_unique(str_name)
+{
+	var bln_result=true;
+	appear_count=0;
+	
+	var CS_Set=external.Context.CS_Set;
+	for (var i=0;i<CS_Set.length;i++)
+	{
+		if (CS_Set[i].VAR_NAME==str_name) 
+		{
+			appear_count+=1;
+		}
+	}	
+	
+	if ((str_name==external.Context.Target.VAR_NAME)&&(external.Context.srcFORMTYPE=='EDIT'))
+	{//If it's oringinal record name and dialog type is 'EDIT'
+		appear_count-=1
+	}
+
+	if (appear_count>0)
+	{
+			bln_result=false;	
+	}
+	return bln_result;
+}
+//========================================================3. input control ===================================================================================
+//show sitable buttons.
+function show_button_panel(event_type) 
+{
+		var btn_panel=document.getElementById('btn_panel_div');
+		var str_control_panel ='';
+		
+		switch(event_type)
+		{
+			case 'I':
+				str_control_panel=  "<button name='btn_input'   style='width:55px;height:25px;' onclick='functions_Add_SFFS();'>Add</button>"; //**
+				str_control_panel+= "<button name='btn_input'   style='width:55px;height:25px;' onclick='functions_Edit_SFFS(SelectedRow);'>Edit</button>";
+				str_control_panel+= "<button name='btn_input'   style='width:55px;height:25px;' onclick='delete_SFFS(SelectedRow);'>Delete</button>";
+				str_control_panel+= "<button name='btn_input'   style='width:55px;height:25px;' onclick='functions_Insert_SFFS();'>Insert</button>";
+				str_control_panel+= "<button name='btn_input'   style='width:55px;height:25px;' onclick='move_to_next(&#39;up&#39;);'>Up</button>";
+				str_control_panel+= "<button name='btn_input'   style='width:55px;height:25px;' onclick='move_to_next(&#39;down&#39;);'>Down</button>";
+				
+				break;
+			case 'S':
+				str_control_panel= "<button name='btn_input'   style='width:105px;height:25px;' onclick='functions_Edit_SFFS(SelectedRow);'>Edit</button>";
+				break;
+				
+		}
+		btn_panel.innerHTML=str_control_panel;//**
+}
+
+//show suitable Event Name field style.(text or dropdown list)
+//get <tr> elements first. 
+//0-text style, 1-dropdown list style.
+//The arguement event_name is for while the type is "stored event", arg "event_name" is the desired value to refill.
+function show_right_EventName_style(event_type,event_name)
+{		
+		var event_name_for_refill='';
+		var ele_array=document.getElementsByName("tr_EVE_NAME"); 
+		if (typeof(event_name)!='undefined') event_name_for_refill=event_name;
+		switch(event_type)
+		{
+			case 'I':
+				ele_array[0].style.display = "block";
+				ele_array[1].style.display = "none";
+				break;
+				
+			case 'S':
+				var sel_EVE_NAME=document.getElementById('edit_EVE_NAME_DROPDOWN');
+				reset_name_option(sel_EVE_NAME);																			//after reseting, we refill the value to the element(external.Context.Target.VAR_NAME).
+				sel_EVE_NAME.value=event_name_for_refill;
+				ele_array[0].style.display = "none";
+				ele_array[1].style.display = "block";	
+				break;
+				
+		}
+}
+
+//reset name options
+//Reset the Drop Down List of the event name from "table library".
+/*
+		var ele_VAR_NAME=document.getElementById('edit_VAR_NAME');
+		reset_name_option(ele_VAR_NAME);
+*/
+function reset_name_option(sel)
+{
+		var srcFORMTYPE=external.Context.srcFORMTYPE; //get srcFORMTYPE, we may have different process.
+		//Remove all options when it needs to change the value.(sel=edit_VAR_NAME)
+		sel.options.length=0;
+		event_type=document.getElementById("edit_EVE_TYPE").value;
+		
+		//Only deal with "Stored Event".
+		switch (event_type)
+		{
+			case "S":
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data)
+				{	//這邊有控制一開始開啟對話方塊的reference的檢查 因為發現開啟後檢查到 1.沒有reference connection沒建立 就無法編輯, 但是       2.也發現沒控制到檢查是否該記錄 存在於table library裡.
+					alert('Cannot locate the tables library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the reference handler is not activated.' );
+					external.EndDialog(0);
+					return;
+				}
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_STRUCT=='L')  //*-*-* Add this, cuz the "Log" type record are allowed in Events entity. (Definiately need to add validation in agg_main later.)
+					addOption(sel,tbl_lib_data.TableSet[i].TBL_NAME,tbl_lib_data.TableSet[i].TBL_NAME);
+				}
+				sel.value='';
+				break;
+					
+			default:
+				if (srcFORMTYPE=='EDIT')
+				{
+					alert('Unrecognized Reference Type.');
+					return;
+				}
+				break;
+				
+		}
+		
+		//if (sel.value=='') disable_elements(true); //cuz no record...
+} 
+
+//========================================================4. the rest of the functions =======================================================================
+function decode_events_script(agg_script)
+{
+//if ((agg_script.length>255)||(agg_script.length==0)) {alert('255'); return null;}
+//0.
+var base_script=new String();
+base_script=agg_script.replace(/\s*[<]\s*/g, "<");
+base_script=base_script.replace(/\s*[>]\s*/g, ">");
+base_script=base_script.replace(/\s*[=]\s*/g, "=");
+
+pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[0-5]>)(<[^<>\s]+>)>/;
+
+base_Array = pat_base.exec(base_script);
+if (base_Array==null) {return null;}
+
+//base layer
+//1.start
+	var obj_variable = new Object;
+	obj_variable.name=base_Array[1];
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=base_Array[2];                										//record format(=field format set)
+	obj_variable.description=base_Array[7].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.help=base_Array[8].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.level=base_Array[9].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.group=base_Array[10].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+
+	//second layer	//record format= (field format).....+ record format flags.										
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;			
+																					 //pattern of getting the rest of the flags in record format layer
+//2.get each field format string
+	//push every field_format
+	arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats
+	
+	if (arr_field_format!=null) 																															 //add null check.
+	{	
+			for (var i=0;i<arr_field_format.length;i++)
+			{
+					var tmp_obj = new Object;
+					tmp_obj.original_string=arr_field_format[i];																				//save oringinal_string first               
+					obj_variable.format.field_format_set.push(tmp_obj);
+			}
+	}
+	
+//3.get the rest of the flag in second layer(record format layer) and push the values.
+	var tmp=base_Array[2].replace(pat_field_format,""); 											 	 			 		 //get the rest of the str, except all fields' formats.(get only field_format_set_flag)				 
+	//alert('get the rest of the script, except all fields formats. \r\n \r\n tmp='+tmp);		 //show the rest																			 
+	arr_layer2_flag=tmp.match(pat_record_format_flag);																		 //get the rest of the flags in second layer(record format without fieldformat set).
+	//push RF_flag
+	for (var i=0;i<arr_layer2_flag.length;i++)
+	{
+			obj_variable.format.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+
+//third layer
+//4.extract name and type form each single field format
+//5.get all flags in each field format
+	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; 	//pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.format.field_format_set[i].fld_name=tmppArray[j]};//name
+			if (j==2) {obj_variable.format.field_format_set[i].fld_type=tmppArray[j]};//type
+		}
+		
+		var tmppArray2=obj_variable.format.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.format.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.format.field_format_set[i].field_format_flag.push(fff_str);
+		}
+	}
+	return obj_variable;	
+}
+
+//retrieve script string from script object
+function encode_events_script(agg_structure)
+{
+	var result_string=new String();
+	result_string='';
+
+	if (agg_structure==null)
+	{
+			return null;
+	}
+	var var_name='<'+agg_structure.name+'>';
+	var var_format='';
+	var var_description='<'+agg_structure.description+'>';
+	var var_help='<'+agg_structure.help+'>';
+	var var_level='<'+agg_structure.level+'>';
+	var var_group='<'+agg_structure.group+'>';
+
+//2.Deal with 'Format'.
+	//a
+	for (var i=0;i<agg_structure.format.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.format.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		var_format+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b
+	for (var i=0;i<agg_structure.format.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.format.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		var_format+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c
+	var_format='<'+var_format+'>';
+	
+	result_string=var_format;
+//3.get to the top layer, push in the rest of the data.
+	result_string=var_name+result_string+var_description+var_help+var_level+var_group;
+	result_string='<R='+result_string+'>';
+	if (external.Context.Target.C_SCRIPT!=result_string) 
+	{
+		//alert('they r not equal');
+		//alert('R \r\n'+result_string);
+		//alert('T \r\n'+external.Context.Target.C_SCRIPT);
+	}
+	return result_string;
+}
+
+//Decode web encoded content to the real value.
+function HTMLDecode(str) 
+{
+		var ta = document.createElement("textarea");
+		ta.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&middot;/g, "{*}");
+		toReturn = ta.value;
+		ta = null;																																		 //release ta;
+		return toReturn.replace("/<br\s*\/?>/mg", "\n");
+}
+
+//show real value on web page, for example, <> sign.
+function HTMLEncode(str) 
+{
+	var esc_div_obj = document.getElementById('esc_div');
+	var text = document.createTextNode(str);
+	esc_div_obj.appendChild(text);
+	text =esc_div_obj.innerHTML;
+	var children = esc_div_obj.childNodes;
+
+	for(var i=0;i<children.length;i++)
+	{
+		esc_div_obj.removeChild(children[i]);
+	}
+	//alert(HTMLDecode(text));
+	return text;
+}
+
+//return desired field_format_set_flag value
+function get_flag_value(arr,f_name)
+{
+	var flag_obj=new Object();
+	
+	for (var i=0;i<arr.length;i++) 
+	{
+			//This literation for flag S in field format
+			var tmp_arr=new Array();
+			if ((arr[i].substr(0,1)!="S")&&(arr[i].substr(0,1)!="V"))//&&(arr[i].substr(0,1)!="A"))
+			{
+				tmp_arr = arr[i].split("=");
+			}
+			else
+			{
+				//var tmp_arr = arr[i].match(/<[^<>\s]+=[^<>\s]+>/g);
+				var first_found_index=new Number();
+				first_found_index=arr[i].indexOf('=');
+				if (first_found_index!=-1)
+				{
+					tmp_arr[0]=arr[i].slice(0,first_found_index);
+					tmp_arr[1]=arr[i].slice(first_found_index+1);
+					//alert(i+'  s-s  '+tmp_arr[0]+','+tmp_arr[1]);
+				}
+			}
+			if (tmp_arr.length<2) continue;
+			flag_obj[tmp_arr[0]]=tmp_arr[1];
+	}
+	
+	for (var Property in flag_obj)
+	{
+			if (Property == f_name)
+			return flag_obj[Property];
+	}
+	return null;
+}
+
+
+//set focus
+function set_focus(elm)
+{
+    if(typeof(elm) == 'string') 
+    {
+        elm = xGetElementById(elm);
+    }
+    if (elm) 
+    {     
+        elm.focus();
+        elm.select();
+    }
+}
+
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='180px'; //def 15
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='11';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9'; 
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='180px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='12';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#fffAAA';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.90'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)|(\s*$)/g, ""); //
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)/g, "");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(\s*$)/g, "");
+}
+
+function disableDivs()
+{
+	d = document.getElementsByTagName("BODY")[0];
+	for(x=0;x<arguments.length;x++)
+	{
+	    if (document.getElementById(arguments[x]))
+	    {
+			    xPos = document.getElementById(arguments[x]).offsetLeft;
+			    yPos = document.getElementById(arguments[x]).offsetTop;
+			    var real_abs_pos =GetRealOffset(arguments[x]);
+			    xPos=real_abs_pos.left+1;
+			    yPos=real_abs_pos.top+1;	 
+			    oWidth = document.getElementById(arguments[x]).offsetWidth;    
+			    oHeight = document.getElementById(arguments[x]).offsetHeight;
+			    oWidth -=2;  
+			    oHeight -= 2;
+			    if (oWidth<0) oWidth=0;
+			    if (oHeight<0) oHeight=0;
+			    cDivs[cDivs.length] = document.createElement("DIV");
+			    cDivs[cDivs.length-1].style.width = oWidth+"px";
+			    cDivs[cDivs.length-1].style.height = oHeight+"px";
+			    cDivs[cDivs.length-1].style.position = "absolute";
+			    cDivs[cDivs.length-1].style.left =xPos+"px";
+			    cDivs[cDivs.length-1].style.top = yPos+"px";
+			    cDivs[cDivs.length-1].style.backgroundColor = "white";
+			    cDivs[cDivs.length-1].style.opacity = .6;
+			    cDivs[cDivs.length-1].style.filter = "alpha(opacity=70)";
+			    d.appendChild(cDivs[cDivs.length-1]);
+	    }
+	}
+}
+
+function enableDivs()
+{
+	for (hippopotamus=0;hippopotamus<cDivs.length;hippopotamus++)
+	{
+		document.getElementsByTagName("BODY")[0].removeChild(cDivs[hippopotamus]);
+	}
+	cDivs = [];
+}
+
+//get real absolute position
+function GetRealOffset(id)
+{
+    var elem = document.getElementById(id);
+    var leftOffset = elem.offsetLeft;
+    var topOffset = elem.offsetTop;
+    var parent = elem.offsetParent;
+ 
+        while(parent != document.body) 
+    {
+             leftOffset += parent.offsetLeft;
+         topOffset += parent.offsetTop;
+            parent = parent.offsetParent;
+    }
+        var Offsets = new Object();
+    Offsets.top = topOffset;
+    Offsets.left = leftOffset;
+    //alert(Offsets.top + " " +Offsets.left)
+    return Offsets;
+}
+
+//predefine the tab enable/disable Area (only execute it once.)
+function define_disabled_area()
+{
+	//Tab_0- index(0)=test_d
+
+	//Tab(1)-
+	
+	//Tab(2)-
+	var tmp=new Object;
+	tmp.Enabled=true;
+	tmp.Div_Id=document.getElementById('div_enable_3').id;	
+	disabled_area.TAB_2.push(tmp);
+	
+	//test init
+	disabled_area.TAB_2[0].Enabled=false;	//div_enable_3
+}
+
+//process enable/disable area, especially tab has changed.
+function process_disabled_area(cur_tab_index)
+{//1.enable all 2.reupdate current tab disable area
+	enableDivs();
+	switch(cur_tab_index)
+	{
+	case 0:
+		for (var i=0;i<disabled_area.TAB_0.length;i++)
+		{
+			if (disabled_area.TAB_0[i].Enabled==false)
+			disableDivs(disabled_area.TAB_0[i].Div_Id);
+		}
+		break;
+		
+	case 1:
+		for (var i=0;i<disabled_area.TAB_2.length;i++)
+		{
+			if (disabled_area.TAB_2[i].Enabled==false)
+			disableDivs(disabled_area.TAB_2[i].Div_Id);
+		}
+		break;
+	}
+	
+}
+
+//while edit_EVE_TYPE on change event, we need to do.
+//Note that:The function must be after the data is loaded.(Cuz we will use the value of the HTML element as a reference value.)
+//1.Reset name option list.
+//2.Set event name =''
+//3.Disbaled the all input fields while name=''.
+//4.show suitable EventName style. (Drop down or Text box)
+//5.Set event name=''.
+//6.Set event level=0. (Default)
+function edit_EVE_TYPE_onchange()
+{
+	var EVENT_TYPE=HTML_EVE_TYPE.value;
+	show_button_panel(EVENT_TYPE);									//Show suitable button(s).
+	show_right_EventName_style(EVENT_TYPE, '');			//There is reset_name_option inside.
+	HTML_EVE_NAME.value='';
+	HTML_EVE_LEVEL.value=0;
+	
+	//(Stored---->>>Instant)
+	if (EVENT_TYPE=='I')
+	{
+		clear_flds_n_cscript();   //we should clear all fields here and clear c_script. (S->I)
+		hide_AEL_informer();
+	}
+	//while (Instant---->>>Stored), the dropdown event name must be = '' at first place. Therefore clear_flds_n_cscript.
+	if (EVENT_TYPE=='S')
+	{
+		clear_flds_n_cscript();   //we should clear all fields here and clear c_script. (S->I)
+		show_AEL_informer('');		//'' = "!"
+	}
+}
+
+//for edit. 1.get data from tbl_lib or stg_lib 	2.generate the script by the data we get. 3. Display it.
+//load data record from from lib for changing(Editing) record. //@@ should add unique validation
+//Need to check something before replacing oringinal one.
+//1.Get data from tbl_lib or stg_lib.
+//2.Generate the script by the data we get. 
+//3.Display it and store it into relative variable and script object.
+//Read syn_Events_with_TBL_libs for reference.(*-*-*)
+//Before executing the function, make sure it is "stored event", then you load the related data. If it is not, "clear" all fields.
+function load_data_from_TBL_lib()
+{
+	//1.
+	type_element=HTML_EVE_TYPE.value;
+	name_element=HTML_EVE_NAME_DROPDOWN.value;
+	
+	var Event_Type=type_element;												
+	switch (Event_Type)
+	{
+		case "S":	//S = Stored Event...
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data) {alert('Cannot locate the Tables Library.'); return;}
+				var found_tbl_record = new Object;
+				var found_match = new Boolean();
+				found_tbl_record=null;
+				found_match=false;
+				
+				if (!tbl_lib_data)												
+				{
+					alert('No Data in Tables Library.');
+					restore_sequence();
+					return;
+				}
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_NAME==name_element)
+					{
+						found_match=true;
+						found_tbl_record=tbl_lib_data.TableSet[i];//get the record we found.
+						break;
+					}
+				}
+				//found
+						//1.Found out the record in table lib 
+						//2.check -check if there is another record are the same in the CS_set(must be unique).
+						//3.If everything is ok, regenerate script string and fill all the related fields.
+				if (found_match==true)
+				{		
+						var CS_Set=external.Context.CS_Set;
+
+						//*.check if it is unique in the variables CS Set.
+						var appear_count=0;	
+						for (var k=0;k<CS_Set.length;k++)
+						{
+							if (CS_Set[k].VAR_NAME==name_element)
+							appear_count+=1;
+						}
+						//The record itself does not count when "EDIT".
+						if ((name_element==external.Context.Target.VAR_NAME)&&(external.Context.srcFORMTYPE=='EDIT'))
+						{//If it's oringinal record and dialog type is 'EDIT'
+							appear_count-=1;
+							restore_sequence(); 			//means the oringinal record. (load_data within.)
+							return;
+						}
+						
+						if (appear_count>0)
+						{//means it has already occupied.//@@restore data to the last selected item.
+							alert('The record \''+name_element+'\' has already existed in the Events Table.');
+							restore_sequence(); //@@@@@ when the srcFORMTYPE is 'addnew'? 
+							return;
+						}
+						//If all ok then 1.generate the customize script object. 2.Update the webpage elements.
+						var tmp_csobj=generate_new_cs_EVENT_object(found_tbl_record);
+						var tmp_csstring=encode_events_script(tmp_csobj); 							//for gettting the length.
+						//show and update webpage elements.
+						show_c_script(tmp_csobj);																				//we don't validate the result here(ex:str len>255).				 
+						//Assign the new script object to the global variables object.
+						c_script_structure=tmp_csobj;   																//if all ok, assign the new structure to c_script_structure.
+						//Record_Reset_Flag=true;																				//Important. To prevent the "save to object" seuence to be executed in the beginning.
+						point_on_first();
+						//disable_elements(false); //back to normal 
+						show_AEL_informer(name_element);																//When everything is ok and the record is loaded(changed), update the informer.
+				}
+				else
+				{
+						alert('Cannot found destiny record in Table Library.');
+						return;
+				}
+				break;
+		
+
+		default:
+				break;
+	}	
+}
+
+//generate new customize_script object by the record from Library. This is for Edit or Addnew.(events)
+function generate_new_cs_EVENT_object(data_from_lib)
+{
+	var obj_variable = new Object;
+	obj_variable.name=new String();
+	obj_variable.description=new String();
+	obj_variable.help=new String();
+	obj_variable.level=new String();
+	obj_variable.group=new String();
+	
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=new String();		
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+
+
+	//process base layer
+	obj_variable.name=data_from_lib.TBL_NAME;
+	obj_variable.description=data_from_lib.TBL_NAME;
+	obj_variable.help='^';
+	obj_variable.level='0';
+	obj_variable.group='remote';
+	//process ffsf
+	obj_variable.format.field_format_set_flag.push('M=1');						//always 1 1 while have record.
+	obj_variable.format.field_format_set_flag.push('X=1');
+	//process ffs
+	if (!data_from_lib.FieldsDefnition) {alert('Found the reference table record, but it is invalid.');return null}						//@@important
+	if (data_from_lib.FieldsDefnition.length==0) {alert('Found the reference table record, but it is invalid.');return null} 	//@@important
+	
+	for (var j=0;j<data_from_lib.FieldsDefnition.length;j++)
+	{
+		if (data_from_lib.FieldsDefnition[j].FIELD_NAME=='AEL')   //we don't include the record which the name equal to 'AEL'.
+		continue;
+		
+		var ffs_obj=new Object();
+		var fld_name=data_from_lib.FieldsDefnition[j].FIELD_NAME;
+		var fld_type=data_from_lib.FieldsDefnition[j].FIELD_TYPE; //field type in table library(corresponding type in agg.)//@@
+		fld_type=LibType_to_AggType(fld_type,'T');     						//corresponding type in agg.
+		var fld_P1=data_from_lib.FieldsDefnition[j].P1;
+		var fld_P2=data_from_lib.FieldsDefnition[j].P2;
+		var fld_DEFVAL=data_from_lib.FieldsDefnition[j].DEFVAL;
+		
+		ffs_obj.fld_name=fld_name;
+		ffs_obj.fld_type=fld_type; //need transfer type
+		//process fff
+		ffs_obj.field_format_flag=new Array;
+		//if (fld_type!='D')	{ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>')} 		//Data/Time value has no limitation, don't set it. //we don't need value range in stored event.
+		if (fld_type=='D')	{fld_DEFVAL=convert_LibTD_to_AggTD(fld_DEFVAL);}
+		
+		if (fld_DEFVAL!=null)	
+		{
+			//if (fld_DEFVAL.indexOf('^')==-1)
+			//ffs_obj.field_format_flag.push('A='+fld_DEFVAL); 																			//The flag seems not useful in Event Entity. So...
+		}
+		obj_variable.format.field_format_set.push(ffs_obj);
+	}
+	return obj_variable;
+}
+
+//convert Lib time/date to AGG time/date
+function convert_LibTD_to_AggTD(td_str) 
+{//Agg td format='2000-01-05 06:22:33.555'
+ //yyyy-MM-dd HH:mm:ss.SSS
+ 	var agg_TD=null;
+	if (isNaN(td_str)==true) return null;
+	
+	var td_length=td_str.length;
+	switch(td_length)
+	{
+		case 0://null
+			return null;
+		case 4://hhmm
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':00.000';
+			return agg_TD;
+		case 6://hhmmss
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;
+		case 8://YYYYMMDD
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			agg_TD=YYYY+'-'+MM+'-'+DD+' 00:00:00.000';
+			return agg_TD;
+		case 9://hhmmssmls
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			var mls=td_str.substr(6);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.'+mls;
+		case 12://YYYYMMDDhhmm
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':00.000';
+			return agg_TD;		
+		case 14://YYYYMMDDhhmmss
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;		
+		case 17://YYYYMMDDhhmmssmls
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12,2);	
+			var mls=td_str.substr(14);		
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.'+mls;
+			return agg_TD;		
+		default:
+		return null;
+	}	
+
+}
+
+//if anything go wrong, restore all to default.
+function restore_sequence()
+{
+		var srcFORMTYPE=external.Context.srcFORMTYPE;
+		if(srcFORMTYPE=='EDIT')
+		{	
+				load_data();
+				//Record_Reset_Flag=true;															
+				point_on_first(); 	
+		}
+		else
+		{
+				var adv_table =document.getElementById("advance_table");
+				//1.reset all status to beginning state
+				//a.Delete all record in AddNew, or we will get error message if we don't do this.
+				if ( adv_table.rows.length > 1) 																																	
+				{
+						var tmp_length =adv_table.rows.length;
+						for (var i = 1; i < tmp_length; i++)
+						{
+							adv_table.deleteRow(1);
+						}
+				}
+				//b.clear the value of each element.
+				set_flds_empty();
+				//2.reload everthing
+				load_data();
+				//Record_Reset_Flag=true;
+		}
+}
+
+//Set all fields to ''. For restore sequence.
+//For addnew mode mainly. (Recovery to default)
+function set_flds_empty()
+{
+		var g=new Object();
+		g.DESCRIPTION					=HTML_DESCRIPTION;
+		g.HELP								=HTML_HELP;
+
+		for (var property in g)
+		{
+				g[property].value='';
+		}
+}
+
+//Set all fields to ''. For S-->I.
+//For while S->I in "EDIT mode" mainly. (Set everthing empty. not restoring seqence.)
+function clear_flds_n_cscript()
+{
+		var g=new Object();
+		g.DESCRIPTION					=HTML_DESCRIPTION;
+		g.HELP								=HTML_HELP;
+		
+		for (var property in g)
+		{
+				g[property].value='';
+		}
+		
+		//If we wanna use it not only just in the "addnew mode", we need to 1. clear advance table  2. make c_script_structure empty
+		c_script_structure=create_empty_c_object(); 
+		SelectedRow = null;			//Important: Cuz there is no data in the adv table. This will prevent error while click edit button.
+		refresh_all();    			//The function will update the the adv table and the colon display according to the "c_script_structure".
+}
+
+//enable or disable elements(for variable add function)
+function disable_elements(bln)
+{	
+	
+	var g=new Object(); //a group of dom element
+	
+	//g.EVENT_NAME_TEXT			=HTML_EVE_NAME;
+	//g.EVENT_NAME_DROPDOWN	=HTML_EVE_NAME_DROPDOWN;
+	//g.EVENT_TYPE					=HTML_EVE_TYPE;
+	//g.EVENT_LEVEL					=HTML_EVE_LEVEL;
+		g.DESCRIPTION					=HTML_DESCRIPTION;
+		g.HELP								=HTML_HELP;
+	//g.GROUP								=HTML_GROUP;
+
+		for (var property in g)
+		{
+				if (bln==true)
+				{
+								g[property].style.backgroundColor='#fafafa';
+				}
+				else
+				{
+								g[property].style.backgroundColor='#ffffff';
+				}
+				g[property].disabled=bln;
+		}
+}
+
+//Retrieve corresponding type in aggregate.
+function LibType_to_AggType(type_from_lib,reference_type)
+{//AGG FIELD TYPE = SILBFD (TCA)
+		var result = new String();
+		result='S';	//defval
+		switch (reference_type)
+		{
+			case "T":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='U') result='L'; //32bit
+				if (type_from_lib=='T') result='D'; //datetime
+				break;
+			case "S":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='D') result='S'; //Dot Decimal
+				break;
+			default:
+		}
+		return result;
+}
+
+//Detect if "AEL" field exists or not.
+//0 - doesn't exist
+//1 - exists
+//2 - unknown (the library is not connected therefore unknown.)
+function has_AEL(EVE_NAME)
+{
+			var do_exist=0;
+			
+			//0.get thedata from the tblae lib.
+			var tbl_lib_data=external.XTextEx(TBL_Path);
+			if (!tbl_lib_data)		return 2;																								//cannot connect to the table library therefore unkonwn. 
+
+			//1.searching sequence
+			var found_match = new Boolean();		
+			found_match=false;
+			for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+			{
+				//if (tbl_lib_data.TableSet[i].TBL_NAME==external.Context.Target.VAR_NAME)		//find matching record by 'name'.
+				if (tbl_lib_data.TableSet[i].TBL_NAME==EVE_NAME)		//find matching record by 'name'.
+				{
+					found_match=true;				//tbl_lib_data.TableSet[i].TBL_NAME
+					single_record_from_lib=tbl_lib_data.TableSet[i];
+					break;
+				}
+			}
+			if (found_match==false) 					return 0;
+			
+			//2.If found the "TBL record" we want then check it's FieldsDefnitions.
+			if (!single_record_from_lib.FieldsDefnition) 	return 0;												//Found the reference table record, but it is invalid.
+			if (single_record_from_lib.FieldsDefnition.length==0) return 0;
+			for (var j=0;j<single_record_from_lib.FieldsDefnition.length;j++)
+			{
+				if (single_record_from_lib.FieldsDefnition[j].FIELD_NAME=='AEL')
+				do_exist=1;
+			}
+			return do_exist;
+}
+
+//AEL informer
+//0 - doesn't exist
+//1 - exists
+//2 - unknown (the library is not connected therefore unknown.)
+//No need to think about src_form_type for now.
+//It will be triggered in "on_load", "edit_EVE_TYPE_onchange", and "load_data_from_TBL_lib".
+function show_AEL_informer(EVE_NAME)
+{	
+		var div_AEL=document.getElementById('div_AEL_informer');
+		var str_AEL_str ='';
+			
+		str_AEL_str+="<font size='1'  color='#990000'> ";	
+//--------------------------------------------------------------------------------------		
+
+		var do_exist=has_AEL(EVE_NAME);
+		switch(do_exist)
+		{
+			case 0:
+				//alert('Not Exist');
+					str_AEL_str+="<div  style='position:absolute; top:2; left:0;'> <img src='image\\information.png' width='20' height='20' />   </div>";
+				
+				str_AEL_str+="<div  style='position:absolute; top:0; left:22;'> ";
+				str_AEL_str+="\'AEL\' AggreGate event level field is not found. Default Level will be used as the event level for all event instance.";
+				str_AEL_str+="</div>";
+				break;
+			case 1:
+				//alert('Exists');
+				str_AEL_str+="<div  style='position:absolute; top:2; left:0;'> <img src='image\\alert.ico' width='20' height='20' />   </div>";
+				
+				str_AEL_str+="<div  style='position:absolute; top:0; left:22;'> ";
+				str_AEL_str+="\'AEL\' AggreGate event level field is found. The field value of each record will be used as event level for each event instance.";
+				str_AEL_str+="</div>";
+				break;
+			case 2:
+				//alert('Unknown')
+				str_AEL_str+="Unknown";
+				div_AEL.innerHTML=str_AEL_str;
+				return;
+		}
+//--------------------------------------------------------------------------------------	
+		str_AEL_str+="</font>";
+		div_AEL.innerHTML=str_AEL_str;
+}
+
+//Hide AEL informer
+//In some circumstance we need to hide the informer. (Instant Event?)
+function hide_AEL_informer()
+{
+		var div_AEL=document.getElementById('div_AEL_informer');
+		div_AEL.innerHTML='';
+}
+
+//add option
+function addOption(sel,text,value)
+{ 
+	sel.options.add(new Option(text,value)); 
+} 
+
+//refresh tab
+//tab_content is div id. Therefore, use it directly.//tab_content is div id. Therefore, use it directly.
+//1.make all tab_content(s) invisible.
+//2.Display the desired tab.
+function refresh_tab(li_index)
+{
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";  
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";current_tab_index=i;process_disabled_area(i);};
+				}
+		}		
+	}
+}
+</script>
+
+
+</BODY>
+</HTML>

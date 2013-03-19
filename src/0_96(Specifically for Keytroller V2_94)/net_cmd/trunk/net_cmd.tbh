@@ -1,0 +1,56 @@
+'=============================================================
+'		NET_CMD.TBS
+'=============================================================
+#ifndef LOGIN_TOUT_CONST
+#define LOGIN_TOUT_CONST 600
+#endif
+
+#ifndef MAX_NUM_SDF_LINES
+#define MAX_NUM_SDF_LINES 14
+#endif
+
+#ifndef MAX_NET_CMD_LEN
+#define MAX_NET_CMD_LEN 131 'max length of network command
+#endif
+
+#ifndef MAX_NET_RPL_LEN
+#define MAX_NET_RPL_LEN 255 'max length of network replies
+#endif
+
+#ifndef NUM_VSPD_SER_PORTS
+#define NUM_VSPD_SER_PORTS 0 'num of serial ports for remote access (with VSPD, etc.)
+#endif
+
+#ifndef SOCK_UDP
+#define SOCK_UDP 0
+#endif
+
+#ifndef SDF_FILE
+#define SDF_FILE "sdf.txt"
+#endif
+
+#ifndef NCMD_TX_BUF_SIZE
+#define NCMD_TX_BUF_SIZE 2
+#endif
+
+#ifndef NCMD_RX_BUF_SIZE
+#define NCMD_RX_BUF_SIZE 2
+#endif
+
+
+const CMD_ESC_CHAR = "@"
+const PAT_BLINK_BOTH_IN_TURNS_FAST=	"GRGRGRGR**"
+const PAT_GREEN_LOOP=			"G~"
+
+enum net_cmd_proto_options
+	CMD_UDP,
+	CMD_TELNET,
+	CMD_INBAND
+end enum
+
+declare num_sdf as byte
+declare sdf_addr(MAX_NUM_SDF_LINES) as word
+
+declare sub net_cmd_init
+declare sub net_cmd_proc(byref s as string(MAX_NET_CMD_LEN), cmd_mode as cmd_modes, byref cmd_data as string(32), cmd_bcast as no_yes, error_mode as no_yes)
+declare sub sock_closed_check_net_login(sock_num as byte)

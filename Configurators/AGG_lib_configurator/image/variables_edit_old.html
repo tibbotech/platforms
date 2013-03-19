@@ -1,0 +1,2412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif; }
+		th 		{background-color:yellow; text-align: center;} 
+		td 		{font-size: 15px;}
+		button {width: 75px;} 
+
+
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2" >
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADER START---------------------------------------- -->
+<div id="tab_header" >
+		<ul>
+			<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">General</a></li>
+			<li><a href="#" onclick="javascript:refresh_tab(1)">Advanced</a></li>
+		</ul>
+</div>
+<div id="tab_content" ><br>
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+
+			<table> 
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Dummy -->
+				<tr style="height:2px;">
+					<td >	<div style="width:100px;height:2px;"></div> </td>
+					<td >	<div style="width:220px;height:2px;"></div> </td>
+				</tr>
+			<!-- ------------------------Fields Display Section----------------------- -->
+			<!-- Entity -->		
+										<!-- Leave it empty for now -->
+			<!-- --------------------------------------------------------------------- -->
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Reference Source: -->
+				<tr> 
+				<td><p><span title="header=[Reference Source:] body=[Settings Library and Tables Library are available.]">Reference Source:</span> </td>
+				<td><select ID="edit_VAR_TYPE" style="width: 175px" onChange="reset_name_option(document.getElementById('edit_VAR_NAME'));"> 
+							<option value="S">Settings Library</option> 
+							<option value="T">Tables Library</option>
+						</select></p></td>
+				</tr>
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Variable Name: -->
+				<tr>
+				<td><p><span title="header=[Variable Name:] body=[Name of variable.]">Variable Name:</span> </td>
+				<td><select ID="edit_VAR_NAME" style="width: 175px" onChange="load_data_from_lib();" >
+							<option value="None">None</option> 
+						</select></p></td>
+				</tr>
+				<!-- --------------------------------------------------------------------- -->
+				<!--Divider2 -->
+				<tr><td colspan=2 align=left>
+				<p>
+					<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+				</p>
+				</td></tr>
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Readable and writable -->
+				<tr>
+						<td><p><span title="header=[Readable:] body=[Flag indicating that variable can be read.]">Readable:</span>  <input type="checkbox" name="chkb_RW" id="chkb_RW" value="checkbox" onclick =""></p></td>
+						<td><p><span title="header=[Writable:] body=[Flag indicating that variable can be modified.]">Writable:</span>  <input type="checkbox" name="chkb_RW" id="chkb_RW" value="checkbox" onclick =""></p></td>
+				</tr>	
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Variable Description(Table Description): -->
+				<tr>
+				<td><p><span title="header=[Description:] body=[The description is the human-readable caption of this variable (table).]">Description:</span></td>
+				<td><input type="text" ID="edit_VAR_DESCRIPTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr>	
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Help: -->
+				<tr>
+				<td><p><span title="header=[Help:] body=[Detailed variable description. The field can be null.]">Help:</span></td>
+				<td><input type="text" ID="edit_HELP" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr>
+				<!-- --------------------------------------------------------------------- -->	
+				<!-- Group: -->
+				<tr>
+				<td><p><span title="header=[Group:] body=[The groups will show as Tabs.]">Group:</span></td>
+				<td><input type="text" ID="edit_GROUP" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>
+				</tr>	
+				<!-- --------------------------------------------------------------------- -->
+				<!-- Min Record count(C_Script): -->
+				<tr>
+				<td><p><span title="header=[Min Record(s):] body=[Minimal allowed number of records in the table.]">Min Records:</span></td>
+				<td><input type="text" ID="edit_MIN" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px" disabled="disabled"> </p></td>
+				</tr>
+				<!-- Max Record count(C_Script): -->
+				<tr>
+				<td><p><span title="header=[Max Record(s):] body=[Maximal allowed number of records in the table.]">Max Records:</span></td>
+				<td><input type="text" ID="edit_MAX" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px" disabled="disabled"> </p></td>
+				</tr>	
+<!-- -------------------------------Adjust Height-------------------------------------- -->
+				<tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>  <tr><td>&nbsp</td><td>&nbsp</td></tr>
+<!-- ---------------------------------------------------------------------------------- -->	
+				<!-- --------------------------------------------------------------------- -->
+				<!--Divider -->
+				<tr><td colspan=2 align=center>
+				<p><div class="Divider" style="background-color: #8FBC8F;height:20px;"><b>Optional Table Configuration</b></div></p>
+				<!--<div class="Divider" style="background-color: green;height:0px;font-size: 0em;"></div>-->
+				</td></tr>
+				<!-- -------------------------------------------------------------------- -->
+				<!--Table Properties(Table rule): 0--unknown R-Reorderable U-Unresizeable -->
+				<tr> 
+				<td style="vertical-align:top;"><p><span title="header=[Table Properties:] body=['R' (Reodrerable) - indicates rows of this table may be reordered by AggreGate users editing it.<br>'U' (Unresizable) - indicates that users cannot add/remove rows when editing the table.]">Table Properties:</span> </td>
+				<td>
+						<select ID="edit_TBL_RULE" style="width: 175px; display:none;" onChange="">
+							<option value="Disabled">0-Disabled</option>
+							<option value="R">R-Reorderable</option>
+							<option value="U">U-Unresizable</option>
+						</select>
+						
+						<input type="checkbox" name="chkb_TBL_property" id="chkb_TBL_property" value="checkbox" onclick ="">Reorderable<br/>
+						<input type="checkbox" name="chkb_TBL_property" id="chkb_TBL_property" value="checkbox" onclick ="">Unresizable
+						
+						</p>
+				</td>
+				</tr> 			
+				<!-- ---------------------------------------------------------------------------------- -->
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB END(div tab_content)----------------------------------- -->
+<div id="tab_content" ><br> <!-- TAB2 -->
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+
+			<table> 
+			
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Dummy -->
+			<tr style="height:2px;">
+				<td >	<div style="width:100px;height:2px;"></div></td>
+				<td >	<div style="width:100px;height:2px;"></div></td>
+			</tr>
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider -->
+			<tr><td colspan=2 align=center>
+			<div class="Divider" style="background-color:#8FBC8F;height:20px;"><b>Field Configuration</b></div>
+			<!--<div class="Divider" style="background-color: green;height:0px;font-size: 0em;"></div>-->
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->
+			<!--Advance field(s) settings table-->
+			<tr>
+				<td colspan=2 align=center>
+<!--=================================================================================================================================-->
+						<div style="height:100px;overflow:scroll; OVERFLOW-X: hidden;  position: relative;" >
+							
+									<table border="1"  id="advance_table"  class="selection">
+											<thead>
+															<tr>
+																									<th>Field Name</th>
+																									<th>Type</th>
+																									<span title="header=[Field Properties] body=[]">  <th>F</th> </span>
+																									<span title="header=[Default Value] body=[]">  <th>A</th> </span>
+																									<span title="header=[Description] body=[]">  <th>D</th> </span>
+																									<span title="header=[Help] body=[]">  <th>H</th> </span>
+																									<span title="header=[Selection Values] body=[]">  <th>S</th> </span>
+																									<span title="header=[Validator] body=[]">  <th>V</th> </span>
+																									<span title="header=[Editor/Renderer] body=[]">  <th>E</th> </span>
+																									<span title="header=[Editor Options] body=[]">  <th>O</th> </span>
+															</tr>
+											</thead>
+											
+											<tbody id ="adv_tbody" style="height: auto;" >
+											</tbody>
+										
+									</table>
+									
+						</div>
+<!--=================================================================================================================================-->
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<td align=left>
+						<div id="div_for_adjust_width"  style="width:170px;">&nbsp;<div>
+				</td>
+				<td align=right>
+					<button name='btn_input'   style='width:105px;height:20px;' onclick='variables_Edit_SFFS(SelectedRow);'>Edit Optional Flags</button>
+				</td>
+			</tr>
+<!-- *********************************************************************************************************************//Allow to change field type now. -->		 	
+			<!-- --------------------------------------------------------------------- -->
+			<!--Field Type: -->
+			<tr>
+			<td><p><span title="header=[Field Type:] body=[The type of this Field. It cannot be null, and it is the only field which is not optional in the advance page.]">Field Type:</span> </td>
+					<td>
+					<select ID="edit_FLD_TYPE" style="width: 175px" onChange="on_FT_changes();reset_editor_option(document.getElementById('edit_FLD_VR'));"> 
+						<option value="S">String</option>
+						<option value="I">Integer</option>
+						<option value="L">Long</option>
+						<option value="B">Boolean</option>
+						<option value="F">Float</option>
+						<option value="D">Date</option>
+						<!--<option value="C">Color</option>-->
+						<!--<option value="A">Data Block</option> Cancel this for now-->
+					</select></p>
+					</td>
+			</tr> 
+			<!-- --------------------------------------------------------------------- -->	
+<!-- ********************************************************************************************************************* -->		
+
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Behavior</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!--Field Rule-->							
+			<tr> 
+			<td style="vertical-align:top;"><p><span title="header=[Field Properties:] body=[Advanced properties of the field.]">Field Properties:</span> </td>
+			<td><select ID="edit_FLD_RULE" style="width: 175px; display:none;" onChange=""> 
+						<option value="Disabled">0 - Disabled</option> 
+						<option value="N">N - Nullable</option> 
+						<option value="O">O - Optional</option>
+						<option value="E">E - Extendable selection value</option> 
+						<option value="R">R - Read Only</option> 
+						<option value="C">C - Not Replicated</option>
+						<option value="H">H - Hidden</option> 
+						<!-- <option value="K">K-Optional</option> not supported for now-->
+					</select>																																																																			
+
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Nullable<br/>
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Optional<br/>
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Ext. Selection Values<br/>
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Read Only<br/>
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Not Replicated<br/>
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" onclick ="">Hidden
+					
+				</p>
+			</td>
+			</tr>
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Appearance</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!--Field Description-->
+			<tr>
+			<td><p><span title="header=[Field Description:] body=[Field description is the caption of this field.]">Description:</span></td>
+			<td><input type="text" ID="edit_FLD_DESCRIPTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>		
+			<!--Field HELP-->
+			<tr>
+			<td><p><span title="header=[Field HELP:] body=[Field help is the detailed description of the field. It usually appears in a tool tip.]">Help:</span></td>
+			<td><input type="text" ID="edit_FLD_HELP" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Style</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>	
+			<!--List of Selection-->			
+			<tr>
+			<td>
+				<p>
+				<!--<input type="radio"  name="fld_style_type" onclick ="" value="List_Selection" checked>-->
+				<input type="checkbox" name="chkb_style" id="chkb_style" value="checkbox" onclick ="chk_style_option(0);" > 
+				<span title="header=[Selection Value:] body=[List of selection values for the field.]">Selection Values:</span>
+			</td>
+			<td>
+				<input type="text" ID="edit_FLD_SELECTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 148px" disabled="disabled">
+				<button ID="btn_FLD_SELECTION" style="width:22px;height:22px" onclick="selection_edit();" disabled="disabled">...</button> &nbsp; 
+				</p>
+			</td>	
+			</tr>	
+			
+			<!--Visual Respesentation(Editor/Render)-->							
+			<tr> 
+			<td>
+				<p>
+				<!--<input type="radio"  name="fld_style_type" onclick ="" value="Visual_REP" checked>-->
+				<input type="checkbox" name="chkb_style" id="chkb_style" value="checkbox" onclick ="chk_style_option(1);" >  
+				<span title="header=[Editor/Renderer:] body=[Type of editor/renderer. This element enables custom visual representation of field value. Supported editors and renderers are listed here.]">Editor/Renderer:</span> 
+			</td>
+			<td>
+					<select ID="edit_FLD_VR" style="width: 175px" onChange="VR_onchange();">
+						<option value="period">Period</option> 
+					</select>
+				</p>
+			</td>
+			</tr>
+			<!--Visual Respesentation Option-->							
+			<tr> 
+			<td><p>
+				<input type="radio"  name="rad_dummy" onclick ="" style="visibility:hidden;" value="Rad_Dummy" checked>
+				<span title="header=[Editor Options:] body=[Editor-specific options.]">Editor Options:</span>
+			</td>
+			<td>
+				
+					<input type="text" ID="edit_FLD_VRO" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px">	
+									
+					</p>
+			</td>
+			</tr> 				
+			<!-- --------------------------------------------------------------------- -->
+			<tr><td>&nbsp</td><td>&nbsp</td></tr>
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB2 END(div tab_content)----------------------------------- -->
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+	<button width = "100"  style="display : none;" onclick="disable_elements(false);">test</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+var Record_Reset_Flag=true; 								//let related functions know that we change record.
+var c_script_structure = new Object(); 			//global customized script structure(variables).
+var TBL_Path=external.Context.Ref_Path.TBL;
+var STG_Path=external.Context.Ref_Path.STG;
+load_data();																//load data on start, ret value to html object.
+refresh_tab(0); 														//must be executed on start.
+var SelectedRow;														//for field table
+var old_index=new Number();									//this is for when current fff table pointer changes, need to memorize the old_record field changes.
+point_on_first();
+//=================================================1.General Operation===================================================
+//load data sequence.
+function load_data()
+{
+	//1.load the variable data from agg_lib.(name, type, script.)
+	document.getElementById("edit_VAR_TYPE").value =external.Context.Target.VAR_TYPE;
+	reset_name_option(document.getElementById("edit_VAR_NAME")); 															//init name option list by element VAR_TYPE.
+	document.getElementById("edit_VAR_NAME").value =external.Context.Target.VAR_NAME;					//won't trigger onchange here.
+	var script_object=decode_variables_script(external.Context.Target.C_SCRIPT);              //tmpobj= decode agg.c_script to object.
+	
+	//2.decode the script in to object respectively and display them.
+	var srcFORMTYPE=external.Context.srcFORMTYPE;
+	if (srcFORMTYPE=='EDIT')
+	{
+		disable_elements(false); //VAR_NAME won't trigger onchange(loadxxxx), therefore need to add this.
+		if (script_object==null){alert('Invalid script format.');}//@@ add recreate script seqence.
+		else{show_c_script(script_object);}		
+	}
+	else
+	{//do nothing in addNew.
+		
+	}		 
+	//assign to global variables object.
+	c_script_structure=script_object;
+}
+
+//load customize_script to html elements.
+function show_c_script(script_obj)
+{
+	if (!script_obj) return;
+	if (script_obj==null) return;
+	//Tab1
+	var tmp_min=get_flag_value(script_obj.format.field_format_set_flag,'M');//must exist
+	var tmp_max=get_flag_value(script_obj.format.field_format_set_flag,'X');//must exist
+	if (tmp_min!=null) {document.getElementById("edit_MIN").value=tmp_min;}
+	else{alert('Script: Field Record Count\(Min\) is missing.');} 					//@@ add recreate script seqence from lib.
+	if (tmp_max!=null) {document.getElementById("edit_MAX").value=tmp_max;}
+	else{alert('Script: Field Record Count\(Max\) is missing.');} 					//@@ add recreate script seqence from lib.
+	var chk_array=document.getElementsByName("chkb_RW");										//get chkbox array	
+	var tmp_readable=script_obj.readable;																		//must exist  
+	var tmp_writable=script_obj.writable;																		//must exist  
+	chk_array[0].checked = tmp_readable == '0' ? false : true;							//readable
+	chk_array[1].checked = tmp_writable == '0' ? false : true;							//writable
+	
+	var tmp_var_description=script_obj.description;													//must exist
+	var tmp_help=script_obj.help;																						//must exist
+	if (tmp_help=='^') tmp_help='';																					//deal with '^'
+	var tmp_group=script_obj.group;																					//must exist
+	document.getElementById("edit_VAR_DESCRIPTION").value=tmp_var_description;
+	document.getElementById("edit_HELP").value=tmp_help;
+	tmp_group=tmp_group.substr(7); // don't show "remote|".
+	document.getElementById("edit_GROUP").value=tmp_group;
+	
+	//Tab2(optional flags) 
+	//a.table flag
+	var tmp_table_rule=get_flag_value(script_obj.format.field_format_set_flag,'F');										//optional 
+	var HTML_TBL_property=document.getElementsByName("chkb_TBL_property");														//multi-ele
+	if (tmp_table_rule!=null) 
+		{
+					
+					if (has_desired_flag(tmp_table_rule,'R')==true) 
+					{
+						document.getElementById("edit_TBL_RULE").value='R';																//document.getElementById("edit_TBL_RULE").value=tmp_table_rule;
+						HTML_TBL_property[0].checked = true;
+					}else{HTML_TBL_property[0].checked = false;}
+					if (has_desired_flag(tmp_table_rule,'U')==true) 
+					{
+						document.getElementById("edit_TBL_RULE").value='U';	
+						HTML_TBL_property[1].checked = true;
+					}else{HTML_TBL_property[1].checked = false;}
+		
+		}
+	else
+		{
+					//Cuz the flag is optional. So if null, it means that user might change the record.(EDIT MODE or ADDNEW MODE)
+					HTML_TBL_property[0].checked = false;
+					HTML_TBL_property[1].checked = false;
+		} 	
+	//b.fields
+	var tmp_field_format = new Array();
+	var adv_table =document.getElementById("advance_table");
+	if ( adv_table.rows.length > 1) 																																	//clear all if in case we may reload it.
+	{
+			var tmp_length =adv_table.rows.length;
+			for (var i = 1; i < tmp_length; i++)
+			{
+				adv_table.deleteRow(1);
+			}
+	}
+	//second layer(every thing in "format")
+	for (var i=0;i<script_obj.format.field_format_set.length;i++)
+	{
+			var Row = adv_table.insertRow();
+			var tmp_fld_name=script_obj.format.field_format_set[i].fld_name;//fixed
+			var tmp_fld_type=script_obj.format.field_format_set[i].fld_type;//fixed
+			var tmp_field_format_flag=script_obj.format.field_format_set[i].field_format_flag;//not fixed
+			//show content in the "Format", and get rid of "<>".
+			for (var k=0;k<script_obj.format.field_format_set[i].field_format_flag.length;k++)
+			{
+				tmp_field_format_flag[k]=script_obj.format.field_format_set[i].field_format_flag[k];
+			}
+			//create fields' flag status on the table.(first load)
+			Row.onmousedown = function() {Select(this)};
+			Row.ondblclick = function() {variables_Edit_SFFS(this);}
+			Row.insertCell(0).innerHTML = tmp_fld_name;		
+			Row.insertCell(1).innerHTML = tmp_fld_type;
+			var flag_item=new Array();
+			flag_item=["0","0","F","A","D","H","S","V","E","O"];
+			for (var k=2;k<10;k++)
+			{
+				var chkbox = document.createElement('input');chkbox.type = "checkbox";
+				Row.insertCell(k).appendChild(chkbox);
+				var tmp_fld_flag=get_flag_value(tmp_field_format_flag,flag_item[k]);
+				if (tmp_fld_flag!=null) chkbox.checked= true;chkbox.disabled = true;		
+			}
+	}
+}
+
+//when table pointer
+function Select(Row)
+{
+	if (SelectedRow)
+		SelectedRow.bgColor = 0xfafafa;
+	Row.bgColor = 0xff9080;
+	SelectedRow = Row;
+	//load field details
+	load_field_details(SelectedRow.rowIndex); //@@ should add check the if selected row is null
+}
+
+//point on first record
+function point_on_first()
+{
+	var table =document.getElementById("advance_table");
+	var rows = Number(table.rows.length)-1;
+	if (rows!=0) 
+	{
+		var Row=table.rows[1]
+		Select(Row);
+	}
+}
+
+//set pointer to given index 
+function point_on_index(p_index)
+{
+	var table =document.getElementById("advance_table");
+	var rows = Number(table.rows.length)-1;
+	if ((rows!=0)&&(p_index<rows+1))
+	{
+		var Row=table.rows[p_index+1]
+		Select(Row);
+	}
+}
+
+
+//This function is for when pointer of the table changed,
+//the relative data  below the table on tab2 will show correct data.
+function load_field_details(selected_rowIndex)
+{	
+	//1.memorize the last record value changes when we switch the pointer.
+	if (Record_Reset_Flag==true)
+		{Record_Reset_Flag=false;old_index=0;}	
+	
+	
+	save_changes_to_fffobj(old_index);
+	//var script_obj=decode_variables_script(external.Context.Target.C_SCRIPT)//script_obj[selected_rowIndex].field_format_flag=;
+	
+	//1.5 We now allow user to change default field type.
+	var HTML_FLD_TYPE=document.getElementById('edit_FLD_TYPE');
+	var tmp_FLD_TYPE=c_script_structure.format.field_format_set[selected_rowIndex-1].fld_type;
+	HTML_FLD_TYPE.value=tmp_FLD_TYPE;
+	
+	//1.5 reset editor/render option list after the
+	reset_editor_option(document.getElementById('edit_FLD_VR'));																															//refill the value
+	
+	
+	//2.start to load current selected fff record.
+	var fff_obj=c_script_structure.format.field_format_set[selected_rowIndex-1].field_format_flag;	//get only flag data
+	var chk_obj=document.getElementsByName("chkb_style");																						//get style chk box array	
+	
+	//check empty
+	if (fff_obj=='undefined') return;
+	if (fff_obj==null) return;
+	//if (fff_obj.length==0) return;
+	//show values
+	//No need to .replace(/(^[<]?)|([>]?$)/g, ""); again, cuz we have done it at load_data() //@@ 368
+	//FADHSVEO
+	var tmp_F=get_flag_value(fff_obj,'F');
+	var HTML_FLD_property=document.getElementsByName("chkb_FLD_property");														//multi-ele
+	if (tmp_F!=null)
+		{
+				document.getElementById("edit_FLD_RULE").value=tmp_F;
+				if (has_desired_flag(tmp_F,'N')==true) {HTML_FLD_property[0].checked = true;}else{HTML_FLD_property[0].checked = false;}
+				if (has_desired_flag(tmp_F,'O')==true) {HTML_FLD_property[1].checked = true;}else{HTML_FLD_property[1].checked = false;}
+				if (has_desired_flag(tmp_F,'E')==true) {HTML_FLD_property[2].checked = true;}else{HTML_FLD_property[2].checked = false;}
+				if (has_desired_flag(tmp_F,'R')==true) {HTML_FLD_property[3].checked = true;}else{HTML_FLD_property[3].checked = false;}
+				if (has_desired_flag(tmp_F,'C')==true) {HTML_FLD_property[4].checked = true;}else{HTML_FLD_property[4].checked = false;}
+				if (has_desired_flag(tmp_F,'H')==true) {HTML_FLD_property[5].checked = true;}else{HTML_FLD_property[5].checked = false;}
+		}	
+	else
+		{
+				document.getElementById("edit_FLD_RULE").value='Disabled';
+				HTML_FLD_property[0].checked = false;
+				HTML_FLD_property[1].checked = false;
+				HTML_FLD_property[2].checked = false;
+				HTML_FLD_property[3].checked = false;
+				HTML_FLD_property[4].checked = false;
+				HTML_FLD_property[5].checked = false;
+		}
+		
+		
+		
+	var tmp_D=get_flag_value(fff_obj,'D');
+	if (tmp_D!=null){document.getElementById("edit_FLD_DESCRIPTION").value=tmp_D;}
+	else{document.getElementById("edit_FLD_DESCRIPTION").value='';}
+	var tmp_H=get_flag_value(fff_obj,'H');
+	if (tmp_H!=null){document.getElementById("edit_FLD_HELP").value=tmp_H;}
+	else{document.getElementById("edit_FLD_HELP").value='';}
+	//---------------Flag SEO--------------------
+	var tmp_S=get_flag_value(fff_obj,'S');
+	if (tmp_S!=null)
+		{document.getElementById("edit_FLD_SELECTION").value=tmp_S;chk_obj[0].checked=true;}
+	else
+		{document.getElementById("edit_FLD_SELECTION").value='';chk_obj[0].checked=false;}
+	//---------------Flag E--------------------
+	var tmp_E=get_flag_value(fff_obj,'E');
+	var tmp_O=get_flag_value(fff_obj,'O');
+	if ((tmp_E!=null)||(tmp_O!=null)){document.getElementById("edit_FLD_VR").value=tmp_E;   	chk_obj[1].checked=true;  }
+	else{document.getElementById("edit_FLD_VR").value='';   	chk_obj[1].checked=false;  }
+	//---------------Flag O--------------------		
+	if (tmp_O!=null){document.getElementById("edit_FLD_VRO").value=tmp_O;}
+	else{document.getElementById("edit_FLD_VRO").value='';}
+	syn_field_sataus_changes();																								//important:need to execute this function when SEO value has changed.
+	
+	
+	old_index=selected_rowIndex; //It is for save_changes_to_fffobj(old_index);
+}
+
+//1.save "field format flag" to fffobj(old_index)
+//2.meanwhile, syn the "fff" status table.
+//The function will be triggered in two place. 1.pointer changed 2.onok click 
+function save_changes_to_fffobj(fff_index,del_val_range)
+{
+		if (fff_index>0) //0 means no old index
+		{//save changes to tempoary object.
+			//1.get structure object
+			var fff_obj=c_script_structure.format.field_format_set[fff_index-1].field_format_flag;
+			//1.5 We now allow user to change default field type.
+			var HTML_FLD_TYPE=document.getElementById('edit_FLD_TYPE');
+			var tmp_FLD_TYPE=HTML_FLD_TYPE.value;
+			c_script_structure.format.field_format_set[fff_index-1].fld_type=tmp_FLD_TYPE; // Validate this field in "onok" event.
+				
+			//2.add validation here
+
+			//3.push values
+			var tmp_A=get_flag_value(fff_obj,'A');
+			var tmp_V=get_flag_value(fff_obj,'V');
+			fff_obj.length=0;//clear all (need to save A and V)
+			if (tmp_A!=null) {fff_obj.push('A='+tmp_A);}
+			if (tmp_V!=null) 
+			{
+				if (typeof(del_val_range)=='undefined') fff_obj.push('V='+tmp_V);
+			}
+			
+			var str_fld_rule=ret_FLD_property_str(); 					//document.getElementById("edit_FLD_RULE").value;			<--- oringinal																								//ggggg
+			
+			                                       
+			var str_fld_description=document.getElementById("edit_FLD_DESCRIPTION").value;
+			var str_fld_help=document.getElementById("edit_FLD_HELP").value;
+			var str_fld_selection=document.getElementById("edit_FLD_SELECTION").value;
+			var str_fld_vr=document.getElementById("edit_FLD_VR").value;
+			var str_fld_vro=document.getElementById("edit_FLD_VRO").value;
+			
+			str_fld_rule=str_fld_rule.replace(/^\s+|\s+$/g,""); 							//trim
+			str_fld_description=str_fld_description.replace(/^\s+|\s+$/g,""); //trim
+			str_fld_help=str_fld_help.replace(/^\s+|\s+$/g,""); 							//trim
+			str_fld_selection=str_fld_selection.replace(/^\s+|\s+$/g,"");
+			str_fld_vr=str_fld_vr.replace(/^\s+|\s+$/g,"");
+			str_fld_vro=str_fld_vro.replace(/^\s+|\s+$/g,"");
+			
+			//push values to object
+			if ((str_fld_rule!='')&&(str_fld_rule!='Disabled'))	{fff_obj.push('F='+str_fld_rule);}
+			if (str_fld_description!='')	{fff_obj.push('D='+str_fld_description);}
+			if (str_fld_help!='')	fff_obj.push('H='+str_fld_help);
+			
+			var chk_obj=document.getElementsByName("chkb_style");							//get chk array	
+			if (chk_obj[0].checked == true) 
+			{  if (str_fld_selection!='')	fff_obj.push('S='+str_fld_selection);	}
+			if (chk_obj[1].checked == true) 
+			{
+					if (str_fld_vr!='')	fff_obj.push('E='+str_fld_vr);
+					if (str_fld_vro!='')	fff_obj.push('O='+str_fld_vro);
+			}
+			//4."Step 4" has nothing to do with the steps above.(independent)
+						//a.get structure object
+						var fff_obj2=c_script_structure.format.field_format_set_flag;
+						//b.add validation here, if pass it then clear all
+						//c.push values
+						fff_obj2.length=0;//clear all
+						var str_MIN=document.getElementById("edit_MIN").value;
+						var str_MAX=document.getElementById("edit_MAX").value;
+						var str_TBL_RULE=ret_TBL_property_str();												//document.getElementById("edit_TBL_RULE").value; //return the table property value set string.
+						str_MIN=str_MIN.replace(/^\s+|\s+$/g,"");
+						str_MAX=str_MAX.replace(/^\s+|\s+$/g,"");
+						str_TBL_RULE=str_TBL_RULE.replace(/^\s+|\s+$/g,"");
+						//d.push values to object
+						if (str_MIN!='')	{fff_obj2.push('M='+str_MIN);}
+						if (str_MAX!='')	{fff_obj2.push('X='+str_MAX);}
+						if ((str_TBL_RULE!='')&&(str_TBL_RULE!='Disabled'))	{fff_obj2.push('F='+str_TBL_RULE);}
+						
+			//5.update the last record status
+			update_adv_chkbox(fff_index);
+		}
+}
+
+//return table property value set(a string with multiple value) by the table property "HTML fields".
+
+
+function ret_TBL_property_str()
+{
+		var TBL_property_str='';
+		var HTML_TBL_property=document.getElementsByName("chkb_TBL_property");
+		if (HTML_TBL_property[0].checked == true) TBL_property_str='R';
+		if (HTML_TBL_property[1].checked == true) TBL_property_str+='U';
+		return TBL_property_str;
+}
+
+function ret_FLD_property_str()
+{
+		var FLD_property_str='';
+		var HTML_FLD_property=document.getElementsByName("chkb_FLD_property");
+		if (HTML_FLD_property[0].checked == true) FLD_property_str='N';
+		if (HTML_FLD_property[1].checked == true) FLD_property_str+='O';
+		if (HTML_FLD_property[2].checked == true) FLD_property_str+='E';
+		if (HTML_FLD_property[3].checked == true) FLD_property_str+='R';
+		if (HTML_FLD_property[4].checked == true) FLD_property_str+='C';
+		if (HTML_FLD_property[5].checked == true) FLD_property_str+='H';
+		
+		return FLD_property_str;
+}
+
+//update the status of the flag on adv table(syn single row in the table.)
+function update_adv_chkbox(fff_index)
+{//get field_format_flag data by given fff_index.
+	
+	var table =document.getElementById("advance_table"); 	if (!c_script_structure) return;
+	var fff_obj=c_script_structure.format.field_format_set[fff_index-1].field_format_flag;  
+	var tmp_FLD_TYPE=c_script_structure.format.field_format_set[fff_index-1].fld_type; 	
+
+	//check changes in table	
+	var Row=table.rows[fff_index];
+	Row.cells[1].innerHTML=tmp_FLD_TYPE;
+	
+	//iffff
+	if (!fff_obj) return;
+	var flag_item=new Array();
+	flag_item=["0","0","F","A","D","H","S","V","E","O"];
+	for (var k=2;k<10;k++)
+	{
+		var tmp_fld_flag=get_flag_value(fff_obj,flag_item[k]);
+		if (tmp_fld_flag!=null) {Row.cells[k].childNodes(0).checked=true;}
+		else {Row.cells[k].childNodes(0).checked=false;}		
+	}
+}
+
+//1.It's a little different from the one in the universal_format_edit.
+//2.change(syn) the field type value in the adv table,too. (Notice that the real value will not be changed at this moment.)
+//3.check if limitation is supported. 
+function on_FT_changes()
+{
+	//-1.			
+			save_changes_to_fffobj(SelectedRow.rowIndex,true);
+			
+	//0.
+			//HTML_FLD_MIN.value='';
+			//HTML_FLD_MAX.value='';
+	//1.change control status when field type is changed.
+			//syn_field_limit_control();
+	//2.set Default value='' on each type change.
+			//HTML_FLD_DEFVAL.value='';
+}
+
+//reset name options (Reset NameList by ref Library)
+function reset_name_option(sel)
+{
+		var srcFORMTYPE=external.Context.srcFORMTYPE; //get srcFORMTYPE, we may have different process.
+		//Remove all options when it needs to change the value.(sel=edit_VAR_NAME)
+		sel.options.length=0;
+		ref_src=document.getElementById("edit_VAR_TYPE").value;
+		switch (ref_src)
+		{
+			case "T":
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data)
+				{
+					alert('Cannot locate the tables library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.' );
+					//Please enter the correct Reference Path in the main screen.
+					external.EndDialog(0);
+					return;
+				}
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_STRUCT=='T')  //*-*-* Add this, cuz the "table" type record are allowed in variable library. (Definiately need to add validation in agg_main later.)
+					addOption(sel,tbl_lib_data.TableSet[i].TBL_NAME,tbl_lib_data.TableSet[i].TBL_NAME);
+				}
+				sel.value='';
+				break;
+				
+			case "S":
+				var stg_lib_data=external.XTextEx(STG_Path);
+				if (!stg_lib_data) 
+				{
+					alert('Cannot locate the settings library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.' );
+					external.EndDialog(0); 
+					return;
+				}
+				for (var i=0;i<stg_lib_data.length;i++)
+				{
+					if ((typeof(stg_lib_data[i].NAME)!='undefined')&&(stg_lib_data[i].NAME!=null)) //@@
+					addOption(sel,stg_lib_data[i].NAME,stg_lib_data[i].NAME);
+				}
+				sel.value=''; 
+				break;
+				
+			default:
+				//addNew will go here. So...
+				if (srcFORMTYPE=='EDIT')
+				{
+					alert('Unrecognized Reference Type.');
+					return;
+				}
+				break;
+				
+		}
+		if (sel.value=='') disable_elements(true); //cuz no record...
+} 
+
+//reset editor options
+function reset_editor_option(sel)
+{
+/*
+
+S - String
+I - Integer
+L - Long
+B - Boolean
+F - Float
+D - Date
+
+*/	
+	
+		//Remove all options
+		sel.options.length=0;
+		fld_type=document.getElementById("edit_FLD_TYPE").value;
+		
+		switch (fld_type)
+		{
+			case "S":	
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				addOption(sel,'Password Editor','password');
+				addOption(sel,'Text Editor','text');
+				addOption(sel,'Text Area Editor','textarea');
+				addOption(sel,'Embedded Text Area Renderer','etextarea');
+				addOption(sel,'IP Address Editor','ip');
+								
+				sel.value=''; 
+			break;	
+			case "I":
+				addOption(sel,'Spinner','spinner');
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				
+				sel.value='';	
+			break;
+			case "L":
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				addOption(sel,'Time Period Editor','period');
+				
+				sel.value='';				
+			break;
+			case "B":
+				sel.value='';		
+			break;
+			case "F":
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				
+				sel.value='';		
+			break;		
+			case "D":
+				addOption(sel,'Date Editor','date');
+				addOption(sel,'Time Editor','time');
+				
+				sel.value='';					
+			break;
+			default:
+			
+			break;
+		}	
+			
+} 
+
+//edit_VAR_TYPE on change
+function editVARTYPE_onchange()
+{
+	var srcFORMTYPE=external.Context.srcFORMTYPE; //get srcFORMTYPE, we may have different process.
+	if (srcFORMTYPE=='EDIT')
+	{
+		var ele_VAR_NAME=document.getElementById('edit_VAR_NAME');
+		reset_name_option(ele_VAR_NAME);
+		if (ele_VAR_NAME.value!='')	load_data_from_lib();
+	}
+	else
+	{
+		reset_name_option(document.getElementById('edit_VAR_NAME'))
+	}
+	//disable_elements
+}
+
+//edit_FLD_VR on change
+function VR_onchange()
+{
+	var VRO=document.getElementById('edit_FLD_VRO');
+	VRO.value=0;
+}
+
+//sub edit dialog box for Variables fields.
+function variables_Edit_SFFS(Row)
+{	
+	if (!Row)			return;
+		
+	var Context = new Object;
+	//1.Define the Context we wanna send and get data of the current record. (Customize_Script_Set[x])
+	var cur_fld_index=(Row.rowIndex-1);
+	Context.Target=c_script_structure.format.field_format_set[cur_fld_index]; 				//entity index + C_script index under entity = the record we want.
+	Context.CS_ffs=c_script_structure.format.field_format_set; 											//this is for unique checking in Edit Dialog box.
+	Context.srcFORMTYPE = 'EDIT';																													//Dialog Type
+	
+	//2.Open EDIT
+
+		var Result = external.ModalDialog("variables_format_edit.html", "Edit  (Variables Field)", Context);		//StoredEvent_format_edit.html
+		
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements 
+	//a.update the table
+	//b.set pointer to the original record
+	refresh_adv_format_table(c_script_structure); //reload
+	point_on_index(cur_fld_index);
+}
+
+//for edit. 1.get data from tbl_lib or stg_lib 	2.generate the script by the data we get. 3. Display it.
+//load data record from from lib for changing(Editing) record. //@@ should add unique validation
+//Need to check something before replacing oringinal one.
+function load_data_from_lib()
+{
+	//1.Get data from tbl_lib or stg_lib.
+	//2.Generate the script by the data we get. 
+	//3.Display it and store it into relative variable and script object.
+	
+	//1.
+	type_element=document.getElementById("edit_VAR_TYPE").value;
+	name_element=document.getElementById("edit_VAR_NAME").value;
+															
+	
+	switch (type_element)
+	{
+		case "T":
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data) {alert('Cannot locate the Tables Library.'); return;}
+				var found_tbl_record = new Object;
+				var found_match = new Boolean();
+				found_tbl_record=null;
+				found_match=false;
+				
+				//check if table is empty
+				if (!tbl_lib_data)
+				{//should do some action if nothing to refer to. restore??? //@@
+				 //It is triggered by making selection. Therefore it is different from 'variables_Edit' in main.
+					alert('No Data in Tables Library.');
+					restore_sequence();			//restore 
+					return;
+				}
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_NAME==name_element)
+					//if (tbl_lib_data.TableSet[i].TBL_NAME==external.Context.Target.VAR_NAME)
+					{
+						found_match=true;
+						found_tbl_record=tbl_lib_data.TableSet[i];//get the record we found.
+						break;
+					}
+				}
+				//found
+				if (found_match==true)
+				{		//1.Found out the record in table lib 
+						//2.check -check if there is another record are the same in the CS_set(must be uniqe). 
+						//3.If everything is ok, regenerate script string and fill all the related fields.
+						var CS_Set=external.Context.CS_Set;
+
+						//*.check if it is unique in the variables CS Set.
+						var appear_count=0;	
+						for (var k=0;k<CS_Set.length;k++)
+						{
+							if (CS_Set[k].VAR_NAME==name_element)
+							appear_count+=1;
+						}
+						//The record itself does not count when "EDIT".
+						if ((name_element==external.Context.Target.VAR_NAME)&&(external.Context.srcFORMTYPE=='EDIT'))
+						{//If it's oringinal record and dialog type is 'EDIT'
+							appear_count-=1;
+							restore_sequence(); 			//means the oringinal record.
+							return;
+						}
+						
+						if (appear_count>0)
+						{//means it has already occupied.//@@restore data to the last selected item.
+							alert('The record \''+name_element+'\' has already existed in the Variables Table.');
+							restore_sequence(); //@@@@@ when the srcFORMTYPE is 'addnew'? 
+							return;
+						}
+						//If all ok then 1.generate the customize script object. 2.Update the webpage elements.
+						//alert('found_tbl_record.TBL_NAME='+found_tbl_record.TBL_NAME);
+						var tmp_csobj=generate_new_cs_object(found_tbl_record,type_element);
+						var tmp_csstring=encode_variables_script(tmp_csobj); 								//for gettting the length.
+						//alert('TRRR-'+tmp_csstring+'\r\n found_tbl_record.TBL_NAME='+found_tbl_record.TBL_NAME);
+						//if (tmp_csstring=='') {alert('test-bb=0 string');}
+						//if (tmp_csstring==null) {alert('test-bb=null');}
+
+						//show and update webpage elements.
+						show_c_script(tmp_csobj);																				//we don't validate the result here(ex:str len>255).				 
+						//Assign the new script object to the global variables object.
+						c_script_structure=tmp_csobj;   																//if all ok, assign the new structure to c_script_structure.
+						Record_Reset_Flag=true;																					//Important. To prevent the "save to object" seuence to be executed in the beginning.
+						point_on_first();
+						disable_elements(false); //back to normal
+				}
+				else
+				{
+						alert('Cannot found destiny record in Table Library.');
+						return;
+				}
+				break;
+		
+		case "S":
+				var stg_lib_data=external.XTextEx(STG_Path);
+				if (!stg_lib_data) {alert('Cannot locate the Settings Library.'); return;}
+				var found_stg_record = new Object;
+				var found_match = new Boolean();
+				found_stg_record=null;
+				found_match=false;
+				
+				var stg_lib_data_len=get_eof_index(stg_lib_data);		//For STG Lib, get length first.
+				//check if Setting lib is empty
+				if ((!stg_lib_data)||(stg_lib_data_len==0))
+				{
+					alert('No Data in Settings Library.');
+					restore_sequence();			//restore 
+					return;
+				}
+				for (var i=0;i<stg_lib_data_len;i++)
+				{
+					if (stg_lib_data[i].NAME==name_element)
+					//if (tbl_lib_data.TableSet[i].TBL_NAME==external.Context.Target.VAR_NAME)
+					{
+						found_match=true;
+						found_stg_record=stg_lib_data[i];//get the record we found.
+						break;
+					}
+				}
+				//found
+				if (found_match==true)
+				{
+						var CS_Set=external.Context.CS_Set;
+						//*.check if it is unique in the variables CS Set.
+						var appear_count=0;	
+						for (var k=0;k<CS_Set.length;k++)
+						{
+							if (CS_Set[k].VAR_NAME==name_element)
+							appear_count+=1;
+						}
+						//The record itself does not count when "EDIT".
+						if ((name_element==external.Context.Target.VAR_NAME)&&(external.Context.srcFORMTYPE=='EDIT'))
+						{//If it's oringinal record and dialog type is 'EDIT'
+							appear_count-=1;
+							restore_sequence(); 			//means the oringinal record.
+							return;
+						}
+						
+						if (appear_count>0)
+						{//means it has already occupied.//@@restore data to the last selected item.
+							alert('The record \''+name_element+'\' has already existed in the Variables Table.');
+							restore_sequence(); //@@@@@ when the srcFORMTYPE is 'addnew'? 
+							return;
+						}
+						//If all ok then 1.generate the customize script object. 2.Update the webpage elements.
+						//alert('found_stg_record.NAME='+found_stg_record.NAME);
+						var tmp_csobj=generate_new_cs_object(found_stg_record,type_element);
+						var tmp_csstring=encode_variables_script(tmp_csobj); 								//for gettting the length.
+						//alert('TRRR-'+tmp_csstring+'\r\n found_stg_record.NAME='+found_stg_record.NAME);
+						if (tmp_csstring=='') {alert('test-bb=0 string');}
+						if (tmp_csstring==null) {alert('test-bb=null');}
+
+						show_c_script(tmp_csobj);																						 
+						c_script_structure=tmp_csobj;   																
+						Record_Reset_Flag=true;																					
+						point_on_first();
+						disable_elements(false); //back to normal
+				}
+				else
+				{
+						alert('Cannot found destiny record in Table library.');
+						return;
+				}
+				break;
+
+		default:
+				break;
+	}	
+}
+
+//generate new customize_script object by the record from Library. This is for Edit or Addnew.(variable)
+function generate_new_cs_object(data_from_lib,reference_type)
+{
+	var tmp_variable_obj = new Object();
+	tmp_variable_obj.name=new String();
+	tmp_variable_obj.description=new String();
+	tmp_variable_obj.readable=new String();
+	tmp_variable_obj.writable=new String();
+	tmp_variable_obj.help=new String();
+	tmp_variable_obj.group=new String();
+	tmp_variable_obj.iconId=new String();
+	
+	tmp_variable_obj.format=new Object;
+	tmp_variable_obj.format.field_format_set=new Array;
+	tmp_variable_obj.format.field_format_set_flag=new Array;
+	
+		
+	switch (reference_type)
+	{
+		case "T":
+			//process base layer
+			tmp_variable_obj.name=data_from_lib.TBL_NAME;
+			tmp_variable_obj.description=data_from_lib.TBL_NAME;
+			tmp_variable_obj.readable='1';
+			tmp_variable_obj.writable='1';
+			tmp_variable_obj.help='^';
+			tmp_variable_obj.group='remote|Default';
+			tmp_variable_obj.iconId='^';
+			//process ffsf
+			tmp_variable_obj.format.field_format_set_flag.push('M=0');
+			var tmpMAX='X='+data_from_lib.MAX_RECS;
+			tmp_variable_obj.format.field_format_set_flag.push(tmpMAX);
+			//process ffs
+			if (!data_from_lib.FieldsDefnition) {alert('Found the reference table record, but it is invalid.');return}					//@@important
+			if (data_from_lib.FieldsDefnition.length==0) {alert('Found the reference table record, but it is invalid.');return} //@@important
+			
+			for (var j=0;j<data_from_lib.FieldsDefnition.length;j++)
+			{
+				var ffs_obj=new Object();
+				var fld_name=data_from_lib.FieldsDefnition[j].FIELD_NAME;
+				var fld_type=data_from_lib.FieldsDefnition[j].FIELD_TYPE; //field type in table library(corresponding type in agg.)//@@
+				fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+				var fld_P1=data_from_lib.FieldsDefnition[j].P1;
+				var fld_P2=data_from_lib.FieldsDefnition[j].P2;
+				var fld_DEFVAL=data_from_lib.FieldsDefnition[j].DEFVAL;
+				
+				ffs_obj.fld_name=fld_name;
+				ffs_obj.fld_type=fld_type; 																//need transfer type
+				//process fff
+				ffs_obj.field_format_flag=new Array;
+				if (fld_type!='D')	{ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>')} 		//Data/Time value has no limitation, don't set it.
+				else{fld_DEFVAL=convert_LibTD_to_AggTD(fld_DEFVAL);}
+					
+				if (fld_DEFVAL!=null)	
+				{
+					if (fld_DEFVAL.indexOf('^')==-1) //can not contain "^" in Flag A. Aggregate won't accept this character in flag A. - -".
+					ffs_obj.field_format_flag.push('A='+fld_DEFVAL); 																			//This line only for table.
+				}
+				tmp_variable_obj.format.field_format_set.push(ffs_obj);
+			}
+			return tmp_variable_obj;
+		case "S":
+			//process base layer
+			tmp_variable_obj.name=data_from_lib.NAME;
+			tmp_variable_obj.description=data_from_lib.NAME;
+			tmp_variable_obj.readable='1';
+			tmp_variable_obj.writable='1';
+			tmp_variable_obj.help='^';
+			tmp_variable_obj.group='remote|Default';
+			tmp_variable_obj.iconId='^';
+			//process ffsf
+			tmp_variable_obj.format.field_format_set_flag.push('M=1');
+			tmp_variable_obj.format.field_format_set_flag.push('X=1');
+			
+			//process ffs										//data_from_lib.MEMBER								//isNaN(parseInt
+			if (!data_from_lib.MEMBER) {alert('Found the reference setting record, but it is invalid.');return null}					//@@important
+			if (isNaN(data_from_lib.MEMBER)) {alert('Found the reference setting record, but it is invalid.');return null}
+			
+
+			if (data_from_lib.MEMBER>1)
+			{
+					for (var j=0;j<data_from_lib.MEMBER;j++)
+					{
+								var ffs_obj=new Object();
+								var fld_name=j;
+								var fld_type=data_from_lib.TYPE;
+								fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+								var fld_P1=data_from_lib.P1;
+								var fld_P2=data_from_lib.P2;
+								
+								ffs_obj.fld_name=fld_name;
+								ffs_obj.fld_type=fld_type; 																//need transfer type
+								//process fff
+								ffs_obj.field_format_flag=new Array;
+								if (data_from_lib.TYPE!='D')                 							//don't add validator to the Dot Decimal type.
+								ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>');
+								tmp_variable_obj.format.field_format_set.push(ffs_obj);
+					}
+					return tmp_variable_obj;				
+			}
+			else
+			{
+					var ffs_obj=new Object();
+					var fld_name=data_from_lib.NAME;
+					var fld_type=data_from_lib.TYPE;
+					fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+					var fld_P1=data_from_lib.P1;
+					var fld_P2=data_from_lib.P2;
+					
+					ffs_obj.fld_name=fld_name;
+					ffs_obj.fld_type=fld_type; 																//need transfer type
+					//process fff
+					ffs_obj.field_format_flag=new Array;
+					if (data_from_lib.TYPE!='D')                 							//don't add validator to the Dot Decimal type.
+					ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>');
+					tmp_variable_obj.format.field_format_set.push(ffs_obj);
+					return tmp_variable_obj;
+			}
+	}
+	return null;
+}
+
+//convert Lib time/date to AGG time/date
+function convert_LibTD_to_AggTD(td_str) 
+{//Agg td format='2000-01-05 06:22:33.555'
+ //yyyy-MM-dd HH:mm:ss.SSS
+ 	var agg_TD=null;
+	if (isNaN(td_str)==true) return null;
+	
+	var td_length=td_str.length;
+	switch(td_length)
+	{
+		case 0://null
+			return null;
+		case 4://hhmm
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':00.000';
+			return agg_TD;
+		case 6://hhmmss
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;
+		case 8://YYYYMMDD
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			agg_TD=YYYY+'-'+MM+'-'+DD+' 00:00:00.000';
+			return agg_TD;
+		case 9://hhmmssmls
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			var mls=td_str.substr(6);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.'+mls;
+		case 12://YYYYMMDDhhmm
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':00.000';
+			return agg_TD;		
+		case 14://YYYYMMDDhhmmss
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;		
+		case 17://YYYYMMDDhhmmssmls
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12,2);	
+			var mls=td_str.substr(14);		
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.'+mls;
+			return agg_TD;		
+		default:
+		return null;
+	}	
+
+}
+
+//if anything go wrong, restore all to default.
+function restore_sequence()
+{
+		var srcFORMTYPE=external.Context.srcFORMTYPE;
+		if(srcFORMTYPE=='EDIT')
+		{	
+				//alert('EDIT MODE');
+				load_data();
+				Record_Reset_Flag=true;															
+				point_on_first(); 	
+		}
+		else
+		{
+				//alert('ADDNEW MODE or INSERT_BEFORE MODE');
+				var adv_table =document.getElementById("advance_table");
+				//1.reset all status to beginning state
+				//a.Delete all record in AddNew, or we will get error message if we don't do this.
+				if ( adv_table.rows.length > 1) 																																	
+				{
+						var tmp_length =adv_table.rows.length;
+						for (var i = 1; i < tmp_length; i++)
+						{
+							adv_table.deleteRow(1);
+						}
+				}
+				//b.clear the value of each element.
+				set_flds_empty();
+				//2.reload everthing
+				load_data();
+				Record_Reset_Flag=true;
+		}
+}
+
+
+//Retrieve corresponding type in aggregate.
+function LibType_to_AggType(type_from_lib,reference_type)
+{//AGG FIELD TYPE = SILBFD (TCA)
+		var result = new String();
+		result='S';	//defval
+		switch (reference_type)
+		{
+			case "T":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='U') result='L'; //32bit
+				if (type_from_lib=='T') result='D'; //datetime
+				break;
+			case "S":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='D') result='S'; //Dot Decimal
+				break;
+			default:
+		}
+		return result;
+} 
+
+//Edit dialog box(selection list)
+function selection_edit()
+{
+	//check if selection enabled.
+	var chk_obj=document.getElementsByName("chkb_style");								//get chk array	
+	if (chk_obj[0].checked==false) return;
+	//if chk ok then open edit modal dialog box.
+	var Context = new Object;
+	var sel_str=document.getElementById("edit_FLD_SELECTION").value;  
+
+	var sel_arr = sel_str.match(/<[^<>]+=[^<>\s]+>/g);							 		//parse the field value and push the result into array.
+	var sel_obj = new Array();
+
+	if (sel_arr!=null)
+	{
+			for (var i=0;i<sel_arr.length;i++)
+			{
+				var tmp_str=sel_arr[i].replace(/(^[<]?)|([>]?$)/g, "");				//get rid of "<>" once.
+				var tmp_arr=tmp_str.split('=');
+				var tmp_obj=new Object();
+				if (tmp_arr.length<2) continue;
+				tmp_obj.LIST_NAME=tmp_arr[0];
+				tmp_obj.LIST_VALUE=tmp_arr[1];
+				sel_obj.push(tmp_obj);
+			}
+	}
+	
+	
+	Context.Target=sel_obj;
+	Context.Result=new String();
+	var Result = external.ModalDialog("variables_edit_selection.html", "Edit  (Selection)", Context);
+	if (Result != 1) 	return;
+	document.getElementById("edit_FLD_SELECTION").value =Context.Result;
+}
+
+//ON OK
+function OnOK()
+{
+	if (SelectedRow)	save_changes_to_fffobj(SelectedRow.rowIndex);// save the last one to c script object.(important)
+	
+//validation (1)
+	var tmp_var_name=document.getElementById("edit_VAR_NAME").value;	
+	var tmp_var_type=document.getElementById("edit_VAR_TYPE").value;
+	tmp_var_name=tmp_var_name.replace(/^\s+|\s+$/g,"");
+	tmp_var_type=tmp_var_type.replace(/^\s+|\s+$/g,"");
+	if (tmp_var_name=='') {alert('Variable Name cannnot be null');return;}
+	if (tmp_var_type=='')	{alert('Variable type cannnot be null');return;}
+	
+//validation (2) - C_Script, validate all but not variables.format
+	
+	//description
+	var tmp_description=document.getElementById("edit_VAR_DESCRIPTION").value;
+	tmp_description=tmp_description.replace(/^\s+|\s+$/g,"");
+	c_script_structure.description=tmp_description;
+	//readable writable
+	var chk_RW_obj=document.getElementsByName("chkb_RW");							
+	if (chk_RW_obj[0].checked == true) 	{c_script_structure.readable='1';}
+	else {c_script_structure.readable='0';}
+	if (chk_RW_obj[1].checked == true) 		{c_script_structure.writable='1';}
+	else 	{c_script_structure.writable='0';}
+	//help
+	var tmp_help=document.getElementById("edit_HELP").value;
+	tmp_help=tmp_help.replace(/^\s+|\s+$/g,"");
+	c_script_structure.help=tmp_help;
+	//group
+	var tmp_group=document.getElementById("edit_GROUP").value;
+	tmp_group=tmp_group.replace(/^\s+|\s+$/g,"");
+	c_script_structure.group=tmp_group;
+	//iconId//we have already generated the c_script_structure.iconId.
+
+	if (validate_variable_Cscript(c_script_structure)==false) return;
+	
+//validation (3) - C_Script length
+	//encode the structure,  if all ok. Check the length of the encoded String then push values.
+	var tmp_C_SCRIPT=encode_variables_script(c_script_structure);
+	if (tmp_C_SCRIPT==null)	{alert('Encoding SCRIPT error.');return;}
+	
+	/* Disable this section cuz the limitation is overcomed.
+	if (tmp_C_SCRIPT.length>255)	
+	{//Need to check the total length of the encoded String.(cannot greater than 255.)
+		var con_str=new String();
+		con_str='The Script which is generated by your definitions is invalid. \r\n';
+		con_str+='-The length of the Script can not be greater than 255.\r\n';
+		con_str+='-You now have length '+tmp_C_SCRIPT.length+'.\r\n\r\n';
+		con_str+='Solution:\r\n';
+		con_str+='-Reducing the amount of your fields or the optional flags.\r\n';
+		con=alert(con_str);
+		return;
+	}			
+	*/
+	
+	external.Context.Target.VAR_NAME=tmp_var_name;
+	external.Context.Target.VAR_TYPE=tmp_var_type;
+	external.Context.Target.C_SCRIPT=tmp_C_SCRIPT;				//encode_variables_script(c_script_structure);
+	
+	external.EndDialog(1);
+}
+
+//========================================================2. validation ======================================================================================
+//validate_variable- it checks only c_script and except variables.format part in c_script(import).
+function validate_variable_Cscript(obj)
+{
+
+		var html_description=document.getElementById("edit_VAR_DESCRIPTION");
+		var chk_RW_obj=document.getElementsByName("chkb_RW");
+		var html_readable=chk_RW_obj[0];
+		var html_writable=chk_RW_obj[1];
+		var html_help=document.getElementById("edit_HELP");
+		var html_group=document.getElementById("edit_GROUP");
+		
+		var html_FLD_TYPE=document.getElementById('edit_FLD_TYPE');
+		var html_VR=document.getElementById("edit_FLD_VR");
+		var html_VRO=document.getElementById("edit_FLD_VRO");
+		var html_FLD_DESCRIPTION=document.getElementById("edit_FLD_DESCRIPTION");
+		var html_FLD_HELP=document.getElementById("edit_FLD_HELP");
+		
+		
+		var var_description=new String();
+		var var_readable=new String();
+		var var_writable=new String();
+		var var_help=new String();
+		var var_group=new String();
+		
+		var_description=obj.description;
+		var_readable=obj.readable;
+		var_writable=obj.writable;
+		var_help=obj.help;
+		var_group=obj.group;
+		
+//description
+		if (var_description=='') 
+		{
+				refresh_tab(0);
+				alert('Field \'Description\' cannot be null.');
+				set_focus(html_description);			
+				return false; 
+		}
+		if (var_description.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Description\' cannot have "<" character in the value.');
+				set_focus(html_description);	
+				return false; 										
+		}
+		if (var_description.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Description\' cannot have ">" character in the value.');
+				set_focus(html_description);	
+				return false; 												
+		}
+//readable
+	//no need to check.
+//writable
+	//no need to check.
+//help
+		if (var_help=='') obj.help='^';
+		if (var_help.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Help\' cannot have "<" character in the value.');
+				set_focus(html_help);	
+				return false; 										
+		}
+		if (var_help.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Help\' cannot have ">" character in the value.');
+				set_focus(html_help);	
+				return false; 												
+		}
+//group
+		if (var_group=='') 
+		{
+			alert('Field \'Group\' cannot be null.');
+			set_focus(html_group);
+			return false; 
+		}
+		if (var_group.indexOf("<")!=-1) //check"<>" first
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Group\' cannot have "<" character in the value.');
+				set_focus(html_group);	
+				return false; 										
+		}
+		if (var_group.indexOf(">")!=-1) 
+		{
+				refresh_tab(0);
+				alert('Field \'Variable Group\' cannot have ">" character in the value.');
+				set_focus(html_group);	
+				return false; 												
+		}
+		obj.group='remote|'+var_group;
+//optional flag (check vr & vro only)
+
+		var ffs_obj=obj.format.field_format_set; //get field format set
+		for (var i=0;i<ffs_obj.length;i++)
+		{
+				var fff_obj=ffs_obj[i].field_format_flag;	//get field format flag
+				var tmp_E=get_flag_value(fff_obj,'E'); //VR
+				var tmp_O=get_flag_value(fff_obj,'O'); //VRO
+				var tmp_fld_description=get_flag_value(fff_obj,'D');
+				var tmp_fld_help=get_flag_value(fff_obj,'H');
+
+				
+				var tmp_fld_type=ffs_obj.fld_type;		//cuz we add fld type here
+				if (tmp_fld_type=='') 
+				{
+						refresh_tab(1);
+						point_on_index(i);
+						alert('Field \'Field Type\' cannot be null.');
+						set_focus(html_FLD_TYPE);	
+						return false; 										
+				}
+						
+				
+				if (tmp_fld_description!=null)
+				{//check only != null
+						if (tmp_fld_description.indexOf("<")!=-1) //check"<>" first
+						{
+								refresh_tab(1);
+								point_on_index(i);
+								alert('Field \'Field Description\' cannot have "<" character in the value.');
+								set_focus(html_FLD_DESCRIPTION);	
+								return false; 										
+						}
+						if (tmp_fld_description.indexOf(">")!=-1) 
+						{
+								refresh_tab(1);
+								point_on_index(i);
+								alert('Field \'Field Description\' cannot have ">" character in the value.');
+								set_focus(html_FLD_DESCRIPTION);	
+								return false; 												
+						}
+				}
+				
+				if (tmp_fld_help!=null)
+				{//check only != null
+						if (tmp_fld_help.indexOf("<")!=-1) //check"<>" first
+						{
+								refresh_tab(1);
+								point_on_index(i);
+								alert('Field \'Field Help\' cannot have "<" character in the value.');
+								set_focus(html_FLD_HELP);	
+								return false; 										
+						}
+						if (tmp_fld_help.indexOf(">")!=-1) 
+						{
+								refresh_tab(1);
+								point_on_index(i);
+								alert('Field \'Field Help\' cannot have ">" character in the value.');
+								set_focus(html_FLD_HELP);	
+								return false; 												
+						}
+				}
+				
+				
+				if (tmp_E==null)
+				{
+					if (tmp_O!=null) 
+					{
+							refresh_tab(1);
+							point_on_index(i);
+							alert('Field \'Editor/Rendor\' cannot be null, when enabled.');
+							html_VR.focus();
+							return false; 							
+					}
+				}
+				else
+				{
+					if (tmp_O==null)
+					{
+							//refresh_tab(1);
+							//point_on_index(i);
+							//alert('Field \'Represetation Option\' cannot be null, when enabled.');
+							//html_VRO.focus();			
+							//return false; 											
+					}
+				}
+
+		}
+		
+//---		
+
+
+		
+//end
+		return true;
+}
+//========================================================3. input control ===================================================================================
+//========================================================4. the rest of the functions =======================================================================
+
+//get data structure from script
+function decode_variables_script(agg_script)
+{
+	//if ((agg_script.length>255)||(agg_script.length==0)) {return null;alert('over 255');} //Disable this section cuz the limitation is overcomed.
+	if (agg_script.length==0) {return null;alert('length=0 is not allow.');}
+
+	
+	//zero step
+	var base_script=new String();
+	base_script=agg_script.replace(/\s*[<]\s*/g, "<"); 			//clear all white space except it is inside certain word.
+	base_script=base_script.replace(/\s*[>]\s*/g, ">");
+	base_script=base_script.replace(/\s*[=]\s*/g, "=");
+	pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+	base_Array = pat_base.exec(base_script);
+	//if (base_Array==null) {alert('The script is corrupted.');return null;}	
+	if (base_Array==null) {return null;}			 	 
+	
+	//base layer
+	//1.start
+	var obj_variable = new Object;
+	obj_variable.name=base_Array[1];
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=base_Array[2];                										//record format(=field format set)
+	obj_variable.description=base_Array[7].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.readable=base_Array[8].replace(/(^[<]?)|([>]?$)/g, "");									//.replace(/(^[<]*)|([>]*$)/g, "");
+	obj_variable.writable=base_Array[9].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.help=base_Array[10].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.group=base_Array[11].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.iconId=base_Array[12].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+	
+	//second layer
+	//record format= (field format).....+ record format flags.
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;																							 //pattern of getting the rest of the flags in record format layer
+	//2.get each field format string
+	//push every field_format
+	arr_field_format =base_Array[2].match(pat_field_format);                          	 								 //separate all fields' formats
+	for (var i=0;i<arr_field_format.length;i++)
+	{
+			var tmp_obj = new Object;
+			tmp_obj.original_string=arr_field_format[i];
+			obj_variable.format.field_format_set.push(tmp_obj);
+	}
+	
+	//3.get the rest of the flag in second layer(record format layer) and push the values.
+	var tmp=base_Array[2].replace(pat_field_format,""); 											 	 			 		 //get the rest of the str, except all fields' formats.(get only field_format_set_flag)				 
+	//alert('get the rest of the script, except all fields formats. \r\n \r\n tmp='+tmp);		 //show the rest																			 
+	arr_layer2_flag=tmp.match(pat_record_format_flag);																		 //get the rest of the flags in second layer(record format without fieldformat set).
+	//push RF_flag
+	for (var i=0;i<arr_layer2_flag.length;i++)
+	{
+			obj_variable.format.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+
+
+	//third layer
+	//4.extract name and type form each single field format
+	//5.get all flags in each field format
+	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		//pat_field_format_detail.compile(pat_field_format_detail);	
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.format.field_format_set[i].fld_name=tmppArray[j]};//name
+			if (j==2) {obj_variable.format.field_format_set[i].fld_type=tmppArray[j]};//type
+		}
+		
+		
+		var tmppArray2=obj_variable.format.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.format.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.format.field_format_set[i].field_format_flag.push(fff_str); 
+		}
+	}
+	return obj_variable;	
+}
+
+//retrieve script string from script object
+function encode_variables_script(agg_structure)
+{
+	var result_string=new String();
+	result_string='';
+	if (agg_structure==null)
+	{
+			return null;			//if the structure object is null, rebuild only minimal data string that follows the reference.
+	}
+	var var_name='<'+agg_structure.name+'>';
+	var var_format='';
+	var var_description='<'+agg_structure.description+'>';
+	var var_readable='<'+agg_structure.readable+'>';
+	var var_writable='<'+agg_structure.writable+'>';
+	var var_help='<'+agg_structure.help+'>';
+	var var_group='<'+agg_structure.group+'>';
+	var var_iconid='<'+agg_structure.iconId+'>';
+	//1.Deal with 'Format' first.
+	//a.extract fields' definitions(field_format_set)
+	for (var i=0;i<agg_structure.format.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.format.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		result_string+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b.extract table flags
+	for (var i=0;i<agg_structure.format.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.format.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		result_string+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c.cover up format field (completed)
+	result_string='<'+result_string+'>';
+	//2.get to the top layer, push in the rest of the data.
+	result_string=var_name+result_string+var_description+var_readable+var_writable+var_help+var_group+var_iconid;
+	result_string='<R='+result_string+'>';
+	//if (external.Context.Target.C_SCRIPT==result_string) alert('they r equal');
+	//we don't check the length of the result here.
+	return result_string;
+}
+
+//return desired field_format_set_flag value
+function get_flag_value(arr,f_name)
+{
+	var flag_obj=new Object();
+	
+	for (var i=0;i<arr.length;i++) 
+	{
+			//This literation for flag S in field format
+			var tmp_arr=new Array();
+			if ((arr[i].substr(0,1)!="S")&&(arr[i].substr(0,1)!="V"))//&&(arr[i].substr(0,1)!="A"))
+			{
+				tmp_arr = arr[i].split("=");
+			}
+			else
+			{
+				
+				//var tmp_arr = arr[i].match(/<[^<>\s]+=[^<>\s]+>/g);
+				var first_found_index=new Number();
+				first_found_index=arr[i].indexOf('=');
+				if (first_found_index!=-1)
+				{
+					tmp_arr[0]=arr[i].slice(0,first_found_index);
+					tmp_arr[1]=arr[i].slice(first_found_index+1);
+					//alert(i+'  s-s  '+tmp_arr[0]+','+tmp_arr[1]);
+				}
+			}
+			if (tmp_arr.length<2) continue;
+			flag_obj[tmp_arr[0]]=tmp_arr[1];
+	}
+	
+	for (var Property in flag_obj)
+	{
+			if (Property == f_name)
+			return flag_obj[Property];
+	}
+	return null;
+}
+
+//for checking if there is a  desired falg inside the given string(tableproperty) 
+function has_desired_flag(src_Str, dFlag)
+{
+		var tmp_src_Str=src_Str;
+		var bln_fond=false;
+		var s = tmp_src_Str.indexOf(dFlag);
+		if (s!=-1)
+		bln_fond=true;
+		
+		return bln_fond;
+}
+
+//add option
+function addOption(sel,text,value)
+{ 
+	sel.options.add(new Option(text,value)); 
+} 
+
+//syn appearance and behavior. 
+//(use when the value of the SOE flag has changed.)
+function syn_field_sataus_changes()
+{
+	//for flag SEO
+	var chk_obj=document.getElementsByName("chkb_style");							
+	var BTN_SELECT=document.getElementById("btn_FLD_SELECTION");
+	var FLD_SEL=document.getElementById("edit_FLD_SELECTION");
+	var FLD_VR=document.getElementById("edit_FLD_VR");
+	var FLD_VRO=document.getElementById("edit_FLD_VRO");
+	
+	if (chk_obj[0].checked == true) 
+		{BTN_SELECT.disabled=false;FLD_SEL.style.backgroundColor='white';}
+	else
+		{BTN_SELECT.disabled=true;FLD_SEL.style.backgroundColor='#f2f2f2';}
+		
+	if (chk_obj[1].checked == true) 
+	{
+		FLD_VR.disabled=false;
+		FLD_VR.style.backgroundColor='white';
+		FLD_VRO.disabled=false;
+		FLD_VRO.style.backgroundColor='white';
+	}	
+	else
+	{
+		FLD_VR.disabled=true;
+		FLD_VR.style.backgroundColor='#f2f2f2';
+		FLD_VRO.disabled=true;
+		FLD_VRO.style.backgroundColor='#f2f2f2';
+	}
+}
+
+//The function is that 
+//make sure at most one or zero check box can be selected.
+function chk_style_option(chk_index)
+{
+	//The function exists for one purpose-Only allow one checkbox be checked, or none.
+	var chk_obj=document.getElementsByName("chkb_style");							//get chk array	
+	switch(chk_index)
+	{
+		case 0://0- means chkbox value of the flag "S" has been changed.
+			if (chk_obj[chk_index].checked == true) {chk_obj[1].checked=false;};
+		break;
+		case 1:
+			if (chk_obj[chk_index].checked == true) {chk_obj[0].checked=false;};
+		break;
+	}	
+	//add status change process
+	syn_field_sataus_changes();
+		
+}
+
+//EOF   function(for STG Library)
+function get_eof_index(stg_lib)
+{
+		var i=0;
+		for (i = 0; i < stg_lib.length; i++) 
+		{ 
+			if (typeof(stg_lib[i].CONFIG)!='undefined') 
+			{
+				return i;
+			}
+		}
+		return i;
+}
+
+//Set all fields to ''.
+//For addnew mode mainly. (Recovery to default)
+function set_flds_empty()
+{
+		var g_elements=new Object(); //group element
+		var chk_RW=document.getElementsByName("chkb_RW");									
+		var chk_style=document.getElementsByName("chkb_style");	
+		
+		g_elements.VAR_DESCRIPTION=document.getElementById("edit_VAR_DESCRIPTION");
+		g_elements.HELP=document.getElementById("edit_HELP");
+		g_elements.GROUP=document.getElementById("edit_GROUP");
+		g_elements.MIN=document.getElementById("edit_MIN"); 						//no need  min max for now.
+		g_elements.MAX=document.getElementById("edit_MAX");
+		g_elements.TBL_RULE=document.getElementById("edit_TBL_RULE");
+		g_elements.FLD_TYPE=document.getElementById("edit_FLD_TYPE");		//new field
+		g_elements.FLD_RULE=document.getElementById("edit_FLD_RULE");
+		g_elements.FLD_DESCRIPTION=document.getElementById("edit_FLD_DESCRIPTION");
+		g_elements.FLD_HELP=document.getElementById("edit_FLD_HELP");
+		g_elements.FLD_SELECTION=document.getElementById("btn_FLD_SELECTION");
+		g_elements.FLD_VR=document.getElementById("edit_FLD_VR");
+		g_elements.FLD_VRO=document.getElementById("edit_FLD_VRO");
+		g_elements.R=chk_RW[0];
+		g_elements.W=chk_RW[1];
+		g_elements.STY1=chk_style[0];
+		g_elements.STY2=chk_style[1];
+		//set to ''
+		g_elements.VAR_DESCRIPTION.value='';
+		g_elements.HELP.value='';
+		g_elements.GROUP.value='';
+		g_elements.MIN.value='';
+		g_elements.MAX.value='';
+		g_elements.TBL_RULE.value='';
+		g_elements.FLD_TYPE.value='';
+		g_elements.FLD_RULE.value='';
+		g_elements.FLD_DESCRIPTION.value='';
+		g_elements.FLD_HELP.value='';
+		g_elements.FLD_SELECTION.value='';
+		g_elements.FLD_VR.value='';
+		g_elements.FLD_VRO.value='';
+		g_elements.R.checked = false;
+		g_elements.W.checked = false;
+		g_elements.STY1.checked = false;
+		g_elements.STY2.checked = false;
+}
+
+//enable or disable elements(for variable add function)
+function disable_elements(bln)
+{
+		//except varname vartype. true=disable, false=enabled
+		var g_elements=new Object(); //group element
+		var chk_RW=document.getElementsByName("chkb_RW");
+		var chk_TBL_PROPERTY=document.getElementsByName("chkb_TBL_property");	
+		var chk_FLD_PROPERTY=document.getElementsByName("chkb_FLD_property");			
+		var chk_style=document.getElementsByName("chkb_style");	
+		
+		g_elements.VAR_DESCRIPTION=document.getElementById("edit_VAR_DESCRIPTION");
+		g_elements.HELP=document.getElementById("edit_HELP");
+		g_elements.GROUP=document.getElementById("edit_GROUP");
+		g_elements.MIN=document.getElementById("edit_MIN"); //no need  min max for now.
+		g_elements.MAX=document.getElementById("edit_MAX");
+		g_elements.TBL_RULE=document.getElementById("edit_TBL_RULE");
+		g_elements.FLD_TYPE=document.getElementById("edit_FLD_TYPE");		//new field
+		g_elements.FLD_RULE=document.getElementById("edit_FLD_RULE");
+		g_elements.FLD_DESCRIPTION=document.getElementById("edit_FLD_DESCRIPTION");
+		g_elements.FLD_HELP=document.getElementById("edit_FLD_HELP");
+		//g_elements.RELEASE_CONS=document.getElementById("btn_Release_Cons");
+		g_elements.FLD_SELECTION=document.getElementById("btn_FLD_SELECTION");
+		g_elements.FLD_VR=document.getElementById("edit_FLD_VR");
+		g_elements.FLD_VRO=document.getElementById("edit_FLD_VRO");
+		g_elements.R=chk_RW[0];
+		g_elements.W=chk_RW[1];
+		g_elements.TBLP1=chk_TBL_PROPERTY[0];					//edit_TBL_RULE
+		g_elements.TBLP2=chk_TBL_PROPERTY[1];					//edit_TBL_RULE
+		
+		g_elements.FLDP1=chk_FLD_PROPERTY[0];					//edit_FLD_RULE
+		g_elements.FLDP2=chk_FLD_PROPERTY[1];
+		g_elements.FLDP3=chk_FLD_PROPERTY[2];
+		g_elements.FLDP4=chk_FLD_PROPERTY[3];
+		g_elements.FLDP5=chk_FLD_PROPERTY[4];
+		g_elements.FLDP6=chk_FLD_PROPERTY[5];
+		
+		
+		
+		g_elements.STY1=chk_style[0];
+		g_elements.STY2=chk_style[1];
+		
+		for (var property in g_elements)
+		{
+				if (bln==true)
+				{
+						if ((property!='RELEASE_CONS')&&(property!='FLD_SELECTION')&&(property!='R')&&(property!='W'))
+						{
+								if ((property!='TBLP1')&&(property!='TBLP2')&&(property!='FLDP1')&&(property!='FLDP2')&&(property!='FLDP3')&&(property!='FLDP4')&&(property!='FLDP5')&&(property!='FLDP6'))
+								g_elements[property].style.backgroundColor='#fafafa';
+						}
+				}
+				else
+				{
+						if((property!='RELEASE_CONS')&&(property!='FLD_SELECTION')&&(property!='R')&&(property!='W'))
+						{
+								if ((property!='TBLP1')&&(property!='TBLP2')&&(property!='FLDP1')&&(property!='FLDP2')&&(property!='FLDP3')&&(property!='FLDP4')&&(property!='FLDP5')&&(property!='FLDP6'))
+								g_elements[property].style.backgroundColor='#ffffff';
+						}
+				}
+				if (property=='MIN') continue;if (property=='MAX') continue;
+				g_elements[property].disabled=bln;
+		}
+		if (bln==false) syn_field_sataus_changes();   //if enabled(back to normal)
+}
+
+//set focus
+function set_focus(elm)
+{
+    if(typeof(elm) == 'string') 
+    {
+        elm = xGetElementById(elm);
+    }
+    if (elm) 
+    {     
+        elm.focus();
+        elm.select();
+    }
+}
+
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='180px'; //def 15
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='11';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9'; 
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='180px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='12';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#fffAAA';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.90'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)|(\s*$)/g, ""); //
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)/g, "");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(\s*$)/g, "");
+}
+
+
+//refresh tab
+function refresh_tab(li_index)
+{
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+</script>
+
+
+</BODY>
+</HTML>

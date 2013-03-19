@@ -1,0 +1,209 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			DS1101W DEVICE
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#define PLATFORM_ID 18
+
+'--------------------------------------------------------------------
+enum pl_io_num 
+	PL_IO_NUM_0_RX0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 0 (P0.0), aslo the RX/W1in/din input of the serial port 0 and the interrupt line 0.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_1_TX0_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 1 (P0.1), also the TX/W1out/dout output of the serial port 0 and the interrupt line 1.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_2_RX1_INT2,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 2 (P0.2), aslo the RX/W1in/din input of the serial port 1 and the interrupt line 2.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_3_TX1_INT3,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 3 (P0.3), also the TX/W1out/dout output of the serial port 1 and the interrupt line 3.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_4_RX2_INT4,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 4 (P0.4), aslo the RX/W1in/din input of the serial port 2 and the interrupt line 4.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_5_TX2_INT5,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 5 (P0.5), also the TX/W1out/dout output of the serial port 2 and the interrupt line 5.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_6_RX3_INT6,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'General-purpose I/O line 6 (P0.6), aslo the RX/W1in/din input of the serial port 3 and the interrupt line 6.<br><br>
+					'When this serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART) and is enabled (ser.enabled= 1- YES)
+					'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+					'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_7_TX3_INT7,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Not implemented. 				
+
+	PL_IO_NUM_8_PWROUT,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Controls the power output on pin 9 of the DB9M connector.<br><br>
+					'Power will be ON when this output is enabled (io.enabled= 1- YES) and set to LOW (io.state= 0- LOW).
+
+	PL_IO_NUM_9,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Pin 8 on the wireless interface connector.
+	
+	PL_IO_NUM_10,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Pin 6 on the wireless interface connector.
+		
+	PL_IO_NUM_11,			'<b>PLATFORM CONSTANT.</b><br><br>
+					'The RST line of the wireless interface.
+	 
+	PL_IO_NUM_12,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'The DI line of the wireless interface.
+	
+	PL_IO_NUM_13,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'The DO line of the wireless interface.
+	
+	PL_IO_NUM_14,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'The CLK line of the wireless interface.
+	
+	PL_IO_NUM_15,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'The CS line of the wireless interface.
+	
+	PL_IO_NUM_16,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Pin 9 on the wireless interface connector.
+
+	PL_IO_NUM_17_EMPTY,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Not implemented.
+
+	PL_IO_NUM_18_EMPTY,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Not implemented.
+
+	PL_IO_NUM_19_SB1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'LED bar, LED#1 (the "weakest signal" LED).
+	
+	PL_IO_NUM_20_SB2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'LED bar, LED#2.
+
+	PL_IO_NUM_21_SB3,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'LED bar, LED#3.
+
+	PL_IO_NUM_22_SB4,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'LED bar, LED#4.
+
+	PL_IO_NUM_23_SB5,		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'LED bar, LED#5 (the "strongest signal" LED).
+
+	PL_IO_NUM_24_OLED_D0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 0 (P0.0).
+	
+	PL_IO_NUM_25_OLED_D1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 1 (P0.1).
+
+	PL_IO_NUM_26_OLED_D2,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 2 (P0.2).
+
+	PL_IO_NUM_27_OLED_D3,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 3 (P0.3).
+
+	PL_IO_NUM_28_OLED_D4,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 4 (P0.4).
+
+	PL_IO_NUM_29_OLED_D5,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 5 (P0.5).
+
+	PL_IO_NUM_30_OLED_D6,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 6 (P0.6).
+
+	PL_IO_NUM_31_OLED_D7,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED dispay data bus, line 7 (P0.7).
+
+	PL_IO_NUM_32_OLED_CS,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED display, CS control line.
+	
+	PL_IO_NUM_33_OLED_RD,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED display, RD control line.
+
+	PL_IO_NUM_34_OLED_WR,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED display, WR control line.
+
+	PL_IO_NUM_35_OLED_DC,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED display, DC control line.
+
+	PL_IO_NUM_36_OLED_RST,	'<b>PLATFORM CONSTANT.</b><br><br> 
+					'OLED display, RST control line.
+
+	PL_IO_NUM_37_CO,		'<b>PLATFORM CONSTANT.</b><br><br>
+					'General-purpose I/O line 23 (does not belong to any 8-bit port), also a square wave output controlled by the 
+					'beep object. This output is driving a buzzer.<br><br>
+					'When the beeper pattern starts playing, the line is configured as output automatically. When the beeper pattern
+					'stops playing, the output returns to the input/output and high/low state that it had before the pattern started playing.
+
+	PL_IO_NULL			'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL line that does not physically exist.
+					'The state of this line is always detected as LOW. Setting this line has no effect.  
+end enum
+
+'--------------------------------------------------------------------
+enum pl_io_port_num
+	PL_IO_PORT_NUM_0		'<b>PLATFORM CONSTANT.</b><br><br> 
+					'8-bit port 0, contains I/O lines 24-31 (the data bus of the OLED display).
+end enum
+
+'--------------------------------------------------------------------
+enum pl_int_num 
+	PL_INT_NUM_0,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Interrupt line 0 (mapped to I/O line 0).<br><br>
+
+	PL_INT_NUM_1,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Interrupt line 1 (mapped to I/O line 1).<br><br>
+
+	PL_INT_NUM_2,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Interrupt line 2 (mapped to I/O line 2).<br><br>
+
+	PL_INT_NUM_3,			'<b>PLATFORM CONSTANT.</b><br><br> 
+					'Interrupt line 3 (mapped to I/O line 3).<br><br>
+
+	PL_INT_NUM_4,			'<b>PLATFORM CONSTANT.</b><br><br>
+					'Interrupt line 4 (mapped to I/O line 4).
+
+	PL_INT_NUM_5,			'<b>PLATFORM CONSTANT.</b><br><br>
+					'Interrupt line 5 (mapped to I/O line 5).
+
+	PL_INT_NUM_6,			'<b>PLATFORM CONSTANT.</b><br><br>
+					'Interrupt line 6 (mapped to I/O line 6).
+
+	PL_INT_NUM_7,			'<b>PLATFORM CONSTANT.</b><br><br>
+					'Not implemented.
+
+	PL_INT_NULL			'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL interrupt line that does not physically exist.
+				
+end enum
+
+'--------------------------------------------------------------------
+enum pl_sock_interfaces
+	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
+	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP=3,		'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
+end enum
+
+'====================================================================
+include "..\GEN.tph"
+include "..\SYS-1xxx.tph"
+include "..\NET.tph"
+include "..\PPPOE.tph"
+include "..\IO-1xxx.tph"
+include "..\FD.tph"
+include "..\BEEP.tph"
+include "..\RTC.tph"
+include "..\LCD.tph"
+include "..\WLN.tph"

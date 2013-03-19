@@ -1,0 +1,166 @@
+'===========================================================================
+'					ui_tbl_box library
+'
+'	required device specific properties and methods:
+'	depending libraries:
+'		ui_input_box
+'		ui_list_box
+'		ui_msg_box
+'		tbles
+'
+'===========================================================================
+
+#ifndef MAX_DISPLAY_NUM_FIELD
+#define MAX_DISPLAY_NUM_FIELD 5
+#endif
+
+#ifndef MAX_FLD_NAME_LEN
+#define MAX_FLD_NAME_LEN 8
+#endif
+
+#ifndef INPUT_VALUE_LEN
+#define INPUT_VALUE_LEN 32
+#endif
+
+#ifndef UTB_VER_SPACING
+#define UTB_VER_SPACING 3
+#endif
+
+#ifndef UTB_HOR_SPACING
+#define UTB_HOR_SPACING 3
+#endif
+
+#ifndef INVALID_FLAG
+#define INVALID_FLAG chr(0)
+#endif
+
+#ifndef COMMA
+#define COMMA 44
+#endif
+
+#ifndef TAB
+#define TAB 9
+#endif
+
+#ifndef MSG_BOX_X
+#define MSG_BOX_X 0 
+#endif
+
+#ifndef MSG_BOX_Y
+#define MSG_BOX_Y 0
+#endif
+
+#ifndef MSG_BOX_W
+#define MSG_BOX_W lcd.width
+#endif
+
+#ifndef MSG_BOX_H
+#define MSG_BOX_H lcd.height
+#endif
+
+#ifndef LCD_CURSORCOLOR
+#define LCD_CURSORCOLOR 63080
+#endif
+
+#ifndef CURSOR_BAR_LEN_OFFSET
+#define CURSOR_BAR_LEN_OFFSET 2
+#endif
+
+#ifndef LCD_DISABLE_FORECOLOR
+#define LCD_DISABLE_FORECOLOR 33840
+#endif
+
+#ifndef LCD_FORECOLOR
+#define LCD_FORECOLOR 65535
+#endif
+
+#ifndef MENU_IB_INSERT
+#define MENU_IB_INSERT yes
+#endif
+
+#ifndef STD_INPUT_WAIT_TIME
+#define STD_INPUT_WAIT_TIME 20 'in 0.5 seconds
+#endif
+
+#ifndef LIST_BOX_X
+#define LIST_BOX_X 0
+#endif
+
+#ifndef LIST_BOX_Y
+#define LIST_BOX_Y 0
+#endif
+
+#ifndef LIST_BOX_W
+#define LIST_BOX_W lcd.width
+#endif
+
+#ifndef LIST_BOX_H
+#define LIST_BOX_H lcd.height
+#endif
+
+#ifndef LCD_BACKCOLOR
+#define LCD_BACKCOLOR 0
+#endif
+
+const UNEDITABLE_EMPTY="The table is empty."
+const EDITABLE_EMPTY="The table is empty. Would you like to add a new record?"
+const DISK_ERROR="Disk error!`Table data is corrupted."
+const NO_MATCH_FOUND="No matching record found."
+const TABLE_BOTTOM="You have reached the bottom of the table."
+const TABLE_TOP="You have reached the top of the table."
+const TABLE_FULL="The table is full."
+const TABLE_INVALID_FIELD="Invalid field value."
+const TABLE_KEY_VIOLATION="Saving new data would result in a duplicate record."
+const TABLE_SYS_ERROR="System error."
+const MSG_PROCEED="Do you wish to proceed with this operation?"
+
+enum ui_tbl_box_results
+	TBL_BOX_OK,
+	TBL_BOX_NOT_FOUND,
+	TBL_BOX_DISK_ERROR
+end enum
+
+enum ui_tbl_box_states
+	TBL_BOX_STATE_NORMAL,
+	TBL_BOX_STATE_EMPTY,
+	TBL_BOX_STATE_ADD,
+	TBL_BOX_STATE_EDIT,
+	TBL_BOX_STATE_MENU,
+	TBL_BOX_STATE_FAIL,
+	TBL_BOX_STATE_EXIT
+end enum
+
+enum ui_tbl_add_op
+	TBL_BOX_ADD_NONE,
+	TBL_BOX_ADD_CANCEL,
+	TBL_BOX_ADD_NEXT,
+	TBL_BOX_ADD_EDIT,
+	TBL_BOX_ADD_SAVE
+end enum
+
+enum ui_tbl_normal_op
+	TBL_BOX_NORMAL_NONE,
+	TBL_BOX_NORMAL_CLOSE,
+	TBL_BOX_NORMAL_PREV,
+	TBL_BOX_NORMAL_NEXT,
+	TBL_BOX_NORMAL_MORE
+end enum
+
+enum ui_tbl_edit_op
+	TBL_BOX_EDIT_NONE,
+	TBL_BOX_EDIT_CANCEL,
+	TBL_BOX_EDIT_NEXT,
+	TBL_BOX_EDIT_EDIT,
+	TBL_BOX_EDIT_SAVE
+end enum
+
+type item_data_type
+	field_name as string(MAX_FLD_NAME_LEN)
+	field_input_type as string(1)
+	field_display_name as string(10)
+	field_description as string(30)
+	field_value as string(INPUT_VALUE_LEN)
+	field_input_data as string
+end type
+
+declare function ui_tbl_box(x_coord as word, y_coord as word, width as word, height as word, item_data as string(60)) as ui_tbl_box_results

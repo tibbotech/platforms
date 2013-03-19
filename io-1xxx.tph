@@ -1,0 +1,184 @@
+'**************************************************************************************************
+'		IO (Input/output) object
+'**************************************************************************************************
+
+object io
+'The I/O object controls your device's individual I/O lines and ports. Each port groups eight I/O lines. You can control the
+'state of each line or entire port. To function as an output, a particular line must be "enabled" (see
+'<font color="maroon">'<b>io.enabled </b></font>,
+'<font color="maroon"><b>io.portenabled </b></font>properties).<br><br>
+'Notice that some lines are shared with inputs/outputs of special function blocks. Check comments for <font color="olive">
+'<b>pl_io_num </b></font>constants for details.<br><br>
+'There are two ways to select the line or port that you want to work with.
+'<font color="maroon"><b>Io.enabled </b></font> and
+'<font color="maroon"><b>io.state </b></font>properties
+'work with the I/O line previously selected through the 
+'<font color="maroon"><b>io.num </b></font>property.
+'Similarly, <font color="maroon"><b>io.portenabled </b></font> and
+'<font color="maroon"><b>io.portstate </b></font>
+'work with the 8-bit port previously selected through the 
+'<font color="maroon"><b>io.portnum </b></font>property. <br><br>
+'There is also a set of methods that allows you to manipulate a particular I/O line (port) directly, without the need to 
+'pre-select it first. These are
+'<font color="maroon"><b>io.lineset</b></font>,
+'<font color="maroon"><b>io.lineget</b></font>,
+'<font color="maroon"><b> io.invert</b></font>,
+'<font color="maroon"><b>io.portset</b></font>, and 
+'<font color="maroon"><b>io.portget</b></font>.
+
+'--------------------------------------------------------------------
+event(19)  on_io_int(linestate as byte)
+'<b>EVENT of the io object.</b><br><br>
+'Generated when the change of state (<b>HIGH-to-LOW </b>or <b>LOW-to-HIGH</b>) on one of the enabled interrupt lines is detected.<br><br>
+'Each bit of the linestate argument corresponds to one interrupt line in the order that these lines are declared in the pl_int_num enum.
+'<br><br>
+'Interrupt lines are enabled/disabled through the
+'<font color="maroon"><b>io.intenabled </b></font>property.
+'<br><br>
+'Another <font color="teal"><b>on_int_ev </b></font>
+'event is never generated until the previous one is processed.
+
+'--------------------------------------------------------------------
+property io.num
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_IO_NUM_0 (I/O line 0).</b><br><br>
+'Selects a particular I/O line to be manipulated through the <font color="maroon"><b>io.enabled </b></font>and 
+'<font color="maroon"><b>io.state </b></font>properties. 
+	get = syscall(170) as pl_io_num
+	set = syscall(171) (num as pl_io_num)
+end property
+
+'--------------------------------------------------------------------
+property io.portnum
+'<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- PL_IO_PORT_NUM_0 (port 0).</b><br><br>
+'Selects a particular I/O port to be manipulated through the <font color="maroon"><b>io.portenabled </b></font>and 
+'<font color="maroon"><b>io.portstate </b></font>properties. Each port groups eight I/O lines.
+	get = syscall(297) as pl_io_port_num
+	set = syscall(298) (num as pl_io_port_num)
+end property
+
+'--------------------------------------------------------------------
+property io.state
+'<b>PROPERTY (ENUM, BYTE). </b><br><br>
+'Sets/returns the state of currently selected I/O line. Selection is made through the
+'<font color="maroon"><b>io.num </b></font>property.<br><br>
+'See also: <font color="maroon"><b>io.enabled</b></font>.
+	get = syscall(172) as low_high
+	set = syscall(173) (state as low_high)
+end property
+
+'--------------------------------------------------------------------
+property io.portstate
+'<b>PROPERTY (BYTE).</b><br><br>
+'Sets/returns the state of currently selected 8-bit I/O port. Each bit of the property value corresponds to one I/O line of the port.
+'Port selection is made through the
+'<font color="maroon"><b>io.portnum </b></font>property.<br><br>
+'See also:
+'<font color="maroon"><b>io.portenabled</b></font>.
+	get = syscall(299) as byte
+	set = syscall(300) (state as byte)
+end property
+
+'--------------------------------------------------------------------
+property io.enabled
+'<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
+'Sets/returns the state of the output buffer for the currently selected I/O line:
+'<font color="olive"><b>0- NO (disabled, I/O line works as an input)</b></font>,
+'<font color="olive"><b>1- YES (enabled, I/O line works as an output)</b></font>. 
+'I/O line selection is made through the <font color="maroon"><b>io.num </b></font>property.<br><br> 
+'See also: <font color="maroon"><b>io.state </b></font>property.
+	get = syscall(167) as no_yes
+	set = syscall(187) (state as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property io.portenabled
+'<b>PROPERTY (BYTE). DEFAULT VALUE= 0.</b><br><br>
+'Sets/returns the state of the output buffers for the currently selected 8-bit I/O port. Each bit of the value corresponds to
+'one I/O line. The output buffer for the line is on when the bit is set to 1. Port selection is made through the
+'<font color="maroon"><b>io.portnum </b></font> property.<br><br>
+'See also:
+'<font color="maroon"><b>io.portstate</b></font>.
+	get = syscall(301) as byte
+	set = syscall(302) (state as byte)
+end property
+
+'--------------------------------------------------------------------
+syscall(303) io.invert(num as pl_io_num)
+'<b>METHOD.</b><br><br>
+'Inverts the state of the I/O line specified by the num argument.<br><br>
+'No line pre-selection with the
+'<font color="maroon"><b>io.num </b></font> property is required and the value of the
+'<font color="maroon"><b>io.num </b></font>will not be changed.<br><br>
+'See also:
+'<font color="maroon"><b>io.lineget</b></font>,
+'<font color="maroon"><b>io.lineset</b></font>.
+
+'--------------------------------------------------------------------
+syscall(304) io.lineget(num as pl_io_num) as low_high
+'<b>METHOD.</b><br><br>
+'Returns the state of the I/O line specified by the num argument.<br><br>
+'No line pre-selection with the
+'<font color="maroon"><b>io.num </b></font> property is required and the value of the
+'<font color="maroon"><b>io.num </b></font>will not be changed.<br><br>
+'See also:
+'<font color="maroon"><b>io.lineset</b></font>,
+'<font color="maroon"><b>io.invert</b></font>.
+
+'--------------------------------------------------------------------
+syscall(305) io.lineset(num as pl_io_num, state as low_high)
+'<b>METHOD.</b><br><br>
+'Sets the I/O line specified by the num argument HIGH or LOW as specified by the state argument.<br><br>
+'No line pre-selection with the
+'<font color="maroon"><b>io.num </b></font> property is required and the value of the
+'<font color="maroon"><b>io.num </b></font>will not be changed.<br><br>
+'See also:
+'<font color="maroon"><b>io.lineget</b></font>,
+'<font color="maroon"><b>io.invert</b></font>.
+
+'--------------------------------------------------------------------
+syscall(306) io.portget(num as pl_io_port_num) as byte
+'<b>METHOD.</b><br><br>
+'Returns the state of the 8-bit I/O port specified by the num argument. Each bit of the returned value corresponds to one member I/O line of the port.<br><br>
+'No port pre-selection with the
+'<font color="maroon"><b>io.portnum </b></font> property is required and the value of the
+'<font color="maroon"><b>io.portnum </b></font>will not be changed.<br><br>
+'See also:
+'<font color="maroon"><b>io.portset</b></font>.
+
+'--------------------------------------------------------------------
+syscall(307) io.portset(num as pl_io_port_num, state as byte)
+'<b>METHOD.</b><br><br>
+'Sets the 8-bit I/O port specified by the num argument to the state specified by the state argument.
+'Each bit of the value of the state argument corresponds to one member I/O line of the port.<br><br>
+'No port pre-selection with the
+'<font color="maroon"><b>io.portnum </b></font> property is required and the value of the
+'<font color="maroon"><b>io.portnum </b></font>will not be changed.<br><br>
+'See also:
+'<font color="maroon"><b>io.portget</b></font>.
+
+'--------------------------------------------------------------------
+property io.intnum
+'<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- PL_INT_NUM_0 (interrupt line 0).</b><br><br>
+'Sets/returns the number of currently selected interrupt line. Selected interrupt line can be enabled or disabled using the
+'<font color="maroon"><b>io.intenabled </b></font> property.<br><br>
+'Change of state (<b>HIGH-to-LOW </b>or <b>LOW-to-HIGH</b>) of any enabled interrupt line leads to the
+'<font color="teal"><b>on_int_ev </b></font> event
+'generation.
+	get = syscall(15) as pl_int_num
+	set = syscall(16) (num as pl_int_num)
+end property
+
+'--------------------------------------------------------------------
+property io.intenabled
+'<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
+'Enables/disables currently selected interrupt line:
+'<font color="olive"><b>0- NO (disabled)</b></font>,
+'<font color="olive"><b>1- YES (enabled)</b></font>.
+'Interrupt line selection is made through the
+'<font color="maroon"><b>io.intnum </b></font> property.<br><br>
+'Change of state (<b>HIGH-to-LOW </b>or <b>LOW-to-HIGH</b>) of any enabled interrupt line leads to the
+'<font color="teal"><b>on_int_ev </b></font> event
+'generation. State change of disabled interrupt lines produces no effect.  
+	get = syscall(419,"80.TDL"+) as no_yes
+	set = syscall(420,"80.TDL"+) (state as no_yes)
+end property

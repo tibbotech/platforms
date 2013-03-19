@@ -1,0 +1,1736 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+<title>SETTING INTERFACE</title>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+
+</head>
+<body oncontextmenu="return false" onkeydown="javascript:KeyDown(this);" >
+
+<!-- ===============================================================HTML BODY================================================================================================ -->
+<!-- ---------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ---------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+
+
+<div class="posttext">
+		<img class="imgleft" src="tdoc.ico" width="30" height="32"  /></img> <div id="VersionTag" class="verRight">Configurator Version(STG) - 0.9.1.c &#160;&#160;</div>
+		<h2>Library Options (mouse over for hint)</h2>
+		<div id="related_stg">
+					<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="reload_config();validate_all();">  
+					<span title="header=[<img src='info.ico' width='20' height='20'></img>        Debug Printing] body=[When checked, causes debug information to be printed into the output pane. Debug printing only works when the project is in the debug mode. However, still uncheck this option for release, as this will save memory and code space.]">
+					Debug Printing</span>&nbsp;&nbsp;</p>
+					
+
+	  			<p><input type="radio"  name="mem_type" onclick ="reload_config();validate_all();" value="EEPROM" checked>
+	  			<span title="header=[<img src='info.ico' width='20' height='20'></img>        Use EEPROM] body=[Non-volatile settings will be stored in the EEPROM.]">
+	  			Use EEPROM </span>
+	  			
+	  			<input type="radio"  name="mem_type" onclick ="reload_config();validate_all();" value="FD" > 
+	  			<span title="header=[<img src='info.ico' width='20' height='20'></img>        Use Flash Disk] body=[Non-volatile settings will be stored in the file on the flash disk.]">
+	  			Use Flash Disk</span> </p>
+	  			
+	  				<form>
+          	<div id="fd_file_div">
+          			<p><span title="header=[<img src='info.ico' width='20' height='20'></img>        Filename] body=[If you opt for storing non-volatile settings on the flash disk, then you can specify the filename for the file that will store settings data. Leave empty to use the default filename ('settings.dat').]">
+          			Filename:</span>
+          		<input type="text" ID="fd_filename"  onpropertychange="chk_if_fd_changed(this);"  maxlength="20" /></p>
+						</div>
+						</form>
+					
+					
+	  			<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="reload_config();validate_all();">  
+	  			<span title="header=[<img src='info.ico' width='20' height='20'></img>        Timestamp] body=[When checked, enables saving of date and time of the most recent value modification for each setting (one timestamp applies to all setting members).]">
+	  			Timestamp</span>&nbsp;&nbsp;</p>
+	  			
+
+					<!-- --------------------------------------------------------------------- -->
+					<!-- Redundancy: -->
+					<p>
+						<span title="header=[<img src='info.ico' width='20' height='20'></img>        Redundancy:] body=[Enables or disable two independent copies of setting data to be stored for improved reliability. Enabling this option doubles required non-volatile memory space.]">Redundancy:</span>
+						<select ID="sel_Redundancy" style="width: 190px" onChange="reload_config();validate_all();"> 
+									<option value="0">0 - No redundancy</option> 
+									<option value="1">1 - Two copies for EEPROM</option> 
+									<option value="2">2 - Two copies for ALL</option> 
+						</select>
+					</p>
+					<!-- --------------------------------------------------------------------- -->
+	  			<!-- <script>show_config();</script> -->
+	  			
+	  			
+
+	  			
+		</div>
+</div>
+
+
+
+
+<div class="posttext">
+		<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img>
+		<h2>Setting Definitions</h2> 
+
+		<p>
+		<button id='testbutton'  style="WIDTH: 80px; HEIGHT: 25px ;Display:none" onclick = "">test</button>&nbsp;
+		<button id="btn_add" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Add();">Add</button>&nbsp;
+		<button id="btn_edit" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;
+		<button id="btn_del" style="WIDTH: 80px; HEIGHT: 25px " onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Insert_Before();">Insert</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('up');">Move Up</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('down');">Move Down</button>&nbsp;
+<!-- 
+		<script>
+				document.getElementById("fd_filename").value=old_fd_file_name;//Don't ask me why(for on_property_change)
+		</script>
+ -->
+		</p>
+		<p>
+						<table border="1" class="cls_main_table" id ="my_table" >
+									<tr style="background-color:#FFFFFF">
+									<th>Name</th>
+									<th>Storage</th>
+									<th>Data type</th>
+									<th>Member(s)</th>
+									<th>P1(min)</th>
+									<th>P2(max)</th>
+									<th>Ini mode </th>
+									<th>Default value</th>
+									<th>Comment</th>
+									<th bgcolor=#F2F2F2>Status</th>
+									</tr>
+						</table>
+		</p>
+		<p>
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Add();">Add</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Insert_Before();">Insert</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('up');">Move Up</button>&nbsp;
+		<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('down');">Move Down</button>&nbsp;
+		</p>
+</div>
+
+				
+
+<div class="posttext">
+<img class="imgleft" src="tdoc.ico" width="30" height="32"  /></img>
+<h2>Summary Report</h2>
+		<div id="summary_report">
+				<!-- <script>chk_corrupt();validate_all();point_on_first();</script> -->
+		</div>
+</div>
+
+
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+
+var old_XText= new Object; 							//for checking modify-flag
+var stg_config = new Array;
+var changed_flag=false;
+var final_err_report_str=new String(); 	//from final validation
+
+//function settings
+var pass_validation=false;
+var STG_TIMESTAMP=0;
+var STG_REDUNDANCY=0;
+var STG_STORAGE_MEMORY=0;
+
+//validation settings(#define)
+var STG_RAM_ARRAY_SIZE=0;
+var STG_MAX_NUM_SETTINGS=0;
+var STG_MAX_SETTING_NAME_LEN=0;
+var STG_MAX_SETTING_VALUE_LEN=0;
+
+//Report of setting number
+var NUMBER_OF_SETTINGS=0;
+var non_volatile_size=1;
+var volatile_size=0;
+
+//return alias
+var field={storage:0,data_type:1};
+var def_stg={STG_RAM_ARRAY_SIZE:0,STG_MAX_NUM_SETTINGS:1,STG_MAX_SETTING_NAME_LEN:0,STG_MAX_SETTING_VALUE_LEN:0}; //for generatiing setting definition for 'include'.
+var stor_size={EM500W:180,EM1206:2020,EM1206W:2020}; 
+var ram_size={EM500W:180,EM1206:2020,EM1206W:2020};
+
+
+var Selected_Arr=new Array();
+var old_fd_file_name=new String; //for checking if the value has changed.
+var old_XText=duplicate_xtext(); //for checking changes
+
+
+
+show_config();
+load_table_def();
+chk_corrupt();
+validate_all();
+point_on_first();
+
+//========================================================0. General Operations =======================================================================================
+function load_table_def()
+{	
+		var obj_record=external.XText;
+		var html_table =document.getElementById("my_table");
+		
+		if ( html_table.rows.length > 1) //clear all if in case we may reload it.
+		{
+				
+				var tmp_length=html_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					html_table.deleteRow(1);
+				}
+				
+		}
+		
+		var eof=get_eof_index();
+		for (var i = 0; i < eof; i++)
+		{
+			var Row = document.getElementById("my_table").insertRow();
+	
+			Row.onmousedown = function() { Multi_select(this); }
+			Row.ondblclick = function() { Edit(this); }
+			Row.insertCell(0).innerHTML = obj_record[i].NAME;
+			Row.insertCell(1).innerHTML = ret_alias(field.storage,obj_record[i].STORAGE);
+			Row.insertCell(2).innerHTML = ret_alias(field.data_type,obj_record[i].TYPE);
+			Row.insertCell(3).innerHTML = obj_record[i].MEMBER;
+			Row.insertCell(4).innerHTML = obj_record[i].P1;
+			Row.insertCell(5).innerHTML = obj_record[i].P2;
+			Row.insertCell(6).innerHTML = obj_record[i].INI;
+			Row.insertCell(7).innerHTML = obj_record[i].DEFVAL;
+			var tmp_tbl_c=obj_record[i].C;
+			if (typeof(tmp_tbl_c)=='undefined')  tmp_tbl_c='&nbsp;';	//for comment(if null)
+			if (tmp_tbl_c=='')  tmp_tbl_c='&nbsp;';										//for comment(if null)
+			Row.insertCell(8).innerHTML = tmp_tbl_c;
+			Row.insertCell(9).innerHTML = '&nbsp;'; //must add this (status)
+			Row.cells(9).style.backgroundColor="#F2F2F2";
+		}
+}
+
+//summary report
+function show_summary_report(ok_flag)
+{
+	var summary_str=new String;
+	var table =document.getElementById("my_table");
+  var rows = Number(table.rows.length)-1;
+
+	summary_str="";
+	var STG_MAX_NUM_SETTINGS=rows                //external.XText.length;//document.getElementById("my_table").rows.length-1;
+	if (ok_flag)
+	{
+		summary_str='<p>Number of settings:&nbsp;&nbsp;'+STG_MAX_NUM_SETTINGS+'</p>';
+		summary_str+='<p>Non-volatile memory space required:&nbsp;&nbsp;'+non_volatile_size+'</p>';
+		summary_str+='<p>RAM(volatile memory)space required:&nbsp;&nbsp;'+STG_RAM_ARRAY_SIZE+'</p>';
+	}
+	else
+	{
+		summary_str='<p>Setting definitions contain invalid data and the report cannot be generated.</p>';	
+		if (final_err_report_str!='') summary_str+=final_err_report_str;
+	}
+	if (get_eof_index()==0) summary_str='<p>Definition table is empty, can\'t generate report.</p>';
+	document.getElementById('summary_report').innerHTML=summary_str;
+}
+
+//show validation status
+function show_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("my_table").rows[i+1]
+		if (!err_array[i])
+		{
+			Row.cells(9).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			Row.cells(9).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//onproperty changed
+function chk_if_fd_changed(file_obj)
+{
+	 	if (old_fd_file_name!=file_obj.value)
+	 	{
+	 		//alert('changed-old_fd_file_name='+old_fd_file_name+',file_obj.value='+file_obj.value);
+	 		old_fd_file_name=file_obj.value;
+		 	reload_config();
+		 	validate_all();
+	 	}
+}
+
+//point on first record
+function point_on_first()
+{
+	var table =document.getElementById("my_table");
+	var rows = Number(table.rows.length)-1;
+	if (rows!=0) 
+	{
+		var Row=table.rows[1];
+		Multi_select(Row);
+	}
+}
+
+//not yet
+function point_on_index(p_index)
+{
+	if (isNaN(p_index)) return;
+	var table =document.getElementById("my_table");
+	var rows = Number(table.rows.length)-1;
+	if ((rows!=0)&&(p_index<rows+1))
+		{
+				var Row=table.rows[p_index+1]
+				Multi_select(Row);
+		}
+}
+
+//move_to_next(up/down)			//Selected_Arr
+function move_to_next(Dir)
+{
+		if (!Dir) return;
+		//0.check eof
+		var dir_offset= new Number();
+		if (!Selected_Arr) 		return;
+		if (Selected_Arr.length==0) return;
+		var Row=Selected_Arr[0];
+		Multi_select(Row); 
+
+
+		if (!Row) return;																												//It means no pointer in the table. Nothing to move.
+		if (!external.XText) return;																						//if the XTXT Object is not avaiable, exit function.
+		
+		if (Dir=='up'){
+			if ((Row.rowIndex)<=1) return;																				//Avoid that the index is out of the range.
+			dir_offset=-1;
+		}
+		else{
+			var eof=get_eof_index();																							//external.XText.length
+			if (eof<=(Row.rowIndex)) return;																			//if (external.XText.length<=(Row.rowIndex)) return; //Avoid that the index is out of the range.	
+			dir_offset=1;
+		}
+		
+		//1.get the selected record. then delete it. then insert it.
+		Selected_Arr.length=0;//Selected_Arr = null;
+		var tmp_record_obj=external.XText[Row.rowIndex-1];											//get the whole record(single).
+		var tmp_Row_Index=Row.rowIndex-1;
+		external.XText.splice(tmp_Row_Index, 1); 																//1. delete it first
+		external.XText.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 			//2. then insert	
+		external.SetModified(true);	
+		
+																																	
+		//2.refresh(reload) the HTML Table(Parent).
+		refresh_adv_format_table();
+																										
+		//3.Set the pointer to the record that we just moved. 
+		var cur_fld_index=tmp_Row_Index+dir_offset;																			//tmp_Row_Index+(dir_offset+1)
+		point_on_index(cur_fld_index);		
+}
+
+//refresh HTML table and validate it.
+function refresh_adv_format_table()
+{
+		load_table_def();	
+		validate_all(); //for update status field. 		
+}
+//========================================================1. Check if corrupted =======================================================================================
+//========================================================2. Process Sharp DEF (sharp define settings)  ===============================================================
+//========================================================3. Validation ===============================================================================================
+//========================================================4. Input Control ============================================================================================
+//========================================================5. Reference Control ========================================================================================
+//========================================================6. The rest of the functions ================================================================================
+
+
+
+
+//----------------------------
+//check focus state 
+var has_focus;
+onload=function()
+{
+	var el = document.forms[0].elements;
+	for(var i=0;i<el.length;i++)
+	{
+		el[i].onfocus=function(){has_focus=this.id;}
+		el[i].onblur=function(){has_focus='';}
+	}
+}
+//----------------------------
+
+
+
+
+
+
+//Process the timing of saving the doc if context(XTXT Object) of the doc has changed. --------------
+//for compare
+function compare_objects(obj1, obj2)
+{
+    var parameter_name;
+    var compare = function(objA, objB, param){
+        var param_objA = objA[param],
+            param_objB = (typeof objB[param] === "undefined") ? false : objB[param];
+ 
+        switch(typeof objA[param]){
+            case "object": return (compare_objects(param_objA, param_objB));
+            case "function": return (param_objA.toString() === param_objB.toString());
+            default: return (param_objA === param_objB);
+        }
+ 
+    };
+    
+    for(parameter_name in obj1){
+        if(typeof obj2[parameter_name] === "undefined" || !compare(obj1, obj2, parameter_name)){
+        		//alert(parameter_name+','+obj2[parameter_name]+',');
+            return false;
+        }
+    }
+    
+    for(parameter_name in obj2){
+        if(typeof obj1[parameter_name] === "undefined" || !compare(obj1, obj2, parameter_name)){
+        		
+            return false;
+        }        
+    }
+    return true;
+}
+
+//clone object
+function clone_object(original_obj) 
+{
+    var new_obj = {};
+    for(var param in original_obj) {
+        if(original_obj.hasOwnProperty(param)){
+            if(typeof(original_obj[param]) === "object"){
+                new_obj[param] = clone_object(original_obj[param]);
+            } else {
+                new_obj[param] = original_obj[param];
+            }
+        }
+    }
+    return new_obj;
+};
+   
+//duplicate
+function duplicate_xtext(result) 
+{
+	var obj=new Object;
+	var result=new Array;
+	var i=0;
+	for (i = 0; i < external.XText.length; i++)
+	{
+		var obj=clone_object(external.XText[i]);
+		result.push(obj);
+	}
+	return result;
+}
+
+//return T/F
+function chk_if_changed()
+{
+	var i=0;
+	var new_XText=external.XText;
+	
+	if (new_XText.length!=old_XText.length)
+	return false;
+	
+	//alert('in_old');
+	for (i = 0; i < external.XText.length; i++)
+	{
+				if (compare_objects(new_XText[i],old_XText[i])==false)
+				return false;
+	}
+	return true;
+}
+
+//check if changed, if true set modify
+function set_content_modify() 
+{
+	if ((chk_if_changed()==true)&&(changed_flag==false)) //add changed_flag minimize the loading, cuz can only check once(only the beginning)(cuz we can't know when it will be saved therefor unable to compare).
+	{
+		//alert('the same');
+	}
+	else
+	{
+		//alert('not the same');
+		external.SetModified(true);
+		changed_flag=true;
+	}
+}
+
+//get def_setting at beginning
+function show_config()
+{
+  var obj=document.getElementsByName("checkbox");							//get chk array
+  var sel_obj=document.getElementById("sel_Redundancy")				//get selected redundancy option
+  var fd_file_name=document.getElementById("fd_filename");
+  var chk_mem=document.getElementsByName("mem_type");
+   
+		for (i = 0; i < external.XText.length; i++) 
+		{ 
+			if (typeof(external.XText[i].CONFIG)!='undefined') //get define setting(functional settings)
+			{
+						//STG lib has the default value (i.e.#define STG_DEBUG_PRINT 0),
+						//therefore we take a "not" defval as the symbol of enabled function. 
+			
+						var def_value=external.XText[i].CONFIG.replace(/^\s+|\s+$/g,""); //trim
+						if (def_value=="#define STG_DEBUG_PRINT 1") {obj[0].checked = true;}
+						if (def_value=="#define STG_TIMESTAMP 1") {obj[1].checked = true;STG_TIMESTAMP=1;}
+						//if (def_value=="#define STG_REDUNDANCY 1")//oringinal
+						if (def_value.indexOf("define STG_REDUNDANCY")==1)
+						{
+								//Get the redundancy option value first
+								var sel_red_option=def_value.slice(23);
+								sel_obj.value=sel_red_option;
+								if (sel_obj.value=='') 
+								sel_obj.value='0'; 
+								STG_REDUNDANCY=sel_obj.value; //default = 0
+								
+						}
+						if (def_value=="#define STG_STORAGE_MEMORY 1") 
+						{
+									chk_mem[1].checked = true;
+									fd_file_name.disabled = false;
+									STG_STORAGE_MEMORY=1;
+									//fd_file_div.style.display="block";
+									
+						}
+						if (def_value.indexOf("define STG_FILENAME")==1) 
+						{
+									old_fd_file_name=def_value.slice(22,def_value.length-1); //global variable(on begin)
+									document.getElementById("fd_filename").value=old_fd_file_name;//Don't ask me why(for on_property_change)
+									//fd_file_name.value=old_fd_file_name; (assign the variable somewhere else).
+						}
+			}
+		}
+}
+
+function ret_alias(which_field,src_str) //retrieve alias 
+{
+		var src=src_str.replace(/^\s+|\s+$/g,"");
+		switch (which_field) 
+		{
+		case field.storage:
+			switch(src)
+			{
+				case "E":
+					return 'Non-volatile&nbsp;';
+				case "R":
+					return 'Volatile';
+				default:
+					return src;
+			}
+			break;		
+		case field.data_type:
+			switch(src)
+			{
+				case "B":
+					return 'Byte';
+				case "W":
+					return 'Word';
+				case "S":
+					return 'String';
+				case "D":
+					return 'Dot-decimal&nbsp;';
+				default:
+					return src;
+			}
+			break;
+		default: 
+			return src;
+			break;
+		}
+}
+
+//EOF   function-------
+function get_eof_index()
+{
+		//get index of the end of the setting(not define_data_list)
+		//xtext is sorted in the beginning, therefore the first found would be the eof of the setting.
+		var i=0;
+		for (i = 0; i < external.XText.length; i++) 
+		{ 
+			if (typeof(external.XText[i].CONFIG)!='undefined') 
+			{
+				return i;
+			}
+		}
+		//return (external.XText.length);
+		return i;
+}
+
+//clear all config-------
+function clear_all_config()
+{
+		// xtext is sorted in the beginning, therefore the first found would be the eof of the setting.
+		var start_pos=get_eof_index();
+		external.XText.splice(start_pos, Number(external.XText.length));
+		//external.SetModified(true); //fff 
+}
+
+//corrupted data check(must before validation)
+function chk_corrupt()
+{
+		for (i = 0; i < external.XText.length; i++) 
+		{ 
+			if (typeof(external.XText[i].CONFIG)=='undefined') //get each setting record
+			{
+					//STG lib has the default value (i.e.#define STG_DEBUG_PRINT 0),
+					//therefore we take a "not" defval as the symbol of enabled function. 
+					
+					
+					var stg_record=external.XText[i];                //.replace(/^\s+|\s+$/g,""); //trim continue; \r\n
+					var err_report='';
+					var f=0;
+					var count=0;
+					for (var Property in stg_record)	
+					{		
+						f++;	
+						//var field_value = stg_record[Property];					
+					}
+					
+					//alert(f);
+					if (f<8)
+					{
+							alert('Setting \"'+external.XText[i].NAME+'\" descriptor has missing fields. The descriptor will be repaired using default field values.');
+							external.XText[i].NAME = external.XText[i].NAME.replace(/^\s+|\s+$/g,"");
+							external.XText[i].STORAGE = "E";
+							external.XText[i].TYPE = "B";
+							external.XText[i].MEMBER= "1";
+							external.XText[i].P1="0";
+							external.XText[i].P2="255";
+							external.XText[i].INI= "A";
+							external.XText[i].DEFVAL="0";	
+							//external.XText[i].C="Restore";	
+							external.SetModified(true); //fff
+					}
+					var Row=document.getElementById("my_table").rows[i+1]
+					Row.cells(0).innerHTML = external.XText[i].NAME;
+					Row.cells(1).innerHTML = ret_alias(field.storage,external.XText[i].STORAGE);
+					Row.cells(2).innerHTML = ret_alias(field.data_type,external.XText[i].TYPE);
+					Row.cells(3).innerHTML = external.XText[i].MEMBER;
+					Row.cells(4).innerHTML = external.XText[i].P1;
+					Row.cells(5).innerHTML = external.XText[i].P2;
+					Row.cells(6).innerHTML = external.XText[i].INI;
+					Row.cells(7).innerHTML = external.XText[i].DEFVAL;
+						var tmp_tbl_c=external.XText[i].C;
+						if (typeof(tmp_tbl_c)=='undefined')  tmp_tbl_c='&nbsp;';	//for comment(if null)
+						if (tmp_tbl_c=='')  tmp_tbl_c='&nbsp;';										//for comment(if null)
+					Row.cells(8).innerHTML = tmp_tbl_c;
+			}
+		}
+}
+
+//get settings count
+function get_setting_count()
+{
+	var count=0;
+	for (i = 0; i < external.XText.length; i++) 
+	{
+		if (typeof(external.XText[i].CONFIG)=='undefined') //get each setting record
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+//validate single
+function validate_single(obj)
+{
+//NAME
+		if (!obj.NAME)  return false;
+    if(obj.NAME!=obj.NAME.replace(/(^[0-9]*)/g, ""))  return false; //means the value start with a digit    
+    if ((obj.NAME.length<1)||(obj.NAME.length>254))		return false; 
+		if(STG_MAX_SETTING_NAME_LEN<obj.NAME.length)  STG_MAX_SETTING_NAME_LEN=obj.NAME.length; //only save the largest number //@@
+		
+//storage type
+		if (!obj.STORAGE)  return false;
+		if ((obj.STORAGE.length != 1)||((obj.STORAGE != 'E')&&(obj.STORAGE != 'R'))) return false;  
+		
+//setting type
+		obj.TYPE=obj.TYPE.replace(/^\s+|\s+$/g,"");
+		if (!obj.TYPE)  return false;
+		if (obj.TYPE.length != 1)
+		{ 
+			return false; 
+		}
+		else
+		{
+					switch(obj.TYPE)
+					{
+					case "B":
+					case "W":
+					case "S":
+					case "D":
+					break;
+					default:
+					return false; 
+					}
+		}
+		
+//number of member(s)
+		if (!obj.MEMBER)  return false;
+		if (isNaN(obj.MEMBER)==true) return false; 			//The stg_lib will take non-numeric number as zero, but we still need to check here.
+		if ((obj.MEMBER.length<1)||(obj.MEMBER.length>254))		return false; 
+		
+//p1, maybe add something later.
+		
+		if (!obj.P1)  return false;
+		if ((obj.P1.length<1)||(obj.P1.length>254))		return false; 
+		if (isNaN(obj.P1)==true) return false; 					//The stg_lib will take non-numeric p1 as zero, but we still need to check here.
+				var data_type=obj.TYPE;
+				
+				switch(data_type)
+				{
+				case "B":
+				    if (obj.P1>255) 		return false;		
+						break;
+				case "W"	:
+				    if (obj.P1>65535)		return false;
+						break;
+				case "S":
+				    if (obj.P1>254) 		return false;		
+						break;
+				case "D"	:
+				    if (obj.P1>254)     return false;		
+						break;					
+				}		
+				
+//p2
+		if (!obj.P2)  return false;
+		if ((obj.P2.length<1)||(obj.P2.length>254))		return false; 
+		if (isNaN(obj.P2)==true) return false; //The stg_lib will take non-numeric p2 as zero, but we still need to check here.
+				var data_type=obj.TYPE;
+				switch(data_type)
+				{
+				case "B":
+				    if (obj.P2>255) 		return false;		
+						break;
+				case "W"	:
+				    if (obj.P2>65535)		return false;
+						break;
+				case "S":
+				    if (obj.P2>254) 		return false;		
+						break;
+				case "D"	:
+				    if (obj.P2>254)     return false;		
+						break;					
+				}				
+				var P1_value=Number(obj.P1);// what the.....
+				
+		    if (Number(obj.P2)<P1_value)    return false;
+
+//calculate how much space this setting will need in memory
+//validate the string value length?
+		var byte_size=0;  				//j, real_size according to the definition.
+		var required_str_len=0 		//len_of_str_rep,  string length required to represent setting value
+		
+		switch(data_type)
+		{
+			case "B":
+				byte_size=1;
+				required_str_len=3
+				break;
+			case "W":
+				byte_size=2;
+				required_str_len=5
+				break;
+			case "S":
+				byte_size=Number(obj.P2)+1;
+				required_str_len=Number(obj.P2)
+				break;
+			case "D":
+				byte_size=Number(obj.P2)+1;
+				required_str_len=Number(obj.P2)*4;
+				if (required_str_len>0) 
+				required_str_len=required_str_len-1;	
+				break;
+			default:
+				return false;
+		}
+		
+		if (STG_TIMESTAMP==1)
+		{
+				if ((required_str_len<1)||(required_str_len>246))  {return false;}
+		}
+		else
+		{
+				if ((required_str_len<1)||(required_str_len>253))  {return false;}
+		}
+		
+		if(STG_MAX_SETTING_VALUE_LEN<required_str_len) STG_MAX_SETTING_VALUE_LEN=required_str_len; //@@ get max value len(the length of the the value in stringform.)
+		byte_size=byte_size*Number(obj.MEMBER)+1; 				//total declare size of the current definition.(byte) 
+		//alert(obj.NAME+','+byte_size);									//It shouldn't have the problem.
+		if (STG_TIMESTAMP==1){byte_size+=7;}           		//STG_TIMESTAMP_LENGTH=7
+		
+		
+		
+		if (byte_size>255) {return false;}               	//the declared size of each setting can't exceed 255byte //@@
+		
+		
+		if (obj.STORAGE == 'E')
+		{
+			non_volatile_size+=byte_size         //nvmem_offset_ctr    //@@
+
+		}
+		else
+		{
+			STG_RAM_ARRAY_SIZE+=byte_size        //ramarr_offset_ctr	 //@@
+		}
+		
+		
+		
+//ini mode
+		if (!obj.INI)  return false;
+		if ((obj.INI.length != 1)||((obj.INI != 'I')&&(obj.INI != 'A'))) return false; 
+
+//default value
+
+		if (!obj.DEFVAL)  return false;
+		var defval_array=obj.DEFVAL.split("/");
+		var extract_def_value=0;
+		for (var k=0;k<defval_array.length;k++)
+		{
+					switch(data_type)
+					{
+						case "B":
+						case "W":
+							extract_def_value=Number(defval_array[k]);
+							if (defval_array[k]=="^") extract_def_value=0;
+							if (isNaN(extract_def_value)==true) {return false;} //alert('NaN');  //this validation condition won't be checked by stg_lib, but we still check here.
+							if (extract_def_value<obj.P1) return false;
+							if (extract_def_value>obj.P2) return false;
+							break;
+						case "S":
+							extract_def_value=defval_array[k].length;
+							if (defval_array[k]=="^") extract_def_value=0;
+							if (extract_def_value<obj.P1) return false;
+							if (extract_def_value>obj.P2) return false;											
+							break;
+						case "D":
+							var tmp_D=defval_array[k].split(".");
+							extract_def_value=tmp_D.length;
+							if (defval_array[k]=="^") extract_def_value=0;	
+							if (extract_def_value<obj.P1) return false;
+							if (extract_def_value>obj.P2) return false;									
+							break;
+						default:
+							break;
+					}
+		}
+		
+		return true;
+}
+
+//reinit settings #define
+function reinit_def_stg()
+{
+	//validation settings(#define)
+	STG_RAM_ARRAY_SIZE=0;
+	STG_MAX_NUM_SETTINGS=0;
+	STG_MAX_SETTING_NAME_LEN=0;
+	STG_MAX_SETTING_VALUE_LEN=0;
+	//Report of setting number
+	NUMBER_OF_SETTINGS=0;
+	non_volatile_size=1;
+	volatile_size=0;
+}
+
+//validate all validation settings
+function validate_all()
+{
+		//pre_process (Because of chk_corrupt, we don't have to check null field again.)
+		NUMBER_OF_SETTINGS=get_setting_count();
+		var err_mark_list = new Array();
+		var all_ok=true;
+		non_volatile_size=1; //init value for summary report
+		//reset(important)
+		reinit_def_stg();
+
+		STG_MAX_NUM_SETTINGS=document.getElementById("my_table").rows.length-1;
+
+		//validate start
+		for (i = 0; i < external.XText.length; i++) 
+		{
+			if (typeof(external.XText[i].CONFIG)=='undefined') //get each setting record
+			{
+					var tmp=external.XText[i];
+					if ((validate_single(tmp))==false)
+					{
+						all_ok=false;
+						err_mark_list.push(false)
+					}
+					else
+					{
+						err_mark_list.push(true)
+					}
+			}
+		}
+		
+		if (STG_REDUNDANCY!=0){non_volatile_size*=2;} //if (STG_REDUNDANCY==1){byte_size*=2;} //before modification(STG_REDUNDANCY==1){non_volatile_size*=2;}
+		show_err_mark(err_mark_list);
+		//----final validation---
+							final_err_report_str=''
+							if (STG_MAX_NUM_SETTINGS>255) 		{alert('Max settings count can\'t > 255');final_err_report_str='# Max settings count can\'t > 255, you have '+STG_MAX_NUM_SETTINGS+'.';all_ok=false;}
+							//check if the size exceed the max capacity tolerance.
+							if (all_ok)
+							{
+									var pl_name=external.Project.PlatformName;
+									var pl_size=new Number();
+									switch(pl_name)
+									{
+										case 'EM500W':
+											if ((non_volatile_size-1)>stor_size.EM500W) {pl_size=stor_size.EM500W;			all_ok=false;}   break;
+										default:
+											if ((non_volatile_size-1)>2020) {pl_size=2020;			all_ok=false;}   break;							
+									}
+									if (all_ok==false)
+									{
+											alert("ERROR: your non-volatile settings do not fit in the EEPROM (needed: "+(non_volatile_size-1)+", available: "+pl_size+").");
+											final_err_report_str="ERROR: your non-volatile settings do not fit in the EEPROM (needed: "+(non_volatile_size-1)+", available: "+pl_size+").";										
+									}
+							}
+		//------------------------
+		show_summary_report(all_ok);
+		
+		if (all_ok)
+		{
+			def_stg.STG_RAM_ARRAY_SIZE=STG_RAM_ARRAY_SIZE;
+			def_stg.STG_MAX_SETTING_NAME_LEN=STG_MAX_SETTING_NAME_LEN;
+			def_stg.STG_MAX_SETTING_VALUE_LEN=STG_MAX_SETTING_VALUE_LEN; 				//STG_MAX_SETTING_VALUE_LEN	
+			//alert('STG_MAX_SETTING_VALUE_LEN='+STG_MAX_SETTING_VALUE_LEN);
+		}
+		else
+		{
+			def_stg.STG_RAM_ARRAY_SIZE=0;
+			def_stg.STG_MAX_SETTING_NAME_LEN=0;
+			def_stg.STG_MAX_SETTING_VALUE_LEN=0;				
+		}
+		def_stg.STG_MAX_NUM_SETTINGS=STG_MAX_NUM_SETTINGS;
+
+		reload_config();
+		return all_ok;
+}
+
+//reload all config------
+function reload_config()
+{
+	
+  var chk_obj=document.getElementsByName("checkbox");					//get chkbox array
+  var sel_obj=document.getElementById("sel_Redundancy")				//get selected redundancy option
+  var chk_mem=document.getElementsByName("mem_type");					//get radio array
+  var fd_file_name=document.getElementById("fd_filename");		//get filename
+  
+	var Obj = new Object;
+		
+	clear_all_config();
+	//always add descriptor_file_name
+	Obj.CONFIG = "#define STG_DESCRIPTOR_FILE \""+external.FileName+"\""; 
+	external.XText.push(Obj);
+	
+	
+	var Obj = new Object;
+	
+	
+	//1.function settings
+		if (chk_obj[0].checked == true)
+		{	
+	 		Obj.CONFIG = "#define STG_DEBUG_PRINT 1";
+	 		external.XText.push(Obj);
+		}
+		var Obj = new Object; 
+		if (chk_obj[1].checked == true)
+		{
+	 		Obj.CONFIG = "#define STG_TIMESTAMP 1";
+	 		external.XText.push(Obj);
+	 		STG_TIMESTAMP=1;
+		}else{STG_TIMESTAMP=0;}
+		
+		// sel Redundancy
+		var Obj = new Object;
+		if ((sel_obj.value != '')&&(sel_obj.value != '0'))
+		{	
+	 		Obj.CONFIG = "#define STG_REDUNDANCY "+sel_obj.value;
+	 		external.XText.push(Obj);
+	 		STG_REDUNDANCY=sel_obj.value;
+		}else{STG_REDUNDANCY=0;}
+		//
+		
+		var Obj = new Object;
+		if (chk_mem[1].checked == true)
+		{
+		 		Obj.CONFIG = "#define STG_STORAGE_MEMORY 1";
+		 		external.XText.push(Obj);
+		 		STG_STORAGE_MEMORY=1;
+		 		
+		 		var Obj = new Object;
+		 		var str_fd_file_name=new String();//.replace(/^\s+|\s+$/g,"")
+		 		str_fd_file_name=fd_file_name.value;
+		 		str_fd_file_name=str_fd_file_name.replace(/^\s+|\s+$/g,"");
+		 		if (str_fd_file_name.length!=0) 
+		 		{
+				 		Obj.CONFIG = '#define STG_FILENAME \"'+fd_file_name.value+'\"';
+				 		external.XText.push(Obj);
+
+		 		}
+		 		fd_file_name.disabled = false;
+				fd_file_div.style.color='black';fd_file_name.style.backgroundColor='white';
+		 }else{STG_STORAGE_MEMORY=0;fd_file_name.disabled = true;fd_file_div.style.color='gray';fd_file_name.style.backgroundColor='#F2F2F2'; }//fd_file_div.style.display="none";
+		
+		
+		
+	//2.Validation settings(validation result)
+		var Obj = new Object;
+		Obj.CONFIG = "#define STG_MAX_NUM_SETTINGS "+def_stg.STG_MAX_NUM_SETTINGS;
+	 	external.XText.push(Obj);
+	 	
+		var Obj = new Object;
+		Obj.CONFIG = "#define STG_RAM_ARRAY_SIZE "+def_stg.STG_RAM_ARRAY_SIZE;
+	 	external.XText.push(Obj);
+	 	
+		var Obj = new Object;
+		Obj.CONFIG = "#define STG_MAX_SETTING_NAME_LEN "+def_stg.STG_MAX_SETTING_NAME_LEN;
+	 	external.XText.push(Obj);
+	 	
+		var Obj = new Object;
+		Obj.CONFIG = "#define STG_MAX_SETTING_VALUE_LEN "+def_stg.STG_MAX_SETTING_VALUE_LEN;
+	 	external.XText.push(Obj);
+	 	
+	 
+		set_content_modify();//external.SetModified(true); //fff
+}
+
+//Multiselect----------------
+function Multi_select(Row,e) 
+{	
+	var ctrlPressed=0;
+	var altPressed=0;
+	var shiftPressed=0;
+	if (parseInt(navigator.appVersion)>3) 
+	{		
+			var evt = navigator.appName=="Netscape" ? e:event;
+			if (evt!=null)  //this for if we excute the function not by physical action.
+			{
+				  if (navigator.appName=="Netscape" && parseInt(navigator.appVersion)==4) 
+				  {
+					   var mString =(e.modifiers+32).toString(2).substring(3,6);
+					   shiftPressed=(mString.charAt(0)=="1");
+					   ctrlPressed =(mString.charAt(1)=="1");
+					   altPressed  =(mString.charAt(2)=="1");
+					   self.status="modifiers="+e.modifiers+" ("+mString+")"
+				  }
+				  else 
+				  {
+					   shiftPressed=evt.shiftKey;
+					   altPressed  =evt.altKey;
+					   ctrlPressed =evt.ctrlKey;
+					   self.status=""
+					    +  "shiftKey="+shiftPressed 
+					    +", altKey="  +altPressed 
+					    +", ctrlKey=" +ctrlPressed 
+				  }
+			}
+	 }
+		//start processing
+  	if (ctrlPressed) 
+  	{ //alert('Ctrl');
+				var s_flag=chk_if_already_selected(Row);
+				if (s_flag==false) 
+				{
+					Row.bgColor = 0xff9080;
+					Selected_Arr.push(Row);	
+				}
+ 		}
+  	else
+  	{
+	  		clear_selected_arr();		//reset 
+	  		Row.bgColor = 0xff9080;
+	  		Selected_Arr.push(Row);	
+  	}
+		return true;
+}
+
+//chk_if_selected 1.chk 2.unselecte it if it already in the array.
+function chk_if_already_selected(Row)
+{
+		var s_flag=false;
+		var tmp_index_in_arr= new Number();
+		if (Selected_Arr.length==0) return s_flag;
+		for (var i=0;i<Selected_Arr.length;i++)
+		{
+				if (Row.rowIndex==Selected_Arr[i].rowIndex)
+				{
+						s_flag=true;
+						tmp_index_in_arr=i;
+				}
+		}
+		
+		if (s_flag==true) 
+		{//already selected
+				if (Selected_Arr.length >1) //unselecte it (only if length>1)
+				{
+					Selected_Arr[tmp_index_in_arr].bgColor=0xffffff;					
+					Selected_Arr.splice(tmp_index_in_arr, 1); //delete it from array.
+				}
+		}
+		return s_flag;
+}
+
+//reset array 1.change color back 2.clear all element
+function clear_selected_arr()
+{
+	if (Selected_Arr.length==0) return;
+	for (var i=0;i<Selected_Arr.length;i++)
+	{
+		Selected_Arr[i].bgColor=0xffffff;
+	}
+	Selected_Arr.length=0;
+}
+
+function KeyDown(objTR)
+{
+	//delete and insert key 
+  if (!objTR) return;                 
+  var key = event.keyCode;
+	var tmp_tag_name=objTR.tagName;
+	switch(tmp_tag_name){
+	case "BODY":
+				if (has_focus!='fd_filename')
+				{
+					switch(key)
+					{
+						case 45:
+							var ele_add =document.getElementById("btn_add");
+							ele_add.click(); 
+							break;
+						case 46:
+							var ele_del =document.getElementById("btn_del");
+							ele_del.click();
+							break;
+					}
+				}
+    break;
+	default:
+	  break;
+	}
+	
+	if (objTR.name=='td_input_text')
+	{
+			//alert('KEY'+key);
+			if((key == 47)||(key == 61)||(key == 94)) 	//they r (',/,^)
+			{      
+					event.keyCode = 0;
+			}
+	}
+}
+
+//delete
+function Delete()
+{	
+	if (!Selected_Arr) 		return;
+	if (Selected_Arr.length==0) return;
+	
+	if (Selected_Arr.length>1)
+	{
+		var ans;
+	 	ans=confirm('You are going to delete the '+ Selected_Arr.length +' selected records.\r\n\r\nConfirm to delete them, or Cancel to resume.')
+	 	if (ans!=1) return;
+	}
+	for (var i=Selected_Arr.length-1;i>-1;i--)
+	{ 
+		var Row=Selected_Arr[i];
+		external.XText.splice(Row.rowIndex-1, 1);
+		document.getElementById('my_table').deleteRow(Row.rowIndex);
+	}
+	external.SetModified(true);
+	Selected_Arr.length = 0;
+
+	validate_all();
+	point_on_first();
+}
+
+//Edit
+function Edit()
+{	
+	if (!Selected_Arr) 		return;
+	if (Selected_Arr.length==0) return;
+	var Row=Selected_Arr[0];
+	Multi_select(Row); 
+	
+	var Context = new Object;
+	Context.Target = external.XText[Row.rowIndex-1];
+	Context.TIMESTAMP = STG_TIMESTAMP;
+	Context.REDUNDANCY = STG_REDUNDANCY;
+	
+	var Result = external.ModalDialog("stg_edit.html", "Edit Setting Item", Context);
+	if (Result != 1)
+		return;	
+	
+	Row.cells(0).innerHTML = Context.Target.NAME;	
+	Row.cells(1).innerHTML = ret_alias(field.storage,Context.Target.STORAGE);
+	Row.cells(2).innerHTML = ret_alias(field.data_type,Context.Target.TYPE);
+	Row.cells(3).innerHTML = Context.Target.MEMBER;
+	Row.cells(4).innerHTML = Context.Target.P1;
+	Row.cells(5).innerHTML = Context.Target.P2;
+	Row.cells(6).innerHTML = Context.Target.INI;
+	Row.cells(7).innerHTML = Context.Target.DEFVAL;
+	Row.cells(8).innerHTML = Context.Target.C+'&nbsp'; //let the cell have outter frame. Only comment field can be null.
+	
+	external.SetModified(true);
+	validate_all();
+}
+
+//Add a record
+function Add()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.TIMESTAMP = STG_TIMESTAMP;
+	Context.REDUNDANCY = STG_REDUNDANCY;
+	var Obj = new Object;
+	// initial value of ADD dialog box(caution: note that must be by order)
+	Context.Target.NAME = "";
+	Context.Target.STORAGE = "E";
+	Context.Target.TYPE = "B";
+	Context.Target.MEMBER= "1";
+	Context.Target.P1="0";
+	Context.Target.P2="";
+	Context.Target.INI= "A";
+	Context.Target.DEFVAL="^";	
+	Context.Target.C="";	
+
+	var Result = external.ModalDialog("stg_edit.html", "Add New Setting", Context);
+	if (Result != 1)
+		return;	
+	
+	
+	var eof=get_eof_index();
+	
+	external.XText.splice(eof,0,Context.Target);    //insert new record behind the setting records.(but before the "#define...." list.)
+	external.SetModified(true);
+	
+	
+
+	var Row = document.getElementById("my_table").insertRow();
+	
+	Row.onmousedown = function() { Multi_select(this); }
+	Row.ondblclick = function() { Edit(this); }
+	Row.insertCell(0).innerHTML = Context.Target.NAME;
+	Row.insertCell(1).innerHTML = ret_alias(field.storage,Context.Target.STORAGE);
+	Row.insertCell(2).innerHTML = ret_alias(field.data_type,Context.Target.TYPE);
+	Row.insertCell(3).innerHTML = Context.Target.MEMBER;
+	Row.insertCell(4).innerHTML = Context.Target.P1;
+	Row.insertCell(5).innerHTML = Context.Target.P2;
+	Row.insertCell(6).innerHTML = Context.Target.INI;
+	Row.insertCell(7).innerHTML = Context.Target.DEFVAL;
+	Row.insertCell(8).innerHTML = Context.Target.C+'&nbsp';
+	Row.insertCell(9).innerHTML = '&nbsp;'; //must add this (status)
+	Row.cells(9).style.backgroundColor="#F2F2F2";
+	Multi_select(Row);
+
+	validate_all();
+}
+
+//Add a record
+function Insert_Before()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.TIMESTAMP = STG_TIMESTAMP;
+	Context.REDUNDANCY = STG_REDUNDANCY;
+	var Obj = new Object;
+	Context.Target.NAME = "";
+	Context.Target.STORAGE = "E";
+	Context.Target.TYPE = "B";
+	Context.Target.MEMBER= "1";
+	Context.Target.P1="0";
+	Context.Target.P2="";
+	Context.Target.INI= "A";
+	Context.Target.DEFVAL="^";	
+	Context.Target.C="";	
+
+	var Result = external.ModalDialog("stg_edit.html", "Insert Before", Context);
+	if (Result != 1)		return;	
+	
+//Start inserting sequence(a.).
+	if (!Selected_Arr)
+	 	var Row=null;
+	else
+		if (Selected_Arr.length==0) 
+			var Row=null;
+		else
+		{
+			var Row=Selected_Arr[0];
+			Multi_select(Row); 
+		}
+	
+	var eof=get_eof_index();	
+	if (!Row)
+	{ 	
+			var tmp_Row_Index= document.getElementById("my_table").rows.length-1;
+			external.XText.splice(eof,0,Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+			var tmp_Row_Index=Row.rowIndex-1;
+			external.XText.splice(tmp_Row_Index, 0,Context.Target); 																												
+			external.SetModified(true);	
+	}
+	refresh_adv_format_table();																											//validate_all with in
+	point_on_index(tmp_Row_Index);
+}
+
+
+//------------------tooltip js-------------------------------------------------
+
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="info.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='170px';
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='12';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9';
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='170px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='11';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#ffffff';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.85'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/^\s+|\s+$/g,"");
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/^\s+/,"");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/\s+$/,"");
+}
+
+//IsNumeric
+function IsNumeric(sText)
+{
+   var ValidChars = "0123456789";
+   var IsNumber=true;
+   var Char;
+
+ 
+   for (i = 0; i < sText.length && IsNumber == true; i++) 
+      { 
+      Char = sText.charAt(i); 
+      if (ValidChars.indexOf(Char) == -1) 
+         {
+         IsNumber = false;
+         }
+      }
+   return IsNumber;  
+}
+
+// return the value of the radio button that is checked
+function getCheckedValue(radioObj) {
+	if(!radioObj)
+		return "";
+	var radioLength = radioObj.length;
+	if(radioLength == undefined)
+		if(radioObj.checked)
+			return radioObj.value;
+		else
+			return "";
+	for(var i = 0; i < radioLength; i++) {
+		if(radioObj[i].checked) {
+			return radioObj[i].value;
+		}
+	}
+	return "";
+}
+
+// set the radio button with the given value as being checked
+function setCheckedValue(radioObj, newValue) {
+	if(!radioObj)
+		return;
+	var radioLength = radioObj.length;
+	if(radioLength == undefined) {
+		radioObj.checked = (radioObj.value == newValue.toString());
+		return;
+	}
+	for(var i = 0; i < radioLength; i++) {
+		radioObj[i].checked = false;
+		if(radioObj[i].value == newValue.toString()) {
+			radioObj[i].checked = true;
+		}
+	}
+}
+
+//========================================================3. input control ===================================================================================
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+'===========================================================================
+'					ui_list_box libaray
+'
+'	required device specific properties and methods:
+'		const SYS_ERROR_REBOOT
+
+'		sub lcd_clear(x as word, y as word, width as word, height as word)
+'		sub lcd_print_msg(byref msg as string,x as word, y as word, w as word, h as word,al as pl_lcd_text_alignment, bolder as no_yes)
+'		sub device_lb_key_proc(key_event as pl_kp_event_codes, key_code as byte, byref current_state as list_box_key_action)
+'		sub device_lb_interrupt()
+'		sub device_list_box_pre(
+'			x_coord as word,		'x coordination
+'			y_coord as word,		'y coordination
+'			list_width as word,		'list box width
+'			list_height as word,	'list box height
+'			byref listbox_data as string,		'values and display strings of all list box items
+'			byref listbox_value as string(10),	'the value of selected list box item 
+'			timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the list box and return to the previous screen. If timeout=0, no time out applies
+'			)
+'		sub device_list_box_post(
+'			x_coord as word,		'x coordination
+'			y_coord as word,		'y coordination
+'			list_width as word,		'list box width
+'			list_height as word,	'list box height
+'			byref listbox_data as string,		'values and display strings of all list box items
+'			byref listbox_value as string(10),	'the value of selected list box item 
+'			timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the list box and return to the previous screen. If timeout=0, no time out applies
+'			)
+'===========================================================================
+
+#ifndef SMALL_ICON_FILE
+#define SMALL_ICON_FILE "small_icons.bmp"
+#endif
+
+#ifndef LCD_STD_FONT
+#define LCD_STD_FONT "Tibbo-5x7(VP).bin"
+#endif
+
+#ifndef LIST_BOX_CURSOR_STYLE
+#define LIST_BOX_CURSOR_STYLE 0
+#endif
+
+#ifndef ULB_VER_SPACING
+#define ULB_VER_SPACING 3
+#endif
+
+#ifndef ULB_HOR_SPACING
+#define ULB_HOR_SPACING 3
+#endif
+
+#ifndef DISPLAY_STR_LEN
+#define DISPLAY_STR_LEN 255
+#endif
+
+#ifndef SCROLL_BORDER
+#define SCROLL_BORDER 2
+#endif
+
+#ifndef SCROLL_CURSOR_WIDTH
+#define SCROLL_CURSOR_WIDTH 5
+#endif
+
+#ifndef CURSOR_BAR_LEN_OFFSET
+#define CURSOR_BAR_LEN_OFFSET 2
+#endif
+
+#ifndef SCROLL_BAR_WIDTH
+#define SCROLL_BAR_WIDTH 5
+#endif
+
+#ifndef SCROLL_ARROW_HEIGHT
+#define SCROLL_ARROW_HEIGHT 5
+#endif
+
+#ifndef SCROLL_ARROW_X_POS_OFFSET
+#define SCROLL_ARROW_X_POS_OFFSET 0
+#endif
+
+#ifndef SCROLL_ARROW_Y_POS_OFFSET
+#define SCROLL_ARROW_Y_POS_OFFSET 2
+#endif
+
+#ifndef LCD_LOCK
+#define LCD_LOCK lcd.lock
+#endif
+
+#ifndef LCD_UNLOCK
+#define LCD_UNLOCK lcd.lock
+#endif
+
+#ifndef LCD_BACKCOLOR
+#define LCD_BACKCOLOR 0
+#endif
+
+enum ui_list_box_results
+	LIST_BOX_RESULT_OK,
+	LIST_BOX_RESULT_CANCEL,
+	LIST_BOX_RESULT_TIMEOUT,
+	LIST_BOX_RESULT_FAIL
+end enum
+
+enum list_box_key_action
+	LIST_BOX_CURSOR_UP,
+	LIST_BOX_CURSOR_DOWN,
+	LIST_BOX_CONFIRM,
+	LIST_BOX_CANCEL
+end enum
+
+declare function ui_list_box(
+	x_coord as word,
+	y_coord as word,
+	list_width as word,	
+	list_height as word,
+	byref listbox_data as string,
+	byref listbox_value as string(10),
+	timeout as byte
+) as ui_list_box_results

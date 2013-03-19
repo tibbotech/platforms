@@ -1,0 +1,4818 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>AGGREGATE INTERFACE</title>
+	<base href="<?%BaseDir?>"/>
+	<style type="text/css">@import url(universal.css);</style>
+</head>
+
+
+
+<body oncontextmenu="return false">
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+
+<!-- Related Setting Options -->
+
+<div class="posttext">
+	<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img> <div id="VersionTag" class="verRight">Configurator Version(AGG) - 0.9.3.d &#160;&#160;</div> 
+	<h2>Library Options (mouse over for hint) </h2>
+							<!-- Debug Printing -->
+							<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="changed_flag=true;rewrite_sharp_def();validate_all();">  
+							<span title="header=[<img src='info.ico' width='20' height='20'></img> Debug Printing:] body=[When <b>checked</b>, prints debug information into the <B>output pane</B>. Debug printing only works when the project is in the debug mode. However, still <b>uncheck</b> this option for release, as this will save memory and code space.]">
+							Debug Printing</span>&nbsp;&nbsp;</p>
+							<!-- Login Control -->
+							<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="changed_flag=true;rewrite_sharp_def();validate_all();">
+							<span title="header=[<img src='info.ico' width='20' height='20'></img> Login Control:] body=[This option must be enabled if your project uses multiple user interfaces. It should be disabled if only AggreGate is used as the interface.]">
+							Login Control</span>&nbsp;&nbsp;</p>
+							<!-- Using Custom RTC -->
+							<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="changed_flag=true;rewrite_sharp_def();validate_all();">
+							<span title="header=[<img src='info.ico' width='20' height='20'></img> Using Custom RTC:] body=[When <b>checked</b>, the external RTC is selected.]">
+							Using Custom RTC</span>&nbsp;&nbsp;</p>
+			  			<!-- REFERENCE_PATH -->
+			  			
+	          	<div id="stg_file_div" style="">
+		          		<table border="0" style=" height:80px; border-collapse: collapse; margin: 0px; padding: 0px;">
+		          			
+				          				<tr style="background-color:#FFFFFF;">
+				          						<td>  <!-- ******************************************************************************** -->
+				          									<input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="handle_libs_reference_flag('STG');"> 
+				          						</td>
+						          				<td>
+									          				<span title="header=[<img src='info.ico' width='20' height='20'></img> Referenced Library] body=[The option is for Variables. If checked, make sure the filename is correct, and the invoked handler(s) is Activated.]">
+									          					Reference Library (Settings):
+									          				</span>
+							          			</td>
+							          			<td><input type="text" ID="stg_filename"  onpropertychange="syn_path_to_ex();"  maxlength="20" value=""/></td>
+							          			<!-- <td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td> -->
+							          			<td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td>
+				          				</tr>
+				          				
+				          				<tr style="background-color:#FFFFFF;">
+				          						<td>  <!-- ******************************************************************************** -->
+				          									<input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="handle_libs_reference_flag('TBL');">
+				          						</td>			          					
+				          					
+						          				<td>
+									          				<span title="header=[<img src='info.ico' width='20' height='20'></img> Referenced Library] body=[The option is for Variables. If checked, make sure the filename is correct, and the invoked handler(s) is Activated.]">
+									          					Reference Library (Tables):
+									          				</span>
+							          			</td>
+							          			<td><input type="text" ID="tbl_filename"  onpropertychange="syn_path_to_ex();" maxlength="20" value=""/></td>
+							          			<!-- <td><img ID="tbl_img" src='image\unplug.jpg' width='40' height='20'></img></td> -->
+							          			<td><img ID="tbl_img" src='image\unplug.jpg' width='40' height='20'></img></td>
+				          				</tr>
+				          				
+		          		</table>	
+		          		<p></p>
+		          		
+							</div>  			 			
+
+</div>
+<!-- Aggregate Info Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Generic Info <label id="lab_info">(<I>No Data</I>)</label> </h2> 
+						<p>		
+						<table border="1"  id ="table_info" class="cls_main_table">
+								<tr style="background-color:#9ACD32">
+								<th>Description</th><th>Context Type</th><th bgcolor=#F2F2F2>Status</th>
+								</tr>
+						</table>
+						</p>
+
+</div>	
+<!-- Aggregate Variable Section -->
+<div  class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Variables Definitions <label id="lab_variables">(<I>No Data</I>)</label> </h2> 
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" style="display:none;" onclick = "__Test();">Test</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Edit(SelectedRow_vari); ">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_vari,'variables'); ">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('variables','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('variables','down');">Move Down</button>&nbsp;
+						</p>
+						<p>	
+								<div id="var_div"  style="position:relative;">
+											<div id='var_cmd_list'></div>	
+											<table border="1"  id ="table_variables" class="cls_main_table">
+													<tr style="background-color:#9ACD32">
+													<th>Variable Name</th><th>Reference Source</th><th>Group/Description</th><th bgcolor=#F2F2F2>Status</th>
+													</tr>
+											</table>
+								</div>
+						</p>
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Edit(SelectedRow_vari); ">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_vari,'variables'); ">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "variables_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('variables','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('variables','down');">Move Down</button>&nbsp;
+						</p>
+</div>	
+<!-- Aggregate Function Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Functions Definitions <label id="lab_functions">(<I>No Data</I>)</label></h2> 
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Edit(SelectedRow_func);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_func,'functions');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('functions','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('functions','down');">Move Down</button>&nbsp;
+						</p>
+						<p>		
+								<table border="1"  id ="table_functions" class="cls_main_table">
+										<tr style="background-color:#9ACD32">
+										<th>Function Name</th><th bgcolor=#F2F2F2>Status</th>
+										</tr>
+								</table>
+						</p>
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Edit(SelectedRow_func);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_func,'functions');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "functions_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('functions','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('functions','down');">Move Down</button>&nbsp;
+						</p>
+</div>	
+<!-- Aggregate Events Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Events Definitions <label id="lab_events">(<I>No Data</I>)</label></h2> 
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Edit(SelectedRow_even);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_even,'events');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('events','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('events','down');">Move Down</button>&nbsp;
+						</p>
+						<p>		
+								<table border="1"  id ="table_events" class="cls_main_table">
+										<tr style="background-color:#9ACD32">
+										<th>Event Name</th><th>Event Type</th><th>Level</th><th bgcolor=#F2F2F2>Status</th>
+										</tr>
+								</table>
+						</p>
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Edit(SelectedRow_even);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_even,'events');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "events_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('events','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('events','down');">Move Down</button>&nbsp;
+						</p>
+</div>	
+
+<!-- Summary_Report Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Summary Report</h2>
+						<div id="summary_report">
+						</div>
+</div>
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<div id="esc_div" style="display:block;"></div>
+
+<script>
+	
+	function __Test()
+	{
+		var Dlg = external.CreateObject("em202ui.BrowseDlg"); //this is cool
+		Dlg.DoModal();
+	}
+	
+	
+//get the index of each entity, cuz this way let us know where to find the data respectively.
+//Therefore when we have add new entity, we should assign the variables below, too.
+		var index_info = new Number();index_info = -1;    	// entity index(if add new, we should set this index variable at the same time.)
+		var index_variables = new Number();index_variables=-1;
+		var index_functions = new Number();index_functions=-1;
+		var index_events = new Number();index_events=-1;
+		
+//default necessary records for each entity.
+		//info
+		var def_info_NS_set=new Array(); 				//default info necessary script.(only one for now.)
+		def_info_NS_set[0]='<R=<none><none>>';
+		//variables
+		var def_var_NS_set=new Array(); 				//default variable necessary script set.
+		def_var_NS_set[0]='<R=<version><<<version><S>> <M=1> <X=1>><Version><1><0><^><remote|General><^>>';
+		def_var_NS_set[1]='<R=<date><<<date><D>> <M=1> <X=1>><Date/Time><1><0><^><remote|General><^>>';
+		def_var_NS_set[2]='<R=<modtime><<<variable><S>> <<modtime><D><F=N>>><Modification time><1><0><^><^><^>>';
+		//functions
+		var def_functions_NS_set=new Array(); 	//default variable necessary script set.
+		def_functions_NS_set[0]='<R=<hash><<<context><S>><<variable><S>><M=1><X=1>><<<hash><I>><M=1><X=1>><Table Hash><^><^>>';	
+		def_functions_NS_set[1]='<R=<finishTable><<<context><S>><<variable><S>><M=1><X=1>><<<hash><I>><M=1><X=1>><Finish Table><^><^>>';	
+		def_functions_NS_set[2]='<R=<startTable><<<context><S>><<variable><S>><M=1><X=1>><<M=0><X=0>><Start Table><^><^>>';	
+		def_functions_NS_set[3]='<R=<addRecord><<<context><S>><<variable><S>><<record><S>><M=1><X=1>><<M=0><X=0>><Add Record><^><^>>';	
+		def_functions_NS_set[4]='<R=<removeRecord><<<context><S>><<variable><S>><<id><S>><M=1><X=1>><<M=0><X=0>><Remove Record><^><^>>';	
+		def_functions_NS_set[5]='<R=<updateRecord><<<context><S>><<variable><S>><<record><S>><M=1><X=1>><<M=0><X=0>><Update Record><^><^>>';		
+		def_functions_NS_set[6]='<R=<putRecords><<<record><S>><M=1><X=1>><<M=0><X=0>><Put Record><^><^>>';	
+		def_functions_NS_set[7]='<R=<login><<<challenge><S>><M=1><X=1>><<<owner><S>><<name><S>><<response><S>><M=1><X=1>><Login><^><^>>';	
+		def_functions_NS_set[8]='<R=<register><<M=0><X=0>><<<password><S>><M=1><X=1>><Auto Register><^><^>>';	
+		def_functions_NS_set[9]='<R=<synchronized><<M=0><X=0>><<M=0><X=0>><Synchronized><^><^>>';	
+		//events
+		
+//global entity objects
+
+//global sharp definition variables
+		//functional #define
+		var AGG_DEBUG_PRINT=0;
+		var AGG_LOGIN_CONTROL=0;
+		var AGG_TABLE_CONTROL=0;					//defval must be 0.
+		var AGG_SETTING_CONTROL=0;
+		var AGG_DESCRIPTOR_FILE=new String();	AGG_DESCRIPTOR_FILE='';
+		var AGG_WAIT_TIME=new Number();		//It's the reconnect time, it only counting down when device is disconnected from aggregate server.
+		AGG_WAIT_TIME=15;
+		var AGG_CUSTOM_RTC=0;									//Add this new sharp definition. Default=0. set to 1 means that use external RTC.		
+		
+		//validation #define
+		var AGG_MAX_NUM_ENTITIES=3;       		//At least 3. I think 3 is better, but lib default is 2.
+		var AGG_MAX_CONTEXT_NAME_LEN=4; 			//4~255
+		var AGG_MAX_NUM_ITEMS=0;							//0~255 c_script count.
+		var AGG_MAX_ITEM_NAME_LEN=0;					// oringinal default(12~255). New default vlaue=0.//var AGG_MAX_ITEM_NAME_LEN=12;
+		var AGG_MAX_NUM_EVENT_FIELDS=1;				//it means the fields number inside the "event script".
+		var AGG_MAX_EVENT_FIELD_VAL_LEN=1;		//The agent lib accept only string type. Therefore.....
+		var AGG_MAX_FUNCTION_NAME_LEN=12;			//Add this new sharp definition. Default=12.
+		var AGG_MAX_NUM_STORED_EVENTS=0;			//Add this new sharp definition.
+		
+		//the others
+		var TBL_TIMESTAMP=1;
+		var STG_TIMESTAMP=1;
+		
+		
+		
+		//def_stg is used to save "validation setting" set only .	           
+		var def_stg={AGG_MAX_NUM_ENTITIES:3,AGG_MAX_CONTEXT_NAME_LEN:12,AGG_MAX_NUM_ITEMS:0,AGG_MAX_ITEM_NAME_LEN:0,AGG_MAX_NUM_EVENT_FIELDS:1,AGG_MAX_EVENT_FIELD_VAL_LEN:1,AGG_MAX_FUNCTION_NAME_LEN:12,AGG_MAX_NUM_STORED_EVENTS:0};
+
+//general global variables
+		var STG_Path='';        	 						//path value for reference
+		var	TBL_Path='';					 						//path value for reference
+		var old_STG_link_state=new Boolean();	//for trigger onchange
+		var old_TBL_link_state=new Boolean();
+		var changed_flag=false;           		//To see if the Doc has been modified.
+		var have_hash=true;										//twice
+		var err_msg_array = new Array();			//for extra err messages
+		var events_msg_array = new Array();		//for extra messages when pass all validation.
+		
+//initialize sequence
+		show_reference_src();
+		get_link_state();					 //only execute once 
+		poll_libs_link_state();		 //only execute once(execute after show_reference_src)
+		show_sharp_def();					 //only before validate_all() will be ok.
+		chk_if_Nscript_valid();    //the function might create new entity, therefore it must before load_agg_def().(+ empty entity check)
+		chk_cs_data_corruptd();		 //check cs, must after 
+		load_agg_def();
+		point_on_first('variables');
+		point_on_first('functions');
+		point_on_first('events');
+		check_mismatch();					 //must after table loading sequence has completed.
+		check_tbl_have_hash();
+		validate_all();            //the order is always the last one.
+
+		handle_libs_refflag_onload(); //must after stg and table loading sequence has completed.
+		
+//========================================================0. General Operations =======================================================================================
+//load data(AggreGate Definition Data)
+function load_agg_def()
+{
+		var obj_record=external.XText.EntitySet;				//aggregate data set
+
+		for (var i = 0; i < obj_record.length; i++)
+		{
+				switch(obj_record[i].ENTITY_NAME)
+				{
+					case 'info':
+										//0.get global index
+										index_info=i;
+										//1.reset table
+										var html_table =document.getElementById("table_info");
+										if ( html_table.rows.length > 1) //clear all cuz we may reload it.
+										{
+												var tmp_length =html_table.rows.length;
+												for (var i = 1; i < tmp_length; i++)
+												{
+													html_table.deleteRow(1);
+												}
+										}
+										//2.get entity information
+										var entity_context = document.getElementById("lab_info"); //CONTEXT_LAYER
+										entity_context.innerHTML='(<I>'+obj_record[i].CONTEXT_LAYER+'</I>)';
+										
+										//3.load necessary 
+										for (var k = 0; k < obj_record[i].Necessary_Script_Set.length; k++)
+										{
+											var NS_Row = document.getElementById("table_info").insertRow();
+											//NS_Row.onmousedown = function() {};
+											NS_Row.ondblclick = function() {info_Edit(this);};
+											var tmpobj=decode_info_script(obj_record[i].Necessary_Script_Set[k].N_SCRIPT); //get values from script.
+											
+											//only info do script 'format' validation here. 
+											if (tmpobj==null)  																	
+											{
+												var tmpobj= new Object(); 												//It needs to be redefined, cuz it's null now.
+												tmpobj.Description='none';
+												tmpobj.Context_type='none';
+												alert('The \'info\' script corrupted. The default values will be loaded.');
+												var tmpstr=encode_info_script(tmpobj);
+												//re-assign one.
+												obj_record[i].Necessary_Script_Set[k].N_SCRIPT=tmpstr;
+												//should add restore default data here, but still  have to have another check sequence. (done)
+												//Cuz if info strcture is empty, it will never go here. (done)
+											}
+											NS_Row.insertCell(0).innerHTML = HTMLEncode(tmpobj.Description);
+											NS_Row.insertCell(1).innerHTML = HTMLEncode(tmpobj.Context_type);
+											if (NS_Row.cells(0).innerHTML=='') NS_Row.cells(0).innerHTML='&nbsp';
+											if (NS_Row.cells(1).innerHTML=='') NS_Row.cells(1).innerHTML='&nbsp';
+											NS_Row.insertCell(2).innerHTML = '&nbsp';
+											NS_Row.cells(2).style.backgroundColor="#F2F2F2";
+										}
+										//4.No need to load customized child in info.
+										
+					break;
+					case 'variables':
+										//0.get global index
+										index_variables=i;
+										//1.reset table
+										var html_table =document.getElementById("table_variables");
+										if ( html_table.rows.length > 1) //clear all if in cuz we may reload it.
+										{
+												var tmp_length =html_table.rows.length;
+												for (var i = 1; i < tmp_length; i++)
+												{
+													html_table.deleteRow(1);
+												}
+										}
+										//2.get entity information
+										var entity_context = document.getElementById("lab_variables");
+										entity_context.innerHTML='(<I>'+obj_record[i].CONTEXT_LAYER+'</I>)';
+										//3.load necessary  
+										for (var k = 0; k < obj_record[i].Necessary_Script_Set.length; k++)
+										{
+											//do validation here...
+										}
+										//4.load customized 
+										for (var k=0;k < obj_record[i].Customize_Script_Set.length;k++) 
+										{
+											var tmp_Group_n_Description=ret_G_n_D(obj_record[i].Customize_Script_Set[k].C_SCRIPT); //@@@
+											
+											var CS_Row = document.getElementById("table_variables").insertRow();
+											CS_Row.onmousedown = function() {Select(this,'variables')};
+											CS_Row.ondblclick = function() {variables_Edit(this);}
+											CS_Row.insertCell(0).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_NAME);		
+											CS_Row.insertCell(1).innerHTML = ret_alias('ref_src',obj_record[i].Customize_Script_Set[k].VAR_TYPE);	//HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_TYPE);	//NS_Row.insertCell(2).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].C_SCRIPT);
+											CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);   															//@@@  
+											CS_Row.insertCell(3).innerHTML = '&nbsp'; 
+											CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+										}
+										
+						break;
+						case 'functions':
+										//0.get global index
+										index_functions=i;
+										//1.reset table
+										var html_table =document.getElementById("table_functions");
+										if ( html_table.rows.length > 1) //clear all if in cuz we may reload it.
+										{
+												var tmp_length =html_table.rows.length;
+												for (var i = 1; i < tmp_length; i++)
+												{
+													html_table.deleteRow(1);
+												}
+										}
+										//2.get entity information
+										var entity_context = document.getElementById("lab_functions");
+										entity_context.innerHTML='(<I>'+obj_record[i].CONTEXT_LAYER+'</I>)';
+										//3.load necessary child 
+										for (var k = 0; k < obj_record[i].Necessary_Script_Set.length; k++)
+										{
+												//no need to show here.
+										}
+										//4.load customized child 
+										for (var k=0;k < obj_record[i].Customize_Script_Set.length;k++)
+										{
+											var CS_Row = document.getElementById("table_functions").insertRow();
+											CS_Row.onmousedown = function() {Select(this,'functions')};
+											CS_Row.ondblclick = function() {functions_Edit(this);}
+											CS_Row.insertCell(0).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_NAME);		//No VAR_TYPE in function.
+											CS_Row.insertCell(1).innerHTML = '&nbsp';
+											CS_Row.cells(1).style.backgroundColor="#F2F2F2";
+										}
+						break;
+						case 'events':
+										//0.get global index
+										index_events=i;
+										//1.reset table
+										var html_table =document.getElementById("table_events");
+										if ( html_table.rows.length > 1) //clear all if in cuz we may reload it.
+										{
+												var tmp_length =html_table.rows.length;
+												for (var i = 1; i < tmp_length; i++)
+												{
+													html_table.deleteRow(1);
+												}
+										}
+										//2.get entity information
+										var entity_context = document.getElementById("lab_events");
+										entity_context.innerHTML='(<I>'+obj_record[i].CONTEXT_LAYER+'</I>)';
+										//3.load necessary child 
+										for (var k = 0; k < obj_record[i].Necessary_Script_Set.length; k++)
+										{
+												//no need to show here.
+										}
+										//4.load customized child 
+										for (var k=0;k < obj_record[i].Customize_Script_Set.length;k++) 
+										{
+											var CS_Row = document.getElementById("table_events").insertRow();
+											CS_Row.onmousedown = function() {Select(this,'events');} 
+											CS_Row.ondblclick = function() {events_Edit(this);}
+											CS_Row.insertCell(0).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_NAME);
+											var tmp_obj=extract_type_n_level(obj_record[i].Customize_Script_Set[k].VAR_TYPE);
+											CS_Row.insertCell(1).innerHTML = HTMLEncode(ret_alias('event_type',tmp_obj.event_type));
+											CS_Row.insertCell(2).innerHTML = HTMLEncode(ret_alias('event_level',tmp_obj.event_level));
+											CS_Row.insertCell(3).innerHTML = '&nbsp';
+											CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+										}		
+						break;
+						
+					default:
+										//ignore the others
+						break;
+				}
+
+		}
+}
+
+//extract type n level with object form.(event)
+function extract_type_n_level(str)
+{
+	var tmp_obj= new Object();
+	tmp_obj.event_type=new String();
+	tmp_obj.event_level=new String();
+	tmp_obj.event_type=str.substr(0, 1);
+	tmp_obj.event_level=str.substr(1, 1);
+	return tmp_obj;
+}
+
+//summary report
+function show_summary_report(ok_flag)
+{
+	var summary_str=new String;
+
+	summary_str="";
+	if (ok_flag)
+	{
+		summary_str='<p>Number of Event Field(s): '+AGG_MAX_NUM_EVENT_FIELDS+'</p>';;
+		summary_str+='<p>Max Event Field Value Length: '+AGG_MAX_EVENT_FIELD_VAL_LEN+'</p>';
+		summary_str+='<p>Total Number of Customized Item(s): '+AGG_MAX_NUM_ITEMS+'</p>';
+		summary_str+='<p>Total Number of Stored Event(s): '+AGG_MAX_NUM_STORED_EVENTS+'</p>';
+		summary_str+='<p></p>';
+		/*	Cancel this for now
+		for (var i = 0; i < events_msg_array.length; i++)		
+		{
+			summary_str+=events_msg_array[i]+'<br>';
+		}
+		*/
+	}
+	else
+	{
+		summary_str='<p>AggreGate descriptor file contain invalid data. Therefore, the report cannot be generated.</p>';	
+		for (var i = 0; i < err_msg_array.length; i++)
+		{
+				summary_str+='&nbsp&nbsp&nbsp'+err_msg_array[i]+'<br>';
+		}
+	}
+	document.getElementById('summary_report').innerHTML=summary_str;
+}
+
+//show the status of the record. (info) 
+function show_info_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("table_info").rows[i+1]
+		if (!err_array[i])
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(2).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(2).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//show the status of the record. (variables) 
+function show_variables_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("table_variables").rows[i+1]
+		if (!err_array[i])
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(3).innerHTML = '<font color=\'red\'><b>INVALID</b></font>'; 	//@@@
+		}
+		else
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(3).innerHTML = '<font color=\'green\'><b>OK</b></font>';  		//@@@
+		}
+	}
+}
+
+//show the status of the record. (functions) 
+function show_functions_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("table_functions").rows[i+1]
+		if (!err_array[i])
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(1).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(1).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//show the status of the record. (functions) 
+function show_events_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("table_events").rows[i+1]
+		if (!err_array[i])
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(3).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			//Row.cells(2).width='65px'
+			Row.cells(3).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//show if the AGG interface have linked to the both libs.
+function show_link_state_stg(bln_stg)
+{// stg_img tbl_img
+	var html_stg_img=document.getElementById("stg_img");
+	if (bln_stg==false)
+	{html_stg_img.src='image\\unplug.jpg';} else{html_stg_img.src='image\\plug.jpg';}
+}
+
+//show if the AGG interface have linked to the both libs.
+function show_link_state_tbl(bln_tbl)
+{// stg_img tbl_img
+	var html_tbl_img=document.getElementById("tbl_img");
+	if (bln_tbl==false){html_tbl_img.src='image\\unplug.jpg';} else{html_tbl_img.src='image\\plug.jpg';}
+}
+
+//edit dialog box(info)
+function info_Edit(Row)
+{	
+	if (!Row)
+		return;
+	
+	var Context = new Object;
+	
+	//Oringinally, we send the xtext data object directly to the Edit dialogbox.
+	//And the dataset object index is correspond to the html table index.
+	//But in this case we cannot do it this way.
+	//We need to reload
+	//1.first find the data object we wanna edit.
+	//2.Then we send the data onject to the dialog box.
+	Context.Target = external.XText.EntitySet[index_info];  	//find exact data
+	Context.fld_N_SCRIPT= new Object();                       
+	Context.fld_N_SCRIPT.Description='';											//return the value of the script fields
+	Context.fld_N_SCRIPT.Context_type='';
+	Context.srcFORMTYPE = 'info_EDIT';
+	//Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	
+	var Result = external.ModalDialog("info_edit.html", "Edit  (info)", Context);
+	if (Result != 1) 		return;	
+	
+	Row.cells(0).innerHTML = Context.fld_N_SCRIPT.Description;
+	Row.cells(1).innerHTML = Context.fld_N_SCRIPT.Context_type;
+	external.SetModified(true);
+	validate_all();
+}
+
+//addnew(variable)
+function variables_Add()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_variables].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'ADD';	
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE='';
+	Context.Target.C_SCRIPT='';
+	
+	var Result = external.ModalDialog("variables_edit.html", "Add New (Variables)", Context);
+	if (Result != 1) 	return;	//Cancel
+
+	Context.CS_Set.push(Context.Target);
+	external.SetModified(true);
+	
+	var tmp_Group_n_Description=ret_G_n_D(Context.Target.C_SCRIPT); //@@@
+	var CS_Row = document.getElementById("table_variables").insertRow();
+	CS_Row.onmousedown = function() {Select(this,'variables')};
+	CS_Row.ondblclick = function() {variables_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);		
+	CS_Row.insertCell(1).innerHTML = ret_alias('ref_src',Context.Target.VAR_TYPE);//HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_TYPE);	//NS_Row.insertCell(2).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].C_SCRIPT);
+	CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);	//@@@
+	CS_Row.insertCell(3).innerHTML = '&nbsp';
+	CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'variables')	
+	
+	//The following line is for checking if the "reffflag" is disabled while users add record into "Variables". If so, enable the reffflag and handle the related operations.
+	handle_libs_refflag_onadd();	//must before validate_all().
+	validate_all();
+}
+
+//Insert(variable)
+function variables_Insert()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_variables].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'INSERT';
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE='';
+	Context.Target.C_SCRIPT='';
+	
+
+	var Result = external.ModalDialog("variables_edit.html", "Insert Before (Variables)", Context);
+	if (Result != 1) 	return;	//Cancel
+	
+	//start inserting sequence.
+	var Row=SelectedRow_vari;
+	if (!Row)
+	{ 	//equal to add
+			var tmp_Row_Index= document.getElementById("table_variables").rows.length-1;
+			Context.CS_Set.push(Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+			var tmp_Row_Index=Row.rowIndex-1;
+			//external.XText.EntitySet[index_variables].Customize_Script_Set.splice(tmp_Row_Index, 0,Context.Target); 			//insert
+			Context.CS_Set.splice(tmp_Row_Index, 0,Context.Target); 																												//insert
+			external.SetModified(true);	
+	}
+	
+	
+
+	var tmp_Group_n_Description=ret_G_n_D(Context.Target.C_SCRIPT); //@@@
+	var CS_Row = document.getElementById("table_variables").insertRow(tmp_Row_Index+1);
+	CS_Row.onmousedown = function() {Select(this,'variables')};
+	CS_Row.ondblclick = function() {variables_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);		
+	CS_Row.insertCell(1).innerHTML = ret_alias('ref_src',Context.Target.VAR_TYPE);//HTMLEncode(obj_record[i].Customize_Script_Set[k].VAR_TYPE);	//NS_Row.insertCell(2).innerHTML = HTMLEncode(obj_record[i].Customize_Script_Set[k].C_SCRIPT);
+	CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);	//@@@
+	CS_Row.insertCell(3).innerHTML = '&nbsp';
+	CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'variables')	
+
+	//The following line is for checking if the "reffflag" is disabled while users add record into "Variables". If so, enable the reffflag and handle the related operations.
+	handle_libs_refflag_onadd();	//must before validate_all().
+	validate_all();
+}
+
+//edit dialog box(variable)
+function variables_Edit(Row)
+{	
+	if (!Row) return;   											//if no pointer
+	var Context = new Object;		
+
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	var cur_customize_index=(Row.rowIndex-1);
+	Context.Target = external.XText.EntitySet[index_variables].Customize_Script_Set[cur_customize_index]; //entity index + C_script index under entity = the record we want.
+	Context.CS_Set=external.XText.EntitySet[index_variables].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'EDIT';																																					//Dialog Type
+	
+	//1.5 validation something first.(a.check )
+	var script_str=new String();
+	script_str=Context.Target.C_SCRIPT;
+	//if (script_str.length>255) {}		//Disable this section cuz the limitation is overcomed.
+	var script_object= new Object(); 	//the decode obj is only for validation here.
+	script_object=decode_variables_script(Context.Target.C_SCRIPT); 								 		//@@ check null? check length? we don't need this.		
+	if (script_object==null) {alert('The script is corrupted. Cannot edit it.');return;}//@@
+	
+	//2.Get the Context
+	if (!Context.Target.VAR_TYPE) 		{alert('Variable Name is empty.');return;}
+	switch (Context.Target.VAR_TYPE)
+	{
+		case "T":	//check reference lib and look for the record that matchs the current record.
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data)
+				{
+					alert('Cannot locate the tables library. \r\n\r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.' );
+					document.getElementById('tbl_filename').focus();
+					document.getElementById('tbl_filename').select();
+					return;
+				}
+				var found_match = new Boolean();		//local flag
+				found_match=false;
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{//find matching record by 'name'.
+					if (tbl_lib_data.TableSet[i].TBL_NAME==Context.Target.VAR_NAME)
+					{
+						found_match=true;				
+						//alert(tbl_lib_data.TableSet[i].TBL_NAME+' - was found in table library!!!');//@@
+						break;
+					}
+				}
+				//check if current record is in the tables or settings library.
+				if (found_match==false)
+				{
+					alert('Found no data in tables or settings library that is corresponding to the current record.  \r\n The record will be deleted.');
+					//should add delete process or something here later. //@@
+					return;
+				}
+				break;
+		
+		case "S":
+				var stg_lib_data=external.XTextEx(STG_Path);
+				if (!stg_lib_data) 
+				{
+					alert('Cannot locate the settings library. \r\n\r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.' );
+					document.getElementById('stg_filename').focus();
+					document.getElementById('stg_filename').select();
+					return;
+				}
+				var found_match = new Boolean();										//local flag
+				found_match=false;
+				
+				var stg_lib_data_len=get_eof_index(stg_lib_data);		//For STG Lib, get length first.
+				for (var i=0;i<stg_lib_data_len;i++)
+				{//find matching record by 'name'.
+					if (stg_lib_data[i].NAME==Context.Target.VAR_NAME)
+					{
+						found_match=true;																
+						//alert(stg_lib_data[i].NAME+' - was found in settings library!!!');//@@
+						break;
+					}
+				}
+				//check if current record is in the tables or settings library.
+				if (found_match==false)
+				{
+					alert('Found no matching data in tables or settings library.  \r\n The record will be deleted.');
+					//should add "delete process" or something here later. //@@
+					return;
+				}
+				break;
+		
+		default:		
+		alert('Invalid Reference Source. Edit dialog box won\'t be initiated.');
+		return;
+	}
+	
+	
+	var Result = external.ModalDialog("variables_edit.html", "Edit  (variables)", Context);
+	if (Result != 1) 		return;    
+	
+	var tmp_Group_n_Description=ret_G_n_D(Context.Target.C_SCRIPT); //@@@
+	Row.cells(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);	
+	Row.cells(1).innerHTML = ret_alias('ref_src',Context.Target.VAR_TYPE);
+	Row.cells(2).innerHTML = HTMLEncode(tmp_Group_n_Description);	//@@@//@@@
+
+	
+	external.SetModified(true);
+	validate_all();
+}
+
+
+
+//EOF   function(STG Library)
+function get_eof_index(stg_lib)
+{
+		var i=0;
+		for (i = 0; i < stg_lib.length; i++) 
+		{ 
+			if (typeof(stg_lib[i].CONFIG)!='undefined') 
+			{
+				return i;
+			}
+		}
+		return i;
+}
+
+//addnew(functions)
+function functions_Add()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_functions].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'ADD';	
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE=''; //var type is useless in function.
+	Context.Target.C_SCRIPT='';
+	
+	var Result = external.ModalDialog("functions_edit.html", "Add New (Functions)", Context);
+	if (Result != 1) 	return;	//Cancel
+
+	Context.CS_Set.push(Context.Target);
+	external.SetModified(true);
+	
+	var CS_Row = document.getElementById("table_functions").insertRow();
+	CS_Row.onmousedown = function() {Select(this,'functions')};
+	CS_Row.ondblclick = function() {functions_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);		
+	CS_Row.insertCell(1).innerHTML = '&nbsp';
+	CS_Row.cells(1).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'functions');										
+	validate_all();
+}
+
+//Insert(function)
+function functions_Insert()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_functions].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'ADD';	
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE=''; //var type is useless in function.
+	Context.Target.C_SCRIPT='';
+	
+	var Result = external.ModalDialog("functions_edit.html", "Insert Before (Functions)", Context);
+	if (Result != 1) 	return;	//Cancel
+
+
+	//start inserting sequence.
+	var Row=SelectedRow_func;
+	if (!Row)
+	{ 	//equal to add
+			var tmp_Row_Index = document.getElementById("table_functions").rows.length-1;
+			Context.CS_Set.push(Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+			var tmp_Row_Index=Row.rowIndex-1;
+			Context.CS_Set.splice(tmp_Row_Index, 0,Context.Target); 			
+			external.SetModified(true);	
+	}
+	
+	
+	var CS_Row = document.getElementById("table_functions").insertRow(tmp_Row_Index+1);
+	CS_Row.onmousedown = function() {Select(this,'functions')};
+	CS_Row.ondblclick = function() {functions_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);		
+	CS_Row.insertCell(1).innerHTML = '&nbsp';
+	CS_Row.cells(1).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'functions');
+	validate_all();
+}
+
+//edit dialog box(functions)
+function functions_Edit(Row)
+{	
+	if (!Row)
+		return;
+		
+	var Context = new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	var cur_customize_index=(Row.rowIndex-1);
+	Context.Target = external.XText.EntitySet[index_functions].Customize_Script_Set[cur_customize_index]; //entity index + C_script index under entity = the record we want.
+	Context.CS_Set=external.XText.EntitySet[index_functions].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'EDIT';																																					//Dialog Type
+	
+	//1.5 Simple Validation before open 'EDIT' dialog box.
+	var script_str=new String();
+	script_str=Context.Target.C_SCRIPT;
+	//if (script_str.length>255) {}				// Disable this section cuz the limitation is overcomed.
+	var script_object= new Object(); 			//the decode obj is only for validation here.
+	script_object=decode_functions_script(Context.Target.C_SCRIPT);						 			
+	if (script_object==null) {alert('The script is corrupted. Cannot edit it.');return;}	//if corrupted then //@@ deal with it later.
+	
+	//2.Open EDIT
+	var Result = external.ModalDialog("functions_edit.html", "Edit  (functions)", Context);
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements
+	Row.cells(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);
+	
+	external.SetModified(true);
+	validate_all();
+}
+
+//addnew(functions)
+function events_Add()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_events].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'ADD';	
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE='I0';
+	Context.Target.C_SCRIPT='';
+	
+	var Result = external.ModalDialog("events_edit.html", "Add New (Events)", Context);
+	if (Result != 1) 	return;	//Cancel
+
+	Context.CS_Set.push(Context.Target);
+	external.SetModified(true);
+	
+	var CS_Row = document.getElementById("table_events").insertRow();
+	CS_Row.onmousedown = function() {Select(this,'events')};
+	CS_Row.ondblclick = function() {events_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);	
+	var tmp_obj=extract_type_n_level(Context.Target.VAR_TYPE);	
+	CS_Row.insertCell(1).innerHTML = HTMLEncode(ret_alias('event_type',tmp_obj.event_type));
+	CS_Row.insertCell(2).innerHTML =  HTMLEncode(ret_alias('event_level',tmp_obj.event_level));
+	CS_Row.insertCell(3).innerHTML = '&nbsp';
+	CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'events')										
+	validate_all();
+}
+
+//Insert(event)
+function events_Insert()
+{
+	var Context = new Object;
+	Context.Target =new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	Context.CS_Set=external.XText.EntitySet[index_events].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'ADD';	
+	//create structure
+	Context.Target.VAR_NAME='';
+	Context.Target.VAR_TYPE='S0';
+	Context.Target.C_SCRIPT='';
+	
+	var Result = external.ModalDialog("events_edit.html", "Add New (Events)", Context);
+	if (Result != 1) 	return;	//Cancel
+
+
+	//start inserting sequence.
+	var Row=SelectedRow_even;
+	if (!Row)
+	{ 	//equal to add
+			var tmp_Row_Index = document.getElementById("table_events").rows.length-1;
+			Context.CS_Set.push(Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+			var tmp_Row_Index=Row.rowIndex-1;
+			Context.CS_Set.splice(tmp_Row_Index, 0,Context.Target); 			
+			external.SetModified(true);	
+	}
+	
+	
+	var CS_Row = document.getElementById("table_events").insertRow(tmp_Row_Index+1);
+	CS_Row.onmousedown = function() {Select(this,'events')};
+	CS_Row.ondblclick = function() {events_Edit(this);}
+	CS_Row.insertCell(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);	
+	var tmp_obj=extract_type_n_level(Context.Target.VAR_TYPE);	
+	CS_Row.insertCell(1).innerHTML = HTMLEncode(ret_alias('event_type',tmp_obj.event_type));
+	CS_Row.insertCell(2).innerHTML =  HTMLEncode(ret_alias('event_level',tmp_obj.event_level));
+	CS_Row.insertCell(3).innerHTML = '&nbsp';
+	CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+	Select(CS_Row,'events')										
+	validate_all();	
+}
+
+//edit dialog box(functions)
+function events_Edit(Row)
+{	
+	if (!Row)
+		return;
+		
+	var Context = new Object;
+	//1.Define the Context we wanna send and get current record. (Customize_Script_Set[x])
+	var cur_customize_index=(Row.rowIndex-1);
+	Context.Target = external.XText.EntitySet[index_events].Customize_Script_Set[cur_customize_index]; 	//entity index + C_script index under entity = the record we want.
+	Context.CS_Set=external.XText.EntitySet[index_events].Customize_Script_Set; 												//this is for unique checking in Edit Dialog box.
+	Context.Ref_Path=new Object();
+	Context.Ref_Path.TBL=TBL_Path;
+	Context.Ref_Path.STG=STG_Path;
+	Context.srcFORMTYPE = 'EDIT';																																				//Dialog Type
+	
+	//1.5 Simple Validation before open 'EDIT' dialog box.
+	var script_str=new String();
+	script_str=Context.Target.C_SCRIPT;
+	//if (script_str.length>255) {}				// Disable this section cuz the limitation is overcomed.
+	var script_object= new Object(); 		//the decode obj is only for validation here.
+	script_object=decode_events_script(Context.Target.C_SCRIPT);			 			
+	if (script_object==null) {alert('The script is corrupted. Cannot edit it.');return;}	//if corrupted then //@@ deal with it later.
+					
+	//1.6. Validate if the linkstate is ok.(Check records with "Stored Event" type only.)   
+	if (!Context.Target.VAR_TYPE) {alert('Variable Type is empty.');return;}
+	var TYPE_n_LEVEL=extract_type_n_level(Context.Target.VAR_TYPE);
+	var Event_Type=TYPE_n_LEVEL.event_type;
+	switch (Event_Type)
+	{
+		case "S":	//check reference lib and look for the record that matchs the current record.
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				if (!tbl_lib_data)
+				{
+					alert('Cannot locate the tables library. \r\n\r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.' );
+					document.getElementById('tbl_filename').focus();
+					document.getElementById('tbl_filename').select();
+					return;
+				}
+				break;
+	}
+
+	//2.Open EDIT
+	var Result = external.ModalDialog("events_edit.html", "Edit  (Events)", Context);
+	if (Result != 1) 		return;
+	
+	//3.Return value to the web elements
+	Row.cells(0).innerHTML = HTMLEncode(Context.Target.VAR_NAME);
+	var tmp_obj=extract_type_n_level(Context.Target.VAR_TYPE);
+	Row.cells(1).innerHTML = HTMLEncode(ret_alias('event_type',tmp_obj.event_type));
+	Row.cells(2).innerHTML = HTMLEncode(ret_alias('event_level',tmp_obj.event_level));
+	
+	external.SetModified(true);
+	validate_all();
+}
+
+//delete
+function Delete(Row,src_entity)
+{	
+	if (!Row) return;
+
+	switch(src_entity)
+	{
+		case 'variables':
+			if (Row == SelectedRow_vari)  SelectedRow_vari = null;
+			if (!external.XText.EntitySet[index_variables]) return;
+			external.XText.EntitySet[index_variables].Customize_Script_Set.splice(Row.rowIndex-1, 1);
+			external.SetModified(true);
+			document.getElementById('table_variables').deleteRow(Row.rowIndex);
+			point_on_first(src_entity);
+			break;
+		case 'functions':
+			if (Row == SelectedRow_func)  SelectedRow_func = null;
+			if (!external.XText.EntitySet[index_functions]) return;
+			external.XText.EntitySet[index_functions].Customize_Script_Set.splice(Row.rowIndex-1, 1);
+			external.SetModified(true);
+			document.getElementById('table_functions').deleteRow(Row.rowIndex);
+			point_on_first(src_entity);
+			break;
+		case 'events':
+			if (Row == SelectedRow_even)  SelectedRow_even = null;
+			if (!external.XText.EntitySet[index_events]) return;
+			external.XText.EntitySet[index_events].Customize_Script_Set.splice(Row.rowIndex-1, 1);
+			external.SetModified(true);
+			document.getElementById('table_events').deleteRow(Row.rowIndex);
+			point_on_first(src_entity);
+			break;
+		default:
+			break;
+	}
+	validate_all();
+}
+
+//========================================================1. Check if corrupted ======================================================================================
+//must before everything
+function chk_if_Nscript_valid()
+{
+	//check if necessary is valid and if the entity is empty.
+	//rule:
+	//1. info, variables ,functions must exist.(empty check sequence)(The seqence must be before the Nscript validation sequence.)
+	//2. if all exist, check the necessary script that has just mensioned above. They must be equal to the script here.						
+	//*. the process will ignore the other stuff in the necessary script.																													
+	//*. the necessary script of the info is the only one that user can see and edit it.																					
+	//*. if we found no necessary script or the script is invalid, recreate the entity or rebuild the necessary script.						
+	//**. must load before load_agg_def(), cuz there global index for entities in it.
+	//1.
+	chk_if_entity_exist('info');        
+	chk_if_entity_exist('variables');
+	chk_if_entity_exist('functions');
+	chk_if_entity_exist('events');
+	//2.all exists, check if NSs are match to each other.
+	var obj_EntitySet=external.XText.EntitySet;				//aggregate data set
+	for (var i = 0; i < obj_EntitySet.length; i++)
+	{
+				//alert(obj_EntitySet[i].ENTITY_NAME);
+				switch(obj_EntitySet[i].ENTITY_NAME)
+				{
+					case 'info':
+							if (obj_EntitySet[i].Necessary_Script_Set.length==0)
+							{
+										alert('Entity: '+obj_EntitySet[i].ENTITY_NAME+'\r\n - The data is missing. The default value will be installed.')
+										var tmp_Nscript_obj=new Object;
+										tmp_Nscript_obj.N_SCRIPT=def_info_NS_set[0];// '<R=<none><none>>';
+										obj_EntitySet[i].Necessary_Script_Set.push(tmp_Nscript_obj);
+										external.SetModified(true);
+							}
+							break;
+					case 'variables':
+							for (var k=0;k<def_var_NS_set.length;k++)
+							{
+										//if script set length less than default script number, fill the rest of the default script.
+										if (k>obj_EntitySet[i].Necessary_Script_Set.length-1)
+										{
+											alert('Entity: '+obj_EntitySet[i].ENTITY_NAME+'\r\n - Necessary Script ('+k+') is missing. The script will be regenerated.')
+											var tmp_Nscript_obj=new Object;
+											tmp_Nscript_obj.N_SCRIPT=def_var_NS_set[k];
+											obj_EntitySet[i].Necessary_Script_Set.push(tmp_Nscript_obj);
+											external.SetModified(true);
+											continue;
+										}
+										//check if they r equal
+										if (def_var_NS_set[k]!=obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT)
+										{
+											alert('Entity: '+obj_EntitySet[i].ENTITY_NAME+'\r\n - Necessary Script ('+k+') mismatch. The script will be recreated.')
+											//alert(obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT+'\r\n'+def_var_NS_set[k])
+											obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT=def_var_NS_set[k];
+											external.SetModified(true);
+										}
+							}
+							break;
+					case 'functions':
+							for (var k=0;k<def_functions_NS_set.length;k++)
+							{
+										//if script set length less than default script number, fill the rest of the default script.
+										if (k>obj_EntitySet[i].Necessary_Script_Set.length-1)
+										{
+											alert('Entity: '+obj_EntitySet[i].ENTITY_NAME+'\r\n - Necessary Script ('+k+') is missing. The script will be regenerated.')
+											var tmp_Nscript_obj=new Object;
+											tmp_Nscript_obj.N_SCRIPT=def_functions_NS_set[k];
+											obj_EntitySet[i].Necessary_Script_Set.push(tmp_Nscript_obj);
+											external.SetModified(true);
+											continue;
+										}
+										//check if they r equal
+										if (def_functions_NS_set[k]!=obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT)
+										{
+											alert('Entity: '+obj_EntitySet[i].ENTITY_NAME+'\r\n - Necessary Script ('+k+') mismatch. The script will be recreated.')
+											//alert(obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT+'\r\n'+def_functions_NS_set[k])
+											obj_EntitySet[i].Necessary_Script_Set[k].N_SCRIPT=def_functions_NS_set[k];
+											external.SetModified(true);
+										}
+							}
+							break;
+					case 'events':
+						//no need to check event.
+						break;
+				}
+	}
+}
+
+//check if entity exist. If not, recreate one.
+function chk_if_entity_exist(ent_name)
+{ //if empty, process here.
+	var exist_flag=false;
+	var obj_EntitySet=external.XText.EntitySet;				
+	for (var i = 0; i < obj_EntitySet.length; i++)
+	{
+			if (obj_EntitySet[i].ENTITY_NAME==ent_name) 
+			{exist_flag=true; break; }
+	}
+	//maybe should rebuild here?
+	if (exist_flag==false)
+	{
+		alert('The Entity \''+ent_name+'\' not exist. The application will create one automatically.');
+		reCreate_entity_and_Nscript(ent_name);
+	}
+	return exist_flag;
+}
+
+//rebuild necessary script only if the script is invalid or the entity is empty.
+function reCreate_entity_and_Nscript(ent_name)
+{//rebuild entity and  script only if the entity is empty.
+	if ((ent_name!='info')&&(ent_name!='variables')&&(ent_name!='functions')&&(ent_name!='events'))			return;
+	var tmp_enity_obj=new Object;
+	switch(ent_name)
+	{
+		case 'info':
+			//create data structure first.
+			var tmp_enity_obj = new Object;
+			tmp_enity_obj.ENTITY_NAME=ent_name;
+			tmp_enity_obj.CONTEXT_LAYER='root';
+			tmp_enity_obj.Necessary_Script_Set = new Array; 
+			tmp_enity_obj.Customize_Script_Set = new Array;
+			var tmp_Nscript_obj=new Object;
+			tmp_Nscript_obj.N_SCRIPT=def_info_NS_set[0];// '<R=<none><none>>';
+			tmp_enity_obj.Necessary_Script_Set.push(tmp_Nscript_obj);
+			//external.XText.EntitySet.push(tmp_enity_obj);
+			external.XText.EntitySet.splice(0,0,tmp_enity_obj);
+			external.SetModified(true);
+			break;
+		case 'variables':
+			//create data structure first.
+			var tmp_enity_obj = new Object;
+			tmp_enity_obj.ENTITY_NAME=ent_name;
+			tmp_enity_obj.CONTEXT_LAYER='root';
+			tmp_enity_obj.Necessary_Script_Set = new Array; 
+			tmp_enity_obj.Customize_Script_Set = new Array;
+			//push N_SCRIPT
+			for (var k=0;k<def_var_NS_set.length;k++)
+			{
+				var tmp_Nscript_obj=new Object;
+				tmp_Nscript_obj.N_SCRIPT=def_var_NS_set[k];
+				tmp_enity_obj.Necessary_Script_Set.push(tmp_Nscript_obj);
+			}
+			external.XText.EntitySet.splice(1,0,tmp_enity_obj);
+			external.SetModified(true);	
+			break;
+		case 'functions':
+			//create data structure first.
+			var tmp_enity_obj = new Object;
+			tmp_enity_obj.ENTITY_NAME=ent_name;
+			tmp_enity_obj.CONTEXT_LAYER='root';
+			tmp_enity_obj.Necessary_Script_Set = new Array; 
+			tmp_enity_obj.Customize_Script_Set = new Array;
+			//push N_SCRIPT
+			for (var k=0;k<def_functions_NS_set.length;k++)
+			{
+				var tmp_Nscript_obj=new Object;
+				tmp_Nscript_obj.N_SCRIPT=def_functions_NS_set[k];
+				tmp_enity_obj.Necessary_Script_Set.push(tmp_Nscript_obj);
+			}
+			external.XText.EntitySet.splice(2,0,tmp_enity_obj);
+			external.SetModified(true);	
+			break;
+		case 'events':
+			//create data structure only.
+			var tmp_enity_obj = new Object;
+			tmp_enity_obj.ENTITY_NAME=ent_name;
+			tmp_enity_obj.CONTEXT_LAYER='root';
+			tmp_enity_obj.Necessary_Script_Set = new Array; 
+			tmp_enity_obj.Customize_Script_Set = new Array;
+			external.XText.EntitySet.splice(3,0,tmp_enity_obj);
+			external.SetModified(true);	
+			break;
+	}
+}
+
+//corrupted data check(must after chk_if_Nscript_valid, cuz we don't check empty here.)
+//Only check once when opened.
+//1.Must before validation 
+//2.Only check for  null value (if the record exists in the related library (X)) mainly.
+//3.should add the check if variables value has changed in library?
+function chk_cs_data_corruptd()
+{	
+	var obj_EntitySet=external.XText.EntitySet;
+	for (var i = 0; i < obj_EntitySet.length; i++)
+	{
+				switch(obj_EntitySet[i].ENTITY_NAME)
+				{
+					case 'info':
+						//Nothing to check here.
+						break;
+					case 'variables':
+							//variable will check only null fields. null only
+							var cs_set=obj_EntitySet[i].Customize_Script_Set;
+							if (cs_set.length==0) continue;
+							for (var j=0;j<cs_set.length;j++)
+							{
+										var cs=cs_set[j];
+										var g=0;
+										for (var Property in cs)	g++;
+										if (g<3)
+										{
+												if (g==0)
+												{
+													alert('Entity:variables - Record('+j+') is corrupted. The record will be deleted.');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);
+												}
+												else
+												{
+													alert('Entity:variables  Record Name:\''+cs.VAR_NAME+'\' is corrpted. The Record will be Deleted');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);	
+												}
+										}
+							}
+							break;
+					case 'functions':
+							var cs_set=obj_EntitySet[i].Customize_Script_Set;
+							if (cs_set.length==0) continue;
+							for (var j=0;j<cs_set.length;j++)
+							{
+										var cs=cs_set[j];
+										var g=0;
+										for (var Property in cs)	g++;
+										if (g<2)
+										{
+												if (g==0)
+												{
+													alert('Entity:functions - Record('+j+') is corrupted. The record will be deleted.');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);
+												}
+												else
+												{
+													alert('Entity:functions - Record Name:\''+cs.VAR_NAME+'\' is corrpted. The Record will be Deleted');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);	
+												}
+										}
+							}						
+							break;
+					case 'events':
+							var cs_set=obj_EntitySet[i].Customize_Script_Set;
+							if (cs_set.length==0) continue;
+							for (var j=0;j<cs_set.length;j++)
+							{
+										var cs=cs_set[j];
+										var g=0;
+										for (var Property in cs)	g++;
+										if (g<3)
+										{
+												if (g==0)
+												{
+													alert('Entity:events - Record('+j+') is corrupted. The record will be deleted.');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);
+												}
+												else
+												{
+													alert('Entity:events - Record Name:\''+cs.VAR_NAME+'\' is corrpted. The Record will be Deleted');
+													cs_set.splice(j,1);j--;
+													external.SetModified(true);
+												}
+										}
+							}
+							break;
+				}
+	}
+}
+
+//check changes on beginning (Variables)
+//it must after "the table" has loaded on webpage.
+function check_mismatch()
+{//0..check if libs are activated 1.mismatch 2.check if the record exists in the related library
+		external.NotificationFilter = STG_Path+'/'+TBL_Path;
+		var T=external.XTextEx(TBL_Path);
+		var S=external.XTextEx(STG_Path);
+		if (!T)	
+			{
+				//alert('The Aggregate Library Interface cannot link to the TBL Library.');	   	//Because of agg_stg_control and agg_tbl_control, we make it quiet.
+			}
+		else
+			{
+				chk_lib(TBL_Path);
+				chk_TBLLib_n_aggEvent(TBL_Path);																								//Add chk_TBLLib_n_aggEvent to check if values are changed in Agg and in TBL lib.
+			}													
+			
+		if (!S)	
+			{
+				//alert('The Aggregate Library Interface cannot link to the STG Library.');	 
+			}	
+		else{chk_lib(STG_Path);}
+		
+}
+
+function check_mismatch_quiet()
+{//0.Check if libs are activated 1.mismatch 2.check if the record exists in the related library
+		external.NotificationFilter = STG_Path+'/'+TBL_Path;
+		var T=external.XTextEx(TBL_Path);
+		var S=external.XTextEx(STG_Path);
+		if (T)	
+			{
+				chk_lib(TBL_Path);
+				chk_TBLLib_n_aggEvent(TBL_Path);																								//Add chk_TBLLib_n_aggEvent to check if values are changed in Agg and in TBL lib.
+			};											
+		if (S)	chk_lib(STG_Path);
+}
+
+
+//check "changes" in lib (Variables)
+function chk_lib(src_lib)
+{//this function is for entity variables
+	//1.Check if libs are activated
+	//Objective 1. has already (and should be) be checked before this function is excuted.
+	
+	//2. checking start
+	if (index_variables==-1) return;
+	if (external.XText.EntitySet[index_variables]==null) return;
+	var VARIABLES_ENTITY=external.XText.EntitySet[index_variables];// get entity first.
+	var VARIABLES_CS_SET=VARIABLES_ENTITY.Customize_Script_Set;
+
+	
+	switch(src_lib)
+	{
+		case STG_Path://settings library
+			//check sequence
+				var deletion_arr=new Array();
+				for (var i=0;i<VARIABLES_CS_SET.length;i++)
+				{
+						//check changes 
+						if (VARIABLES_CS_SET[i].VAR_TYPE=='S')
+						{
+							var delete_flag=false;
+							delete_flag=syn_Variables_with_both_libs(VARIABLES_CS_SET[i]);
+							if  (delete_flag==true) deletion_arr.push(i);
+						}
+				}
+				//delete sequence
+				for (var k=deletion_arr.length-1;k>-1;k--)
+				{//backward
+					delete_sequence(deletion_arr[k],VARIABLES_CS_SET);
+				}
+				break;
+		case TBL_Path://tables library
+			//check sequence
+				var deletion_arr=new Array();
+				for (var i=0;i<VARIABLES_CS_SET.length;i++)
+				{
+						//check changes 
+						if (VARIABLES_CS_SET[i].VAR_TYPE=='T')
+						{
+							var delete_flag=false;
+							delete_flag=syn_Variables_with_both_libs(VARIABLES_CS_SET[i]);
+							if  (delete_flag==true) {deletion_arr.push(i);} //for deletion
+						}
+				}
+				//delete sequence
+				for (var k=deletion_arr.length-1;k>-1;k--)
+				{//backward
+					delete_sequence(deletion_arr[k],VARIABLES_CS_SET);
+				}
+				break;
+	}
+}
+
+//Check "changes" in AGGlib and TBLlib(Events).
+//Events with "Stored Event" type.
+function chk_TBLLib_n_aggEvent(src_lib)
+{
+	//this function is for entity events
+	//1.Check if libs are activated - Objective 1. has already (and should be) be checked before this function is excuted.
+	//2. checking start
+	
+	if (index_events==-1) return;				//means no record in the events
+	if (external.XText.EntitySet[index_events]==null) return;
+	var EVENTS_ENTITY=external.XText.EntitySet[index_events];// get entity first.
+	var EVENTS_CS_SET=EVENTS_ENTITY.Customize_Script_Set;
+
+
+	switch(src_lib)
+	{
+		case TBL_Path://tables library
+				//check sequence
+				var deletion_arr=new Array();
+				for (var i=0;i<EVENTS_CS_SET.length;i++)
+				{
+						//check changes and only check type with "Stored Event"
+						var type_n_level=extract_type_n_level(EVENTS_CS_SET[i].VAR_TYPE);
+						var Event_Type=type_n_level.event_type;
+						if (Event_Type=='S')
+						{
+							var delete_flag=false;
+							delete_flag=syn_Events_with_TBL_libs(EVENTS_CS_SET[i]);
+							if  (delete_flag==true) {deletion_arr.push(i);} //for deletion
+						}
+				}
+				
+				//delete sequence
+				for (var k=deletion_arr.length-1;k>-1;k--)
+				{//backward
+					delete_sequence_event(deletion_arr[k],EVENTS_CS_SET);
+				}
+				break;
+	}	
+}
+
+//========================================================2. PROCESS SHARP DEF (#define...) and Reference source File  ====================================================================
+//show reference source path on the webpage at beginning
+function show_reference_src()
+{
+		var obj=document.getElementById("stg_filename");
+		STG_Path=external.XText.STG_RefPath;
+		obj.value=STG_Path;
+		
+		var obj=document.getElementById("tbl_filename");
+		TBL_Path=external.XText.TBL_RefPath;
+		obj.value=TBL_Path;
+	
+}
+
+//Check if the reference path value has changed. if so, assign the value to global variables and set modify .
+function syn_path_to_ex()
+{//get the value form webpage then compare the value with the old value to see if it has been changed.
+ //If the value(s) have changed, update the changes to the external object. 
+	
+	var local_change_flag=false;
+	var tmp_STG=document.getElementById("stg_filename").value;
+	var tmp_TBL=document.getElementById("tbl_filename").value;
+	if (tmp_STG!=STG_Path) {STG_Path=tmp_STG;local_change_flag=true;}
+	if (tmp_TBL!=TBL_Path) {TBL_Path=tmp_TBL;local_change_flag=true;}
+
+	if (local_change_flag==true)
+	{
+		external.XText.STG_RefPath=STG_Path;
+		external.XText.TBL_RefPath=TBL_Path;
+		external.NotificationFilter = STG_Path+'/'+TBL_Path; //reassign this too
+		external.SetModified(true);
+	}
+}
+
+//Get def_setting only at beginning.(only show no save)
+function show_sharp_def() // 1.show 2.load defset at beginning(if needed) 3.check if it has basic #define(for changed_flag)
+{
+	  var obj=document.getElementsByName("checkbox");			//get chk array	  
+	  if (!external.XText.DefSet) return;
+	  var tmp_defset=external.XText.DefSet;
+	  var have_DESCRIPTOR_FILE_NAME=false;
+	  var have_AGG_TABLE_CONTROL=false;
+	  var have_AGG_SETTING_CONTROL=false;
+	  var have_AGG_LOGIN_CONTROL=false;
+	  
+		for (i = 0; i < tmp_defset.length; i++)
+		{ 
+				//AGG lib has the default value (i.e.#define STG_DEBUG_PRINT 0),
+				//therefore, we take a "not" defval as the symbol of an enabled function. 
+				var def_value=tmp_defset[i].replace(/^\s+|\s+$/g,""); 
+				
+				if (def_value=="#define AGG_DEBUG_PRINT 1") 
+					{obj[0].checked = true;    AGG_DEBUG_PRINT=1;}
+				if (def_value=="#define AGG_LOGIN_CONTROL 1")
+					{obj[1].checked = true;		AGG_LOGIN_CONTROL=1;  have_AGG_LOGIN_CONTROL=true;}
+				if (def_value=="#define AGG_CUSTOM_RTC 1")
+					{obj[2].checked = true;		AGG_CUSTOM_RTC=1;}
+					
+				if (def_value=="#define AGG_DESCRIPTOR_FILE \""+external.FileName+"\"")
+					{AGG_DESCRIPTOR_FILE=external.FileName; have_DESCRIPTOR_FILE_NAME=true;}
+				
+				
+				
+				if (def_value=="#define AGG_SETTING_CONTROL 1")															//1.New(means not setup anything yet. Defval is "Disabled".)
+					{																																					//2.Oringinally Disabled.
+						AGG_SETTING_CONTROL=1;   
+						have_AGG_SETTING_CONTROL=true;
+						obj[3].checked = true;
+					}				
+				if (def_value=="#define AGG_TABLE_CONTROL 1")																//Important:To get the settings of enabling the stg or tbl libs reference or not.
+					{																																					//if table or setting lib reference is not enabled means 
+						AGG_TABLE_CONTROL=1;
+						have_AGG_TABLE_CONTROL=true;
+						obj[4].checked = true;
+					}											
+
+				
+
+				//not allow user to modify AGG_WAIT_TIME for now.
+				//But if it had already existed in the library, the interface will keep it.
+				if (def_value.indexOf("#define AGG_MAX_RECONNECTION_DELAY")==0)													//Rename AGG_WAIT_TIME	to	AGG_MAX_RECONNECTION_DELAY
+				{
+					var tmp_wt_str=def_value.slice(22);
+					if (isNaN(tmp_wt_str)==true) tmp_wt_str='15'; //reset to default value
+					AGG_WAIT_TIME=Number(tmp_wt_str);
+					//alert('|'+AGG_WAIT_TIME+'|');
+				}
+		}
+		
+//--Post Processes
+		if (have_DESCRIPTOR_FILE_NAME==false) external.SetModified(true);
+		if (have_AGG_SETTING_CONTROL==false)
+		{
+			//alert('Post-AGG_SETTING_CONTROL=false');
+		}
+		
+		if (have_AGG_TABLE_CONTROL==false)
+		{
+			//alert('Post-AGG_TABLE_CONTROL=false');
+		}
+		
+}
+
+//clear all and write related #define into DefSet object.
+function rewrite_sharp_def()
+{	//write all setting XTXT.DEF Object
+	//functional settings -> certain function or state of the library.
+	//validation settings -> the value required the result of some calculation or process.
+  var chk_obj=document.getElementsByName("checkbox");							//get chk array
+	var tmp_defset=external.XText.DefSet;
+	var Obj = new String();
+//0. must have
+	tmp_defset.length=0;																							//remove all
+	
+	var Obj = '';
+	Obj= "#define TBL_TIMESTAMP 1";																		//Steven said he cancel this one?
+	tmp_defset.push(Obj);
+	var Obj = '';
+	Obj= "#define STG_TIMESTAMP 1"; 																	//TBL_TIMESTAMP and STG_TIMESTAMP only works when we use agg lib. But they are not belong to the AGG.
+	tmp_defset.push(Obj);
+	
+	var Obj = '';																					
+	Obj= "#define AGG_DESCRIPTOR_FILE \""+external.FileName+"\"";  		//always add descriptor_file_name, AGG_TABLE_CONTROL, and AGG_SETTING_CONTROL.
+	tmp_defset.push(Obj);
+
+
+
+
+	
+	var Obj = '';
+	if (AGG_TABLE_CONTROL)
+	{
+		Obj= "#define AGG_TABLE_CONTROL 1";															//Enable the TBL Lib reference or not.(It depends on the reflib linked state now.)
+		tmp_defset.push(Obj);
+	}
+	var Obj = '';
+	if (AGG_SETTING_CONTROL)
+	{
+		Obj= "#define AGG_SETTING_CONTROL 1";														//Disable the STG Lib reference or not.
+		tmp_defset.push(Obj);
+	}
+
+	
+
+
+		
+		
+		
+	var Obj = '';
+	Obj= "#define AGG_MAX_RECONNECTION_DELAY "+AGG_WAIT_TIME.toString();						//Rename AGG_WAIT_TIME	to	AGG_MAX_RECONNECTION_DELAY
+	tmp_defset.push(Obj);	
+
+	
+	
+//1.functional settings(means that it has nothing to do with calculation procedure.)
+		var Obj = '';
+		if (chk_obj[0].checked == true)
+		{	
+	 		Obj= "#define AGG_DEBUG_PRINT 1";
+	 		AGG_DEBUG_PRINT=1;
+	 		tmp_defset.push(Obj);
+		}
+		else
+		{
+			Obj= "#define AGG_DEBUG_PRINT 0";	//temporary
+			AGG_DEBUG_PRINT=0;
+			tmp_defset.push(Obj);
+		}
+			
+		var Obj = '';
+		if (chk_obj[1].checked == true)
+		{	
+	 		Obj= "#define AGG_LOGIN_CONTROL 1";
+	 		AGG_LOGIN_CONTROL=1;
+	 		tmp_defset.push(Obj);
+		}
+		else{AGG_LOGIN_CONTROL=0;}
+
+		var Obj = '';
+		if (chk_obj[2].checked == true)
+		{	
+	 		Obj= "#define AGG_CUSTOM_RTC 1";
+	 		AGG_CUSTOM_RTC=1;
+	 		tmp_defset.push(Obj);
+		}
+		else{AGG_CUSTOM_RTC=0;}
+		
+//2.validation settings(settings by calculate result)
+		var Obj = new String;
+		Obj= "#define AGG_MAX_NUM_ENTITY_TYPES "+def_stg.AGG_MAX_NUM_ENTITIES;				//Rename AGG_MAX_NUM_ENTITIES	 to	 AGG_MAX_ENTITY_TYPE_NUM	//Rename2 AGG_MAX_ENTITY_TYPE_NUM	 to	 AGG_MAX_NUM_ENTITY_TYPES
+		tmp_defset.push(Obj);
+		
+		var Obj = new String;
+		Obj= "#define AGG_MAX_CONTEXT_NAME_LEN "+def_stg.AGG_MAX_CONTEXT_NAME_LEN;	
+		tmp_defset.push(Obj);
+		
+		var Obj = new String;
+		Obj= "#define AGG_MAX_NUM_SCRIPT_LINES "+def_stg.AGG_MAX_NUM_ITEMS;						//Rename AGG_MAX_NUM_ITEMS	to	AGG_MAX_SCRIPT_LINE_NUM			//Rename2 AGG_MAX_SCRIPT_LINE_NUM to AGG_MAX_NUM_SCRIPT_LINES
+		tmp_defset.push(Obj);
+		
+		var Obj = new String;
+		Obj= "#define AGG_MAX_SCRIPT_LINE_NAME_LEN "+def_stg.AGG_MAX_ITEM_NAME_LEN; 	//Rename AGG_MAX_ITEM_NAME_LEN	to	AGG_MAX_SCRIPT_LINE_NAME_LEN
+		tmp_defset.push(Obj);
+		
+		//AGG_MAX_FUNCTION_NAME_LEN (newly add)
+		var Obj = new String;
+		Obj= "#define AGG_MAX_FUNCTION_NAME_LEN "+def_stg.AGG_MAX_FUNCTION_NAME_LEN; 	//Rename AGG_MAX_ITEM_NAME_LEN	to	AGG_MAX_SCRIPT_LINE_NAME_LEN
+		tmp_defset.push(Obj);		
+		
+		//AGG_MAX_NUM_STORED_EVENTS (newly add)
+		var Obj = new String;
+		Obj= "#define AGG_MAX_NUM_STORED_EVENTS "+def_stg.AGG_MAX_NUM_STORED_EVENTS; 	
+		tmp_defset.push(Obj);			
+		
+		/*
+		var Obj = new String;
+		Obj= "#define AGG_MAX_EVENT_FIELD_NUM "+def_stg.AGG_MAX_NUM_EVENT_FIELDS;							//Rename AGG_MAX_NUM_EVENT_FIELDS	to AGG_MAX_EVENT_FIELD_NUM								//Erase2 this sharp define now
+		tmp_defset.push(Obj);
+
+		var Obj = new String;																												
+		Obj= "#define AGG_MAX_EVENT_FIELD_VALUE_LEN "+def_stg.AGG_MAX_EVENT_FIELD_VAL_LEN;		//Rename AGG_MAX_EVENT_FIELD_VAL_LEN	to AGG_MAX_EVENT_FIELD_VALUE_LEN			//Erase2 this sharp define now
+		tmp_defset.push(Obj);
+		*/
+		if (changed_flag==true) {external.SetModified(true);}  //should setup a flag...
+}
+
+//Check the the flag of the STG or TBL refernce before adding.
+//If the flag is diabled(unchecked) and have_ref_libs_data=true, then make the flag be true(enable) no matter what.
+function handle_libs_refflag_onadd()
+{
+		var chk_obj=document.getElementsByName("checkbox");	
+		if (AGG_SETTING_CONTROL==0)
+		{
+					if (have_ref_libs_data('STG'))
+					{			
+									chk_obj[3].checked = true; 			
+									AGG_SETTING_CONTROL=1;							//Change the value back.
+									changed_flag=true;
+									rewrite_sharp_def();								//The function will (1)Remove all first. (2)Then rebuild all settings.
+									//validate_all();										
+					}
+		}
+		if (AGG_TABLE_CONTROL==0)
+		{
+					if (have_ref_libs_data('TBL'))
+					{			
+									chk_obj[4].checked = true; 			
+									AGG_TABLE_CONTROL=1;								//Change the value back.
+									changed_flag=true;
+									rewrite_sharp_def();								//The function will (1)Remove all first. (2)Then rebuild all settings.
+									//validate_all();										
+					}
+		}
+}
+
+//Check the the flag of the STG or TBL refernce while loading only.
+//If the flag is diabled(unchecked) and have_ref_libs_data=true, then make the flag be true(enable) no matter what.
+function handle_libs_refflag_onload()
+{
+		var chk_obj=document.getElementsByName("checkbox");	
+		if (AGG_SETTING_CONTROL==0)
+		{
+					if (have_ref_libs_data('STG'))
+					{			
+									chk_obj[3].checked = true; 			
+									AGG_SETTING_CONTROL=1;							//Make the refflag be true.
+									changed_flag=true;
+									rewrite_sharp_def();								//The function will (1)Remove all first. (2)Then rebuild all settings.
+									//validate_all();										
+					}
+		}
+		if (AGG_TABLE_CONTROL==0)
+		{
+					if (have_ref_libs_data('TBL'))
+					{			
+									chk_obj[4].checked = true; 			
+									AGG_TABLE_CONTROL=1;								//Make the refflag be true.
+									changed_flag=true;
+									rewrite_sharp_def();								//The function will (1)Remove all first. (2)Then rebuild all settings.
+									//validate_all();										
+					}
+		}
+}
+
+//Handle the "related processes" after user enable/disable(check or uncheck) the flag of the STG or TBL refernce.(click on the checkbox.)
+//The function is "Not" for when page first loaded, but it will be triggered when the user check or uncheck the option.
+function handle_libs_reference_flag(target_lib)
+{
+		var chk_obj=document.getElementsByName("checkbox");											//get chk array
+		switch(target_lib)
+		{
+				case 'STG':
+						//1.Syn the value to the flag.
+						chk_obj[3].disabled = true; 							//prevent the element process still
+						if (chk_obj[3].checked == true)
+						{AGG_SETTING_CONTROL=1;}
+						
+						else
+						{
+									AGG_SETTING_CONTROL=0;
+									if (have_ref_libs_data('STG'))
+									{
+											var note_str = "You still have STG data in the 'Variables'.\r\n\r\n";
+											note_str += "If you disable(uncheck) the STG Library Reference,\r\n";
+											note_str += "the related STG data in the 'Variables' will be deleted.\r\n\r\n";
+											note_str += "Click 'Confirm' to proceed, 'Cancel' to cancel 'uncheck'.\r\n";
+											
+											var answer = confirm(note_str);
+											if (answer)
+											{
+													if (delete_refdata_by_lib('STG'))
+													{
+															//2.
+															changed_flag=true;
+															rewrite_sharp_def();					//The function will (1)Remove all first. (2)Then rebuild all settings.
+															validate_all();										
+													}
+											}
+											else
+											{
+													chk_obj[3].checked = true; 				//if user click "cancel", Change the value back.
+													AGG_SETTING_CONTROL=1;			
+													//return;
+											}
+									}
+						}
+						break;
+				
+				case 'TBL':
+						chk_obj[4].disabled = true; 
+						if (chk_obj[4].checked == true)
+						{AGG_TABLE_CONTROL=1;}
+						
+						else
+						{
+									AGG_TABLE_CONTROL=0;
+									if (have_ref_libs_data('TBL'))
+									{
+											var note_str = "You still have TBL data in the 'Variables'.\r\n\r\n";
+											note_str += "If you disable(uncheck) the TBL Library Reference,\r\n" 
+											note_str += "the related TBL data in the 'Variables' will be deleted.\r\n\r\n";
+											note_str += "Click 'Confirm' to proceed, 'Cancel' to cancel 'uncheck'.\r\n";		
+											var answer = confirm("You still have TBL data in the 'Variables'.\r\n\r\nClick 'Confirm' to proceed, 'Cancel' to cancel.")
+											if (answer)
+											{
+													if (delete_refdata_by_lib('TBL')) 
+													{
+															//2.
+															changed_flag=true;
+															rewrite_sharp_def();					//The function will (1)Remove all first. (2)Then rebuild all settings.
+															validate_all();
+													}
+											}
+											else
+											{
+													chk_obj[4].checked = true; 				//if user click "cancel", Change the value back.
+													AGG_TABLE_CONTROL=1;
+													//return;
+											}				
+									}							
+						}
+						//alert('AGG_TBL='+AGG_TABLE_CONTROL);
+						break;	
+		}
+			
+		changed_flag=true;
+		rewrite_sharp_def();					//The function will (1)Remove all first. (2)Then rebuild all settings.
+		validate_all();	
+		chk_obj[3].disabled = false; 
+		chk_obj[4].disabled = false; 			
+}
+
+//Check if we have the libs reference data in the "Variables".
+//Note that if the target lib is not in linked state or target_lib arg is null, the function will return false.
+function have_ref_libs_data(target_lib)
+{
+	//0.This function is for checking if STG or TBL records exist in the Variables.
+	//0.no need to check if refPath is online. Check only the data in the XTXT. If there is data required to be deleted, then deleted it.
+	//1.Then check if we have the "target lib data" in the variables.
+	
+	if (typeof(target_lib)=='undefined') return false;
+	if (index_variables==-1) return false; 																//沒有variables實體的話
+	if (external.XText.EntitySet[index_variables]==null) return false;
+	
+	var have_data=false;
+	var VARIABLES_ENTITY=external.XText.EntitySet[index_variables];				//get entity first
+	var VARIABLES_CS_SET=VARIABLES_ENTITY.Customize_Script_Set;
+	
+	
+	var tmp_target='';		//target lib str
+	if (target_lib=='STG') tmp_target='S';
+	if (target_lib=='TBL') tmp_target='T';
+	
+	
+	for (var i=0;i<VARIABLES_CS_SET.length;i++)
+	{
+		if (VARIABLES_CS_SET[i].VAR_TYPE==tmp_target)	have_data=true;
+	}
+	
+	return have_data;
+}
+
+//Delete all ref-data in Variables by given lib type(STG or TBL).
+//The way we delete data here is (1)delete all first. (2)then reload the html table.
+function delete_refdata_by_lib(target_lib)
+{
+		if (typeof(target_lib)=='undefined') return false;
+		if (index_variables==-1) return false; 																		//means varEntity not exists.											
+		if (external.XText.EntitySet[index_variables]==null) return false;	
+		var del_success=false;																										//If the flag is true means we have really delete something in the "Variables".
+		var VARIABLES_ENTITY=external.XText.EntitySet[index_variables];
+		var VARIABLES_CS_SET=VARIABLES_ENTITY.Customize_Script_Set;
+//0.get desired libtype
+		var tmp_VAR_TYPE = new String();
+		switch(target_lib)
+		{
+				case 'STG':
+					tmp_VAR_TYPE='S';
+					break;
+				case 'TBL':
+					tmp_VAR_TYPE='T';
+					break;
+				default:
+					tmp_VAR_TYPE='X';
+					return false;
+					break;
+		}		
+
+//1.delete sequence
+		tmp_CS_length=VARIABLES_CS_SET.length;
+		for (var i=tmp_CS_length-1;i>-1;i--)
+		{
+				if (VARIABLES_CS_SET[i].VAR_TYPE==tmp_VAR_TYPE)	//S or T
+				{
+					VARIABLES_CS_SET.splice(i, 1);
+					del_success=true;
+				}
+		}
+
+//2.refresh the HTML Table of the "Entity Variables".
+		//a.reset table
+		var html_table =document.getElementById("table_variables");
+		if ( html_table.rows.length > 1) 																			//clear all before reload data into the table.
+		{
+				var tmp_length =html_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					html_table.deleteRow(1);
+				}
+		}
+		
+		//b.get entity information
+		var entity_context = document.getElementById("lab_variables");
+		entity_context.innerHTML='(<I>'+VARIABLES_ENTITY.CONTEXT_LAYER+'</I>)';
+		
+		//c.load necessary
+		for (var k = 0; k < VARIABLES_ENTITY.Necessary_Script_Set.length; k++)
+		{
+		}
+		
+		//d.load customized
+		for (var k=0;k < VARIABLES_ENTITY.Customize_Script_Set.length;k++) 
+		{
+			var tmp_Group_n_Description=ret_G_n_D(VARIABLES_ENTITY.Customize_Script_Set[k].C_SCRIPT); //@@@
+			var CS_Row = document.getElementById("table_variables").insertRow();
+			CS_Row.onmousedown = function() {Select(this,'variables');}
+			CS_Row.ondblclick = function() {variables_Edit(this);}
+			CS_Row.insertCell(0).innerHTML = HTMLEncode(VARIABLES_ENTITY.Customize_Script_Set[k].VAR_NAME);		
+			CS_Row.insertCell(1).innerHTML = ret_alias('ref_src',VARIABLES_ENTITY.Customize_Script_Set[k].VAR_TYPE);
+			CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);	//@@@
+			CS_Row.insertCell(3).innerHTML = '&nbsp';
+			CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+		}
+//3.	
+		if (del_success)
+		{
+			external.SetModified(true);
+			point_on_first('variables');
+		}
+		return del_success;
+}
+
+
+//========================================================3. validation ======================================================================================
+//validate all entities(must be the last one in all check sequence)
+function validate_all()
+{
+	
+//1.reset or init
+	reset_sharp_def_variables(); 												//only validation settings.
+	AGG_MAX_NUM_ENTITIES=get_entities_count(); 					//get total count first.
+	AGG_MAX_NUM_ITEMS=get_cs_records_count();
+	AGG_MAX_CONTEXT_NAME_LEN=get_contextlayer_maxlen(); //root
+	AGG_MAX_ITEM_NAME_LEN=get_varname_maxlen(); 	
+	AGG_MAX_FUNCTION_NAME_LEN=get_funname_maxlen();			//new sharp setting.
+	AGG_MAX_NUM_STORED_EVENTS=get_cs_stored_event_records_count();
+	
+//2.validation starts and show fields' status.
+	err_msg_array.length=0; 												//it need to reset every time.(Global)
+	events_msg_array.length=0; 											//it need to reset every time.(Global)
+	var all_entities_ok=true;
+	if (validate_info_all()==false) all_entities_ok=false;
+	if (validate_variables_all()==false) all_entities_ok=false;
+	if (validate_functions_all()==false) all_entities_ok=false;
+	if (validate_events_all()==false) all_entities_ok=false;
+	
+//3.final validation(the rest of...validate the conclusion)---	
+	//i.e. connect path
+	
+	
+//4.show report
+	show_summary_report(all_entities_ok);       //always show report after each validation.
+	
+	
+//5.Deal with #define stuff.
+	//assign related #defines (validation settings only)
+	if (all_entities_ok)
+	{
+		def_stg.AGG_MAX_NUM_ENTITIES=AGG_MAX_NUM_ENTITIES;								//ok
+		def_stg.AGG_MAX_CONTEXT_NAME_LEN=AGG_MAX_CONTEXT_NAME_LEN; 				//ok
+		def_stg.AGG_MAX_NUM_ITEMS=AGG_MAX_NUM_ITEMS;											//ok
+		def_stg.AGG_MAX_ITEM_NAME_LEN=AGG_MAX_ITEM_NAME_LEN;							//tok
+		def_stg.AGG_MAX_FUNCTION_NAME_LEN=AGG_MAX_FUNCTION_NAME_LEN;			//AGG_MAX_FUNCTION_NAME_LEN
+		def_stg.AGG_MAX_NUM_STORED_EVENTS=AGG_MAX_NUM_STORED_EVENTS;			//AGG_MAX_NUM_STORED_EVENTS
+		def_stg.AGG_MAX_NUM_EVENT_FIELDS=AGG_MAX_NUM_EVENT_FIELDS; 				//not ok. 			It's impossible to get the value without decoding the script.
+		def_stg.AGG_MAX_EVENT_FIELD_VAL_LEN=AGG_MAX_EVENT_FIELD_VAL_LEN; 	//not ok. 			It's impossible to get the value without decoding the script.
+	}
+	else
+	{
+		def_stg.AGG_MAX_NUM_ENTITIES=0;
+		def_stg.AGG_MAX_CONTEXT_NAME_LEN=0;
+		def_stg.AGG_MAX_NUM_ITEMS=0;
+		def_stg.AGG_MAX_ITEM_NAME_LEN=0;
+		def_stg.AGG_MAX_FUNCTION_NAME_LEN=0;
+		def_stg.AGG_MAX_NUM_STORED_EVENTS=0;
+		def_stg.AGG_MAX_NUM_EVENT_FIELDS=0;
+		def_stg.AGG_MAX_EVENT_FIELD_VAL_LEN=0;
+	}
+	
+//6.Save updated #define data. (syn the result.)	
+	rewrite_sharp_def();  	//necessary step, write to defset.
+}
+
+//always reset related #define variables before executing every validation sequence. 
+function reset_sharp_def_variables()
+{
+		//reset global variables(validation setting only)
+		var AGG_MAX_NUM_ENTITIES=0;       //3  validate_all
+		var AGG_MAX_CONTEXT_NAME_LEN=0; 	//minimal 4  , so...
+		var AGG_MAX_NUM_ITEMS=0;					//0  validate_all
+		var AGG_MAX_ITEM_NAME_LEN=0;			//minimal 12, so...
+		var AGG_MAX_FUNCTION_NAME_LEN=0;	//AGG_MAX_FUNCTION_NAME_LEN
+		var AGG_MAX_NUM_STORED_EVENTS=0;	//AGG_MAX_NUM_STORED_EVENTS
+		var AGG_MAX_NUM_EVENT_FIELDS=0;		//1  
+		var AGG_MAX_EVENT_FIELD_VAL_LEN=0;//1  
+}
+
+//get the Entity count
+function get_entities_count()
+{
+	var entities_count=0;
+	if (!external.XText.EntitySet) return entities_count;
+	var En_set=external.XText.EntitySet;	//external.XText.EntitySet[i].Necessary_Script_Set[0].N_SCRIPT
+	entities_count=En_set.length;
+	 return entities_count;
+}
+
+//get total customized record count
+function get_cs_records_count()
+{
+	var records_count=0;
+	if (!external.XText.EntitySet) return records_count;
+	var En_set=external.XText.EntitySet;
+	for (var i=0;i<En_set.length;i++)
+	{
+		var Cs_set=En_set[i].Customize_Script_Set;
+		records_count+=Cs_set.length;
+	}
+	return records_count;
+}
+
+//get max length of the Entities CONTEXT_LAYER fields
+function get_contextlayer_maxlen()
+{
+	var maxlen=0;
+	if (!external.XText.EntitySet) return maxlen;
+	var En_set=external.XText.EntitySet;
+	for (var i=0;i<En_set.length;i++)
+	{
+		if (typeof(En_set[i].CONTEXT_LAYER)=='undefined') break;
+		var cl_str=En_set[i].CONTEXT_LAYER;
+		if (cl_str.length>maxlen) maxlen=cl_str.length;
+	}
+	return maxlen;
+}
+
+//get max length of the var_name(s)
+//this is just temporary function
+//(should get the value inside the validate_single not by this function.)
+function get_varname_maxlen()
+{
+	var maxlen=0;
+	if (!external.XText.EntitySet) return maxlen;
+	var En_set=external.XText.EntitySet;
+	for (var i=0;i<En_set.length;i++)
+	{
+		var Cs_set=En_set[i].Customize_Script_Set;
+		for (var j=0;j<Cs_set.length;j++)
+		{
+			if (typeof(Cs_set[j].VAR_NAME)=='undefined') continue;
+			if (Cs_set[j].VAR_NAME.length > maxlen) maxlen=Cs_set[j].VAR_NAME.length;
+		}
+	}
+	//if (maxlen<12) maxlen=12; //we mark this line now, cuz the lib is different now.
+	return maxlen;
+}
+
+//get max length of the function name.
+//AGG_MAX_FUNCTION_NAME_LEN
+function get_funname_maxlen()
+{
+	var maxlen=0;
+	if (!external.XText.EntitySet) return maxlen;
+	if (index_functions==-1) return maxlen;				//-1 means no data in func entity. Make sure that the entity exists.
+	var En_set=external.XText.EntitySet;
+	
+		var Cs_set=En_set[index_functions].Customize_Script_Set;
+		for (var j=0;j<Cs_set.length;j++)
+		{
+			if (typeof(Cs_set[j].VAR_NAME)=='undefined') continue;
+			if (Cs_set[j].VAR_NAME.length > maxlen) maxlen=Cs_set[j].VAR_NAME.length;
+		}
+
+	if (maxlen<12) maxlen=12;
+	return maxlen;
+}
+
+//get total customized record count
+function get_cs_stored_event_records_count()
+{
+	var records_count=0;
+	if (!external.XText.EntitySet) return records_count;
+	if (index_events==-1) return records_count;				//-1 means no data in event entity. Make sure that the entity exists.
+
+	var En_set=external.XText.EntitySet;
+		var Cs_set=En_set[index_events].Customize_Script_Set;
+		for (var j=0;j<Cs_set.length;j++)
+		{
+			if (typeof(Cs_set[j].VAR_NAME)=='undefined') continue;
+			if (typeof(Cs_set[j].VAR_TYPE)=='undefined') continue;
+			var type_obj=extract_type_n_level(Cs_set[j].VAR_TYPE);
+			var tmp_Event_Type=type_obj.event_type;
+			if (tmp_Event_Type=='S')
+			records_count+=1;
+		}	
+	return records_count;
+}
+
+//info-----
+//single info
+function validate_info_single(obj)
+{
+		var info_description =new String();
+		var info_context_type = new String();
+		info_description=obj.Description;
+		info_context_type=obj.Context_type;
+		
+	//validation start.
+
+	//Description
+		if (info_description.length==0) 
+		{
+			return false;
+		}
+		//info_obj.Description=tmp_DS_str.replace(/\s*/g,"");  //ignore this in Description
+	//Context Type
+		if (info_context_type.length==0)
+		{
+			return false;
+		}
+		var tmp_str=info_context_type.replace(/\s*/g,"");  		//check white space
+		if (info_context_type!=tmp_str)
+		{
+			return false;
+		}
+	//result validation
+		var tmp_str=encode_info_script(obj);
+		if (tmp_str=='')
+		{
+			return false;
+		}
+		
+		/*
+		if (tmp_str.length>255) // Disable this section cuz the limitation is overcomed.
+		{
+			return false;
+		}
+		*/
+		
+		return true;
+}
+
+//all info
+function validate_info_all()
+{		//Generally, we check 1.format then 2.content value. But we only check 2. in info validation.
+		//we r sure the "external.XText.EntitySet[i].Necessary_Script_Set[0].N_SCRIPT)" is exist, so...
+		var all_ok=true;
+		var err_mark_list = new Array(); //no need to change name
+		var info_obj = new Object();
+		
+		info_obj=decode_info_script(external.XText.EntitySet[index_info].Necessary_Script_Set[0].N_SCRIPT);		//It suppose to have format checking here(info_obj(null)), but we have already checked that(only info).
+	
+		if ((validate_info_single(info_obj))==false)
+		{
+			all_ok=false;
+			err_mark_list.push(false);
+		}
+		else
+		{
+			err_mark_list.push(true);
+		}
+		
+		show_info_err_mark(err_mark_list); 	// update fields' status.
+		return all_ok;											// for summary report
+}
+
+//variables-----
+//single variable record
+function validate_variables_single(obj)
+{
+		var variable_name=new String();
+		var variable_type=new String(); 			//reference source.
+		var variable_c_script=new String();
+		variable_name=obj.VAR_NAME;
+		variable_type=obj.VAR_TYPE;
+		variable_c_script=obj.C_SCRIPT;
+		
+	//validation start.	
+	//VAR_NAME
+		if (typeof(variable_name)=='undefined') return false;
+		if (variable_name=='') return false;
+		
+	//VAR_TYPE
+		if (typeof(variable_type)=='undefined') return false;
+		if (variable_type=='')	return false;
+		switch(variable_type)
+		{
+			case 'S':
+			case 'T':
+				break;
+			default:
+				return false;
+				break;
+		}
+		
+	//C_SCRIPT
+		if (typeof(variable_c_script)=='undefined') return false;
+		if (variable_c_script=='') 	return false;
+		/*// Disable this section cuz the limitation is overcomed.
+		if (variable_c_script.length>255)	
+		{
+			err_msg_array.push('-Variable Name =  &quot;<I>'+variable_name+'</I>&quot;.&nbsp;&nbsp;   The script lenth cannot be greater than 255, you have '+variable_c_script.length+'. Reduce your fields to pass validation.');
+			return false;
+		}	
+		*/
+		//decode it
+		var var_csobj=decode_variables_script(variable_c_script);	
+		if (var_csobj==null) {
+			//alert('ill-formated while rechecking---.'); 
+			return false;
+		}													//ill-formated(recheck after decoding it.)
+		//we don't check "variable.format" here, cuz it's 'import' stuff.(u can't modify it by this interface in the entity variables).
+		return true;
+}
+
+//all variable records
+function validate_variables_all()
+{		//Check 1.format(pass decode sequence or not) then 2.content value.
+		//we r sure the "external.XText.EntitySet[i].Necessary_Script_Set[0].N_SCRIPT)" is exist, so...
+		var all_ok=true;
+		var err_mark_list = new Array(); //no need to change name(local)
+		var info_obj = new Object();
+		
+		variables_obj=external.XText.EntitySet[index_variables].Customize_Script_Set;	
+
+		for (var i = 0; i < variables_obj.length; i++) 
+		{
+				if ((validate_variables_single(variables_obj[i]))==false)
+				{
+					all_ok=false;
+					err_mark_list.push(false);
+				}
+				else
+				{
+					err_mark_list.push(true);
+				}
+		}
+	
+		show_variables_err_mark(err_mark_list); 	// update fields' status.
+		return all_ok;											// for summary report
+}
+
+//functions--
+function validate_functions_single(obj)
+{		
+		//no var_type in functions.
+		var function_name=new String();			
+		var function_c_script=new String();
+		function_name=obj.VAR_NAME;
+		function_c_script=obj.C_SCRIPT;
+		
+	//validation start.	
+	//VAR_NAME
+		if (typeof(function_name)=='undefined') return false;
+		if (function_name=='') return false;
+				
+	//C_SCRIPT
+		if (typeof(function_c_script)=='undefined') return false;
+		if (function_c_script=='') 	return false;
+		/*// Disable this section cuz the limitation is overcomed.
+		if (function_c_script.length>255)	
+		{
+			err_msg_array.push('-Function Name =  &quot;<I>'+function_name+'</I>&quot;.&nbsp;&nbsp;   The script lenth cannot be greater than 255, you have '+function_c_script.length+'. Reduce your fields to pass validation.');
+			return false;
+		}
+		*/
+		//decode it
+		var var_csobj=decode_functions_script(function_c_script);	
+		if (var_csobj==null) 
+			{
+				err_msg_array.push('-Function Name =  &quot;<I>'+function_name+'</I>&quot;.&nbsp;&nbsp;   The script field is corrupted.');
+				return false;
+			}													//ill-formated(recheck after decoding it.)
+		//we don't check "variable.format" here, cuz it's 'import' stuff.(u can't modify it by this interface in the entity variables).
+		return true;
+}
+
+function validate_functions_all()
+{
+		//we r sure the "external.XText.EntitySet[i].Necessary_Script_Set[0].N_SCRIPT)" is exist, so...
+		var all_ok=true;
+		var err_mark_list = new Array(); //no need to change name(local)
+		
+		
+		functions_obj=external.XText.EntitySet[index_functions].Customize_Script_Set;	
+		for (var i = 0; i < functions_obj.length; i++) 
+		{
+				if ((validate_functions_single(functions_obj[i]))==false)
+				{
+					all_ok=false;
+					err_mark_list.push(false);
+				}
+				else
+				{
+					err_mark_list.push(true);
+				}
+		}
+	
+		show_functions_err_mark(err_mark_list); 	// update fields' status.
+		return all_ok;											// f
+}
+
+//events--
+function validate_events_single(obj)
+{
+		//no var_type in functions.
+		var event_name=new String();
+		var event_type=new String();
+		var event_c_script=new String();
+		event_name=obj.VAR_NAME;
+		event_type=obj.VAR_TYPE;
+		event_c_script=obj.C_SCRIPT;
+		
+	//validation start.	
+	//VAR_NAME
+		if (typeof(event_name)=='undefined') return false;
+		if (event_name=='') return false;
+		
+	//VAR_TYPE
+		if (typeof(event_type)=='undefined') return false;
+		if (event_type=='')	return false;
+		var real_event_type=new String(); //for "generate_event_msg"
+		switch(event_type)
+		{
+			case 'S0':
+			case 'S1':
+			case 'S2':
+			case 'S3':
+			case 'S4':
+			case 'S5':
+				real_event_type='S';
+				break;
+			case 'I0':
+			case 'I1':
+			case 'I2':
+			case 'I3':
+			case 'I4':
+			case 'I5':
+				real_event_type='I';
+				break;
+			default:
+				return false;
+				break;
+		}				
+	//C_SCRIPT
+		if (typeof(event_c_script)=='undefined') return false;
+		if (event_c_script=='') 	return false;
+		/*// Disable this section cuz the limitation is overcomed.
+		if (event_c_script.length>255)	
+		{
+			err_msg_array.push('-Event Name =  &quot;<I>'+event_name+'</I>&quot;.&nbsp;&nbsp;   The script lenth cannot be greater than 255, you have '+event_c_script.length+'. Reduce your fields to pass validation.');
+			return false;
+		}	
+		*/
+		//decode it
+		var var_csobj=decode_events_script(event_c_script);	
+		if (var_csobj==null) 
+			{
+				err_msg_array.push('-Event Name =  &quot;<I>'+event_name+'</I>&quot;.&nbsp;&nbsp;   The script field is corrupted.');
+				return false;
+			}
+			
+																//ill-formated(recheck after decoding it.)
+		//get the values of	AGG_MAX_NUM_EVENT_FIELDS and AGG_MAX_EVENT_FIELD_VAL_LEN.
+		tmp_eventfld_num=0;
+		tmp_eventfld_val_len=0;
+		
+		var event_ffs=var_csobj.format.field_format_set;
+		tmp_eventfld_num=event_ffs.length;
+		if (AGG_MAX_NUM_EVENT_FIELDS<tmp_eventfld_num) AGG_MAX_NUM_EVENT_FIELDS=tmp_eventfld_num; //get max value of event field count.
+		
+		//1.for getting value length
+		for (var i=0;i<event_ffs.length;i++)
+		{
+				var tmp_type=event_ffs[i].fld_type;
+				var fff_obj=event_ffs[i].field_format_flag;
+				switch(tmp_type)
+				{
+					case 'I':
+						tmp_eventfld_val_len=5;
+						break;
+					case 'L':
+					case 'F':
+						tmp_eventfld_val_len=10;
+						break;
+					case 'D':
+						tmp_eventfld_val_len=23;
+						break;
+					case 'B':
+						tmp_eventfld_val_len=1;
+						break;
+					case 'S':	
+						tmp_eventfld_val_len=10; //default value=10 in String form if there is no limitation rule in String form.
+						var tmp_V=get_flag_value(fff_obj,'V'); //Limitation***
+						var tmp_V_obj=new Object();
+						tmp_V_obj=extract_P1P2(tmp_V);
+						if (tmp_V_obj!=null)
+						{
+							tmp_eventfld_val_len=tmp_V_obj.MAX;
+						}						
+						break;	
+				}
+				if (AGG_MAX_EVENT_FIELD_VAL_LEN<tmp_eventfld_val_len) AGG_MAX_EVENT_FIELD_VAL_LEN=tmp_eventfld_val_len; //get max value of event field value len.
+		}
+		
+		//2.for generating event message
+		
+		if (real_event_type=='I')
+			generate_event_msg(var_csobj);
+		
+		return true;
+}
+
+//generate event message
+function generate_event_msg(var_csobj)
+{//The function won't show 1.type!= I 2.have no "format" definition.
+		var single_ffs=var_csobj.format.field_format_set;
+		if (single_ffs.length==0) return;
+		var event_name=var_csobj.name;
+		var event_length=single_ffs.length;
+		events_msg_array.push('Event('+event_name+'): - Copy the following text to the tbs file if you want to raise a Instant Event');
+		events_msg_array.push('&nbsp;&nbsp;&nbsp; dim event_buff_'+event_name+' as agg_instant_event_buffer');
+		for (var i=0;i<single_ffs.length;i++)
+		{
+			events_msg_array.push('&nbsp;&nbsp;&nbsp; event_buff_'+event_name+'.field_value('+i+')=\"\"'); //event_buff.field_value(0)="1";
+		}
+		events_msg_array.push('&nbsp;&nbsp;&nbsp; agg_add_instant_events("root","'+event_name+'",event_buff_'+event_name+','+single_ffs.length+')');
+		events_msg_array.push('&nbsp;');
+}
+
+//validate event
+function validate_events_all()
+{
+		//we r sure the "external.XText.EntitySet[i].Necessary_Script_Set[0].N_SCRIPT)" is exist, so...
+		var all_ok=true;
+		var err_mark_list = new Array(); //no need to change name(local)
+		
+		
+		events_obj=external.XText.EntitySet[index_events].Customize_Script_Set;	
+		for (var i = 0; i < events_obj.length; i++) 
+		{
+				if ((validate_events_single(events_obj[i]))==false)
+				{
+					all_ok=false;
+					err_mark_list.push(false);
+				}
+				else
+				{
+					err_mark_list.push(true);
+				}
+		}
+	
+		show_events_err_mark(err_mark_list); 	// update fields' status.
+		return all_ok;												// f
+}
+
+//check if the table lib have enabled the Aggregate hash
+//get def_setting at beginning
+function check_tbl_have_hash() 
+{
+		var T=external.XTextEx(TBL_Path);
+		if (!T)		return; 
+	  if (!T.DefSet) return;
+	  var tmp_defset=T.DefSet;
+	  var have_enable_agg_hash=false;
+	  
+		for (i = 0; i < tmp_defset.length; i++)
+		{ 
+				var def_value=tmp_defset[i].replace(/^\s+|\s+$/g,""); //trim
+				if (def_value=="#define TBL_AGGREGATE_HASH 1")
+					have_enable_agg_hash=true;
+		}
+		
+		if (have_enable_agg_hash==false) 
+		{
+			if (have_hash==true) 
+				alert('The \"AggreGate Hash\" option is not checked. \r\n\r\nPlease enable it in the Table Library while running  Aggregate Library.\r\n');
+			have_hash=false;
+		}
+		else
+		{
+			have_hash=true;
+		}
+}
+
+//========================================================4. input control ===================================================================================
+//========================================================5. the rest of the functions =======================================================================
+//This is for syn data.(AGG with TBL and STG) 
+//check sequence
+//1.get all records in CS_Set (not all, only reference source is STG Lib ) 
+//2.find stg records which is equal to cs record name  in the stg lib.(if missing delete the record in agg lib.)
+//3.check and compare sequence start
+//4.make stg record as object(generate_new_cs_object)
+//5.make cs record as object (decode_variables_script)
+//6.compare both (only few main field)
+//7.If  not the same , initiate rebuild sequence
+//8.Rebuild sequence(The result data may be invalid.)//@@
+//8-1.afetr Rebuilding is complete, check if the result is valid.(if invalid, pop up a dialog box?)
+//8-2.if not show invalid on the last field of the variable table.
+
+external.NotificationFilter = STG_Path+'/'+TBL_Path;
+function external::OnModified(src_lib)
+{//this function is for entity variables
+	var s = new String
+	s = external.FileName + "::OnModified(" + src_lib + ")";
+	//alert('s');	//**
+	
+	if (index_variables==-1) return;
+	if (external.XText.EntitySet[index_variables]==null) return;
+	var VARIABLES_ENTITY=external.XText.EntitySet[index_variables];// get entity first
+	var VARIABLES_CS_SET=VARIABLES_ENTITY.Customize_Script_Set;
+	
+	switch(src_lib)
+	{
+		case STG_Path://settings library
+			//1.check if the lib are activated
+				var S=external.XTextEx(STG_Path);
+				if (!S)	
+				{
+					alert('The Aggregate Library Interface cannot link to the STG Library.');	
+					return;
+				}
+			//2.check sequence
+				var deletion_arr=new Array();
+				for (var i=0;i<VARIABLES_CS_SET.length;i++)
+				{
+						//check changes
+						if (VARIABLES_CS_SET[i].VAR_TYPE=='S')
+						{
+							var delete_flag=false;
+							delete_flag=syn_Variables_with_both_libs(VARIABLES_CS_SET[i]);
+							if  (delete_flag==true) deletion_arr.push(i);
+						}
+				}
+				//delete sequence
+				for (var k=deletion_arr.length-1;k>-1;k--)
+				{
+					delete_sequence(deletion_arr[k],VARIABLES_CS_SET);
+				}
+				break;
+		case TBL_Path://tables library
+			//1.check if the lib are activated
+				var T=external.XTextEx(TBL_Path);
+				if (!T)	
+				{
+					alert('The Aggregate Library Interface cannot link to the TBL Library.');	
+					return;
+				}
+			//2.check sequence
+				var deletion_arr=new Array();
+				for (var i=0;i<VARIABLES_CS_SET.length;i++)
+				{
+						//check changes 
+						if (VARIABLES_CS_SET[i].VAR_TYPE=='T')
+						{
+							var delete_flag=false;
+							delete_flag=syn_Variables_with_both_libs(VARIABLES_CS_SET[i]);
+							if  (delete_flag==true) {deletion_arr.push(i);}  //for deletion
+						}
+				}
+				//delete sequence
+				for (var k=deletion_arr.length-1;k>-1;k--)
+				{//backward
+					delete_sequence(deletion_arr[k],VARIABLES_CS_SET);
+				}
+			//3.extra checkings it has nothing to do with the process above.
+				check_tbl_have_hash();
+				chk_TBLLib_n_aggEvent(TBL_Path);		//add this for checking stored event reference.
+				break;
+	}
+
+	validate_all(); //It may change something, so...
+}
+
+//delete sequence - for variable only
+function delete_sequence(c_index,CS_SET)
+{	
+		if (!CS_SET) return;
+		CS_SET.splice(c_index, 1);
+		external.SetModified(true);
+		document.getElementById('table_variables').deleteRow(c_index+1);
+		external.SetModified(true);
+		point_on_first('variables');
+}
+
+//delete sequence - for event only
+function delete_sequence_event(c_index,CS_SET)
+{	
+		if (!CS_SET) return;
+		CS_SET.splice(c_index, 1);
+		external.SetModified(true);
+		document.getElementById('table_events').deleteRow(c_index+1);
+		external.SetModified(true);
+		point_on_first('events');
+}
+
+//syn one by one, and the function will return true or false(true false for deletion sequence)
+//Get the script data from stg tbl descriptor, and then compare the if they are the same with agg one.
+function syn_Variables_with_both_libs(CS)
+{	
+	var deletion_falg=false;
+	type_element=CS.VAR_TYPE;
+	name_element=CS.VAR_NAME;
+															
+	switch (type_element)
+	{
+		case "T":
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				var found_tbl_record = new Object;
+				var found_match = new Boolean();
+				found_tbl_record=null;
+				found_match=false;
+				
+				if (!tbl_lib_data)
+				{
+					//should delete the cs record //but !tbl_lib_data could be just not linked. so... ignore it for now. 
+					return false;
+				}
+				if (tbl_lib_data.TableSet.length==0)
+				{
+					deletion_falg=true;		return deletion_falg;
+				}
+				
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_NAME==name_element)
+					{
+						found_match=true; 													//found what we want..
+						found_tbl_record=tbl_lib_data.TableSet[i];	//get the record we found.
+						break;
+					}
+				}
+				
+				if (found_match==true)
+				{		
+						//execute compare sequence
+						var lib_csobj=generate_new_cs_object(found_tbl_record,type_element);   //transfer given tbl record into lib cs object(Variables). 	(source is from Table descriptor.)
+						var agg_csobj=decode_variables_script(CS.C_SCRIPT);										 //transfer given CS.C_SCRIPT into AGG cs object. (source is from oringinal Agg descriptor.)
+						if 	((agg_csobj==null)&&(lib_csobj==null)) return;	//@@
+						//for (var Property in lib_csobj)
+						//comparation start
+						if 	(agg_csobj!=null)
+						{//comparing sequence
+								//1.check fields cont first (ffs number count)
+								if (agg_csobj.format.field_format_set.length!=lib_csobj.format.field_format_set.length)
+								{
+										//rebuild sequence(we don't show script value on webpage, therefore we don't need to refresh webpage.)
+										var tmp_C_SCRIPT=encode_variables_script(lib_csobj);
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										//if (name_element=='TEST') alert('changed=true');
+										external.SetModified(true);
+										return;
+								}
+								//2.compare
+								var format_changed=false;
+								for (var i=0;i<agg_csobj.format.field_format_set.length;i++)
+								{
+									//var the field type is different from oringinal one.
+										var fld_flag_changed=false;
+									//get_flag_value(arr,f_name)
+										var agg_fldname=agg_csobj.format.field_format_set[i].fld_name;
+										var agg_fldtype=agg_csobj.format.field_format_set[i].fld_type;			
+										var lib_fldname=lib_csobj.format.field_format_set[i].fld_name;
+										var lib_fldtype=lib_csobj.format.field_format_set[i].fld_type;			
+										if (agg_fldname!=lib_fldname) {format_changed=true;break;}
+										if (agg_fldtype!=lib_fldtype) {fld_flag_changed=true;}									//Now we add this for checking if the the field type is different from oringinal one.
+
+										var agg_fff_obj=agg_csobj.format.field_format_set[i].field_format_flag;
+										var lib_fff_obj=lib_csobj.format.field_format_set[i].field_format_flag;
+										
+										//validate v-range only defalt_type has not changed.
+										if (fld_flag_changed==false)
+										{
+												var agg_V=get_flag_value(agg_fff_obj,'V'); //limitation							//Now we cancel type comparation, bacause we allow the user to change the field type now.
+												var lib_V=get_flag_value(lib_fff_obj,'V');													//Now we cancel type comparation, bacause we allow the user to change the field type now.
+												if (agg_V!=lib_V){format_changed=true;break;}												//Now we cancel type comparation, bacause we allow the user to change the field type now.
+										}
+										
+										
+										var agg_A=get_flag_value(agg_fff_obj,'A'); //default value
+										var lib_A=get_flag_value(lib_fff_obj,'A');
+										if (agg_A!=lib_A){format_changed=true;break;}										
+										
+										var agg_ffsf_obj=agg_csobj.format.field_format_set_flag;
+										var lib_ffsf_obj=lib_csobj.format.field_format_set_flag;							//record count		
+										var agg_min=get_flag_value(agg_ffsf_obj,'M');
+										var agg_max=get_flag_value(agg_ffsf_obj,'X');
+										var lib_min=get_flag_value(lib_ffsf_obj,'M');
+										var lib_max=get_flag_value(lib_ffsf_obj,'X');
+										if (agg_min!=lib_min){format_changed=true;break;}
+										if (agg_max!=lib_max){format_changed=true;break;}
+								}
+								
+								//if (name_element=='TEST') alert('changed='+format_changed);
+								
+								if (format_changed==true)
+								{
+										//rebuild sequence
+										var tmp_C_SCRIPT=encode_variables_script(lib_csobj);
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										//alert('S2');
+										external.SetModified(true);
+										return deletion_falg;					
+								}
+								
+						}
+						if 	((agg_csobj==null)&&(lib_csobj!=null))
+						{
+								//rebuild sequence 1.len>255 2.Description=null
+								var tmp_C_SCRIPT=encode_variables_script(lib_csobj);
+								if (tmp_C_SCRIPT!=null)
+								{	//Trigger the alert only the replace one is valid.
+											alert('Aggregate Agent Library Interface(Variables):\r\n Record: Name='+name_element+'   Type='+ ret_alias('ref_src',type_element)+'\r\n\r\n -The script field in Aggregate Agent Library is invalid, the interface will recreate the script.');
+											CS.C_SCRIPT=tmp_C_SCRIPT;
+											refresh_table_by_entity('variables');// method 2 - reload all data. (change to method 1 while I have more time.)
+											external.SetModified(true);
+								}
+								return deletion_falg;
+						}
+				}
+				else
+				{//found nothing, execute delete sequence.
+						deletion_falg=true;
+						return deletion_falg;
+				}
+				break;
+
+		case "S":
+				var stg_lib_data=external.XTextEx(STG_Path);
+				var found_stg_record = new Object;
+				var found_match = new Boolean();
+				found_stg_record=null;
+				found_match=false;
+				
+				if (!stg_lib_data)
+				{
+					//should delete the cs record //but !tbl_lib_data could be just not linked. so... ignore it for now. 		
+					return false;
+				}
+				
+				var stg_lib_data_len=get_eof_index(stg_lib_data);		//For STG Lib, get length first.
+				if (stg_lib_data_len==0)
+				{
+					deletion_falg=true;
+					return deletion_falg;				
+				}
+				for (var i=0;i<stg_lib_data_len;i++)
+				{
+					if (stg_lib_data[i].NAME==name_element)
+					{
+						found_match=true;
+						found_stg_record=stg_lib_data[i];//get the record we found.
+						break;
+					}
+				}
+				if (found_match==true)
+				{							
+						//execute compare sequence
+						var lib_csobj=generate_new_cs_object(found_stg_record,type_element);
+						var agg_csobj=decode_variables_script(CS.C_SCRIPT);
+						if 	((agg_csobj==null)&&(lib_csobj==null)) return; //@@
+						//for (var Property in lib_csobj)
+						//comparation start
+						if 	(agg_csobj!=null)
+						{//comparing sequence
+							
+								//1.check length first
+								if (agg_csobj.format.field_format_set.length!=lib_csobj.format.field_format_set.length)
+								{
+										//rebuild sequence(we don't show script value on webpage, therefore we don't need to refresh webpage.)
+										var tmp_C_SCRIPT=encode_variables_script(lib_csobj);
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										external.SetModified(true);
+										//alert('inn4');
+										return;
+								}
+								//2.compare 
+								var format_changed=false;
+								for (var i=0;i<agg_csobj.format.field_format_set.length;i++)
+								{	//var the field type is different from oringinal one.
+										var fld_flag_changed=false; 																			//indicate that the fld type was changed. if changed, we don't check the value range.
+									//get_flag_value(arr,f_name)
+										var agg_fldname=agg_csobj.format.field_format_set[i].fld_name; 		//compare name and type only for now ? cuz release constraints problem.
+										var agg_fldtype=agg_csobj.format.field_format_set[i].fld_type; 		//Now 
+										var lib_fldname=lib_csobj.format.field_format_set[i].fld_name; 
+										var lib_fldtype=lib_csobj.format.field_format_set[i].fld_type; 		//Now 											
+										if (agg_fldname!=lib_fldname) {format_changed=true;break;}
+										if (agg_fldtype!=lib_fldtype) {fld_flag_changed=true;}						//Now we add this for checking if the the field type is different from oringinal one.If so we don't validate it.
+	
+										var agg_fff_obj=agg_csobj.format.field_format_set[i].field_format_flag;
+										var lib_fff_obj=lib_csobj.format.field_format_set[i].field_format_flag;
+										
+										//validate v-range only defalt type has "not" changed
+										if (fld_flag_changed==false)
+										{						
+												//alert('fld_flag_changed='+fld_flag_changed);										//Steven's request if client didn't change default setting then validate the value range , too.
+												var agg_V=get_flag_value(agg_fff_obj,'V'); //limitation					//Now we cancel type comparation, bacause we allow the user to change the field type now.
+												var lib_V=get_flag_value(lib_fff_obj,'V');											//Now we cancel type comparation, bacause we allow the user to change the field type now.
+												if (agg_V!=lib_V){format_changed=true;break;}										//Now we cancel type comparation, bacause we allow the user to change the field type now.
+										}
+										
+										
+										var agg_A=get_flag_value(agg_fff_obj,'A'); //default value
+										var lib_A=get_flag_value(lib_fff_obj,'A');
+										if (agg_A!=lib_A){format_changed=true;break;}
+								}
+								
+								if (format_changed==true)
+								{
+										//rebuild sequence
+										var tmp_C_SCRIPT=encode_variables_script(lib_csobj);		
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										external.SetModified(true);
+										return deletion_falg;					
+								}
+						}
+						
+						if 	((agg_csobj==null)&&(lib_csobj!=null))
+						{			//means the script ill-formated					
+									//rebuild sequence 1. len>255(the limitation is overcome.) 2.Description=null		
+									var tmp_C_SCRIPT=encode_variables_script(lib_csobj);
+									if (tmp_C_SCRIPT!=null)
+									{			//Trigger the alert only the replace one is valid.
+
+												//While we need to restore the data automatically, 
+												//we still need to show the table(html) properly and change the real data.
+												//That is because now we have the extra field "GROUP AND DESCRIPTION".
+												//reload to the table ?
+
+												alert('Aggregate Agent Library interface(Variables):\r\n Record: Name='+name_element+'   Type='+ ret_alias('ref_src',type_element)+'\r\n\r\n -The script field in Aggregate Agent Library is invalid, the interface will recreate the script.');
+												CS.C_SCRIPT=tmp_C_SCRIPT;
+												//		method 1- is better but need table index
+												//		var tmp_Group_n_Description=ret_G_n_D(obj_record[i].Customize_Script_Set[k].C_SCRIPT); 	//@@@
+												//		CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);   								//@@@
+												//		or method 2 - reload all data. (change to method 1 while I have more time.)
+												//		But one problem is that pink pointer color gone. fix it later.
+												refresh_table_by_entity('variables');
+												external.SetModified(true);
+									}
+									return deletion_falg;
+						}												
+				}
+				else
+				{		//execute delete sequence
+						deletion_falg=true;
+						return deletion_falg;
+				}
+				break;
+		default:
+				return deletion_falg;
+	}	
+}
+
+//Compare each desired record fields one by one.
+//1.Get Single AGG record(Single CS)
+//2.Handle VAR_TYPE==Stored Event only
+//3.Find if there is a record in the table respectively.
+//4.If so, compare both records.(from Agg and from TBL). And if they are not equal(values changed), the rebuild seqence will initiate.
+//5.If not, return true for deletion. 
+//The function will return true or false for deletion sequence.
+//Check the stored events only.
+function syn_Events_with_TBL_libs(CS)
+{	
+	var deletion_falg=false;
+	var type_element=CS.VAR_TYPE;
+	var name_element=CS.VAR_NAME;
+	var type_n_level=extract_type_n_level(type_element);
+	var Event_Type=type_n_level.event_type;
+
+															
+	switch (Event_Type)
+	{
+		case "S":	//S = Stored Event...
+				var tbl_lib_data=external.XTextEx(TBL_Path);
+				var found_tbl_record = new Object;
+				var found_match = new Boolean();
+				found_tbl_record=null;
+				found_match=false;
+				
+				if (!tbl_lib_data)													
+				{
+					return false;																		//should delete the cs record //but !tbl_lib_data could be just not linked. so... ignore it for now. 
+				}
+				if (tbl_lib_data.TableSet.length==0)
+				{
+					deletion_falg=true;		
+					return deletion_falg;
+				}
+				
+				for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+				{
+					if (tbl_lib_data.TableSet[i].TBL_NAME==name_element)
+					{
+						found_match=true; //found what we want..
+						found_tbl_record=tbl_lib_data.TableSet[i];//get the record we found.
+						break;
+					}
+				}
+				
+				if (found_match==true)
+				{		
+						//execute compare sequence
+						var lib_csobj=generate_new_cs_EVENT_object(found_tbl_record);   							//transfer given tbl record into lib cs object(Events). 	(source is from Table descriptor.)
+						var agg_csobj=decode_events_script(CS.C_SCRIPT);										 					//transfer given CS.C_SCRIPT into AGG cs object. (source is from oringinal Agg descriptor.)
+						
+						//comparation start
+						if 	((agg_csobj==null)&&(lib_csobj==null)) return;														//@@
+						if 	(agg_csobj!=null)
+						{//comparing sequence
+								//1.check length first (ffs number count)
+								if (agg_csobj.format.field_format_set.length!=lib_csobj.format.field_format_set.length)
+								{
+										//rebuild sequence(we don't show script value on webpage, therefore we don't need to refresh webpage.)
+										var tmp_C_SCRIPT=encode_events_script(lib_csobj);
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										//if (name_element=='TEST') alert('changed=true');
+										external.SetModified(true);
+										return;
+								}
+								//2.compare
+								var format_changed=false;
+								for (var i=0;i<agg_csobj.format.field_format_set.length;i++)
+								{
+										//var the field type is different from oringinal one.
+										var fld_flag_changed=false;
+										//get_flag_value(arr,f_name)
+										var agg_fldname=agg_csobj.format.field_format_set[i].fld_name;
+										var agg_fldtype=agg_csobj.format.field_format_set[i].fld_type;			
+										var lib_fldname=lib_csobj.format.field_format_set[i].fld_name;
+										var lib_fldtype=lib_csobj.format.field_format_set[i].fld_type;			
+										if (agg_fldname!=lib_fldname) {format_changed=true;break;}
+										if (agg_fldtype!=lib_fldtype) {fld_flag_changed=true;}										//Now we add this for checking if the the field type is different from oringinal one.
+										
+										var agg_fff_obj=agg_csobj.format.field_format_set[i].field_format_flag;
+										var lib_fff_obj=lib_csobj.format.field_format_set[i].field_format_flag;
+										
+										//validate v-range only defalt_type has not changed.
+										if (fld_flag_changed==false)
+										{
+												//var agg_V=get_flag_value(agg_fff_obj,'V'); 			//Value Range				//The flag seems not useful in Events Entity. So...	
+												//var lib_V=get_flag_value(lib_fff_obj,'V');													
+												//if (agg_V!=lib_V){format_changed=true;break;}												
+										}
+										
+										
+										//var agg_A=get_flag_value(agg_fff_obj,'A'); 					//Default Value			//The flag seems not useful in Event Entity. So...
+										//var lib_A=get_flag_value(lib_fff_obj,'A');
+										//if (agg_A!=lib_A){format_changed=true;break;}										
+										
+										var agg_ffsf_obj=agg_csobj.format.field_format_set_flag;
+										var lib_ffsf_obj=lib_csobj.format.field_format_set_flag;							//record count		
+										var agg_min=get_flag_value(agg_ffsf_obj,'M');
+										var agg_max=get_flag_value(agg_ffsf_obj,'X');
+										var lib_min=get_flag_value(lib_ffsf_obj,'M');
+										var lib_max=get_flag_value(lib_ffsf_obj,'X');
+										if (agg_min!=lib_min){format_changed=true;break;}
+										if (agg_max!=lib_max){format_changed=true;break;}
+								}				
+				
+								if (format_changed==true)
+								{
+										//rebuild sequence
+										var tmp_C_SCRIPT=encode_events_script(lib_csobj);
+										CS.C_SCRIPT=tmp_C_SCRIPT;
+										external.SetModified(true);
+										return deletion_falg;					
+								}
+								
+						}
+						if 	((agg_csobj==null)&&(lib_csobj!=null))
+						{
+								//Rebuild Sequence 1.len>255(The limitation is overcome) 2.Description=Null
+								var tmp_C_SCRIPT=encode_events_script(lib_csobj);
+								if (tmp_C_SCRIPT!=null)
+								{			//Trigger the alert only the replace one is valid.
+											alert('Aggregate Agent Library Interface(Events):\r\n Record: Name='+name_element+'   Type= Stored Event'+'\r\n\r\n -The script field in Aggregate Agent Library is invalid, the interface will recreate the script.');
+											CS.C_SCRIPT=tmp_C_SCRIPT;
+											refresh_table_by_entity('events');						//method 2 - reload all data. (change to method 1 while I have more time.)
+											external.SetModified(true);
+								}
+								return deletion_falg;
+						}
+				}
+				else
+				{//found nothing, execute delete sequence.
+						deletion_falg=true;
+						return deletion_falg;
+				}
+				break;
+
+
+		default:
+				return deletion_falg;
+	}	
+}
+
+//generate new customize_script object by the record from Library. This is for Edit or Addnew.(variable)
+function generate_new_cs_object(data_from_lib,reference_type)
+{
+	var tmp_variable_obj = new Object();
+	tmp_variable_obj.name=new String();
+	tmp_variable_obj.description=new String();
+	tmp_variable_obj.readable=new String();
+	tmp_variable_obj.writable=new String();
+	tmp_variable_obj.help=new String();
+	tmp_variable_obj.group=new String();
+	tmp_variable_obj.iconId=new String();
+	
+	tmp_variable_obj.format=new Object;
+	tmp_variable_obj.format.field_format_set=new Array;
+	tmp_variable_obj.format.field_format_set_flag=new Array;
+	
+		
+	switch (reference_type)
+	{
+		case "T":
+			//process base layer
+			tmp_variable_obj.name=data_from_lib.TBL_NAME;
+			tmp_variable_obj.description=data_from_lib.TBL_NAME;
+			tmp_variable_obj.readable='1';
+			tmp_variable_obj.writable='1';
+			tmp_variable_obj.help='^';
+			tmp_variable_obj.group='remote|Default';
+			tmp_variable_obj.iconId='^';
+			//process ffsf
+			tmp_variable_obj.format.field_format_set_flag.push('M=0');
+			var tmpMAX='X='+data_from_lib.MAX_RECS;
+			tmp_variable_obj.format.field_format_set_flag.push(tmpMAX);
+			//process ffs
+			if (!data_from_lib.FieldsDefnition) {alert('Found the reference table record, but it is invalid.');return null}					//@@important
+			if (data_from_lib.FieldsDefnition.length==0) {alert('Found the reference table record, but it is invalid.');return null} //@@important
+			
+			for (var j=0;j<data_from_lib.FieldsDefnition.length;j++)
+			{
+				var ffs_obj=new Object();
+				var fld_name=data_from_lib.FieldsDefnition[j].FIELD_NAME;
+				var fld_type=data_from_lib.FieldsDefnition[j].FIELD_TYPE; //field type in table library(corresponding type in agg.)//@@
+				fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+				var fld_P1=data_from_lib.FieldsDefnition[j].P1;
+				var fld_P2=data_from_lib.FieldsDefnition[j].P2;
+				var fld_DEFVAL=data_from_lib.FieldsDefnition[j].DEFVAL;
+				
+				ffs_obj.fld_name=fld_name;
+				ffs_obj.fld_type=fld_type; //need transfer type
+				//process fff
+				ffs_obj.field_format_flag=new Array;
+				if (fld_type!='D')	{ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>')} 		//Data/Time value has no limitation, don't set it.
+				else{fld_DEFVAL=convert_LibTD_to_AggTD(fld_DEFVAL);}
+					
+				if (fld_DEFVAL!=null)	
+				{
+					if (fld_DEFVAL.indexOf('^')==-1) //can not contain "^" in Flag A. Aggregate won't accept this character in flag A. - -".
+					ffs_obj.field_format_flag.push('A='+fld_DEFVAL); 																			//This line only for table.
+				}
+				tmp_variable_obj.format.field_format_set.push(ffs_obj);
+			}
+			return tmp_variable_obj;
+		case "S":
+			//process base layer
+			tmp_variable_obj.name=data_from_lib.NAME;
+			tmp_variable_obj.description=data_from_lib.NAME;
+			tmp_variable_obj.readable='1';
+			tmp_variable_obj.writable='1';
+			tmp_variable_obj.help='^';
+			tmp_variable_obj.group='remote|Default';
+			tmp_variable_obj.iconId='^';
+			//process ffsf
+			tmp_variable_obj.format.field_format_set_flag.push('M=1');
+			tmp_variable_obj.format.field_format_set_flag.push('X=1');
+			
+			//process ffs										//data_from_lib.MEMBER								//isNaN(parseInt
+			if (!data_from_lib.MEMBER) {alert('Found the reference setting record, but it is invalid.');return null}					//@@important
+			if (isNaN(data_from_lib.MEMBER)) {alert('Found the reference setting record, but it is invalid.');return null}
+			
+
+			if (data_from_lib.MEMBER>1)
+			{
+					for (var j=0;j<data_from_lib.MEMBER;j++)
+					{
+								var ffs_obj=new Object();
+								var fld_name=j;
+								var fld_type=data_from_lib.TYPE;
+								fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+								var fld_P1=data_from_lib.P1;
+								var fld_P2=data_from_lib.P2;
+								
+								ffs_obj.fld_name=fld_name;
+								ffs_obj.fld_type=fld_type; 																//need transfer type
+								//process fff
+								ffs_obj.field_format_flag=new Array;
+								if (data_from_lib.TYPE!='D')                 							//don't add validator to the Dot Decimal type.
+								ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>');
+								tmp_variable_obj.format.field_format_set.push(ffs_obj);
+					}
+					return tmp_variable_obj;				
+			}
+			else
+			{
+					var ffs_obj=new Object();
+					var fld_name=data_from_lib.NAME;
+					var fld_type=data_from_lib.TYPE;
+					fld_type=LibType_to_AggType(fld_type,reference_type);     //corresponding type in agg.
+					var fld_P1=data_from_lib.P1;
+					var fld_P2=data_from_lib.P2;
+					
+					ffs_obj.fld_name=fld_name;
+					ffs_obj.fld_type=fld_type; 																//need transfer type
+					//process fff
+					ffs_obj.field_format_flag=new Array;
+					if (data_from_lib.TYPE!='D')                 							//don't add validator to the Dot Decimal type.
+					ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>');
+					tmp_variable_obj.format.field_format_set.push(ffs_obj);
+					return tmp_variable_obj;
+			}
+	}
+	return null;
+}
+
+//generate new customize_script object by the record from Library. This is for Edit or Addnew.(events)
+function generate_new_cs_EVENT_object(data_from_lib)
+{
+
+	var obj_variable = new Object;
+	obj_variable.name=new String();
+	obj_variable.description=new String();
+	obj_variable.help=new String();
+	obj_variable.level=new String();
+	obj_variable.group=new String();
+	
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=new String();		
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+
+
+	//process base layer
+	obj_variable.name=data_from_lib.TBL_NAME;
+	obj_variable.description=data_from_lib.TBL_NAME;
+	obj_variable.help='^';
+	obj_variable.level='0';
+	obj_variable.group='remote';
+	//process ffsf
+	obj_variable.format.field_format_set_flag.push('M=1');						//always 1 1 while have record.
+	obj_variable.format.field_format_set_flag.push('X=1');
+	//process ffs
+	if (!data_from_lib.FieldsDefnition) {alert('Found the reference table record, but it is invalid.');return null}						//@@important
+	if (data_from_lib.FieldsDefnition.length==0) {alert('Found the reference table record, but it is invalid.');return null} 	//@@important
+	
+	for (var j=0;j<data_from_lib.FieldsDefnition.length;j++)
+	{
+		if (data_from_lib.FieldsDefnition[j].FIELD_NAME=='AEL')   //we don't include the record which the name equal to 'AEL'.
+		continue;
+		
+		var ffs_obj=new Object();
+		var fld_name=data_from_lib.FieldsDefnition[j].FIELD_NAME;
+		var fld_type=data_from_lib.FieldsDefnition[j].FIELD_TYPE; //field type in table library(corresponding type in agg.)//@@
+		fld_type=LibType_to_AggType(fld_type,'T');     						//corresponding type in agg.
+		var fld_P1=data_from_lib.FieldsDefnition[j].P1;
+		var fld_P2=data_from_lib.FieldsDefnition[j].P2;
+		var fld_DEFVAL=data_from_lib.FieldsDefnition[j].DEFVAL;
+		
+		ffs_obj.fld_name=fld_name;
+		ffs_obj.fld_type=fld_type; //need transfer type
+		//process fff
+		ffs_obj.field_format_flag=new Array;
+		//if (fld_type!='D')	{ffs_obj.field_format_flag.push('V=<L='+fld_P1+' '+fld_P2+'>')} 	//Data/Time value has no limitation, don't set it. //we don't need value range in stored event.
+		if (fld_type=='D')	{fld_DEFVAL=convert_LibTD_to_AggTD(fld_DEFVAL);}
+		
+		if (fld_DEFVAL!=null)
+		{
+			//if (fld_DEFVAL.indexOf('^')==-1) 																										
+			//ffs_obj.field_format_flag.push('A='+fld_DEFVAL); 																		//The flag seems not useful in Event Entity. So...	
+		}
+		obj_variable.format.field_format_set.push(ffs_obj);
+	}
+	return obj_variable;
+}
+
+//convert Lib time/date to AGG time/date
+function convert_LibTD_to_AggTD(td_str) 
+{//Agg td format='2000-01-05 06:22:33.555'
+ //yyyy-MM-dd HH:mm:ss.SSS
+ 	var agg_TD=null;
+	if (isNaN(td_str)==true) return null;
+	
+	var td_length=td_str.length;
+	switch(td_length)
+	{
+		case 0://null
+			return null;
+		case 4://hhmm
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':00.000';
+			return agg_TD;
+		case 6://hhmmss
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;
+		case 8://YYYYMMDD
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			agg_TD=YYYY+'-'+MM+'-'+DD+' 00:00:00.000';
+			return agg_TD;
+		case 9://hhmmssmls
+			var hh=td_str.substr(0,2);
+			var mm=td_str.substr(2,2);
+			var ss=td_str.substr(4,2);
+			var mls=td_str.substr(6);
+			agg_TD='2000-01-01 '+hh+':'+mm+':'+ss+'.'+mls;
+		case 12://YYYYMMDDhhmm
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':00.000';
+			return agg_TD;		
+		case 14://YYYYMMDDhhmmss
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12);			
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.000';
+			return agg_TD;		
+		case 17://YYYYMMDDhhmmssmls
+			var YYYY=td_str.substr(0,4);
+			var MM=td_str.substr(4,2);
+			var DD=td_str.substr(6,2);
+			var hh=td_str.substr(8,2);
+			var mm=td_str.substr(10,2);
+			var ss=td_str.substr(12,2);	
+			var mls=td_str.substr(14);		
+			agg_TD=YYYY+'-'+MM+'-'+DD+' '+hh+':'+mm+':'+ss+'.'+mls;
+			return agg_TD;		
+		default:
+		return null;
+	}	
+
+}
+
+//Retrieve corresponding type in aggregate.
+function LibType_to_AggType(type_from_lib,reference_type)
+{//AGG FIELD TYPE = SILBFD (TCA)
+		var result = new String();
+		result='S';	//defval
+		switch (reference_type)
+		{
+			case "T":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='U') result='L'; //32bit
+				if (type_from_lib=='T') result='D'; //datetime
+				break;
+			case "S":
+				if (type_from_lib=='S') result='S';
+				if (type_from_lib=='B') result='I'; //0~255
+				if (type_from_lib=='W') result='L'; 
+				if (type_from_lib=='D') result='S'; //Dot Decimal
+				break;
+			default:
+		}
+		return result;
+} 
+
+//return desired field_format_set_flag value
+function get_flag_value(arr,f_name)
+{
+	var flag_obj=new Object();
+	
+	for (var i=0;i<arr.length;i++) 
+	{
+			//This literation for flag S in field format
+			var tmp_arr=new Array();
+			if ((arr[i].substr(0,1)!="S")&&(arr[i].substr(0,1)!="V"))//&&(arr[i].substr(0,1)!="A"))
+			{
+				tmp_arr = arr[i].split("=");
+			}
+			else
+			{
+				//var tmp_arr = arr[i].match(/<[^<>\s]+=[^<>\s]+>/g);
+				var first_found_index=new Number();
+				first_found_index=arr[i].indexOf('=');
+				if (first_found_index!=-1)
+				{
+					tmp_arr[0]=arr[i].slice(0,first_found_index);
+					tmp_arr[1]=arr[i].slice(first_found_index+1);
+					//alert(i+'  s-s  '+tmp_arr[0]+','+tmp_arr[1]);
+				}
+			}
+			if (tmp_arr.length<2) continue;
+			flag_obj[tmp_arr[0]]=tmp_arr[1];
+	}
+	
+	for (var Property in flag_obj)
+	{
+			if (Property == f_name)
+			return flag_obj[Property];
+	}
+	return null;
+}
+
+//Decode web encoded content to the real value.
+function HTMLDecode(str) 
+{
+		var ta = document.createElement("textarea");
+		ta.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&middot;/g, "{*}");
+		toReturn = ta.value;
+		ta = null;																																		 //release ta;
+		return toReturn.replace("/<br\s*\/?>/mg", "\n");
+}
+
+//show real value on web page, for example, <> sign.
+function HTMLEncode(str) 
+{
+	var esc_div_obj = document.getElementById('esc_div');
+	var text = document.createTextNode(str);
+	esc_div_obj.appendChild(text);
+	text =esc_div_obj.innerHTML;
+	var children = esc_div_obj.childNodes;
+
+	for(var i=0;i<children.length;i++)
+	{
+		esc_div_obj.removeChild(children[i]);
+	}
+	//alert(HTMLDecode(text));
+	return text;
+}
+
+//get the value form the script, and return the value to the defined data structure.
+function decode_info_script(str)
+{
+	//str.replace(/[^a]/g, "").length //calculate how many occurances in a single string
+	//if return null value means the data is invalid.
+	
+	//if ((str.length>255)||(str.length==0))// Disable this section cuz the limitation is overcomed.
+	if (str.length==0)
+	{
+		return null; 
+	}
+	var info_exp=/<\s*R\s*=\s*<(.*)>\s*<(\w*)>\s*>\s*/;
+	var temp_array=info_exp.exec(str);
+	if (temp_array===null) 
+	{
+		return null;
+	}
+	if (temp_array.length<2)
+	{
+		return null; //means nothing
+	}
+	var tmp_obj=new Object();
+	tmp_obj.Description=temp_array[1];
+	tmp_obj.Context_type=temp_array[2];
+	return tmp_obj;
+}
+
+//return the info script string
+function encode_info_script(info_obj)
+{
+		if (!info_obj) return '';
+		var tmp_SCRIPT= new String();
+		tmp_SCRIPT='<'+info_obj.Description+'>';
+		tmp_SCRIPT+='<'+info_obj.Context_type+'>';
+		tmp_SCRIPT='<R='+tmp_SCRIPT+'>';
+		return tmp_SCRIPT;
+}
+
+
+//=get data structure from script=
+function decode_variables_script(agg_script)
+{
+	//if (!agg_script)
+	//Disable this section cuz the limitation has been overcomed.
+	//if ((agg_script.length>255)||(agg_script.length==0)) {return null;}
+	
+	if (agg_script.length==0) {return null;}
+	
+	//zero (pre-process)
+	var base_script=new String();
+	base_script=agg_script.replace(/\s*[<]\s*/g, "<"); 																		//clear all white space except it is inside certain word.
+	base_script=base_script.replace(/\s*[>]\s*/g, ">");
+	base_script=base_script.replace(/\s*[=]\s*/g, "=");
+	//The following line is oringinal
+	//pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+	pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+	base_Array = pat_base.exec(base_script);
+	//if (base_Array==null) {alert('The script is corrupted.');return null;}
+	if (base_Array==null) {return null;}
+	
+	//base layer
+	//1.start
+	var obj_variable = new Object;
+	obj_variable.name=base_Array[1];
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=base_Array[2];                										//record format(=field format set)
+	obj_variable.description=base_Array[7].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.readable=base_Array[8].replace(/(^[<]?)|([>]?$)/g, "");									//.replace(/(^[<]*)|([>]*$)/g, "");
+	obj_variable.writable=base_Array[9].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.help=base_Array[10].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.group=base_Array[11].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.iconId=base_Array[12].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+	
+	//second layer
+	//record format= (field format).....+ record format flags.										
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; 	//pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;											////The following line is oringinal one -	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]>)/g;								 																										//pattern of getting the rest of the flags in record format layer
+	//2.get each field format string
+	//push every field_format
+	arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats
+	for (var i=0;i<arr_field_format.length;i++)
+	{
+			var tmp_obj = new Object;
+			tmp_obj.original_string=arr_field_format[i];
+			obj_variable.format.field_format_set.push(tmp_obj);
+	}
+	
+	//3.get the rest of the flag in second layer(record format layer) and push the values.
+	var tmp=base_Array[2].replace(pat_field_format,""); 											 	 			 		 //get the rest of the str, except all fields' formats.(get only field_format_set_flag)				 
+	//alert('get the rest of the script, except all fields formats. \r\n \r\n tmp='+tmp);	 //show the rest																			 
+	arr_layer2_flag=tmp.match(pat_record_format_flag);																		 //get the rest of the flags in second layer(record format without fieldformat set).
+	//push RF_flag
+	for (var i=0;i<arr_layer2_flag.length;i++)
+	{
+			obj_variable.format.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+	
+	
+	//third layer
+	//4.extract name and type form each single field format
+	//5.get all flags in each field format
+	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; 	//pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		//pat_field_format_detail.compile(pat_field_format_detail);	
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.format.field_format_set[i].fld_name=tmppArray[j]};//name
+			if (j==2) {obj_variable.format.field_format_set[i].fld_type=tmppArray[j]};//type
+		}
+		
+		
+		var tmppArray2=obj_variable.format.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.format.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.format.field_format_set[i].field_format_flag.push(fff_str);//@@@@@
+		}
+	}
+	return obj_variable;	
+}
+
+//retrieve script string from script object
+function encode_variables_script(agg_structure)
+{
+	var result_string=new String();
+	result_string='';
+	if (agg_structure==null)
+	{
+			return null;			//if the structure object is null, rebuild only minimal data string that follows the reference.
+	}
+	var var_name='<'+agg_structure.name+'>';
+	var var_format='';
+	var var_description='<'+agg_structure.description+'>';
+	var var_readable='<'+agg_structure.readable+'>';
+	var var_writable='<'+agg_structure.writable+'>';
+	var var_help='<'+agg_structure.help+'>';
+	var var_group='<'+agg_structure.group+'>';
+	var var_iconid='<'+agg_structure.iconId+'>';
+	//1.Deal with 'Format' first.
+	//a.extract fields' definitions(field_format_set)
+	for (var i=0;i<agg_structure.format.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.format.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		result_string+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b.extract table flags
+	for (var i=0;i<agg_structure.format.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.format.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		result_string+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c.cover up format field (completed)
+	result_string='<'+result_string+'>';
+	//2.get to the top layer, push in the rest of the data.
+	result_string=var_name+result_string+var_description+var_readable+var_writable+var_help+var_group+var_iconid;
+	result_string='<R='+result_string+'>';
+	//if (external.Context.Target.C_SCRIPT==result_string) alert('they r equal');
+	//we don't check the length of the result here.
+	return result_string;
+}
+
+//return "Group/Description" str by variables C script str.
+function ret_G_n_D(str_Cscript)
+{
+		//decode_variables_script
+		var script_object= new Object(); 							//the decode obj is only for validation here.
+		var tmp_Group_n_Description = new String();
+		script_object=decode_variables_script(str_Cscript);
+		if (script_object==null)
+		{
+			tmp_Group_n_Description='Null'; 						//It's not right if it's null.
+		}
+		else
+		{
+			var tmp_group=new String();
+			tmp_group=script_object.group;
+			tmp_group=tmp_group.substr(7); 
+			tmp_Group_n_Description=tmp_group+'/'+script_object.description;
+		}
+		return tmp_Group_n_Description;
+}
+
+//return functions structure object from the script.
+function decode_functions_script(agg_script)
+{
+//if ((agg_script.length>255)||(agg_script.length==0)) {return null;}
+
+//zero step
+//if the script pass validation then erase all white space chars.(the extra validation step is to prevent if there are white space chars inside the word or field name. )
+var base_script=new String();
+base_script=agg_script.replace(/\s*[<]\s*/g, "<"); //clear all white space except it is inside certain word.
+base_script=base_script.replace(/\s*[>]\s*/g, ">");
+base_script=base_script.replace(/\s*[=]\s*/g, "=");
+
+pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+
+base_Array = pat_base.exec(base_script);					 	 
+if (base_Array==null) {return null;}
+
+//base layer
+	var obj_variable = new Object;
+	obj_variable.name=base_Array[1];
+	obj_variable.inputformat=new Object;
+	obj_variable.outputformat=new Object;
+	obj_variable.inputformat.original_string=base_Array[2];                											//record format(=field format set)
+	obj_variable.outputformat.original_string=base_Array[7];                										//record format(=field format set)
+	
+	obj_variable.description=base_Array[12].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.help=base_Array[13].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.group=base_Array[14].replace(/(^[<]?)|([>]?$)/g, "");
+	                                
+	obj_variable.inputformat.field_format_set=new Array;
+	obj_variable.inputformat.field_format_set_flag=new Array;
+	obj_variable.outputformat.field_format_set=new Array;
+	obj_variable.outputformat.field_format_set_flag=new Array;
+
+//inputformat
+	//second layer - record format= (field format).....+ record format flags.										
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;																 		 //pattern of getting the rest of the flags in record format layer
+	var arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats Input-Format
+	if (arr_field_format!=null) 																															 //add null check.
+	{	
+			for (var i=0;i<arr_field_format.length;i++)
+			{
+					var tmp_obj = new Object;
+					tmp_obj.original_string=arr_field_format[i];																				//save oringinal_string first               
+					obj_variable.inputformat.field_format_set.push(tmp_obj);
+			}
+	}
+	var tmp=base_Array[2].replace(pat_field_format,""); 											 	 			 		 		 //get the rest of the str, except all fields' formats.(get only field_format_set_flag)				 																		 
+	var arr_layer2_flag=tmp.match(pat_record_format_flag);																		 //get the rest of the flags in second layer(record format without fieldformat set).
+	//push RF_flag
+	for (var i=0;i<arr_layer2_flag.length;i++)
+	{
+			obj_variable.inputformat.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+	//third layer
+	for (var i=0;i<obj_variable.inputformat.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		//pat_field_format_detail.compile(pat_field_format_detail);	
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.inputformat.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.inputformat.field_format_set[i].fld_name=tmppArray[j]};//name
+			if (j==2) {obj_variable.inputformat.field_format_set[i].fld_type=tmppArray[j]};//type
+		}
+		
+		var tmppArray2=obj_variable.inputformat.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.inputformat.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.inputformat.field_format_set[i].field_format_flag.push(fff_str);
+		}
+	}
+	
+//outputformat (redo)
+	//second layer - record format= (field format).....+ record format flags.										
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;																 		 //pattern of getting the rest of the flags in record format layer
+	var arr_field_format =base_Array[7].match(pat_field_format);                            	 //separate all fields' formats Input-Format
+	if (arr_field_format!=null) 																															 //Function: In "functions", the field_format could be null, so need to add null check.
+	{	
+			for (var i=0;i<arr_field_format.length;i++)
+			{
+					var tmp_obj = new Object;
+					tmp_obj.original_string=arr_field_format[i];																				//save oringinal_string first
+					obj_variable.outputformat.field_format_set.push(tmp_obj);
+			}
+	}
+	var tmp=base_Array[7].replace(pat_field_format,""); 											 	 			 		 						//get the rest of the str, except all fields' formats.(get only field_format_set_flag).																		 
+	var arr_layer2_flag=tmp.match(pat_record_format_flag);																		 				//get the rest of the flags in second layer(record format without fieldformat set).
+	for (var i=0;i<arr_layer2_flag.length;i++)																												//push RF_flag
+	{
+			obj_variable.outputformat.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+	//third layer
+	for (var i=0;i<obj_variable.outputformat.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		//pat_field_format_detail.compile(pat_field_format_detail);	
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.outputformat.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.outputformat.field_format_set[i].fld_name=tmppArray[j];};//name
+			if (j==2) {obj_variable.outputformat.field_format_set[i].fld_type=tmppArray[j];};//type
+		}
+		
+		
+		var tmppArray2=obj_variable.outputformat.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.outputformat.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.outputformat.field_format_set[i].field_format_flag.push(fff_str);
+		}
+	}
+	return obj_variable;	
+}
+
+//retrieve script string from script object
+function encode_functions_script(agg_structure)
+{
+	var result_string=new String();
+	result_string='';
+
+	if (agg_structure==null)
+	{
+			return null;
+	}
+	var var_name='<'+agg_structure.name+'>';
+	var var_inputformat='';
+	var var_outputformat='';
+	var var_description='<'+agg_structure.description+'>';
+	var var_help='<'+agg_structure.help+'>';
+	var var_group='<'+agg_structure.group+'>';
+
+//1.Deal with 'inputFormat'.
+	//a.extract fields' definitions(field_format_set)
+	for (var i=0;i<agg_structure.inputformat.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.inputformat.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		var_inputformat+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b.extract table flags
+	for (var i=0;i<agg_structure.inputformat.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.inputformat.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		var_inputformat+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c.cover up format field (completed)
+	var_inputformat='<'+var_inputformat+'>';
+	
+	
+//2.Deal with 'outputFormat'.
+	//a
+	for (var i=0;i<agg_structure.outputformat.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.outputformat.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		var_outputformat+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b
+	for (var i=0;i<agg_structure.outputformat.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.outputformat.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		var_outputformat+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c
+	var_outputformat='<'+var_outputformat+'>';
+	
+	result_string=var_inputformat+var_outputformat;
+//3.get to the top layer, push in the rest of the data.
+	result_string=var_name+result_string+var_description+var_help+var_group;
+	result_string='<R='+result_string+'>';
+	if (external.Context.Target.C_SCRIPT!=result_string) 
+	{
+		//alert('they r not equal');
+		//alert('R \r\n'+result_string);
+		//alert('T \r\n'+external.Context.Target.C_SCRIPT);
+	}
+	return result_string;
+}
+
+//return events structure object from the script.
+function decode_events_script(agg_script)
+{
+//if ((agg_script.length>255)||(agg_script.length==0)) {return null;}
+
+var base_script=new String();
+base_script=agg_script.replace(/\s*[<]\s*/g, "<");
+base_script=base_script.replace(/\s*[>]\s*/g, ">");
+base_script=base_script.replace(/\s*[=]\s*/g, "=");
+
+pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[0-5]>)(<[^<>\s]+>)>/;
+
+base_Array = pat_base.exec(base_script);
+if (base_Array==null) {return null;}
+
+//base layer
+	var obj_variable = new Object;
+	obj_variable.name=base_Array[1];
+	obj_variable.format=new Object;
+	obj_variable.format.original_string=base_Array[2];                										//record format(=field format set)
+	obj_variable.description=base_Array[7].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.help=base_Array[8].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.level=base_Array[9].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.group=base_Array[10].replace(/(^[<]?)|([>]?$)/g, "");
+	obj_variable.format.field_format_set=new Array;
+	obj_variable.format.field_format_set_flag=new Array;
+
+//Format
+	//second layer
+	//record format= (field format).....+ record format flags.										
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]>)/g;																 //pattern of getting the rest of the flags in record format layer
+	arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats and push every field_format.
+	if (arr_field_format!=null) 																															 //add null check.
+	{	
+			for (var i=0;i<arr_field_format.length;i++)
+			{
+					var tmp_obj = new Object;
+					tmp_obj.original_string=arr_field_format[i];																				//save oringinal_string first               
+					obj_variable.format.field_format_set.push(tmp_obj);
+			}
+	}
+	
+
+	var tmp=base_Array[2].replace(pat_field_format,""); 											 	 			 		 //get the rest of the str, except all fields' formats.(get only field_format_set_flag)				 																		 
+	arr_layer2_flag=tmp.match(pat_record_format_flag);																		 //get the rest of the flags in second layer(record format without fieldformat set).
+	for (var i=0;i<arr_layer2_flag.length;i++)																						 //push RF_flag
+	{
+			obj_variable.format.field_format_set_flag.push(arr_layer2_flag[i].replace(/(^[<]*)|([>]*$)/g, ""));  //get rid of  <> sign.
+	}
+
+	//third layer
+	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
+	{		                                                   
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		//pat_field_format_detail.compile(pat_field_format_detail);	
+		pat_field_format_flag.compile(pat_field_format_flag);	
+		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
+		if (tmppArray==null) {alert('The script is corrupted\(2\).');return null;}
+		
+		for (var j=0;j<tmppArray.length;j++)
+		{
+			if (j==1) {obj_variable.format.field_format_set[i].fld_name=tmppArray[j]};//name
+			if (j==2) {obj_variable.format.field_format_set[i].fld_type=tmppArray[j]};//type
+		}
+		
+		var tmppArray2=obj_variable.format.field_format_set[i].original_string.match(pat_field_format_flag);	// get flag
+		obj_variable.format.field_format_set[i].field_format_flag=new Array; //must declare it first.
+		if(tmppArray2==null) continue;						//could be nothing
+		for(var j=0;j<tmppArray2.length;j++)
+		{
+			var fff_str=tmppArray2[j];
+			fff_str=fff_str.replace(/(^[<]?)|([>]?$)/g, "");
+			obj_variable.format.field_format_set[i].field_format_flag.push(fff_str);
+		}
+	}
+	return obj_variable;	
+}
+
+//retrieve script string from script object
+function encode_events_script(agg_structure)
+{
+	var result_string=new String();
+	result_string='';
+
+	if (agg_structure==null)
+	{
+			return null;
+	}
+	var var_name='<'+agg_structure.name+'>';
+	var var_format='';
+	var var_description='<'+agg_structure.description+'>';
+	var var_help='<'+agg_structure.help+'>';
+	var var_level='<'+agg_structure.level+'>';
+	var var_group='<'+agg_structure.group+'>';
+
+//2.Deal with 'Format'.
+	//a
+	for (var i=0;i<agg_structure.format.field_format_set.length;i++)
+	{
+		var ffs_obj=agg_structure.format.field_format_set[i];
+		var tmp_item_str='';
+		tmp_item_str+='<'+ffs_obj.fld_name+'>';
+		tmp_item_str+='<'+ffs_obj.fld_type+'>';
+		for (var k=0;k<ffs_obj.field_format_flag.length;k++) //optional
+		{
+			tmp_item_str+='<'+ffs_obj.field_format_flag[k]+'>';
+		}
+		var_format+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//b
+	for (var i=0;i<agg_structure.format.field_format_set_flag.length;i++)
+	{
+		var ffsf_obj=agg_structure.format.field_format_set_flag[i];
+		var tmp_item_str='';
+		tmp_item_str=ffsf_obj;
+		var_format+='<'+tmp_item_str+'>';//add <> to the item
+	}
+	//c
+	var_format='<'+var_format+'>';
+	
+	result_string=var_format;
+//3.get to the top layer, push in the rest of the data.
+	result_string=var_name+result_string+var_description+var_help+var_level+var_group;
+	result_string='<R='+result_string+'>';
+
+	return result_string;
+}
+
+// selecting process 
+var SelectedRow_vari;//(variables)
+var SelectedRow_func;//(functions)
+var SelectedRow_even;//(events)
+function Select(Row,src_entity)
+{
+	switch(src_entity)
+	{
+		case 'variables':
+			if (SelectedRow_vari)
+				SelectedRow_vari.bgColor = 0xffffff;
+			Row.bgColor = 0xff9080;
+			SelectedRow_vari = Row;
+			
+			var Row_OBJ=ret_row_position(SelectedRow_vari); //**
+			//show_control_panel(Row_OBJ);
+			break;
+		case 'functions':
+			if (SelectedRow_func)
+				SelectedRow_func.bgColor = 0xffffff;
+			Row.bgColor = 0xff9080;
+			SelectedRow_func = Row;			
+			break;
+		case 'events':
+			if (SelectedRow_even)
+				SelectedRow_even.bgColor = 0xffffff;
+			Row.bgColor = 0xff9080;
+			SelectedRow_even = Row;
+			break;
+		default:
+			break;
+	}
+}
+
+//point on first record
+function point_on_first(src_entity)
+{
+	switch(src_entity)
+	{
+		case 'variables':
+			var table =document.getElementById("table_variables");
+			if (!table) return;
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0) 
+				{var Row=table.rows[1];Select(Row,'variables');}
+			else
+				{
+					//hide_control_panel();	//**
+				}
+			break;
+		case 'functions':
+			var table =document.getElementById("table_functions");
+			if (!table) return;
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0) 
+				{var Row=table.rows[1];Select(Row,'functions');}			
+			break;
+		case 'events':
+			var table =document.getElementById("table_events");
+			if (!table) return;
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0)
+				{var Row=table.rows[1];Select(Row,'events');}
+			break;
+	}
+}
+
+//change the order of the record  in the table.
+//move_to_next(Entity, up/down)
+function move_to_next(src_entity,Dir)
+{
+		if (!Dir) return;
+		
+		switch(src_entity)
+		{
+			case 'variables':
+				//0.check eof
+				var dir_offset= new Number();
+				var Row=SelectedRow_vari;
+				if (!Row) return;
+				if (!external.XText.EntitySet[index_variables]) return;  	//if the entity not exists, exit function.
+
+				if (Dir=='up'){
+					if ((Row.rowIndex)<=1) return;													//Avoid that the index is out of the range.
+					dir_offset=-1;
+				}
+				else{
+					if (external.XText.EntitySet[index_variables].Customize_Script_Set.length<=(Row.rowIndex)) return;				
+					dir_offset=1;
+				}
+				
+				//1.get the selected record. then delete it. then insert it.
+				if (Row == SelectedRow_vari)  SelectedRow_vari = null;
+				var tmp_record_obj=external.XText.EntitySet[index_variables].Customize_Script_Set[Row.rowIndex-1];									//get the whole record(single).
+				var tmp_Row_Index=Row.rowIndex-1;
+				external.XText.EntitySet[index_variables].Customize_Script_Set.splice(tmp_Row_Index, 1); 														//delete
+				external.XText.EntitySet[index_variables].Customize_Script_Set.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 	//delete and insert
+				external.SetModified(true);	
+
+				//2.refresh(reload) the HTML Table of the "Entity Variables".
+				refresh_table_by_entity(src_entity);										//check false?
+				
+				//3.Set the pointer to the record that we just moved. 
+				var table =document.getElementById("table_variables");
+				if (!table) return;
+				var rows = Number(table.rows.length)-1;
+				if (rows!=0)
+					{var Row=table.rows[tmp_Row_Index+(dir_offset+1)];Select(Row,'variables');} //down = +2
+				else
+					{
+						//hide_control_panel();		//**	
+					}
+				break;
+				
+			case 'functions':
+				
+				//0.check eof
+				var dir_offset= new Number();
+				var Row=SelectedRow_func;
+				if (!Row) return;
+				if (!external.XText.EntitySet[index_functions]) return;  	//if the entity not exists, exit function.
+
+				if (Dir=='up'){
+					if ((Row.rowIndex)<=1) return;													//Avoid that the index is out of the range.
+					dir_offset=-1;
+				}
+				else{
+					if (external.XText.EntitySet[index_functions].Customize_Script_Set.length<=(Row.rowIndex)) return;				
+					dir_offset=1;
+				}
+				
+				//1.get the selected record. then delete it. then insert it.
+				if (Row == SelectedRow_func)  SelectedRow_func = null;
+				var tmp_record_obj=external.XText.EntitySet[index_functions].Customize_Script_Set[Row.rowIndex-1];									//get the whole record(single).
+				var tmp_Row_Index=Row.rowIndex-1;
+				external.XText.EntitySet[index_functions].Customize_Script_Set.splice(tmp_Row_Index, 1); 														//delete
+				external.XText.EntitySet[index_functions].Customize_Script_Set.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 	//delete and insert
+				external.SetModified(true);	
+				
+				//2.refresh(reload) the HTML Table of the "Entity Variables".
+				refresh_table_by_entity(src_entity);										//check false?				
+
+				//3.Set the pointer to the record that we just moved. 
+				var table =document.getElementById("table_functions");
+				if (!table) return;
+				var rows = Number(table.rows.length)-1;
+				if (rows!=0)
+					{var Row=table.rows[tmp_Row_Index+(dir_offset+1)];Select(Row,'functions');} //down = +2
+				else
+					{};//{hide_control_panel();}//**	
+				break;
+
+			case 'events':
+				//0.check eof
+				var dir_offset= new Number();
+				var Row=SelectedRow_even;
+				if (!Row) return;
+				if (!external.XText.EntitySet[index_events]) return;  	//if the entity not exists, exit function.
+
+				if (Dir=='up'){
+					if ((Row.rowIndex)<=1) return;													//Avoid that the index is out of the range.
+					dir_offset=-1;
+				}
+				else{
+					if (external.XText.EntitySet[index_events].Customize_Script_Set.length<=(Row.rowIndex)) return;				
+					dir_offset=1;
+				}
+				
+				//1.get the selected record. then delete it. then insert it.
+				if (Row == SelectedRow_even)  SelectedRow_even = null;
+				var tmp_record_obj=external.XText.EntitySet[index_events].Customize_Script_Set[Row.rowIndex-1];										//get the whole record(single).
+				var tmp_Row_Index=Row.rowIndex-1;
+				external.XText.EntitySet[index_events].Customize_Script_Set.splice(tmp_Row_Index, 1); 														//delete
+				external.XText.EntitySet[index_events].Customize_Script_Set.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 	//delete and insert
+				external.SetModified(true);	
+
+				//2.refresh(reload) the HTML Table of the "Entity Variables".
+				refresh_table_by_entity(src_entity);										//check false?
+				
+				//3.Set the pointer to the record that we just moved. 
+				var table =document.getElementById("table_events");
+				if (!table) return;
+				var rows = Number(table.rows.length)-1;
+				if (rows!=0)
+					{var Row=table.rows[tmp_Row_Index+(dir_offset+1)];Select(Row,'events');} //down = +2
+				else
+					{}//{hide_control_panel();}//**	
+				break;
+				
+			default:
+				return;
+		}
+		validate_all();  		//only validate_all for now(update status field). (check_mismatch();	check_tbl_have_hash();)
+}
+
+//Refresh(Reload) the desired HTML table(entity).
+function refresh_table_by_entity(src_entity)
+{
+	var A_SUCCESS = true;
+	
+	switch(src_entity)
+	{
+			case 'variables':
+					if (!external.XText.EntitySet[index_variables]) return false;               //if null exit function
+					var VARIABLES_ENTITY=external.XText.EntitySet[index_variables];
+					var VARIABLES_CS_SET=VARIABLES_ENTITY.Customize_Script_Set;
+					//a.reset the table (remove all the records in the table) b.get entity information c.load customized data
+					remove_HTMLTable_by_entity(src_entity);
+					
+					var entity_context = document.getElementById("lab_variables");
+					entity_context.innerHTML='(<I>'+VARIABLES_ENTITY.CONTEXT_LAYER+'</I>)';
+					for (var k=0;k < VARIABLES_CS_SET.length;k++) 
+					{
+						var tmp_Group_n_Description=ret_G_n_D(VARIABLES_CS_SET[k].C_SCRIPT); //@@@
+						var CS_Row = document.getElementById("table_variables").insertRow();
+						CS_Row.onmousedown = function() {Select(this,'variables');}
+						CS_Row.ondblclick = function() {variables_Edit(this);}
+						CS_Row.insertCell(0).innerHTML = HTMLEncode(VARIABLES_CS_SET[k].VAR_NAME);		
+						CS_Row.insertCell(1).innerHTML = ret_alias('ref_src',VARIABLES_CS_SET[k].VAR_TYPE);
+						CS_Row.insertCell(2).innerHTML = HTMLEncode(tmp_Group_n_Description);	//@@@
+						CS_Row.insertCell(3).innerHTML = '&nbsp';
+						CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+					}
+			break;
+			case 'functions':
+					if (!external.XText.EntitySet[index_functions]) return false;               //if null exit function
+					var FUNCTIONS_ENTITY=external.XText.EntitySet[index_functions];
+					var FUNCTIONS_CS_SET=FUNCTIONS_ENTITY.Customize_Script_Set;
+		
+					remove_HTMLTable_by_entity(src_entity);
+					var entity_context = document.getElementById("lab_functions");
+					entity_context.innerHTML='(<I>'+FUNCTIONS_ENTITY.CONTEXT_LAYER+'</I>)';
+					for (var k=0;k < FUNCTIONS_CS_SET.length;k++)
+					{
+						var CS_Row = document.getElementById("table_functions").insertRow();
+						CS_Row.onmousedown = function() {Select(this,'functions')};
+						CS_Row.ondblclick = function() {functions_Edit(this);}
+						CS_Row.insertCell(0).innerHTML = HTMLEncode(FUNCTIONS_CS_SET[k].VAR_NAME);		//No VAR_TYPE in function.
+						CS_Row.insertCell(1).innerHTML = '&nbsp';
+						CS_Row.cells(1).style.backgroundColor="#F2F2F2";
+					}
+			break;
+			case 'events':
+					if (!external.XText.EntitySet[index_events]) return false;               //if null exit function
+					var EVENTS_ENTITY=external.XText.EntitySet[index_events];
+					var EVENTS_CS_SET=EVENTS_ENTITY.Customize_Script_Set;
+
+					remove_HTMLTable_by_entity(src_entity);
+					var entity_context = document.getElementById("lab_events");
+					entity_context.innerHTML='(<I>'+EVENTS_ENTITY.CONTEXT_LAYER+'</I>)';
+					for (var k=0;k < EVENTS_CS_SET.length;k++) 
+					{
+						var CS_Row = document.getElementById("table_events").insertRow();
+						CS_Row.onmousedown = function() {Select(this,'events');} 
+						CS_Row.ondblclick = function() {events_Edit(this);}
+						CS_Row.insertCell(0).innerHTML = HTMLEncode(EVENTS_CS_SET[k].VAR_NAME);
+						var tmp_obj=extract_type_n_level(EVENTS_CS_SET[k].VAR_TYPE);
+						CS_Row.insertCell(1).innerHTML = HTMLEncode(ret_alias('event_type',tmp_obj.event_type));
+						CS_Row.insertCell(2).innerHTML = HTMLEncode(ret_alias('event_level',tmp_obj.event_level));
+						CS_Row.insertCell(3).innerHTML = '&nbsp';
+						CS_Row.cells(3).style.backgroundColor="#F2F2F2";
+					}		
+			break;	
+							
+		}
+		return A_SUCCESS;
+}
+
+//Remove all records in the desiredHTML Table.
+//For "refresh_table_by_entity" mainly.
+function remove_HTMLTable_by_entity(src_entity)
+{
+			switch(src_entity)
+			{
+				case 'variables':
+						var html_table =document.getElementById("table_variables");
+				break;
+				case 'functions':
+						var html_table =document.getElementById("table_functions");
+				break;
+				case 'events':
+						var html_table =document.getElementById("table_events");
+				break;
+				default:
+				return;		
+			}
+			
+			if ( html_table.rows.length > 1) 																			//clear all before reload data into the table.
+			{
+					var tmp_length =html_table.rows.length;
+					for (var i = 1; i < tmp_length; i++)
+					{
+						html_table.deleteRow(1);
+					}
+			}			
+}
+
+//return row position
+function ret_row_position(Row)
+{
+		if (!Row) return null;
+		var Row_OBJ=new Object();
+		Row_OBJ.X = Row.offsetLeft;
+		Row_OBJ.Y = Row.offsetTop;
+		Row_OBJ.W = Row.offsetWidth;
+		Row_OBJ.H = Row.offsetHeight;
+		//alert('xPos='+Row_OBJ.X+'\r\n yPos='+Row_OBJ.Y+'\r\n Width='+Row_OBJ.W+'\r\n Height='+Row_OBJ.H);
+		var parent_div=document.getElementById('var_div');
+		Row_OBJ.X+=Row.offsetWidth+5;
+		Row_OBJ.Y+=parseInt(Row.offsetHeight/2)-10;
+		return Row_OBJ;
+}
+
+//process td input sequence
+function show_control_panel(Row_OBJ) 
+{
+		var ele_test=document.getElementById('var_cmd_list');
+		var str_control_panel ='';
+		
+		ele_test.style.position = "absolute";
+		ele_test.style.left=Row_OBJ.X+'px';
+		ele_test.style.top=Row_OBJ.Y +'px';
+		str_control_panel=  "<div style='position: absolute; left:0; top:0; width:20px;height:20px;' onClick='move_to_next(&#39;variables&#39;,&#39;up&#39;);'> <img  src='image\\up.png' width='20' height='20' />         </div>"; //**
+		str_control_panel+= "<div style='position: absolute; left:21px; top:0; width:20px;height:20px;' onClick='move_to_next(&#39;variables&#39;,&#39;down&#39;);'> <img  src='image\\down.png' width='20' height='20' />    </div>";
+		str_control_panel+= "<div style='position: absolute; left:58px; top:0; width:20px;height:20px;' onClick='variables_Add();'> <img  src='image\\add.png' width='20' height='20' />     </div>";
+		str_control_panel+= "<div style='position: absolute; left:80px; top:0; width:20px;height:20px;' onClick='variables_Insert();'> <img  src='image\\insert.png' width='20' height='20' />     </div>";
+		str_control_panel+= "<div style='position: absolute; left:102px; top:0; width:20px;height:20px;' onClick='variables_Edit(SelectedRow_vari);'> <img  src='image\\edit.png' width='20' height='20' />    </div>";
+		str_control_panel+= "<div style='position: absolute; left:124px; top:0; width:20px;height:20px;' onClick='Delete(SelectedRow_vari,&#39;variables&#39;);'> <img  src='image\\remove.png' width='20' height='20' /> </div>";
+		
+		ele_test.innerHTML=str_control_panel;//**
+}
+
+function hide_control_panel()
+{
+		var ele_test=document.getElementById('var_cmd_list');
+		ele_test.innerHTML='';//**
+}
+
+
+//return alias
+function ret_alias(which_field,src_str) //retrieve alias 
+{
+		var src=src_str.replace(/^\s+|\s+$/g,"");
+		switch (which_field) 
+		{
+		case 'ref_src':
+			switch(src)
+			{
+				case "T":
+					return 'Table Library';
+				case "S":
+					return 'Setting Library';
+				default:
+					return src;
+			}
+			break;
+		case 'event_type':	
+			switch(src)
+			{
+				case "I":
+					return 'Instant Event';
+				case "S":
+					return 'Stored Event';
+				default:
+					return src;
+			}
+			break;	
+		case 'event_level':	
+			switch(src)
+			{
+				case "0":
+					return 'None';
+				case "1":
+					return 'Notice';
+				case "2":
+					return 'Info';
+				case "3":
+					return 'Warning';
+				case "4":
+					return 'Error';
+				case "5":
+					return 'Fatal';			
+				default:
+					return src;
+			}
+			break;						
+		default: 
+			return src;
+			break;
+		}
+}
+
+//get states(only at beginning)
+function get_link_state()
+{
+	var S=external.XTextEx(STG_Path);
+	var T=external.XTextEx(TBL_Path);
+	if (!S)	{old_STG_link_state=false;show_link_state_stg(old_STG_link_state);}	else{old_STG_link_state=true;show_link_state_stg(old_STG_link_state);}
+	if (!T) {old_TBL_link_state=false;show_link_state_tbl(old_TBL_link_state);} else{old_TBL_link_state=true;show_link_state_tbl(old_TBL_link_state);}
+		
+}
+
+//polling the state
+function poll_libs_link_state()
+{
+	var has_changed=false;   //for trigger onchange
+	var S=external.XTextEx(STG_Path);
+	var T=external.XTextEx(TBL_Path);
+	if (!S)
+		{
+			if (old_STG_link_state!=false)
+				{
+					old_STG_link_state=false;
+					show_link_state_stg(old_STG_link_state);
+					has_changed=true;
+				}
+		}
+	else
+		{
+			if (old_STG_link_state!=true)
+				{
+					old_STG_link_state=true;
+					show_link_state_stg(old_STG_link_state);
+					has_changed=true;
+				}
+		}
+		
+	if (!T) 
+		{
+			if (old_TBL_link_state!=false)
+				{
+					old_TBL_link_state=false;
+					show_link_state_tbl(old_TBL_link_state);
+					has_changed=true;
+				}
+		} 
+	else
+		{
+			if (old_TBL_link_state!=true)
+				{
+					old_TBL_link_state=true;
+					show_link_state_tbl(old_TBL_link_state);
+					has_changed=true;
+				}
+		}
+	
+	if (has_changed==true) on_link_state_change();
+	var result=setTimeout("poll_libs_link_state();",1000);
+}
+
+//on link state change of both libraries.
+function on_link_state_change()
+{
+		//1.STG or TBL reference flags determined by link_state now.(rewrite_sharp_def in the validate_all will do the rest operation)
+		//if (old_STG_link_state)	AGG_SETTING_CONTROL=1;
+		//else 	AGG_SETTING_CONTROL=0;
+		//if (old_TBL_link_state) AGG_TABLE_CONTROL=1;
+		//else AGG_TABLE_CONTROL=0;
+		
+		check_mismatch_quiet();					 //2.must after table loading sequence has completed.
+		validate_all();            			 //3.the order is always the last one.
+}
+
+//extract limitation script(p1, p2)
+function extract_P1P2(L_script)
+{
+	if (L_script=='') return null;
+	pat=/[L]=(\d{1,8})\s(\d{1,8})/;
+	result_Array = pat.exec(L_script);
+	if (result_Array==null) return null;
+	if (result_Array.length<3) return null;
+	
+	var v_obj= new Object;
+	v_obj.MIN=result_Array[1];
+	v_obj.MAX=result_Array[2];
+	return v_obj;
+}
+
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="info.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='170px';
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='12';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9';
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='170px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='11';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#ffffff';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.85'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+</script>
+</body>
+</html>

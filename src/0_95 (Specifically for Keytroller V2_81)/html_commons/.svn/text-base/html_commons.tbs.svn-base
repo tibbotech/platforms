@@ -1,0 +1,147 @@
+include "global.tbh"
+
+'=============================================================
+public sub html_init
+	dim f as byte
+	'TELNET/HTTP
+	for f=SOCK_HTTP to SOCK_HTTP+NUM_HTTP_SOCKETS-1
+		sock.num=f
+		sock.txbuffrq(HTTP_TX_SZ)
+		'sock.rxbuffrq(1) 
+		sock.varbuffrq(HTTP_TX_SZ)
+		sock.redir(PL_REDIR_SOCK0+sock.num)
+	next f
+	sys.buffalloc
+	
+	'TELNET/HTTP
+	for f=SOCK_HTTP to SOCK_HTTP+NUM_HTTP_SOCKETS-1
+		sock.num=f
+		sock.protocol=PL_SOCK_PROTOCOL_TCP
+		sock.localportlist="23"
+		sock.httpportlist="80"
+		sock.connectiontout=40
+		sock.inconmode= PL_SOCK_INCONMODE_ANY_IP_ANY_PORT
+		sock.reconmode= PL_SOCK_RECONMODE_0
+	next f
+end sub
+
+'=============================================================
+public sub sock_setsend(byref s as string)
+'Making sure the tx buffer is free before adding more data to the buffer.
+	while sock.txfree<len(s)
+		if sock.num >= SOCK_HTTP and sock.num < SOCK_HTTP+NUM_HTTP_SOCKETS then
+			if sock.statesimple = PL_SSTS_CLOSED then 
+				sock.txclear
+				exit sub
+			end if
+		else
+			for sock.num = SOCK_HTTP to SOCK_HTTP+NUM_HTTP_SOCKETS-1
+				sock.close
+			next sock.num
+			exit sub
+		end if
+	wend
+	sock.setdata(s)
+	sock.send
+end sub
+
+'=============================================================
+public function get_http_argument(byref http_req_string as string, byref argument as string) as string
+'Get one specific argument from the http request string.
+'For example If http_req_string = http://index.html&p1=abc&p2=def by calling this function, 
+'get_http_argument(sock.httprqstring,"p1="), the function returns "abc"
+	dim x, y as byte
+	x = instr(1, http_req_string, argument,1)
+	if (x = 0) then
+		get_http_argument = ""
+		exit function
+	end if
+	x = x + len(argument)
+	y = instr(x, http_req_string, "&",1)
+	if (y = 0) then
+		y = instr(x, http_req_string, " ",1)
+		if (y = 0) then
+			y = len(argument)
+		end if
+	end if
+	get_http_argument = mid(http_req_string, x, y - x)
+end function
+
+'=============================================================
+public function mod_http_argument(byref http_req_string as string, byref argument as string, byref arg_val as string) as string
+'modify the value of argument in the http_req_string, if the argument doesn't exist, add it the end of http_req_string 
+	dim pos1, pos2 as byte
+	dim s,s1 as string
+	'empty http_req_string
+	if http_req_string = "" then 
+		mod_http_argument = "?"+argument+"="+arg_val
+		exit function
+	end if
+	
+	'remove argument if arg_val = ""
+	if arg_val= "" then
+		pos1 = instr(1,http_req_string,argument,1)
+		if pos1 > 0 then
+			s = left(http_req_string,pos1-1)
+			pos2 = instr(pos1,http_req_string,"&",1)
+			
+			if pos2 > 0 then
+				s1 = right(http_req_string,len(http_req_string)-pos2)
+			else
+				if s  = "?" then s = ""
+				s1 = ""
+			end if
+			mod_http_argument=s+s1
+			exit function
+		end if
+		mod_http_argument = http_req_string
+		exit function
+	end if
+	'remove the tailing infor
+	pos1 = instr(1,http_req_string," HTTP",1)
+	http_req_string = left(http_req_string,pos1-1)
+	
+	'find the argument
+	pos1 = instr(1,http_req_string,argument,1)
+	
+	'if the argument already exit, modify the value to arg_val, else add it to the end of http_req_string
+	if pos1 > 0 then 
+		pos1 = pos1+len(argument)-1
+		pos2 = instr(1,http_req_string,"?",1)
+		if pos2 > 0 then http_req_string = right(http_req_string,len(http_req_string)-pos2)
+		s = "?"+left(http_req_string,pos1)+"="+arg_val
+		
+		'the argument could be in the middle to the http_req_string
+		pos2 = instr(pos1,http_req_string,"&",1)
+		if pos2 > 0 then
+			s = s+right(http_req_string,len(http_req_string)-pos2+1)
+			mod_http_argument = s
+			exit function
+		else
+			mod_http_argument = s
+			exit function
+		end if
+	else
+		mod_http_argument = "?"+http_req_string+"&"+argument+"="+arg_val
+	end if
+end function
+'=============================================================
+public sub html_spec_chr_convert(byref http_req_string as string)
+'convert the escape characters into normal characters (ex. %
+	dim char_ascii as string(2)
+	dim char_str as string(1)
+	dim pos1 as byte
+	dim temp1, temp2 as string
+	do	
+		pos1 = instr(1,http_req_string,"+",1)
+		if pos1 > 0 then
+			device_replace_chr(http_req_string,"+"," ")
+		end if
+		pos1 = instr(1,http_req_string,"%",1)
+		if pos1 > 0 then 
+			char_ascii = mid(http_req_string,pos1+1,2)
+			char_str = chr("&h"+char_ascii)
+			device_replace_chr(http_req_string,"%"+char_ascii,char_str)
+		end if	
+	loop while pos1 > 0
+end sub

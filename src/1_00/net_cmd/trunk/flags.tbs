@@ -1,0 +1,67 @@
+'***********************************************************************************************************
+'			FLAGS: STATUS OF DEVICE IS EXPRESSED THROUGH THEM
+'***********************************************************************************************************
+
+include "global.tbh"
+
+public dim x_flags as string(10) 'dsmanager communication flags
+public dim error_mode as no_yes
+dim ip_obtained as no_yes
+
+'==============================================================================
+public function get_x_flags_net() as string(10)
+	get_x_flags_net=x_flags
+end function
+
+
+'=============================================================
+public sub declare_ip_set
+' Sets the ip declared flag, (including in x_flags string).
+	write_x_flag(EN_X_FLAGS_IP,"M")
+	ip_obtained=YES
+end sub
+
+
+'=============================================================
+public sub declare_ip_obtained
+	write_x_flag(EN_X_FLAGS_IP,"I")
+	ip_obtained=YES
+end sub
+
+
+'=============================================================
+public sub declare_error_mode
+'Sets error mode flag (including in x_flags string).
+
+	write_x_flag(EN_X_FLAGS_ERROR,"E")
+	error_mode=YES
+ 
+end sub
+
+'=============================================================
+public sub write_x_flag(flag_num as en_x_flags,byref new_val as string)
+'Modifies a specific string in the x_flags variable. Flag to be modified is specified by flag.
+'New flag value is passed in val.
+
+	dim s1,s2 as string(10)
+		
+	if flag_num<1 then
+		flag_num=1
+	end if
+	
+	if flag_num>10 then
+		flag_num=10
+	end if	
+		
+	'replace the flag with new value
+	s1=left(x_flags,flag_num-1)
+	s2=right(x_flags,len(x_flags)-flag_num)
+	x_flags=s1+left(new_val,1)+s2
+
+end sub
+
+'=============================================================
+public sub init_x_flags
+	error_mode =NO
+	x_flags="/N****/**/"
+end sub

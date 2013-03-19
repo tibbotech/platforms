@@ -1,0 +1,107 @@
+'===========================================================================
+'					settings library
+'
+'	required device specific properties and methods:
+'		function setting_pre_read(stg_name as string(MAX_SETTING_NAME_LEN),index as byte, byref old_stg_value as string) as string(MAX_SETTING_NAME_LEN)
+'			setting_pre_read=old_stg_value 'no action to be done before reading settings, you should return the old value
+'		setting_post_write(stg_name as string(MAX_SETTING_NAME_LEN),index as byte, byref stg_value as string)
+'		sub setting_error_detected
+'
+'===========================================================================
+
+#ifndef STORAGE_MEMORY
+#define STORAGE_MEMORY 0 'use 0 for EEPROM or 1 for a flash disk file
+#endif
+
+#ifndef USE_STG_TIMESTAMP
+#define USE_STG_TIMESTAMP 1 'set to <>0 to enable individual timestamps for each setting
+#endif
+
+#ifndef MAX_NUM_SETTINGS
+#define MAX_NUM_SETTINGS 83
+#endif
+
+#ifndef STG_RAM_ARRAY_SIZE
+#define STG_RAM_ARRAY_SIZE 0
+#endif
+
+#ifndef MAX_SETTING_NAME_LEN
+#define MAX_SETTING_NAME_LEN 2
+#endif 
+
+#ifndef SETTINGS_SCRIPT_FILE
+#define SETTINGS_SCRIPT_FILE "settings.txt"
+#endif
+
+const SETTINGS_FILENAME="settings4.dat"
+
+'This is a clean length that does not take into the account any additional service data that has
+'to be saved together with the setting. That is, when you do s=setting_get(), you receive a string value.
+'This constant refers to the maximum length of such string that you need in your project.
+'Choosing a smaller value helps you save RAM
+const MAX_SETTING_VALUE_LEN=24
+
+
+enum en_stg_rdwr
+	EN_STG_GET,			'Read operation
+	EN_STG_SET			'Write operation
+end enum
+
+'Status codes for setting-related operations
+enum en_stg_status	
+	EN_STG_STATUS_OK,				'Operation completed successfully
+	EN_STG_STATUS_UNKNOWN,			'Unknown setting or invalid setting number
+	EN_STG_STATUS_INVALID_INDEX,	'Invalid index (out-of-range)
+	EN_STG_STATUS_FAILURE,			'Read failure (checksum error) or write failure (EEPROM trouble)
+	EN_STG_STATUS_INVALID			'Invalid setting value
+end enum
+
+enum stg_init_modes
+	EN_STG_INIT_MODE_NORMAL,		'Initialize NV MEM settings according to the INI field in settings.txt + initialize all RAM ARR settings
+	EN_STG_INIT_MODE_OVERRIDE,		'Initialize all NV MEM settings + initialize all RAM ARR settings
+	EN_STG_INIT_MODE_RAM_ONLY		'Initialize only RAM ARR settings	
+end enum
+
+type struct_stg_timestamp
+	ts_daycount as word
+	ts_mincount as word
+	ts_seconds as byte
+	ts_milsec as word
+end type
+
+type sdr_type
+	name as string(MAX_SETTING_NAME_LEN) 'name
+	storage as byte
+	stype as byte
+	members as byte
+	p1 as word
+	p2 as word
+	ini as byte
+	nvaddr as word
+	romaddr_def as word
+	member_size as byte
+	setting_size as byte
+	status as en_stg_status
+end type
+
+declare function settings_init() as en_stg_status
+declare function settings_restore_def(init_mode as stg_init_modes) as en_stg_status
+declare function setting_get(byref stg_name as string, index as byte) as string
+declare sub setting_set(byref stg_name as string, index as byte, byref stg_value as string) 
+declare function setting_sg(byref stg_name as string,index as byte,byref stg_value as string,op as en_stg_rdwr) as en_stg_status
+declare function setting_get_def(byref stg_name as string,index as byte,byref def_value as string) as en_stg_status
+declare function setting_get_num_members(byref stg_name as string, byref num_members as byte) as en_stg_status
+declare function setting_find(byref stg_name as string(2)) as byte
+declare function setting_member_restore_def(byref stg_name as string, index as byte) as en_stg_status
+declare function setting_check() as en_stg_status
+
+declare sdr(MAX_NUM_SETTINGS) as sdr_type
+
+#if USE_STG_TIMESTAMP<>0
+declare stg_timestamp as struct_stg_timestamp
+declare function setting_set_ts(byref stg_name as string) as en_stg_status
+#endif
+
+#if STORAGE_MEMORY<>0
+	declare settings_filenum as byte
+#endif	

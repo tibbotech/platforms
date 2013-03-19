@@ -1,0 +1,104 @@
+'***********************************************************************************************************
+'			FILE NUMBER ALLOCATION LIBRARY
+'***********************************************************************************************************
+
+include "global.tbh"
+
+'--------------------------------------------------------------------
+const FILENUM_STAMP="FILENUM> "
+const FILENUM_CR_LF=chr(13)+chr(10)
+const FILENUM_MAX_FILES=8
+const FILENUM_UNUSED_SIGNATURE="----"
+const FILENUM_INIT_SIGNATURE=&h39BD
+
+'--------------------------------------------------------------------
+declare sub filenum_init()
+declare sub filenum_debugprint(byref print_data as string)
+
+'--------------------------------------------------------------------
+dim filenum_in_use(FILENUM_MAX_FILES) as no_yes
+dim filenum_user_signature(FILENUM_MAX_FILES) as string(FILENUM_MAX_SIGNATURE_LEN)
+dim filenum_init_flag as word
+
+'==============================================================================
+public function filenum_get(byref signature as string) as byte
+'find free file number or return 255 if no free file numbers available
+	dim f as byte
+
+	if filenum_init_flag<>FILENUM_INIT_SIGNATURE then
+		filenum_init()
+		filenum_init_flag=FILENUM_INIT_SIGNATURE
+	end if
+	
+	for f=0 to FILENUM_MAX_FILES-1
+		if filenum_in_use(f)=NO then
+			filenum_in_use(f)=YES
+			filenum_user_signature(f)=signature
+			filenum_get=f
+			#if FILENUM_DEBUG_PRINT
+				filenum_debugprint("'"+signature+"' got file #"+str(f))
+			#endif
+			exit function
+		end if
+	next f
+
+	'no free file number found
+	#if FILENUM_DEBUG_PRINT
+		filenum_debugprint("'"+signature+"' could not get a file number: no free file numbers left")
+	#endif
+	filenum_get=255
+end function
+
+'--------------------------------------------------------------------
+public function filenum_who_uses(file_num as byte) as string
+
+	if filenum_init_flag<>FILENUM_INIT_SIGNATURE then
+		filenum_init()
+		filenum_init_flag=FILENUM_INIT_SIGNATURE
+	end if
+
+	if filenum_in_use(file_num)=NO then
+		filenum_who_uses=FILENUM_UNUSED_SIGNATURE
+	else
+		filenum_who_uses=filenum_user_signature(file_num)
+	end if
+end function
+
+'--------------------------------------------------------------------
+public sub filenum_release(file_num as byte)
+'cleans and releases the file number so it can be used for something else
+
+	if filenum_init_flag<>FILENUM_INIT_SIGNATURE then
+		filenum_init()
+		filenum_init_flag=FILENUM_INIT_SIGNATURE
+	end if
+
+	'close the file
+	fd.filenum=file_num
+	fd.close
+	
+	#if FILENUM_DEBUG_PRINT
+		filenum_debugprint("'"+filenum_user_signature(file_num)+"' released file #"+str(file_num))
+	#endif
+	
+	filenum_in_use(file_num)=NO
+	filenum_user_signature(file_num)=FILENUM_UNUSED_SIGNATURE
+end sub
+
+'------------------------------------------------------------------------------
+sub filenum_init()
+	dim f as byte
+	
+	for f=0 to FILENUM_MAX_FILES-1
+		filenum_in_use(f)=NO
+		filenum_user_signature(f)=FILENUM_UNUSED_SIGNATURE
+	next f
+end sub
+
+'------------------------------------------------------------------------------
+#if FILENUM_DEBUG_PRINT
+sub filenum_debugprint(byref print_data as string)
+
+	sys.debugprint(FILENUM_STAMP+print_data+FILENUM_CR_LF)
+end sub
+#endif

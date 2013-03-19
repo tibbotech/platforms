@@ -1,0 +1,40 @@
+'===========================================================================
+'					HTML_COMMONS.TBS
+'	required device specific properties and methods:
+'	#if UPLOAD_ENABLED=1
+'		sub device_upload_cycle_end
+'		sub device_upload_cycle_start
+'		function device_upload_proc_parameter(p_name as string,p_value as string) as byte
+'		function device_upload_complete as byte
+'		function device_upload_set_data(s as string) as byte
+'		function device_upload_get_httprqstring as string
+'===========================================================================
+
+#ifndef UPLOAD_ENABLED
+#define UPLOAD_ENABLED 0
+#endif
+
+#ifndef NUM_HTTP_SOCKETS
+#define NUM_HTTP_SOCKETS 3
+#endif
+
+#ifndef HTTP_TX_SZ
+#define HTTP_TX_SZ 3
+#endif
+
+#ifndef SOCK_HTTP
+#define SOCK_HTTP 3
+#endif
+
+declare sub html_init
+declare sub sock_setsend(byref s as string)
+declare sub html_spec_chr_convert(byref http_req_string as string)
+
+declare function get_http_argument(byref http_req_string as string, byref argument as string) as string
+declare function mod_http_argument(byref http_req_string as string, byref argument as string, byref arg_val as string) as string
+#if UPLOAD_ENABLED=1
+declare function html_file_upload as byte
+#endif
+
+declare getting_postdata as no_yes
+declare html_upload_result as byte

@@ -1,0 +1,1286 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif;}
+		th 		{background-color:yellow;} 
+		td 		{font-size: 15px;} 	
+		button {width: 75px;} 
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2">
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td>
+	
+<! - ----------------------------TAB-------------------------------------- ->
+<div id="tab_header" >
+		<ul>
+			<!--<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">Definition</a></li>-->
+		</ul>
+</div>
+<div id="tab_content" >
+<br>
+<! - --------------------------------------------------------------------- ->	
+
+
+
+
+<div class="posttext">
+<! - --------------------------------------------------------------------- ->
+<! - - FIELD NAME - ->
+<table> 
+<tr> 
+<td><p><span title="header=[Field Name:] body=[Must be unique. Names are case-sensitive	and cannot start with a digit (i.e. 0-9 char).]"><B>Field Name:</B></span></td> 
+ 
+<td><input type="text" ID="edit_FIELD_NAME"  maxlength="35" value="" style="width: 175px"></p></td><Font size="2">
+</tr> 
+<tr><td colspan=2 align=center>
+<hr>
+</td></tr>
+<! - --------------------------------------------------------------------- ->
+<! - - FIELD TYPE - ->
+
+<tr> 
+<td><p><span title="header=[Field Type:] body=[<b>&quot;B&quot;&nbsp;-</b> byte, possible value range is 0-255.<br><br>
+																							 <b>&quot;W&quot;&nbsp;-</b> word, possible value range is 0-65535.<br><br>
+																							 <b>&quot;L&quot;&nbsp;-</b> Long, possible value range is 0-4294967296.<br><br>
+																							 <b>&quot;S&quot;&nbsp;-</b> string, the string length cannot greater than total record size.]"> Field Type:</span> </td>
+<td><select ID="edit_FIELD_TYPE" style="width: 175px" onchange="fld_type_onChange();"> 
+			<option value="S">String</option> 
+			<option value="B">Byte</option> 
+			<option value="W">Word</option> 
+			<option value="U">Long</option> 
+			<option value="T">Date/Time</option> 
+		</select></p></td>
+</tr> 
+
+<! - --------------------------------------------------------------------- ->
+<! - - P1 - ->
+<tr>
+<td style="white-space:nowrap"><div id=p1_div_caption><p><span title="header=[P1 (Min) Parameter:] body=[Minimum value for byte and word settings, minimum length for string. But if the ]"><label id="lab_P1">P1 (Min) Parameter:</label></span></div></td>
+<td >
+			<div id='p1_div1'><input type="text" ID="edit_P1" value="" maxlength="10"  onkeypress="javascript:KeyPress(this);"  onBlur="" style="width: 175px"> </div>
+</p>
+<p>	
+			<div id='p1_div2'><select ID="edit_DT_P1" style="width: 175px " onchange="DT_P1_onChange();"> </div>
+													<option value="0">0 - YYYYMMDD</option> 
+													<option value="1">1 - hhmm</option> 
+													<option value="2">2 - hhmmss</option> 
+													<option value="3">3 - hhmmssmls</option> 
+													<option value="4">4 - YYYYMMDDhhmm</option>
+													<option value="5">5 - YYYYMMDDhhmmss</option>
+													<option value="6">6 - YYYYMMDDhhmmssmls</option>
+												</select>
+</p>
+</td>
+</tr>
+<! - --------------------------------------------------------------------- ->
+<! - - P2 - ->
+<tr>
+<td style="white-space:nowrap"><div id=p2_div_caption><p><span title="header=[P2 (Max) Parameter:] body=[Maximum value for byte and word settings, maximum length for string. It is useless if field type is Date/Time type.]"><label id="lab_P2">P2 (max) Parameter:</label></span></div></td>
+<td><div id="p2_div"><input type="text" ID="edit_P2" value="" maxlength="10"  onkeypress="javascript:KeyPress(this);"  onBlur="" style="width: 175px"></div> </p></td>
+</tr>
+
+<! - --------------------------------------------------------------------- ->
+<! - -DEFAULT VALUE- ->
+<tr>
+<td valign=top><p><span title="header=[Default Value:] body=[Use &quot; ^ &quot; to specify NULL default value.]">Default Value: </span></td>
+<td><input type="text" ID="edit_DEFVAL"  maxlength="254" value="" style="width: 175px"></p></td>
+</tr>
+<! - --------------------------------------------------------------------- ->
+<! - - COMMENT: - ->
+<tr>
+<td><p><span title="header=[Comment:] body=[It is optional. 
+																						<br> But remember that the tables
+																						descriptor file is a part of the compiled binary, so adding
+																						comments increases the size of this binary!].]">Comment:</span></td>
+<td><input type="text" ID="edit_FLD_COMMENT" value="" maxlength="150"  onkeypress=""  onBlur="" style="width: 175px"> </p></td>
+</tr>
+<! - --------------------------------------------------------------------- ->
+</table>
+</div>
+</div>  <! - ----------------------------TAB END(div tab_content)----------------------------------- ->
+<div align="right" >
+<br>
+<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+<button width = "100"  style="Display:none" onclick="var Context = new Object();external.ModalDialog('cal.html', 'test', Context);">Test2</button> &nbsp;
+<button width = "100"  style="display : none;" onclick="alert(isNaN('a'));//alert(IsNumeric('^'));">IsNumeric</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+//ret value to html object
+load_data();//load data on start
+p2_enabled(); //check if it's time type. if ture then disabled the p2 input box.(must after load_data at first load)
+change_caption(); //should be execute once at beginning.(syn)
+
+//=================================================1.General Operation===================================================
+//load data record
+function load_data()
+{
+	document.getElementById("edit_FIELD_NAME").value = external.Context.Target.FIELD_NAME;
+	document.getElementById("edit_FIELD_TYPE").value = external.Context.Target.FIELD_TYPE;
+	document.getElementById("edit_P1").value = external.Context.Target.P1;
+	document.getElementById("edit_DT_P1").value = external.Context.Target.P1;
+	document.getElementById("edit_P2").value = external.Context.Target.P2;
+	document.getElementById("edit_DEFVAL").value = external.Context.Target.DEFVAL;
+	var tmp_comment=external.Context.Target.FLD_COMMENT;
+	tmp_comment=tmp_comment.replace(/&nbsp;/g,"");
+	tmp_comment=tmp_comment.replace(/^\s+|\s+$/g,"");
+	document.getElementById("edit_FLD_COMMENT").value = tmp_comment;
+}
+
+//ON OK
+function OnOK()
+{
+	var tmp_P1=new Number(); //erase leading zero of numeric-type fields
+	var tmp_P2=new Number();
+	if (isNaN(document.getElementById("edit_P1").value)==true) document.getElementById("edit_P1").value='0';
+	if (isNaN(document.getElementById("edit_P2").value)==true) document.getElementById("edit_P2").value='0';
+	tmp_P1=Number(document.getElementById("edit_P1").value); //erase leading zero of numeric-type fields
+	tmp_P2=Number(document.getElementById("edit_P2").value);
+	document.getElementById("edit_P1").value=tmp_P1.toString();
+	document.getElementById("edit_P2").value=tmp_P2.toString();
+	
+	var val_obj = new Object;
+	val_obj.FIELD_NAME=document.getElementById("edit_FIELD_NAME").value;
+	val_obj.FIELD_TYPE=document.getElementById("edit_FIELD_TYPE").value;;
+	val_obj.P1=tmp_P1.toString();
+	val_obj.P2=tmp_P2.toString();
+	val_obj.DEFVAL=document.getElementById("edit_DEFVAL").value;
+	val_obj.FLD_COMMENT=document.getElementById("edit_FLD_COMMENT").value;
+	if (validate_fld_def(val_obj)==false) return ;
+	
+	external.Context.Target.FIELD_NAME = document.getElementById("edit_FIELD_NAME").value;
+	external.Context.Target.FIELD_TYPE = document.getElementById("edit_FIELD_TYPE").value;
+	external.Context.Target.P1 = tmp_P1.toString();
+	external.Context.Target.P2 = tmp_P2.toString();
+	external.Context.Target.DEFVAL = document.getElementById("edit_DEFVAL").value;
+
+	var tmp_comment=document.getElementById("edit_FLD_COMMENT").value;
+	tmp_comment=tmp_comment.replace(/&nbsp;/g,"");
+	tmp_comment=tmp_comment.replace(/^\s+|\s+$/g,"");
+	external.Context.Target.FLD_COMMENT=tmp_comment;
+	external.EndDialog(1);
+}
+
+
+//========================================================2. validation ======================================================================================
+//disabled the p2, if field type is Date/Time
+function p2_enabled()
+{
+	if( !(document.getElementById("edit_FIELD_TYPE"))) return;
+	if( !(document.getElementById("edit_P2"))) return;
+	var html_FIELD_TYPE=document.getElementById("edit_FIELD_TYPE").value;
+	var col_P2=document.getElementById("edit_P2");//get filename
+	
+	switch(html_FIELD_TYPE)
+	{
+		case "T":
+			col_P2.value=0;
+			col_P2.disabled = true;
+			p2_div.style.color='gray';col_P2.style.backgroundColor='#F2F2F2';
+			break;
+		default:
+			col_P2.disabled = false;
+			p2_div.style.color='black';col_P2.style.backgroundColor='white';	
+			break;
+	}
+	
+}
+
+//validate Field Def
+function validate_fld_def(child_obj)
+{//we need both.
+//PREPROCESS, ALL VARIABLE MUST BE WELL DEFINED
+		var html_NAME=document.getElementById("edit_FIELD_NAME");
+		var html_FIELD_TYPE=document.getElementById("edit_FIELD_TYPE");
+		var html_P1=document.getElementById("edit_P1");
+		var html_P2=document.getElementById("edit_P2");
+		var html_DEFVAL=document.getElementById("edit_DEFVAL");
+		var html_FLD_COMMENT=document.getElementById("edit_FLD_COMMENT");
+				
+		var fld_name =new String();
+		var fld_type = new String();
+		var fld_P1 = new Number();
+		var fld_P2 = new Number();
+		var fld_defval = new String();  //depend on type, let's make it String for now.
+		var fld_fld_comment = new String();
+		fld_name=child_obj.FIELD_NAME;
+		fld_type=child_obj.FIELD_TYPE;
+		if (isNaN(child_obj.P1))	
+		{	
+			alert('Field \'P1\' must be a number.');
+			set_focus(html_P1);
+			return false;
+		} 
+		if ((child_obj.P1.indexOf(".")!=-1)||(child_obj.P1.indexOf("-")!=-1)) //the data type must be unsigned long
+		{
+			alert('Field \'P1\' must be a unsigned long number.');
+			set_focus(html_P1);
+			return false;
+		}  	
+		fld_P1=Number(child_obj.P1);
+		if (isNaN(child_obj.P2))
+		{	
+			alert('Field \'P2\' must be a number.');
+			set_focus(html_P2);
+			return false;
+		} 
+		if ((child_obj.P2.indexOf(".")!=-1)||(child_obj.P2.indexOf("-")!=-1)) //the data type must be unsigned long
+		{
+			alert('Field \'P2\' must be a unsigned long number.');
+			set_focus(html_P2);
+			return false;
+		}  	 			
+		fld_P2=Number(child_obj.P2);
+		fld_defval=child_obj.DEFVAL;     //depend on type, let's make it String for now.
+		fld_fld_comment=child_obj.FLD_COMMENT;
+		
+//FIELD_NAME
+			//1. missing check
+			if ((fld_name.length==0)||(fld_name.length > 32))
+			{
+				alert('Field \'FieldName\': The length  must not be 0 or > 32.');
+				set_focus(html_NAME);			
+				return false; 
+			} 
+	    if(fld_name!=fld_name.replace(/(^[0-9]*)/g, "")) //means can't start with a digit
+	    {      
+	    		alert('Field Name cannot start with a digit (i.e. 2GW).');
+	    		set_focus(html_NAME);
+	    		return false;
+	    }
+	    
+	    //for checking if the field name is unique.
+	    var fldname_count=unique_name_check(fld_name);  
+	    if (external.Context.srcFORMTYPE=='ADD')
+	    {
+	    		if (fldname_count>0)
+	    		{
+	    			alert('Field Name must be unique, you already have the same Field Name in the Field Definition table.');
+	    			set_focus(html_NAME);
+	    			return false;
+	    		}
+	    }
+	    else
+	    {
+					if (external.Context.Target.FIELD_NAME==fld_name) //means the same name (EDIT)
+					{
+							if (fldname_count>1)
+							{
+	    					alert('Field Name must be unique, you already have the same Field Name in the Field Definition table.');
+	    					set_focus(html_NAME);
+	    					return false;							
+							}
+					}
+	 				else
+	 				{
+	 						if (fldname_count>0)
+	 						{
+	    					alert('Field Name must be unique, you already have the same Field Name in the Field Definition table.');
+	    					set_focus(html_NAME);
+	    					return false;	
+	 						}
+	 				}
+	    	
+	    }
+//FIELD_TYPE
+			switch(fld_type)
+			{
+				case "S":
+				case "B":
+				case "W":
+				case "U":
+				case "T":
+				break;
+				default:
+						alert('Field \'FIELD_TYPE\': unknown structure type.');
+						//set_focus(html_FIELD_TYPE);
+						html_FIELD_TYPE.focus();
+						return false;		
+				break;
+			}
+//P1
+			if ((fld_P1.length==0))
+			{
+				alert('Field \'P1\' can not be null.');
+				if (fld_type=="T")
+				{
+					document.getElementById("edit_DT_P1").focus();
+				}
+				else
+				{
+					set_focus(html_P1);	
+				}
+				return false; 
+			} 
+			
+			
+			switch(fld_type)
+			{
+				
+				case "B":
+					if (fld_P1>255)
+					{ 
+						alert('Field \'P1\': must not exceed 255 with Byte Type.');
+						set_focus(html_P1);
+						return false;
+					}
+				break;
+				case "W":
+					if (fld_P1>65535) 
+					{
+						alert('Field \'P1\': must not exceed 65535 with Word Type.');
+						set_focus(html_P1);
+						return false;
+					}
+				break;
+				case "T":
+					if (fld_P1>6) 
+					{
+						alert('Field \'P1\': must not exceed 6 with Time/Date Type.');
+						//set_focus(html_P1);//@@
+						document.getElementById("edit_DT_P1").focus();
+						return false;
+					}
+				break;
+				case "U": //add this, but not in library 4294967296
+					if (fld_P1>4294967296)
+					{
+						alert('Field \'P1\': must not exceed 4294967296 with Long Type.');	
+						set_focus(html_P1);			
+						return false;
+					}
+					break;
+				case "S":
+					if (fld_P1>127) 
+					{
+						alert('Field \'P1\': must not exceed 127 with String Type.');
+						set_focus(html_P1);
+						return false;
+					}				
+					//if (fld_P1>TBL_MAX_FIELD_VALUE_LEN) {};	//need to check again
+				break;
+			}
+//P2
+			if ((fld_P2.length==0))
+			{
+				alert('Field \'P2\' can not be null.');
+				set_focus(html_P2);			
+				return false; 
+			} 
+			switch(fld_type)
+			{
+				
+				case "B":
+					if (fld_P2>255)
+					{ 
+						alert('Field \'P2\': must not exceed 255 with Byte Type.');
+						set_focus(html_P2);
+						return false;
+					}
+				break;
+				case "W":
+					if (fld_P2>65535) 
+					{
+						alert('Field \'P2\': must not exceed 65535 with Word Type.');
+						set_focus(html_P2);
+						return false;
+					}
+				break;
+				case "U": //add this, but not in library 4294967296
+					if (fld_P2>4294967296)
+					{
+						alert('Field \'P2\': must not exceed 4294967296 with Long Type.');	
+						set_focus(html_P2);			
+						return false;
+					}
+					break;
+				case "S":
+					if (fld_P2>127)  // the upper bound need to be  calculate 128-(other field size) 
+					{
+						alert('Field \'P2\': must not exceed 127 with String Type.');
+						set_focus(html_P2);
+						return false;
+					}				
+					//if (fld_P2>TBL_MAX_FIELD_VALUE_LEN) return false;	//need to check again
+				break;
+			}
+//P1,P2
+			if((fld_P2<fld_P1)&&(fld_type!='T')) 
+			{
+				alert('P1 can not > p2.');
+				set_focus(html_P2);
+				return false;
+			}
+//DEFVAL
+			if ((fld_defval.length==0))
+			{
+						alert('Field \'Default Value\'cannot be null.');
+						set_focus(html_DEFVAL);							
+						return false;
+			}
+			switch(fld_type)
+			{
+				case "B":
+				case "W":
+				case "U":
+					var dw= new Number();
+				
+					if (isNaN(fld_defval))
+					{
+							if(fld_defval=='^')
+							{
+								dw=0;
+							}
+							else
+							{
+								alert('Field \'Default Value\'must be a number.');
+								set_focus(html_DEFVAL);
+								return false;
+							}
+					}
+					else
+					{
+							if ((fld_defval.indexOf(".")!=-1)||(fld_defval.indexOf("-")!=-1))//must be unsigned
+							{
+								alert('Field \'Default Value\' must be a unsigned whole number with byte, word, or long form.');
+								set_focus(html_DEFVAL);
+								return false; 
+							}
+							dw=Number(fld_defval);
+					}
+					//def value < P1
+					if (dw<fld_P1) 
+					{
+						alert('Field \'Default Value\'cannot < P1.');
+						set_focus(html_DEFVAL);					
+						return false;
+					}
+					if (dw>fld_P2) 
+					{
+						alert('Field \'Default Value\'cannot > P2.');
+						set_focus(html_DEFVAL);							
+						return false;
+					}
+				break;
+				case "S":
+					if (fld_defval=='^')
+					{
+							var k= new Number();
+							k=0;
+					}
+					else
+					{
+							var k= new Number();
+							k=fld_defval.length;
+					}
+					//string length
+					if (k<fld_P1) 
+					{
+						alert('The length of the Field \'Default Value\'cannot < P1.');
+						set_focus(html_DEFVAL);					
+						return false;
+					}
+					if (k>fld_P2) 
+					{
+						alert('The length of the Field \'Default Value\'cannot > P2.');
+						set_focus(html_DEFVAL);						
+						return false;
+					}
+				break;
+				case "T":
+					if (td_str_to_binstr(fld_defval,fld_P1)==false)
+					{
+						show_msg_by_type(fld_P1);//alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDDhhmmssmls)');
+						set_focus(html_DEFVAL);
+						return false;
+					}
+				break;		
+			}
+//comment
+			if (fld_fld_comment.length>255) 	
+			{
+					alert('The Comment length cannot exceed 255.');
+					set_focus(html_FLD_COMMENT);
+					return false;				
+			}
+		return true;
+}
+
+//unique field name check. The function will return exist name total count.
+function unique_name_check(chk_fld_name)
+{		
+	
+	var search_count=0;
+	if (!external.Context.REAL_SINGLE_TBL) return search_count;
+	if (!external.Context.REAL_SINGLE_TBL.FieldsDefnition) return search_count;
+	
+	var real_fld_set=external.Context.REAL_SINGLE_TBL.FieldsDefnition;
+	for (var i=0;i<real_fld_set.length;i++)
+	{
+		if (real_fld_set[i].FIELD_NAME==chk_fld_name) {search_count+=1;}
+	}	
+	return search_count;
+}
+
+//validate time/date
+function td_str_to_binstr(td_str,td_type) 
+{
+	if (isNaN(td_str)==true) return false;
+	if (isNaN(td_type)==true) return false;
+
+	var td_str_length=td_str.length; //real length
+	switch(td_type)
+	{
+		case 0:
+			var def_length=8;
+			break;
+		case 1:
+			var def_length=4;
+			break;
+		case 2:
+			var def_length=6;
+			break;
+		case 3:
+			var def_length=9;
+			break;
+		case 4:
+			var def_length=12;
+			break;
+		case 5:
+			var def_length=14;
+			break;
+		case 6:
+			var def_length=17;
+			break;
+		default:
+			return false;
+	}
+	
+	
+	if	(td_str_length!=0)
+	{
+		if (def_length!=td_str_length) 
+		{
+				return false;
+		}
+	}
+		
+	switch(td_str_length)
+	{
+		case 0:
+		case 4:
+		case 6:
+		case 8:
+		case 9:
+		case 12:
+		case 14:
+		case 17:			
+		break;
+		default:
+		//alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDDhhmmssmls)');
+		
+		return false;
+	}	
+	var tmp_time_str =new String();
+	switch(td_str_length)
+	{
+		case 4://hhmm
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			break;
+		case 6://hhmmss
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;			
+			break;
+		case 8://YYYYMMDD
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			break;
+		case 9://hhmmssmls
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(6,9);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>999)) return false;	
+			break;						
+		case 12://YYYYMMDDhhmm
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			break;		
+		case 14://YYYYMMDDhhmmss
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			tmp_time_str=td_str.slice(12,14);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;	
+			break;		
+		case 17://YYYYMMDDhhmmssmls
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			tmp_time_str=td_str.slice(12,14);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(14,17);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>999)) return false;									
+			break;
+		default:
+		return false;
+	}	
+	return true;
+}
+
+//show msgbox
+function show_msg_by_type(td_type)
+{
+	switch(td_type)
+	{
+		case 0:
+			alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDD)');
+			break;
+		case 1:
+			alert('Field \'Default Value\' is not a valid date/time string (hhmm)');
+			break;
+		case 2:
+			alert('Field \'Default Value\' is not a valid date/time string (hhmmss)');
+			break;
+		case 3:
+			alert('Field \'Default Value\' is not a valid date/time string (hhmmssmls)');
+			break;
+		case 4:
+			alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDDhhmm)');
+			break;
+		case 5:
+			alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDDhhmmss)');
+			break;
+		case 6:
+			alert('Field \'Default Value\' is not a valid date/time string (YYYYMMDDhhmmssmls)');
+			break;
+		default:
+			return;
+	}
+}
+
+//========================================================3. input control ===================================================================================
+function KeyPress(objTR)
+{
+  //var objTR = element.document.activeElement;                
+  var txtval=objTR.value;                  
+  var key = event.keyCode;
+		
+	var field_name=objTR.id;
+	switch(field_name){
+	case "edit_P1":
+	case "edit_P2":
+    if((key < 48||key > 57)&&key != 46)
+    {                
+            event.keyCode = 0;
+    }
+    break;
+	default:
+	  break;
+	}
+}
+//========================================================4. the rest of the functions =======================================================================
+//refresh tab
+function refresh_tab(li_index)
+{
+	//var all_tab_content=document.getElementsByID('div');
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+
+
+
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='180px'; //def 15
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='11';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9'; 
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='180px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='12';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#fffAAA';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.90'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)|(\s*$)/g, ""); //
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)/g, "");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(\s*$)/g, "");
+}
+
+//Reset P1 VALUE  and fld_type=T and on field type change event.
+//must before change_caption
+function reset_P1_value()
+{
+	var DT_P1=document.getElementById("edit_DT_P1");
+	var OLD_P1=document.getElementById("edit_P1");
+	var fld_type_element=document.getElementById("edit_FIELD_TYPE").value;
+	if (fld_type_element=='T')
+	{
+		var DT_P1=document.getElementById("edit_DT_P1");
+		var OLD_P1=document.getElementById("edit_P1");
+		DT_P1.value=0;
+		OLD_P1.value=0;
+	}
+} 
+
+//for Date Time Value (this function will change the caption by date/time value)
+function change_caption()
+{	
+	var fld_type_element=document.getElementById("edit_FIELD_TYPE").value;
+ 
+	if (fld_type_element=='T')
+	{
+		p1_div1.style.display="none";//none
+		p1_div2.style.display="block";
+		document.getElementById('p1_div_caption').innerHTML ='<p><span title="header=[Date/Time Format:] body=[Select the foramt you want.]">Date/Time Format:&nbsp&nbsp&nbsp</span>';
+		document.getElementById('p2_div_caption').innerHTML='<p><span title="header=[(Irrelevant):] body=[Irrelevant.]">(Irrelevant):</span>'
+	}
+	else
+	{
+		p1_div1.style.display="block";
+		p1_div2.style.display="none";//none
+		document.getElementById('p1_div_caption').innerHTML ='<p><span title="header=[P1 (Min) Parameter:] body=[Minimum value for byte and word settings, minimum length for string.]">P1 (Min) Parameter:</span>';
+		document.getElementById('p2_div_caption').innerHTML='<p><span title="header=[P2 (Max) Parameter:] body=[Maximum value for byte and word settings, maximum length for string. It is useless if field type is Date/Time type.]">P2 (max) Parameter:</span>'
+	}
+}
+
+//
+function fld_type_onChange()
+{
+	p2_enabled();
+	reset_P1_value();
+	change_caption();
+	var fld_type_element=document.getElementById("edit_FIELD_TYPE").value;
+	if (fld_type_element=='T')
+	{
+		DT_P1_onChange(); 			//Cuz reset_P1_value don't trigger the 'edit_P1' onchange event(when fld_type_onChange).
+	}
+	else
+	{
+		var set_defval=document.getElementById("edit_DEFVAL");
+		set_defval.value='^';
+	}
+}
+
+
+//DT_P1 onchange only
+function DT_P1_onChange()
+{
+	//1.temporary only syn value
+	var DT_P1=document.getElementById("edit_DT_P1");
+	var OLD_P1=document.getElementById("edit_P1");
+	OLD_P1.value=DT_P1.value;
+	//2. onchange we
+	if (DT_P1.value=='') return;
+	if (isNaN(DT_P1.value)) return;
+	tmp_num=Number(DT_P1.value);
+	var set_defval=document.getElementById("edit_DEFVAL");
+	
+	switch(tmp_num)
+	{
+		case 0:
+			set_defval.value='20000101';
+			break;
+		case 1:
+			set_defval.value='0101';
+			break;
+		case 2:
+			set_defval.value='010101';
+			break;
+		case 3:
+			set_defval.value='010101001';
+			break;
+		case 4:
+			set_defval.value='200001010101';
+			break;
+		case 5:
+			set_defval.value='20000101010101';
+			break;
+		case 6:
+			set_defval.value='20000101010101001';
+			break;
+		default:
+			return 
+	}
+	
+} 
+
+//set focus
+function set_focus(elm)
+{
+    if(typeof(elm) == 'string') 
+    {
+        elm = xGetElementById(elm);
+    }
+    if (elm) 
+    {     
+        elm.focus();
+        elm.select();
+    }
+}
+
+</script>
+
+
+
+</BODY>
+</HTML>

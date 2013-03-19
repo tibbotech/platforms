@@ -1,0 +1,107 @@
+'===========================================================================
+'					ui_input_box library
+'
+'	required device specific properties and methods:
+'		sub lcd_clear(x as word, y as word, width as word, height as word)
+'		sub device_ib_key_proc(key_event as pl_kp_event_codes, key_code as byte, byref current_state as input_box_key_actions,byref key_asc as byte, byref insert_mode as no_yes)
+'		sub device_ib_timer_event(byref current_state as input_box_key_actions,byref key_asc as byte, byref insert_mode as no_yes)
+'		sub device_ib_interrupt()
+'		sub device_input_box_pre(
+'			byref mask_str as string(IB_MAX_LEN),	'uneditable part of the input string
+'			byref edit_str as string(IB_MAX_LEN),	'input string
+'			char_range as input_box_char_ranges,	'the input range. INPUT_BOX_CHAR_RANGE_09 only allows numeric input, INPUT_BOX_CHAR_RANGE_AZ allows alphabetic, INPUT_BOX_CHAR_RANGE_09AZ allows both numeric and alphabetic input.
+'			secret_mode as no_yes,			'if secret_mode=yes, all editable part of the input string will be display on the LCD as "*", this are mostly used for password.
+'			insert_mode as no_yes,			'if insert_mode=yes, the new character is insert before the cursor, if insert_mode=no, the character replaces the character at the cursor position.
+'			byref initial_pos as byte,			'initial cursor position
+'			timeout as byte,				'if no keypad activity for the amount of time defined by timeout, input box is automatically closed and return to previous screen.
+'			input_length as byte			'the maximum number of characters
+'		)
+'		sub device_input_box_post(
+'			byref mask_str as string(IB_MAX_LEN),	'uneditable part of the input string
+'			byref edit_str as string(IB_MAX_LEN),	'input string
+'			char_range as input_box_char_ranges,	'the input range. INPUT_BOX_CHAR_RANGE_09 only allows numeric input, INPUT_BOX_CHAR_RANGE_AZ allows alphabetic, INPUT_BOX_CHAR_RANGE_09AZ allows both numeric and alphabetic input.
+'			secret_mode as no_yes,			'if secret_mode=yes, all editable part of the input string will be display on the LCD as "*", this are mostly used for password.
+'			insert_mode as no_yes,			'if insert_mode=yes, the new character is insert before the cursor, if insert_mode=no, the character replaces the character at the cursor position.
+'			byref initial_pos as byte,			'initial cursor position
+'			timeout as byte,				'if no keypad activity for the amount of time defined by timeout, input box is automatically closed and return to previous screen.
+'			input_length as byte			'the maximum number of characters
+'		)
+'===========================================================================
+
+#ifndef RESTART
+#define RESTART no
+#endif
+
+#ifndef IB_MAX_LEN
+#define IB_MAX_LEN 30
+#endif
+
+#ifndef LCD_FIX_FONT
+#define LCD_FIX_FONT "Tibbo-5x7(V).bin"
+#endif
+
+#ifndef INPUT_BOX_X
+#define INPUT_BOX_X 0
+#endif
+
+#ifndef INPUT_BOX_Y
+#define INPUT_BOX_Y 0
+#endif
+
+#ifndef INPUT_BOX_W
+#define INPUT_BOX_W 1
+#endif
+
+#ifndef INPUT_BOX_H
+#define INPUT_BOX_H 1
+#endif
+
+#ifndef UIB_HOR_SPACING
+#define UIB_HOR_SPACING 3
+#endif
+
+enum ui_input_box_results 
+	INPUT_BOX_RESULT_OK,
+	INPUT_BOX_RESULT_CANCEL,
+	INPUT_BOX_RESULT_TIMEOUT,
+	INPUT_BOX_RESULT_FAIL
+end enum
+
+enum input_box_char_ranges 
+	INPUT_BOX_CHAR_RANGE_09,
+	INPUT_BOX_CHAR_RANGE_AZ,
+	INPUT_BOX_CHAR_RANGE_09AZ
+end enum
+
+enum input_box_change_chr_dir
+	INPUT_BOX_CHANGE_CHR_FORWARD,
+	INPUT_BOX_CHANGE_CHR_BACKWARD
+end enum
+
+enum input_box_key_actions
+	INPUT_BOX_NONE,
+	INPUT_BOX_INPUT,
+	INPUT_BOX_CHAR_FORWARD,
+	INPUT_BOX_CHAR_BACKWARD,
+	INPUT_BOX_POS_FORWARD,
+	INPUT_BOX_POS_BACKWARD,
+	INPUT_BOX_DELETE,
+	INPUT_BOX_DELETE_ALL,
+	INPUT_BOX_CONFIRM,
+	INPUT_BOX_CANCEL,
+	INPUT_BOX_BACKSPACE
+end enum
+
+'--------------------------------------------------------------------------------
+declare function ui_input_box(
+	byref mask_str as string(IB_MAX_LEN),
+	byref edit_str as string(IB_MAX_LEN),
+	char_range as input_box_char_ranges,
+	secret_mode as no_yes,
+	insert_mode as no_yes,
+	byref initial_pos as byte,
+	timeout as byte,
+	input_length as byte
+) as ui_input_box_results 
+
+declare sub ui_input_box_key_proc(key_event as pl_kp_event_codes, key_code as byte)

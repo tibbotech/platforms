@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(agg.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif;}
+		th 		{background-color:yellow;} 
+		td 		{font-size: 15px;}
+		button {width: 75px;} 	
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2">
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADER START---------------------------------------- -->
+<div id="tab_header" >
+		<ul>
+			<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">Definition</a></li>
+		</ul>
+</div>
+<div id="tab_content" ><br>
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+			<!-- Entity -->
+			<table> 
+			<tr> 
+			<td><p><span title="header=[] body=[]"><B>Entity:</B></span> </td> 
+			<td><input type="text" ID="edit_TBL_NAME"  maxlength="35" value="" onkeypress="javascript://KeyPress(this);" style="width: 175px"></p></td><Font size="2">
+			</tr>
+			<tr><td colspan=2 align=center>
+			<hr>
+			</td></tr>
+			<!-- -------------------------------------------------------------------- -->
+			<!-- Context: -->
+			<tr>
+			<td><p><span title="header=[] body=[]">Context:</span></td>
+			<td><input type="text" ID="edit_MAX_RECS" value="" maxlength="5" onkeypress="javascript://KeyPress(this);"  onBlur="" style="width: 175px"> </p></td>
+			</tr>
+			<!-- -------------------------------------------------------------------- -->
+			<!-- Script -->
+			<tr>
+			<td><p><span title="header=[] body=[]">Script:</span>  </td>
+			<td><input type="text" ID="edit_NUM_KEY_FIELD" value="" maxlength="5" onkeypress="javascript://KeyPress(this);" style="width: 175px"> </p></td>
+			</tr>
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB END(div tab_content)----------------------------------- -->
+
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+	<button width = "100"  style="display : none;" onclick="">IsNumeric</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+//ret value to html object
+load_data();//load data on start
+
+//=================================================1.General Operation===================================================
+//load data record
+function load_data()
+{
+	//document.getElementById("").value = external.Context.Target.TBL_NAME;
+}
+//ON OK
+function OnOK()
+{
+	External.EndDialog(1);
+}
+//========================================================2. validation ======================================================================================
+//========================================================3. input control ===================================================================================
+//========================================================4. the rest of the functions =======================================================================
+//refresh tab
+function refresh_tab(li_index)
+{
+	//var all_tab_content=document.getElementsByID('div');
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+</script>
+
+
+</BODY>
+</HTML>

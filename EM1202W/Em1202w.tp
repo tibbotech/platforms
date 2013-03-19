@@ -1,0 +1,96 @@
+[platform]
+description=EM1202 Module + GA1000 Wi-Fi add-on
+version=EM1202W-3.33
+rom=983040
+ram=22528
+codebits=24
+sector=256
+
+[transport1]
+name=udp_winpcap
+description=Taiko WinPCap (UDP non-broadcast) Transport
+device=taiko.winpcapdevice
+browsedlg=em202ui.browsedlg
+
+[transport2]
+name=udp_broadcast
+description=Taiko UDP Broadcast Transport
+device=taiko.udpdevice
+browsedlg=em202ui.browsedlg
+
+[define1]
+define=OBJECT_LCD
+description=Display (lcd.) object
+value=LCD_ENABLED
+
+[define1.option1]
+description=Disabled
+value=LCD_DISABLED
+
+[define1.option2]
+description=Enabled
+value=LCD_ENABLED
+
+
+[define2]
+define=LCD_TYPE
+description=Display panel type
+value=SAMSUNG_S6B0108
+
+[define2.option1]
+description=Samsung S6B0108 (Winstar WG12864F)
+value=SAMSUNG_S6B0108
+
+[define2.option2]
+description=Himax HX8309 (Ampire AM176220)
+value=HIMAX_HX8309
+
+[define2.option3]
+description=Solomon SSD1329 (Ritdisplay RGS13128096)
+value=SOLOMON_SSD1329
+
+[define2.option4]
+description=Solomon SSD1963 (Winstar WF35)
+value=SOLOMON_SSD1963
+
+
+[define3]
+define=OBJECT_KP
+description=Keypad (kp.) object
+value=KP_ENABLED
+
+[define3.option1]
+description=Disabled
+value=KP_DISABLED
+
+[define3.option2]
+description=Enabled
+value=KP_ENABLED
+
+
+[define4]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_ENABLED
+
+[define4.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define4.option2]
+description=Enabled
+value=FD_ENABLED
+
+
+[define5]
+define=OBJECT_WLN
+description=Wi-Fi (wln.) object
+value=WLN_ENABLED
+
+[define5.option1]
+description=Disabled
+value=WLN_DISABLED
+
+[define5.option2]
+description=Enabled
+value=WLN_ENABLED

@@ -1,0 +1,54 @@
+'===========================================================================
+'					UI_LIST_BOX.TBS
+'
+'	required device specific properties and methods:
+'		sub lcd_clear(x as word, y as word, width as word, height as word)
+'		sub lcd_print_msg(byref msg as string,x as byte, y as byte, w as byte, h as byte, bolder as no_yes)
+'
+'===========================================================================
+
+#ifndef SMALL_ICON_FILE
+#define SMALL_ICON_FILE "small_icons.bmp"
+#endif
+
+#ifndef LCD_STD_FONT
+#define LCD_STD_FONT "Tibbo-5x7(VP).bin"
+#endif
+
+#ifndef FONT_HEIGHT
+#define FONT_HEIGHT 7
+#endif
+
+#ifndef ULB_VER_SPACING
+#define ULB_VER_SPACING 3
+#endif
+
+#ifndef ULB_HOR_SPACING
+#define ULB_HOR_SPACING 3
+#endif
+
+enum ui_list_box_results
+	LIST_BOX_RESULT_OK,
+	LIST_BOX_RESULT_CANCEL,
+	LIST_BOX_RESULT_TIMEOUT,
+	LIST_BOX_RESULT_FAIL
+end enum
+
+enum list_box_key_action
+	LIST_BOX_CURSOR_UP,
+	LIST_BOX_CURSOR_DOWN,
+	LIST_BOX_CONFIRM,
+	LIST_BOX_CANCEL
+end enum
+
+declare function ui_list_box(
+	x_coord as word,
+	y_coord as word,
+	list_width as word,	
+	list_height as word,
+	byref listbox_data as string,
+	byref listbox_state as string(10),
+	timeout as byte
+) as ui_list_box_results
+
+const SYS_ERROR_REBOOT = "INTERNAL ERROR. Device will now reboot."

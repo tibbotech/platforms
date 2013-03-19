@@ -1,0 +1,199 @@
+'===========================================================================
+'					AGGREGATE.TBS
+'	if STORED_EVENT = 1 
+'		depending libraries:
+'			tables
+'			settings 
+'			time
+'			login_control
+'	if STORED_EVENT = 0
+'		depending libraries:
+'			settings 
+'			time
+'			login_control
+'
+'	required device specific properties and methods:
+'		const FIRMWARE_VERSION
+'		function device_operation(s as string(1)) as string(1)
+'		function device_agg_func_result(operation as string(1), op_result as string(1), byref err as no_yes) as string(50)
+'		function device_specific_setting_sg(byref stg_name as string,byref index as byte,byref stg_value as string,byref result as en_stg_status, op as en_device_rdwr) as no_yes
+'		function device_modtime_sg(byref date_time as string(23), byref field_name as string, op as en_device_rdwr) as ok_ng
+'		function device_setting_saved(sname as string(MAX_SETTING_NAME_LEN), index as byte, s as string) as ok_ng
+'		sub device_sys_busy(busy as no_yes)
+'		sub device_rtc_get(byref wdaycount as word,byref wmincount as word,byref bsec as byte)
+'		sub device_rtc_set(wdaycount as word,wmincount as word,bsec as byte)
+
+'const MSG_TBL_STATUS_FAILURE = "Low-level failure (for example fd. error) or record checksum error"
+'const MSG_TBL_STATUS_UNKNOWN_TABLE = "Unknown table"
+'const MSG_TBL_STATUS_UNKNOWN_FIELD = "Unknown field"
+'const MSG_TBL_STATUS_INVALID = "Field value invalid!"
+'const MSG_TBL_STATUS_FULL = "max record number reached or disk is full"
+'const MSG_TBL_STATUS_EOT = "end of table has been reached"
+'const MSG_TBL_STATUS_NOT_FOUND = "record not found"
+'const MSG_TBL_STATUS_KEY_VIOLATION = "key field violation"
+'const MSG_TBL_STATUS_DELETED = "this record is deleted (not active)"
+'const MSG_TBL_FAIL_DELETE_TABLE = "Unable to delete the table!"
+'const MSG_TBL_TABLE_DELETED = "The table has been deleted."
+'const SETTING_GET_FAIL = "SETTING ERROR (read failed)"
+'const SETTING_SET_FAIL = "SETTING ERROR (write failed)"
+'const SETTING_UNKNOWN = "INTERNAL ERROR (unknown setting name)"
+'const SETTING_INVALID = "SETTING ERROR (invalid value)"
+
+'===========================================================================
+
+#ifndef INSTANT_EVENT 
+#define INSTANT_EVENT 0
+#endif
+
+#ifndef STORED_EVENT 
+#define STORED_EVENT 0
+#endif
+
+#ifndef TABLE_DATA 
+#define TABLE_DATA 0
+#endif
+
+#ifndef AGG_RECONN_TIME
+#define AGG_RECONN_TIME  15
+#endif
+
+#ifndef AGG_RPL_WAIT_TIME
+#define AGG_RPL_WAIT_TIME  80
+#endif
+
+#ifndef MAX_ENTITY_NUM
+#define MAX_ENTITY_NUM 5		
+#endif
+
+#ifndef CONTEXT_NAME_LEN
+#define CONTEXT_NAME_LEN 5		
+#endif
+
+#ifndef RECORD_NAME_LEN
+#define RECORD_NAME_LEN 5		
+#endif
+
+#ifndef LS_RECORD_SZ
+#define LS_RECORD_SZ 64
+#endif
+
+#ifndef EVENT_TYPE_NUM 
+#define EVENT_TYPE_NUM 0
+#endif
+
+#ifndef EVENT_FIELD_NUM 
+#define EVENT_FIELD_NUM 0
+#endif
+
+#ifndef EVENT_FIELD_SZ 
+#define EVENT_FIELD_SZ 0
+#endif
+
+#ifndef TABLE_TYPE_NUM 
+#define TABLE_TYPE_NUM 0
+#endif
+
+#ifndef TABLE_FIELD_NUM 
+#define TABLE_FIELD_NUM 0
+#endif
+
+#ifndef TABLE_FIELD_SZ 
+#define TABLE_FIELD_SZ 0
+#endif
+
+#ifndef NUM_OF_VARIABLE_FLAG 
+#define NUM_OF_VARIABLE_FLAG 1
+#endif
+
+#ifndef MAX_VARIABLE_NUM 
+#define MAX_VARIABLE_NUM 0
+#endif
+
+#ifndef KEY_NAME_LEN 
+#define KEY_NAME_LEN 12
+#endif
+
+#ifndef TAB
+#define TAB 9
+#endif
+
+#ifndef COMMA
+#define COMMA 44
+#endif
+
+#ifndef LS_MAIN_SCRIPT
+#define LS_MAIN_SCRIPT "aggregate.txt"
+#endif
+
+#ifndef SOCK_LS
+#define SOCK_LS 2
+#endif
+
+#ifndef ELEMENT_START
+#define ELEMENT_START 28
+#endif
+
+#ifndef ELEMENT_END
+#define ELEMENT_END 29
+#endif
+
+#ifndef ELEMENT_NAME_VALUE_SEPARATOR
+#define ELEMENT_NAME_VALUE_SEPARATOR 30
+#endif
+
+#ifndef AGG_TX_BUF_SIZE
+#define AGG_TX_BUF_SIZE 2
+#endif
+
+#ifndef AGG_RX_BUF_SIZE
+#define AGG_RX_BUF_SIZE 2
+#endif
+
+#ifndef TEMP_TABLE
+#define TEMP_TABLE "TEMP"
+#endif
+ 
+const TABLE_NULL=&h1a
+const FIELD_SEPARATOR=9
+const END_OF_LINE=13
+const NEW_LINE=10
+const COMMAND_START=&h02
+const COMMAND_END=&h0d
+const COMMAND_PARAMETERS_SEPARATOR=&h17
+
+enum global_state
+	LS_IDLE_STATE
+	LS_PROCESSING_COMMAND_STATE
+	LS_PROCESSING_EVENTS_STATE
+end enum
+
+enum agg_data_proc_phase
+	AGG_IDLE_PHASE
+	AGG_TYPE_PHASE
+	AGG_ID_PHASE
+	AGG_OP_PHASE
+	AGG_SGC_PHASE
+	AGG_ENTITY_PHASE
+	AGG_RECORD_PHASE
+	AGG_DATA_PHASE
+end enum
+
+declare sub agg_init()
+declare sub agg_server_conn()
+declare sub agg_proc_timer()
+declare sub agg_proc_command()
+declare sub agg_proc_cur_events(event_tbl as string)
+
+declare event_in_proc as no_yes
+declare agg_rec_num as word
+declare event_found as boolean
+declare agg_connected as no_yes
+#if INSTANT_EVENT = 1
+declare agg_event_buff as string
+#endif
+
+#if STORED_EVENT = 1
+declare cur_event_tbl as string(MAX_TBL_NAME_LEN)
+declare sub agg_proc_stored_events()
+const LOG_FILE = "log"
+#endif

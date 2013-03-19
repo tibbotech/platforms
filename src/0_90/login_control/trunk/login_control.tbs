@@ -1,0 +1,78 @@
+include "global.tbh"
+
+public dim login_data as string(32)
+public dim login_sock as byte
+dim login_tout as word
+dim login_mode as cmd_modes
+
+'=============================================================
+public sub logout()
+	login_tout=0
+	login_mode=CMD_MODE_NONE
+	login_data=""
+	device_login_event(CMD_MODE_NONE)
+end sub
+
+'-------------------------------------------------------
+public function compare_logins(new_login as cmd_modes, cmd_data as string(32), socket as byte) as login_comparison_codes
+'compares "proposed" new_login attempt against current, reports things
+'does not perform actual login
+
+	if login_mode=CMD_MODE_NONE then
+		compare_logins=LC_WILL_ACCEPT
+	else
+		if login_mode>new_login then 
+			compare_logins=LC_WILL_REJECT_HIGHER_IN_PROGRESS
+			exit function
+		end if
+
+		if login_mode<new_login then
+			compare_logins=LC_WILL_ACCEPT_LOWER_IN_PROGRESS
+			exit function
+		end if
+		
+		'here where same priority level session is already in progress
+		if login_data=cmd_data then
+			compare_logins=LC_WILL_ACCEPT_REPEATED_LOGIN
+		else
+			compare_logins=LC_WILL_REJECT_SAME_IN_PROGRESS
+		end if
+	end if
+end function
+
+'-------------------------------------------------------
+public function login(new_login as cmd_modes, cmd_data as string(32), socket as byte) as ok_ng
+	'looks at the current login attempt, checks it against current situation, makes decision to allow/reject
+	if new_login>login_mode then goto l1 'new login attempt has higher priority -- accept it unconditionally
+	if new_login=login_mode then
+		'same level -- we only accept relogin from the same source
+		if login_data=cmd_data then
+l1:			'restart timeout timer
+			login_mode=new_login
+			reset_login_timeout
+			login_data=cmd_data
+			login_sock=socket
+			login=OK
+			device_login_event(login_mode)
+			exit function
+		end if
+	end if
+	'here when new login attempt can't be accepted
+	login=NG
+end function
+
+'-------------------------------------------------------
+public sub reset_login_timeout
+	'reset login timer
+	login_tout=device_get_timeout(login_mode)
+end sub
+
+'-------------------------------------------------------
+public sub device_login_timer_proc
+'Descr: universal login timer.
+	if login_tout=65535 then exit sub
+	if login_tout > 0 then
+		login_tout=login_tout-1
+		if login_tout=0 then logout()	
+	end if
+end sub

@@ -1,0 +1,1712 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif; }
+		th 		{background-color:yellow; text-align: center;} 
+		td 		{font-size: 15px;}
+		button {width: 75px;} 
+
+
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2" >
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADER START---------------------------------------- -->
+<div id="tab_header" >
+		<ul>
+			<!--<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">General</a></li>-->
+		</ul>
+</div>
+
+<!-- --------------------------------(div tab_content)----------------------------------- -->
+<div id="tab_content" ><br> <!-- TAB1 -->
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+
+			<table> 
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Dummy -->
+			<tr style="height:2px;">
+				<td >	<div style="width:100px;height:2px;font-size: 0em;"></div></td>
+				<td >	<div style="width:100px;height:2px;font-size: 0em;"></div></td>
+			</tr>
+			
+			<!-- --------------------------------------------------------------------- -->
+			<!-- Field Name: -->
+			<tr> 
+			<td><p><span title="header=[Field Name:] body=[This field cannot be null.]">Field Name:</span> </td>
+			<td>
+					<input type="text" ID="edit_FLD_NAME" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px; display:none;"> 
+					<label id="lab_fld_name"></label>
+					</p>
+			</td>
+			</tr> 
+			<!-- --------------------------------------------------------------------- -->
+			<!--Field Type: -->
+			<tr> 
+			<td><p><span title="header=[Field Type:] body=[The type of this Field Definition. This field cannot be null.]">Field Type:</span> </td>
+			<td>
+					<select ID="edit_FLD_TYPE"  onChange="on_FT_changes();reset_editor_option(document.getElementById('edit_FLD_VR'));" style="width: 175px;"> 
+								<option value="S">String</option>
+								<option value="I">Integer</option>
+								<option value="L">Long</option>
+								<option value="B">Boolean</option>
+								<option value="F">Float</option>
+								<option value="D">Date</option>
+								<!--<option value="C">Color</option>-->
+								<!--<option value="A">Data Block</option> Cancel this for now--> 
+					</select>
+					<label id="lab_fld_type" style="display:none;"></label>
+					</p>
+			</td>
+			</tr> 
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider -->
+			<tr><td colspan=2 align=center>
+			<div class="Divider" style="background-color:#8FBC8F;height:20px;"><b>Optional Field Configuration</b></div>
+			<!--<div class="Divider" style="background-color: green;height:0px;font-size: 0em;"></div>-->
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->	
+			<tr><td colspan=2 align=center>
+				&nbsp
+			</td></tr>
+			<!-- --------------------------------------------------------------------- -->	
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Behavior</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!--Field Rule-->							
+			<tr> 
+			<td style="vertical-align:top;"><p><span title="header=[Field Properties:] body=[Advanced properties of the field.]">Field Properties:</span> </td>
+			<td>
+					<select ID="edit_FLD_RULE" style="width: 175px; display:none;" onChange=""> 
+						<option value="Disabled">0 - Disabled</option> 
+						<option value="N">N - Nullable</option> 
+						<option value="O">O - Optional</option>
+						<option value="E">E - Extendable selection value</option> 
+						<option value="R">R - Read Only</option> 
+						<option value="C">C - Not Replicated</option>
+						<option value="H">H - Hidden</option> 
+						<!-- <option value="K">K-Optional</option> not supported for now-->
+					</select>
+					
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox">Nullable							<br />
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" style="display:none;"><!-- Optional -->
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox">Ext. Selection Values	<br />
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox">Read Only							<br />
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox" style="display:none;"><!-- Not Replicated -->
+					<input type="checkbox" name="chkb_FLD_property" id="chkb_FLD_property" value="checkbox">Hidden
+
+					
+					</p>
+			</td>
+			</tr>
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Appearance</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!--Field Description-->
+			<tr>
+			<td><p><span title="header=[Field Description:] body=[Field description is the caption of this field.]">Description:</span></td>
+			<td><input type="text" ID="edit_FLD_DESCRIPTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>		
+			<!--Field HELP-->
+			<tr>
+			<td><p><span title="header=[Field HELP:] body=[Field help is the detailed description of the field. It usually appears in a tool tip.]">Help:</span></td>
+			<td><input type="text" ID="edit_FLD_HELP" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Style</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>	
+			<!--List of Selection-->			
+			<tr>
+			<td><p>
+				<!--<input type="radio"  name="fld_style_type" onclick ="" value="List_Selection" checked>-->
+				<input type="checkbox" name="chkb_style" id="chkb_style" value="checkbox" onclick ="chk_style_option(0);" > 
+				<span title="header=[Selection Value:] body=[List of selection values for the field.]">Selection Value:</span>
+			</td>
+			<td><input type="text" ID="edit_FLD_SELECTION" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 150px" disabled="disabled">
+					<button ID="btn_FLD_SELECTION" style="width:22px;height:22px" onclick="selection_edit();" disabled="disabled">...</button> &nbsp; 
+			</p></td>	
+			</tr>	
+			<!--Visual Respesentation(Editor/Render)-->							
+			<tr> 
+			<td><p>
+				<!--<input type="radio"  name="fld_style_type" onclick ="" value="Visual_REP" checked>-->
+				<input type="checkbox" name="chkb_style" id="chkb_style" value="checkbox" onclick ="chk_style_option(1);" >  
+				<span title="header=[Editor/Renderer:] body=[Type of editor/renderer. This element enables custom visual representation of field value. Supported editors and renderers are listed here.]">Editor/Renderer:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> 
+			</td>
+			<td><select ID="edit_FLD_VR" style="width: 175px" onChange="VR_onchange();">
+						<option value="period">Period</option> 
+					</select></p></td>
+			</tr>
+			<!--Visual Respesentation Option-->							
+			<tr> 
+			<td>
+					<p>
+					<input type="radio"  name="rad_dummy" onclick ="" style="visibility:hidden;" value="Rad_Dummy" checked>
+					<span title="header=[Editor Options:] body=[Editor-specific options.]">Editor Options:</span>
+			</td>
+			<td>
+					<input type="text" ID="edit_FLD_VRO" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px">
+					</p>
+			</td>
+			</tr> 
+			<!-- --------------------------------------------------------------------- -->
+			<!--Divider2 -->
+			<tr><td colspan=2 align=left>
+			<p>
+				<div class="Divider2" style="background-color: white;height:20px;"><b>Others</b></div>
+				<div class="Divider2" style="background-color: green;height:0px;font-size: 0em;"></div>
+			</p>
+			</td></tr>
+			<!--Validator Min-->
+			<tr>
+			<td><p><span title="header=[Minimum Limit:] body=[Minimum Limit. Checks if a value is within the range defined by validator parameters.]">Minimum Limit:</span></td>
+			<td><input type="text" ID="edit_FLD_MIN" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>			
+			<!--Validator Max-->
+			<tr>
+			<td><p><span title="header=[Maximum Limit:] body=[Maximum Limit. Checks if a value is within the range defined by validator parameters.]">Maximum Limit:</span></td>
+			<td><input type="text" ID="edit_FLD_MAX" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>			
+			<!--Default Value-->
+			<tr style="display:none;">
+			<td><p><span title="header=[Default Value:] body=[Default Value of this field.]">Default Value:</span></td>
+			<td><input type="text" ID="edit_FLD_DEFVAL" value="" maxlength="255" onkeypress="javascript://KeyPress(this);"  style="width: 175px"> </p></td>	
+			</tr>
+			<!-- --------------------------------------------------------------------- -->
+			<tr><td>&nbsp</td><td>&nbsp</td></tr>
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB2 END(div tab_content)----------------------------------- -->
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+	<button width = "100"  style="display : none;" onclick="disable_elements(false);">test</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+<div id="esc_div" style="display:block;"></div>
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+//var s_ffs_obj=new Object;      //global //Context.Target=c_script_structure.inputformat.field_format_set[cur_fld_index];
+//var m_ffs_obj=new Object;			 //global //Context.CS_ffs=c_script_structure.inputformat.field_format_set; //this is for unique checking in Edit Dialog box.
+var HTML_FLD_NAME=document.getElementById('edit_FLD_NAME');
+var HTML_FLD_TYPE=document.getElementById('edit_FLD_TYPE');
+var HTML_LabFLD_NAME=document.getElementById('lab_fld_name');
+var HTML_LabFLD_TYPE=document.getElementById('lab_fld_type');
+
+var HTML_FLD_RULE=document.getElementById('edit_FLD_RULE');
+var HTML_FLD_DESCRIPTION=document.getElementById('edit_FLD_DESCRIPTION');
+var HTML_FLD_HELP=document.getElementById('edit_FLD_HELP');
+var HTML_FLD_SELECTION=document.getElementById('edit_FLD_SELECTION');
+var HTML_FLD_VR=document.getElementById('edit_FLD_VR');
+var HTML_FLD_VRO=document.getElementById('edit_FLD_VRO');
+var HTML_FLD_MIN=document.getElementById('edit_FLD_MIN');
+var HTML_FLD_MAX=document.getElementById('edit_FLD_MAX');
+var HTML_FLD_DEFVAL=document.getElementById('edit_FLD_DEFVAL');
+
+var FT_chage_warnning=false;						//only show warnning once.
+
+load_data();														//load data on start, ret value to html object.
+refresh_tab(0); 												//must be executed on start.
+
+//point_on_first();
+//=================================================1.General Operation===================================================
+//load data sequence.
+function load_data()
+{
+	//get field name and type.
+	tmp_FLD_NAME=external.Context.Target.fld_name;
+	tmp_FLD_TYPE=external.Context.Target.fld_type;
+	
+	
+	
+	//get field format flags
+	var fff_obj=external.Context.Target.field_format_flag;
+	
+	var tmp_F=get_flag_value(fff_obj,'F'); //Field Rule
+	var HTML_FLD_property=document.getElementsByName("chkb_FLD_property");														//multi-ele
+	if (tmp_F!=null)
+		{
+				document.getElementById("edit_FLD_RULE").value=tmp_F;
+
+				if (has_desired_flag(tmp_F,'N')==true) {HTML_FLD_property[0].checked = true;}else{HTML_FLD_property[0].checked = false;}
+				if (has_desired_flag(tmp_F,'O')==true) {HTML_FLD_property[1].checked = true;}else{HTML_FLD_property[1].checked = false;}
+				if (has_desired_flag(tmp_F,'E')==true) {HTML_FLD_property[2].checked = true;}else{HTML_FLD_property[2].checked = false;}
+				if (has_desired_flag(tmp_F,'R')==true) {HTML_FLD_property[3].checked = true;}else{HTML_FLD_property[3].checked = false;}
+				if (has_desired_flag(tmp_F,'C')==true) {HTML_FLD_property[4].checked = true;}else{HTML_FLD_property[4].checked = false;}
+				if (has_desired_flag(tmp_F,'H')==true) {HTML_FLD_property[5].checked = true;}else{HTML_FLD_property[5].checked = false;}
+				
+		}	
+	else
+		{
+				document.getElementById("edit_FLD_RULE").value='Disabled';
+				HTML_FLD_property[0].checked = false;
+				HTML_FLD_property[1].checked = false;
+				HTML_FLD_property[2].checked = false;
+				HTML_FLD_property[3].checked = false;
+				HTML_FLD_property[4].checked = false;
+				HTML_FLD_property[5].checked = false;
+		}	
+	
+	
+	
+	var tmp_D=get_flag_value(fff_obj,'D'); //Field Description
+	var tmp_H=get_flag_value(fff_obj,'H'); //Help
+	var tmp_S=get_flag_value(fff_obj,'S'); //Selection
+	var tmp_E=get_flag_value(fff_obj,'E'); //Visual representation
+	var tmp_O=get_flag_value(fff_obj,'O'); //Visual representation option
+	var tmp_A=get_flag_value(fff_obj,'A'); //Default Value
+	var tmp_V=get_flag_value(fff_obj,'V'); //Limitation
+	var tmp_V_MIN=''; //set default value =''
+	var tmp_V_MAX='';//set default value =''
+	
+	if (tmp_F==null) tmp_F='Disabled';
+	if (tmp_D==null) tmp_D='';
+	if (tmp_H==null) tmp_H='';
+	if (tmp_S==null) tmp_S='';
+	if (tmp_E==null) tmp_E='';
+	if (tmp_O==null) tmp_O='';
+	if (tmp_A==null) tmp_A='';
+	if (tmp_V==null)
+		{
+			tmp_V='';
+		}
+	else 
+		{//extract the p1, p2 values
+			var tmp_V_obj=new Object();
+			tmp_V_obj=extract_P1P2(tmp_V);
+			if (tmp_V_obj!=null)
+			{
+				tmp_V_MIN=tmp_V_obj.MIN;
+				tmp_V_MAX=tmp_V_obj.MAX;
+			}
+		}
+	
+	
+	var srcFORMTYPE=external.Context.srcFORMTYPE;
+	if (srcFORMTYPE=='EDIT')
+	{
+		
+	}
+	else
+	{
+		//do nothing in addNew.
+	}
+	
+	//show values
+	HTML_FLD_NAME.value=tmp_FLD_NAME;
+	HTML_FLD_TYPE.value=tmp_FLD_TYPE;
+	HTML_LabFLD_NAME.innerHTML='<b>'+HTMLEncode(tmp_FLD_NAME)+'</b>';
+	HTML_LabFLD_TYPE.innerHTML='<b>'+HTMLEncode(ret_alias(tmp_FLD_TYPE))+'</b>';
+	
+	reset_editor_option(document.getElementById('edit_FLD_VR'));				//reset editor /rendor option list.
+	HTML_FLD_RULE.value=tmp_F;
+	HTML_FLD_DESCRIPTION.value=tmp_D;
+	HTML_FLD_HELP.value=tmp_H;
+	HTML_FLD_SELECTION.value=tmp_S;
+	HTML_FLD_VR.value=tmp_E;
+	HTML_FLD_VRO.value=tmp_O;
+	HTML_FLD_MIN.value=tmp_V_MIN;
+	HTML_FLD_MAX.value=tmp_V_MAX;
+	HTML_FLD_DEFVAL.value=tmp_A;
+	
+	
+	//show SE status (and perform related operations(lock chkbox etc.))
+	var chk_obj=document.getElementsByName("chkb_style");
+	if (tmp_S!='') {chk_obj[0].checked=true;} else{chk_obj[0].checked=false;}
+	if ((tmp_E!='')&&(tmp_O!='')){chk_obj[1].checked=true;} else{chk_obj[1].checked=false;}
+	syn_field_sataus_changes();				//Always need to execute this function when SEO value has changed.		
+	//show A limit status (and perform related operations(lock text controls or not.))
+	syn_field_limit_control();
+}
+
+
+//update the status of the flag on adv table(syn single row in the table.)
+function update_adv_chkbox(fff_index)
+{//get field_format_flag data by given fff_index.
+	
+	var table =document.getElementById("advance_table"); 	if (!c_script_structure) return;
+	var fff_obj=c_script_structure.format.field_format_set[fff_index-1].field_format_flag;  
+	
+	if (!fff_obj) return;
+	var Row=table.rows[fff_index];
+	//check changes in table
+	var flag_item=new Array();
+	flag_item=["0","0","F","A","D","H","S","V","E","O"];
+	for (var k=2;k<10;k++)
+	{
+		var tmp_fld_flag=get_flag_value(fff_obj,flag_item[k]);
+		if (tmp_fld_flag!=null) {Row.cells[k].childNodes(0).checked=true;}
+		else {Row.cells[k].childNodes(0).checked=false;}		
+	}
+}
+
+//extract limitation script(p1, p2)
+function extract_P1P2(L_script)
+{
+	if (L_script=='') return null;
+	pat=/[L]=(\d{1,8})\s(\d{1,8})/;
+	result_Array = pat.exec(L_script);
+	if (result_Array==null) return null;
+	if (result_Array.length<3) return null;
+	
+	var v_obj= new Object;
+	v_obj.MIN=result_Array[1];
+	v_obj.MAX=result_Array[2];
+	return v_obj;
+}
+
+//edit_FLD_VR on change
+function VR_onchange()
+{
+	var VRO=document.getElementById('edit_FLD_VRO');
+	//VRO.value=0;
+}
+
+
+//Edit dialog box(selection list)
+function selection_edit()
+{
+	//check if selection enabled.
+	var chk_obj=document.getElementsByName("chkb_style");								//get chk array	
+	if (chk_obj[0].checked==false) return;
+	//if chk ok then open edit modal dialog box.
+	var Context = new Object;
+	var sel_str=document.getElementById("edit_FLD_SELECTION").value;   
+	var sel_arr = sel_str.match(/<[^<>]+=[^<>\s]+>/g);							 //parse the field value and push the result into array.
+	var sel_obj = new Array();
+
+	if (sel_arr!=null)
+	{
+			for (var i=0;i<sel_arr.length;i++)
+			{
+				var tmp_str=sel_arr[i].replace(/(^[<]?)|([>]?$)/g, "");				//get rid of "<>" once.
+				var tmp_arr=tmp_str.split('=');
+				var tmp_obj=new Object();
+				if (tmp_arr.length<2) continue;
+				tmp_obj.LIST_NAME=tmp_arr[0];
+				tmp_obj.LIST_VALUE=tmp_arr[1];
+				sel_obj.push(tmp_obj);
+			}
+	}
+	//alert(sel_arr);
+	Context.Target=sel_obj;
+	Context.Result=new String();
+	var Result = external.ModalDialog("variables_edit_selection.html", "Edit  (Selection)", Context);
+	if (Result != 1) 	return;
+	document.getElementById("edit_FLD_SELECTION").value =Context.Result;
+}
+
+//a save sequence (save the value to the oringinal object)
+function save_sequence(obj)
+{
+//obj.FLD_NAME	//obj.FLD_TYPE	//obj.FLD_RULE	//obj.FLD_DESCRIPTION	//obj.FLD_HELP	//obj.FLD_SELECTION	//obj.FLD_VR
+//obj.FLD_VRO		//obj.FLD_MIN		//obj.FLD_MAX		//obj.FLD_DEFVAL
+
+	//basic
+	external.Context.Target.fld_name=obj.FLD_NAME;
+	external.Context.Target.fld_type=obj.FLD_TYPE;
+	//optional
+	var fff_obj=external.Context.Target.field_format_flag;
+	fff_obj.length=0; //clear all
+	
+	if ((obj.FLD_RULE!='')&&(obj.FLD_RULE!='Disabled'))	{fff_obj.push('F='+obj.FLD_RULE);}
+	if (obj.FLD_DESCRIPTION!='')	{fff_obj.push('D='+obj.FLD_DESCRIPTION);}
+	if (obj.FLD_HELP!='')	fff_obj.push('H='+obj.FLD_HELP);
+	
+	var chk_obj=document.getElementsByName("chkb_style");							//get chk array	
+	if (chk_obj[0].checked == true) 
+	{  if (obj.FLD_SELECTION!='')	fff_obj.push('S='+obj.FLD_SELECTION);	}
+	if ((chk_obj[1].checked == true)&&(obj.FLD_VR!='')&&(obj.FLD_VRO!=''))
+	{
+			fff_obj.push('E='+obj.FLD_VR);
+			fff_obj.push('O='+obj.FLD_VRO);
+	}
+	
+	if ((obj.FLD_MIN!='')&&(obj.FLD_MAX!=''))
+	{
+		var limit_allow_flag=chk_if_limit_allowable(obj.FLD_TYPE);	//prevent get the (irr)
+		if(limit_allow_flag==true)									
+		{
+				var num_p1= Number(obj.FLD_MIN); 				//erase leading 0(s). 
+				var num_p2= Number(obj.FLD_MAX);				//we have checked the it's a numeric type string in validate_all, therefore, we won't get a NaN value here.
+
+				fff_obj.push('V=<L='+num_p1.toString()+' '+num_p2.toString()+'>');
+		}
+	}
+	if (obj.FLD_DEFVAL!='') fff_obj.push('A='+obj.FLD_DEFVAL);
+	//Done
+	external.EndDialog(1);
+}
+
+//ON OK
+function OnOK()
+{
+	//0.get the value from page elements.
+	var FLD_NAME=new String();
+	var FLD_TYPE=new String();
+	var FLD_RULE=new String();
+	var FLD_DESCRIPTION=new String();
+	var FLD_HELP=new String();
+	var FLD_SELECTION=new String();
+	var FLD_VR=new String();
+	var FLD_VRO=new String();
+	var FLD_MIN=new String();
+	var FLD_MAX=new String();
+	var FLD_DEFVAL=new String();
+	FLD_NAME=HTML_FLD_NAME.value;
+	FLD_TYPE=HTML_FLD_TYPE.value;
+	
+	
+	//FLD_RULE=HTML_FLD_RULE.value;   //<--- oringinal one
+	FLD_RULE=ret_FLD_property_str();
+	//alert('FLD_RULE='+FLD_RULE);
+	
+	FLD_DESCRIPTION=HTML_FLD_DESCRIPTION.value;
+	FLD_HELP=HTML_FLD_HELP.value;
+	FLD_SELECTION=HTML_FLD_SELECTION.value;
+	FLD_VR=HTML_FLD_VR.value;
+	FLD_VRO=HTML_FLD_VRO.value;
+	FLD_MIN=HTML_FLD_MIN.value; 			//check isNaN later
+	FLD_MAX=HTML_FLD_MAX.value;				//check isNaN later
+	FLD_DEFVAL=HTML_FLD_DEFVAL.value;
+	var data_object=new Object(); 		//all properties are String type. 
+	data_object.FLD_NAME=FLD_NAME.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_TYPE=FLD_TYPE.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_RULE=FLD_RULE.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_DESCRIPTION=FLD_DESCRIPTION.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_HELP=FLD_HELP.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_SELECTION=FLD_SELECTION.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_VR=FLD_VR.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_VRO=FLD_VRO.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_MIN=FLD_MIN.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_MAX=FLD_MAX.replace(/(^\s*)|(\s*$)/g, "");
+	data_object.FLD_DEFVAL=FLD_DEFVAL.replace(/(^\s*)|(\s*$)/g, "");
+	
+	
+	//1.validate
+	if (validate_all(data_object)==false) return;
+	//2.save sequence
+	save_sequence(data_object);
+	
+}
+
+//reset editor options
+function reset_editor_option(sel)
+{
+/*
+
+S - String
+I - Integer
+L - Long
+B - Boolean
+F - Float
+D - Date
+
+*/	
+	
+		//Remove all options
+		sel.options.length=0;
+		fld_type=document.getElementById("edit_FLD_TYPE").value;
+		
+		switch (fld_type)
+		{
+			case "S":	
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				addOption(sel,'Password Editor','password');
+				addOption(sel,'Text Editor','text');
+				addOption(sel,'Text Area Editor','textarea');
+				addOption(sel,'Embedded Text Area Renderer','etextarea');
+				addOption(sel,'IP Address Editor','ip');
+								
+				sel.value=''; 
+			break;	
+			case "I":
+				addOption(sel,'Spinner','spinner');
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				
+				sel.value='';	
+			break;
+			case "L":
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				addOption(sel,'Time Period Editor','period');
+				
+				sel.value='';				
+			break;
+			case "B":
+				sel.value='';		
+			break;
+			case "F":
+				addOption(sel,'Progress Bar Renderer','bar');
+				addOption(sel,'Bytes Renderer','bytes');
+				
+				sel.value='';		
+			break;		
+			case "D":
+				addOption(sel,'Date Editor','date');
+				addOption(sel,'Time Editor','time');
+				
+				sel.value='';					
+			break;
+			default:
+			
+			break;
+		}	
+			
+} 
+
+
+//========================================================2. validation ======================================================================================
+//validate all fields(single record)
+function validate_all(obj)
+{
+		var chk_obj=document.getElementsByName("chkb_style"); //check box for Selection or VR
+//Name
+		if (obj.FLD_NAME=='')
+		{
+				alert('Field \'Field Name\' cannot be null.');
+				set_focus(HTML_FLD_NAME);	
+				return false; 
+		}
+		if (obj.FLD_NAME.indexOf("<")!=-1) 
+		{
+				alert('Field \'Field Name\' cannot have "<" character in the value.');
+				set_focus(HTML_FLD_NAME);	
+				return false; 				
+		}
+		if (obj.FLD_NAME.indexOf(">")!=-1) 
+		{
+				alert('Field \'Field Name\' cannot have ">" character in the value.');
+				set_focus(HTML_FLD_NAME);	
+				return false; 							alert('Row\('+i+'\):Option Name cannot have ">" character in the value.'); Select(Row); return;
+		}
+//Cancel this, we can start with a digit. Cuz members in STG Lib.
+//    if(obj.FLD_NAME!=obj.FLD_NAME.replace(/(^[0-9]*)/g, "")) 	//means can't start with a digit
+//    {      
+//    		alert('Field \'Field Name\' cannot start with a digit.');
+//    		set_focus(HTML_FLD_NAME);
+//    		return false;
+//    }
+    if(obj.FLD_NAME!=obj.FLD_NAME.replace(/\s/g, "")) 				//means can't have any whitespace
+    {      
+    		alert('Field \'Field Name\' cannot have any whitesapce.');
+    		set_focus(HTML_FLD_NAME);
+    		return false;
+    }
+		if (chk_if_name_unique(obj.FLD_NAME)==false)					//unique checking
+		{
+				alert('Field \'Field Name\' must be unique.\r\nYou have already had a the same field name in the table.');
+				set_focus(HTML_FLD_NAME);	
+				return false; 			
+		}
+		
+//Type
+		if (obj.FLD_TYPE=='')
+		{//it means unrecognized data type when loaded.
+				alert('Field \'Field Type\' cannot be null.');
+				HTML_FLD_TYPE.focus;			
+				return false; 
+		}
+
+//FLD_RULE
+		if (obj.FLD_RULE=='')
+		{//it means unrecognized data type when loaded.
+				//alert('Field \'Field Rule\' : unrecognized field type.');
+				//HTML_FLD_RULE.focus;			
+				//return false; 
+		}
+		
+//FLD_DESCRIPTION
+		//obj.FLD_DESCRIPTION
+		//HTML_FLD_DESCRIPTION
+
+//--
+//FLD_HELP
+		//obj.FLD_HELP
+		//HTML_FLD_HELP
+
+//FLD_SELECTION
+		//obj.FLD_SELECTION
+		//HTML_FLD_SELECTION
+
+//FLD_VR if ((str_fld_rule!='')&&(str_fld_rule!='Disabled'))
+		//check only if it's checked.
+		if (chk_obj[1].checked == true)
+		{
+				if (obj.FLD_VR=='')
+				{//it means unrecognized data type when loaded.
+						alert('Field \'Editor/Render\' cannot be null when checked.');
+						HTML_FLD_VR.focus;			
+						return false; 
+				}
+		}
+//FLD_VRO
+		if (chk_obj[1].checked == true)
+		{
+				if (obj.FLD_VRO=='')
+				{
+						alert('Field \'Editor Options\' cannot be null when checked.');
+						set_focus(HTML_FLD_VRO);
+						return false; 
+				}
+				if (obj.FLD_VRO.indexOf("<")!=-1) 
+				{
+						alert('Field \'Editor Options\' cannot have "<" character in the value.');
+						set_focus(HTML_FLD_VRO);	
+						return false; 				
+				}
+				if (obj.FLD_VRO.indexOf(">")!=-1) 
+				{
+						alert('Field \'Editor Options\' cannot have ">" character in the value.');
+						set_focus(HTML_FLD_VRO);	
+						return false; 							alert('Row\('+i+'\):Option Name cannot have ">" character in the value.'); Select(Row); return;
+				}				
+		}
+//FLD_MIN
+		var limit_allow_flag=chk_if_limit_allowable(obj.FLD_TYPE);
+		var have_defined_limit_flag=false;
+		if(limit_allow_flag==true)
+		{
+				if (obj.FLD_MIN=='')
+				{
+						if (obj.FLD_MAX!='')
+						{
+								alert('Field \'Min Limit\' cannot be null if you have already assigned the Max Limit.');
+								set_focus(HTML_FLD_MIN);			
+								return false; 
+						}
+				}
+				else
+				{
+						if (isNaN(obj.FLD_MIN)==true)
+						{
+								alert('Field \'Min Limit\' must be a number.');
+								set_focus(HTML_FLD_MIN);			
+								return false; 								
+						}
+						else
+						{
+								var tmp_num=Number(obj.FLD_MIN);
+								if (tmp_num<0)
+								{
+										alert('Field \'Min Limit\'cannot <0.');
+										set_focus(HTML_FLD_MIN);			
+										return false; 										
+								}
+						}
+				}	
+		}
+//FLD_MAX
+		if(limit_allow_flag==true)
+		{
+					if (obj.FLD_MAX=='')
+					{
+							if (obj.FLD_MIN!='')
+							{						
+									alert('Field \'Max Limit\' cannot be null if you have already assigned the Min Limit.');
+									set_focus(HTML_FLD_MAX);			
+									return false; 
+							}
+					}
+					else
+					{
+							if (isNaN(obj.FLD_MAX)==true)
+							{
+									alert('Field \'Max Limit\' must be a number.');
+									set_focus(HTML_FLD_MAX);			
+									return false; 								
+							}
+							else
+							{
+									var tmp_num=Number(obj.FLD_MAX);
+									if (tmp_num<0)
+									{
+											alert('Field \'Max Limit\'cannot <0.');
+											set_focus(HTML_FLD_MAX);			
+											return false; 										
+									}
+									var num_MIN=new Number();
+									var num_MAX=new Number();
+									var num_MIN=Number(obj.FLD_MIN);
+									var num_MAX=Number(obj.FLD_MAX);
+									if (num_MAX<num_MIN) 
+									{
+											alert('Field \'Max Limit\'cannot <field \'Min Limit\'.');
+											set_focus(HTML_FLD_MAX);			
+											return false; 												
+									}
+									have_defined_limit_flag=true;
+							}
+					}
+		}
+//FLD_DEFVAL
+		if (obj.FLD_DEFVAL!='') //only check while the value is not null.(cuz every thing here is optional.)
+		{
+					if (obj.FLD_DEFVAL.indexOf("<")!=-1) //check"<>" first
+					{
+							alert('Field \'Default Value\' cannot have "<" character in the value.');
+							set_focus(HTML_FLD_DEFVAL);
+							return false;													
+					}
+					if (obj.FLD_DEFVAL.indexOf(">")!=-1) 
+					{
+							alert('Field \'Default Value\' cannot have ">" character in the value.');
+							set_focus(HTML_FLD_DEFVAL);
+							return false;													
+					}
+					
+					if (have_defined_limit_flag==true)
+					{
+							var num_MIN=new Number();
+							var num_MAX=new Number();
+							var num_MIN=Number(obj.FLD_MIN);
+							var num_MAX=Number(obj.FLD_MAX);
+			
+									switch(obj.FLD_TYPE)
+									{
+										case 'S':
+											var def_len=obj.FLD_DEFVAL.length;
+											if (def_len<num_MIN)
+											{
+													alert('The length of the \'Default Value\' in String form cannot be < Field:\'Min Limit\'.');
+													set_focus(HTML_FLD_DEFVAL);
+													return false;	
+											}
+
+											if (def_len>num_MAX)
+											{
+													alert('The length of the \'Default Value\' in String form cannot be > Field:\'Max Limit\'.');
+													set_focus(HTML_FLD_DEFVAL);
+													return false;	
+											}
+											break;
+											
+										case 'I':
+										case 'L':
+										case 'F':
+
+											if (isNaN(obj.FLD_DEFVAL)==true)
+											{
+													alert('Field \'Default Value\' must be a number by your Field Type.');
+													set_focus(HTML_FLD_MAX);			
+													return false; 								
+											}
+											else
+											{
+														var tmp_num=Number(obj.FLD_DEFVAL);
+														if (tmp_num<num_MIN)
+														{
+																alert('The Value of the \'Default Value\' cannot be < Field:\'Min Limit\'.');
+																set_focus(HTML_FLD_DEFVAL);
+																return false;	
+														}
+			
+														if (tmp_num>num_MAX)
+														{
+																alert('The length of the \'Default Value\' cannot be > Field:\'Max Limit\'.');
+																set_focus(HTML_FLD_DEFVAL);
+																return false;	
+														}
+												}
+											break;											
+									}
+					}
+					else
+					{
+							switch(obj.FLD_TYPE)
+							{
+								case 'B'://boolean
+											if (isNaN(obj.FLD_DEFVAL)==true)
+											{
+													alert('Field \'Default Value\' must be 0 or 1 by your Field Type1.');
+													set_focus(HTML_FLD_DEFVAL);			
+													return false; 								
+											}	
+											else
+											{
+														var tmp_num=Number(obj.FLD_DEFVAL);
+														if ((tmp_num!=0)&&(tmp_num!=1))
+														{
+																alert('Field \'Default Value\' must be 0 or 1 by your Field Type2.');
+																set_focus(HTML_FLD_DEFVAL);
+																return false;	
+														}
+												}
+											break;																									
+								case 'D'://date
+										if (chk_DateTime_valid(obj.FLD_DEFVAL)==false)
+										{
+													alert('Field \'Default Value\' is invalid.\r\n The field in Date/Time form must follow the format \'yyyy-MM-dd HH:mm:ss.SSS\'. \r\n Example: 2000-01-05 06:22:33.555');
+													set_focus(HTML_FLD_DEFVAL);			
+													return false; 													
+										}
+							}
+							
+					}	
+			}
+		return true; 
+}
+
+
+//if the format is correct then retrn true.
+function chk_DateTime_valid(td_str) 
+{//Agg td format='2000-01-05 06:22:33.555'
+ //yyyy-MM-dd HH:mm:ss.SSS
+
+
+		var td_length=td_str.length;
+	
+		if (td_length!=23) return false;
+		pat=/(\d{4})-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d{3}/;
+		result_Array = pat.exec(td_str);
+		if (result_Array==null) return false;
+		
+		var YYYY=td_str.substr(0,4);
+		var MM=td_str.substr(5,2);
+		var DD=td_str.substr(8,2);
+		var hh=td_str.substr(11,2);
+		var mm=td_str.substr(14,2);
+		var ss=td_str.substr(17,2);	
+		var mls=td_str.substr(20,3);
+		
+		if ((Number(MM)>12)||(Number(MM)<1))			return false;
+		if ((Number(DD)>31)||(Number(DD)<1))			return false;
+		if ((Number(hh)>23)||(Number(hh)<0))			return false;
+		if ((Number(mm)>59)||(Number(mm)<0))			return false;
+		if ((Number(ss)>59)||(Number(ss)<0))			return false;
+		if ((Number(mls)>999)||(Number(mls)<0))			return false;
+		
+	return true;
+}
+
+//return true if field type = SILF
+function chk_if_limit_allowable(FT)
+{
+	var bln_limit=false;
+	switch(FT)
+	{
+		case 'S':
+		case 'I':
+		case 'L':
+		case 'F':
+			bln_limit=true
+			break;	
+	}
+	return bln_limit;
+}
+
+//check if the field name is nique.
+function chk_if_name_unique(str_name)
+{
+	var bln_result=true;
+	appear_count=0;
+	
+	var ffs=external.Context.CS_ffs;
+	for (var i=0;i<ffs.length;i++)
+	{
+		if (ffs[i].fld_name==str_name) 
+		{
+			appear_count+=1;
+		}
+	}	
+	
+	if ((str_name==external.Context.Target.fld_name)&&(external.Context.srcFORMTYPE=='EDIT'))
+	{//If it's oringinal record name and dialog type is 'EDIT'
+		appear_count-=1
+	}
+
+	if (appear_count>0)
+	{
+			bln_result=false;	
+	}
+	return bln_result;
+}
+//========================================================3. input control ===================================================================================
+//========================================================4. the rest of the functions =======================================================================
+
+//Decode web encoded content to the real value.
+function HTMLDecode(str) 
+{
+		var ta = document.createElement("textarea");
+		ta.innerHTML = str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&middot;/g, "{*}");
+		toReturn = ta.value;
+		ta = null;																																		 //release ta;
+		return toReturn.replace("/<br\s*\/?>/mg", "\n");
+}
+
+//show real value on web page, for example, <> sign.
+function HTMLEncode(str) 
+{
+	var esc_div_obj = document.getElementById('esc_div');
+	var text = document.createTextNode(str);
+	esc_div_obj.appendChild(text);
+	text =esc_div_obj.innerHTML;
+	var children = esc_div_obj.childNodes;
+
+	for(var i=0;i<children.length;i++)
+	{
+		esc_div_obj.removeChild(children[i]);
+	}
+	//alert(HTMLDecode(text));
+	return text;
+}
+
+//return desired field_format_set_flag value
+function get_flag_value(arr,f_name)
+{
+	var flag_obj=new Object();
+	
+	for (var i=0;i<arr.length;i++) 
+	{
+			//This literation for flag S in field format
+			var tmp_arr=new Array();
+			if ((arr[i].substr(0,1)!="S")&&(arr[i].substr(0,1)!="V"))//&&(arr[i].substr(0,1)!="A"))
+			{
+				tmp_arr = arr[i].split("=");
+			}
+			else
+			{
+				//var tmp_arr = arr[i].match(/<[^<>\s]+=[^<>\s]+>/g);
+				var first_found_index=new Number();
+				first_found_index=arr[i].indexOf('=');
+				if (first_found_index!=-1)
+				{
+					tmp_arr[0]=arr[i].slice(0,first_found_index);
+					tmp_arr[1]=arr[i].slice(first_found_index+1);
+					//alert(i+'  s-s  '+tmp_arr[0]+','+tmp_arr[1]);
+				}
+			}
+			if (tmp_arr.length<2) continue;
+			flag_obj[tmp_arr[0]]=tmp_arr[1];
+	}
+	
+	for (var Property in flag_obj)
+	{
+			if (Property == f_name)
+			return flag_obj[Property];
+	}
+	return null;
+}
+
+//for checking if there is a  desired falg inside the given string(tableproperty) 
+function has_desired_flag(src_Str, dFlag)
+{
+		var tmp_src_Str=src_Str;
+		var bln_fond=false;
+		var s = tmp_src_Str.indexOf(dFlag);
+		if (s!=-1)
+		bln_fond=true;
+		
+		return bln_fond;
+}
+
+//return field property string
+function ret_FLD_property_str()
+{
+		var FLD_property_str='';
+		var HTML_FLD_property=document.getElementsByName("chkb_FLD_property");
+		if (HTML_FLD_property[0].checked == true) FLD_property_str='N';
+		if (HTML_FLD_property[1].checked == true) FLD_property_str+='O';
+		if (HTML_FLD_property[2].checked == true) FLD_property_str+='E';
+		if (HTML_FLD_property[3].checked == true) FLD_property_str+='R';
+		if (HTML_FLD_property[4].checked == true) FLD_property_str+='C';
+		if (HTML_FLD_property[5].checked == true) FLD_property_str+='H';
+		
+		return FLD_property_str;
+}
+
+//syn SEO appearance and behavior. 
+//(use when the value of the SOE flag has changed.)
+function syn_field_sataus_changes()
+{
+	//for flag SEO
+	var chk_obj=document.getElementsByName("chkb_style");							
+	var BTN_SELECT=document.getElementById("btn_FLD_SELECTION");
+	var FLD_SEL=document.getElementById("edit_FLD_SELECTION");
+	var FLD_VR=document.getElementById("edit_FLD_VR");
+	var FLD_VRO=document.getElementById("edit_FLD_VRO");
+	
+	if (chk_obj[0].checked == true) 
+		{BTN_SELECT.disabled=false;FLD_SEL.style.backgroundColor='white';}
+	else
+		{BTN_SELECT.disabled=true;FLD_SEL.style.backgroundColor='#f2f2f2';}
+		
+	if (chk_obj[1].checked == true) 
+	{
+		FLD_VR.disabled=false;
+		FLD_VR.style.backgroundColor='white';
+		FLD_VRO.disabled=false;
+		FLD_VRO.style.backgroundColor='white';
+	}	
+	else
+	{
+		FLD_VR.disabled=true;
+		FLD_VR.style.backgroundColor='#f2f2f2';
+		FLD_VRO.disabled=true;
+		FLD_VRO.style.backgroundColor='#f2f2f2';
+	}
+}
+
+//The function is that 
+//make sure at most one or zero check box can be selected.
+function chk_style_option(chk_index)
+{
+	//The function exists for one purpose-Only allow one checkbox be checked, or none.
+	var chk_obj=document.getElementsByName("chkb_style");							//get chk array	
+	switch(chk_index)
+	{
+		case 0://0- means chkbox value of the flag "S" has been changed.
+			if (chk_obj[chk_index].checked == true) {chk_obj[1].checked=false;};
+		break;
+		case 1:
+			if (chk_obj[chk_index].checked == true) {chk_obj[0].checked=false;};
+		break;
+	}	
+	//add status change process
+	syn_field_sataus_changes();
+}
+
+//1.on Field Type change, change the appearance of limitation fields.
+//2.check if limitation is supported. 
+function on_FT_changes()
+{
+	//-1
+	if (FT_chage_warnning==false)
+	{
+			FT_chage_warnning=true;
+			var note_str = "If change the default field type, some flags like\r\n";
+			note_str += "\'Value Range\' will no longer bounded by other libraries. \r\n\r\n";
+			note_str += "Click 'Confirm' to proceed, 'Cancel' to restore.\r\n";
+			var answer = confirm(note_str);
+			if (!answer)
+			{
+				HTML_FLD_TYPE.value=external.Context.Target.fld_type;		//restore
+				return;
+			}	
+	}
+	//0.
+	HTML_FLD_MIN.value='';
+	HTML_FLD_MAX.value='';
+	//1.change control status when field type is changed.
+	syn_field_limit_control();
+	//2.set Default value='' on each type change.
+	HTML_FLD_DEFVAL.value='';
+}
+
+//change control status when field type is changed.
+function syn_field_limit_control()
+{
+	var Field_Type=HTML_FLD_TYPE.value;
+	switch(Field_Type)
+	{
+		case 'S':
+		case 'I':
+		case 'L':
+		case 'F':
+			HTML_FLD_MIN.disabled=false;
+			HTML_FLD_MIN.style.backgroundColor='white';
+			HTML_FLD_MAX.disabled=false;
+			HTML_FLD_MAX.style.backgroundColor='white';
+			break;	
+		default:
+			HTML_FLD_MIN.disabled=true;
+			HTML_FLD_MIN.style.backgroundColor='#f2f2f2';
+			HTML_FLD_MIN.value='(Irrelevant)';
+			HTML_FLD_MAX.disabled=true;
+			HTML_FLD_MAX.style.backgroundColor='#f2f2f2';
+			HTML_FLD_MAX.value='(Irrelevant)';
+			break;
+	}
+}
+
+
+
+//set focus
+function set_focus(elm)
+{
+    if(typeof(elm) == 'string') 
+    {
+        elm = xGetElementById(elm);
+    }
+    if (elm) 
+    {     
+        elm.focus();
+        elm.select();
+    }
+}
+
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='180px'; //def 15
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='11';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9'; 
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='180px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='12';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#fffAAA';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.90'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)|(\s*$)/g, ""); //
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)/g, "");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(\s*$)/g, "");
+}
+
+//Detect if "FT" field is changed by the user or not.
+//Note that we have STG member, therefore we can't compare directly.
+//The function need to refactor in the future. We don't use it for now.
+//0 - different
+//1 - the same
+//2 - unknown (the library is not connected therefore unknown.)
+function FT_Changed(VAR_NAME, FLD_NAME, src_lib)
+{
+			var do_changed=2;
+			
+			switch(src_lib)
+			{
+				case 'S':
+					break;
+					
+				case 'T':
+							//0.get the data from the tblae lib.
+							var tbl_lib_data=external.XTextEx(TBL_Path);
+							if (!tbl_lib_data)		return 2;																								//cannot connect to the table library therefore unkonwn. 
+				
+							//1.searching sequence
+							var found_match = new Boolean();		
+							found_match=false;
+							for (var i=0;i<tbl_lib_data.TableSet.length;i++)
+							{
+								if (tbl_lib_data.TableSet[i].TBL_NAME==VAR_NAME)		//find matching record by 'name'.
+								{
+									found_match=true;				//tbl_lib_data.TableSet[i].TBL_NAME
+									single_record_from_lib=tbl_lib_data.TableSet[i];
+									break;
+								}
+							}
+							if (found_match==false) 					return 0;
+							
+							//2.If found the "TBL record" we want then check it's FieldsDefnitions.
+//======================================================================================================
+						//execute compare sequence
+						var lib_csobj=generate_new_cs_object(single_record_from_lib,type_element);   
+						var agg_csobj=decode_variables_script(CS.C_SCRIPT);										 
+						if 	((agg_csobj==null)&&(lib_csobj==null)) return 2;																			//Tke them as unknown.
+						
+						//start
+						if 	(agg_csobj!=null)
+						{
+								//2.compare and check if field type has changed.
+								for (var i=0;i<agg_csobj.format.field_format_set.length;i++)
+								{
+										var agg_fldname=agg_csobj.format.field_format_set[i].fld_name;
+										var agg_fldtype=agg_csobj.format.field_format_set[i].fld_type;			
+										var lib_fldname=lib_csobj.format.field_format_set[i].fld_name;
+										var lib_fldtype=lib_csobj.format.field_format_set[i].fld_type;
+									//Only check the the field which eaual to the current field name.	
+										if	(agg_fldname==FLD_NAME)										//the name we seek for.
+										{
+												if (agg_fldname!=lib_fldname) {return 2;}	//the name is different from the lib one. can't compare them.
+												if (agg_fldtype!=lib_fldtype) {return 0;}	//the same
+												if (agg_fldtype==lib_fldtype) {return 1;}	//different									
+												
+										}
+								}
+			
+						}
+//======================================================================================================
+							if (!single_record_from_lib.FieldsDefnition) 	return 0;												//Found the reference table record, but it is invalid.
+							if (single_record_from_lib.FieldsDefnition.length==0) return 0;
+							
+							for (var j=0;j<single_record_from_lib.FieldsDefnition.length;j++)
+							{
+								if (single_record_from_lib.FieldsDefnition[j].FIELD_NAME=='AEL')
+								do_changed=1;
+							}
+							return do_changed;			
+							break;
+				default:
+							return do_changed;	
+					break;
+			}			
+
+}
+
+//Field Type informer
+//It is differ from Default reference or not.
+//0 - they are different
+//1 - the same
+//2 - unknown (the library is not connected therefore unknown.)
+//No need to think about src_form_type for now.
+//It will be triggered in "on_load", "edit_EVE_TYPE_onchange", and "load_data_from_TBL_lib".
+function show_FT_informer(VAR_NAME)
+{	
+
+}
+
+//Hide FT informer
+//In some circumstance we need to hide the informer. (Instant Event?)
+function hide_FT_informer()
+{
+
+}
+
+//add option
+function addOption(sel,text,value)
+{ 
+	sel.options.add(new Option(text,value)); 
+} 
+
+//refresh tab
+function refresh_tab(li_index)
+{
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+
+//return alias
+function ret_alias(src_str) //retrieve alias 
+{
+			var src=src_str.replace(/^\s+|\s+$/g,"");
+			switch(src)
+			{
+				case "S":
+					return 'String';
+				case "I":
+					return 'Integer';
+				case "L":
+					return 'Integer';
+				case "B":
+					return 'Integer';
+				case "F":
+					return 'Integer';
+				case "D":
+					return 'Integer';			
+				default:
+					return src;
+			}
+}
+
+</script>
+
+
+</BODY>
+</HTML>

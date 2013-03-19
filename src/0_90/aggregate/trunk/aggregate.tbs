@@ -1,0 +1,1468 @@
+'*************************************************************************************************************************
+'           Aggregate Agent Library
+'	Agent Libarary is the interface for TIDE project to work with Tibbo AggreGate Server,
+'	for more details on Agent and AggreGate please visit the website
+'	http://aggregate.tibbo.com/docs/
+'
+'*************************************************************************************************************************
+
+
+include "global.tbh"
+
+'------------------------------------------------------------------------------
+type agg_context
+	key_name as string(KEY_NAME_LEN)
+	context_name as string(CONTEXT_NAME_LEN)
+	romaddr_def as word
+end type
+
+type agg_event
+	event_name as string(RECORD_NAME_LEN)
+	context_name as string(CONTEXT_NAME_LEN)
+	event_level as string(1)
+	event_fields(EVENT_FIELD_NUM) as string(EVENT_FIELD_SZ)
+	disk_event as boolean
+end type
+
+type agg_table
+	table_name as string(RECORD_NAME_LEN)
+	context_name as string(CONTEXT_NAME_LEN)
+	table_fields(TABLE_FIELD_NUM) as string(TABLE_FIELD_SZ)
+end type
+
+type agg_variable
+	variable_name as string(RECORD_NAME_LEN)
+	variable_type as string(1)
+	variable_flag as string(NUM_OF_VARIABLE_FLAG)
+end type
+
+
+type command
+	code as string(1)
+	id as string(8)
+	messageCode as string(1)
+	operationCode as string(1)
+	record as string(KEY_NAME_LEN)
+	context_name as string(CONTEXT_NAME_LEN)
+end type
+
+'------------------------------------------------------------------------------
+dim flag_addr as dword
+dim agc as agg_context(MAX_ENTITY_NUM)
+dim agt as agg_table(TABLE_TYPE_NUM)
+dim agv as agg_variable(MAX_VARIABLE_NUM)
+dim agg_reconn_timer as byte
+dim agg_login_rpl_timer as byte
+dim agg_proc as agg_data_proc_phase
+dim aggrx as string
+dim cmd as command
+dim start_cmd_recieved as byte
+
+public dim agg_connected as no_yes
+public dim age as agg_event(EVENT_TYPE_NUM)
+public dim event_in_proc as no_yes
+public dim agg_rec_num as word
+
+'------------------------------------------------------------------------------
+#if INSTANT_EVENT=1
+public dim agg_event_buff as string
+#endif
+
+#if STORED_EVENT=1
+public dim cur_event_tbl as string(MAX_TBL_NAME_LEN)
+public dim event_found as boolean
+#endif
+
+#if TABLE_DATA=1
+dim cur_table_name as string(MAX_TBL_NAME_LEN)
+#endif
+
+'------------------------------------------------------------------------------
+declare function agg_call_function(key_name as string(KEY_NAME_LEN) ,context_name as string(CONTEXT_NAME_LEN), func_input as string, byref err as no_yes) as string
+
+'==============================================================================
+sub agg_replace_chr(byref s as string, a as string, b as string)
+'replace sub-string a with sub-string b in the target string s
+	dim pos as byte
+	dim temp as string
+	pos=instr(1,s,a,1)
+	while pos > 0 
+		temp=right(s,len(s)-pos-len(a)+1)
+		s=left(s,pos-1)+b+temp
+		pos=instr(pos+1,s,a,1)
+	wend
+end sub
+
+#if STORED_EVENT=1 or TABLE_DATA=1
+'------------------------------------------------------------------------------
+function agg_set_data_source(event_file as string, byref proc_rec_num as word) as ok_ng
+'set pointer for the target table
+	agg_set_data_source=NG
+	if tbl_select(event_file) <> EN_TBL_STATUS_OK then exit function
+	if tbl_record_find(no,"","",proc_rec_num,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL) <> EN_TBL_STATUS_OK then exit function
+	if tbl_record_ptr_sg(proc_rec_num,EN_TBL_SET) <> EN_TBL_STATUS_OK then exit function
+	if tbl_record_sg(EN_TBL_GET) <> EN_TBL_STATUS_OK then exit function
+	agg_set_data_source=OK
+end function
+#endif
+
+'------------------------------------------------------------------------------
+#if TABLE_DATA=1
+function agg_tbl_op_msg(tbl_result as en_tbl_status) as string
+'returns error msg according to the table status
+varify_result:
+	select case tbl_result
+		case EN_TBL_STATUS_OK: 
+			agg_tbl_op_msg=""
+		case EN_TBL_STATUS_FAILURE: 
+			agg_tbl_op_msg=MSG_TBL_STATUS_FAILURE
+		case EN_TBL_STATUS_UNKNOWN_TABLE: 
+			agg_tbl_op_msg=MSG_TBL_STATUS_UNKNOWN_TABLE
+		case EN_TBL_STATUS_UNKNOWN_FIELD: 
+			agg_tbl_op_msg=MSG_TBL_STATUS_UNKNOWN_FIELD
+		case EN_TBL_STATUS_INVALID: 
+			agg_tbl_op_msg=MSG_TBL_STATUS_INVALID
+		case EN_TBL_STATUS_FULL: 
+			agg_tbl_op_msg=MSG_TBL_STATUS_FULL
+		case EN_TBL_STATUS_KEY_VIOLATION
+			agg_tbl_op_msg=MSG_TBL_STATUS_KEY_VIOLATION
+	end select
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_hash(byref context as string, byref err as no_yes) as string(64)
+'extact the table name from the context, and return proper response string which contents the hash of the target table.
+	dim sTemp1, sTemp2 as string(64)
+	dim pos1,pos2 as byte
+	dim tbl_result as en_tbl_status
+	pos1=instr(1,context,chr(ELEMENT_START),3)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	tbl_result=tbl_select(sTemp1)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_hash=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	sTemp2=tbl_get_hash()
+	agg_root_hash =chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+sTemp2+chr(ELEMENT_END)+chr(ELEMENT_END)
+	err=NO
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_add_record(byref context as string, byref err as no_yes) as string(64)
+'extract the table name and record from the context, add the record the table and 
+'returns the proper response string which contents the result of the add record operation
+	dim sTemp1 as string(64)
+	dim pos1,pos2 as byte
+	dim table as tbl_type
+	dim tbl_result as en_tbl_status
+	dim i as byte
+	dim md5_val as dword
+	pos1=instr(1,context,chr(ELEMENT_START),3)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	tbl_result=tbl_select(sTemp1)
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_add_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_get_tbl_info(table)
+
+	pos1=instr(pos2,context,"%<I%=",1)+5
+	pos2=instr(pos1,context,"%>",1)
+	sTemp1=mid(context,pos1,pos2-pos1)
+	tbl_result=tbl_field_sg("UID",sTemp1,EN_TBL_SET)
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_add_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	i=2
+	while true
+		pos1=instr(pos2,context,"%<",1)
+		pos2=instr(pos1,context,"%>",1)
+		if pos1 > 0 and pos2 > 0 then
+			sTemp1=mid(context,pos1+2,pos2-pos1-2)
+			if table.Fields(i).FieldType=`D` then 
+				select case table.Fields(i).p1
+				case EN_TBL_DT_DATE:
+				case EN_TBL_DT_TIME1:
+				case EN_TBL_DT_TIME2:
+				case EN_TBL_DT_TIME3:
+				case EN_TBL_DT_DATE_TIME1:
+				case EN_TBL_DT_DATE_TIME2:
+				case EN_TBL_DT_ALL:
+					time_style_format(sTemp1,3,1)
+				end select
+			end if
+			tbl_result=tbl_field_sg(table.Fields(i).FieldName,sTemp1,EN_TBL_SET)
+			if tbl_result <> EN_TBL_STATUS_OK then
+				agg_root_add_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+				if tbl_result=EN_TBL_STATUS_INVALID then
+					if table.Fields(i).FieldType =`S` then
+						agg_root_add_record= chr(ELEMENT_START)+"Field length invalid"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					else
+						agg_root_add_record= chr(ELEMENT_START)+"Field value is not within vaild range"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					end if
+				end if
+				err=YES
+				exit function
+			end if
+			i=i+1
+		else 
+			exit while
+		end if
+	wend
+	md5_val=tbl_set_md5()
+	tbl_result=tbl_record_add()
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_add_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_mod_HASH(md5_val)
+	err=NO
+	agg_root_add_record=""
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_put_record(byref context as string, byref err as no_yes) as string(64)
+'extract the table name and record from the context, add the record the table and 
+'returns the proper response string which contents the result of the add record operation
+	dim sTemp1 as string(64)
+	dim pos1,pos2 as byte
+	dim table as tbl_type
+	dim tbl_result as en_tbl_status
+	dim i as byte
+	dim md5_val as dword
+	tbl_select(TEMP_TABLE)
+	tbl_get_tbl_info(table)
+	
+	pos1=instr(1,context,"%<I%=",1)+5
+	pos2=instr(pos1,context,"%>",1)
+	sTemp1=mid(context,pos1,pos2-pos1)
+	tbl_result=tbl_field_sg("UID",sTemp1,EN_TBL_SET)
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_put_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+
+	i=2
+	while true
+		pos1=instr(pos2,context,"%<",1)
+		pos2=instr(pos1,context,"%>",1)
+		if pos1 > 0 and pos2 > 0 then
+			sTemp1=mid(context,pos1+2,pos2-pos1-2)
+			if table.Fields(i).FieldType=`D` then 
+				select case table.Fields(i).p1
+				case EN_TBL_DT_DATE:
+				case EN_TBL_DT_TIME1:
+				case EN_TBL_DT_TIME2:
+				case EN_TBL_DT_TIME3:
+				case EN_TBL_DT_DATE_TIME1:
+				case EN_TBL_DT_DATE_TIME2:
+				case EN_TBL_DT_ALL:
+					time_style_format(sTemp1,3,1)
+				end select
+			end if
+			tbl_result=tbl_field_sg(table.Fields(i).FieldName,sTemp1,EN_TBL_SET)
+			if tbl_result <> EN_TBL_STATUS_OK then
+				agg_root_put_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+				if tbl_result=EN_TBL_STATUS_INVALID then
+					if table.Fields(i).FieldType =`S` then
+						agg_root_put_record= chr(ELEMENT_START)+"Field length invalid"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					else
+						agg_root_put_record= chr(ELEMENT_START)+"Field value is not within vaild range"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					end if
+				end if
+				err=YES
+				exit function
+			end if
+			i=i+1
+		else 
+			exit while
+		end if
+	wend
+	md5_val=tbl_set_md5()
+	tbl_result=tbl_record_add()
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_put_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_mod_HASH(md5_val)
+	agg_root_put_record=""
+	err=NO
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_update_record(byref context as string, byref err as no_yes) as string(64)
+	dim sTemp1 as string(64)
+	dim pos1,pos2 as byte
+	dim table as tbl_type
+	dim i as byte
+	dim msw, lsw as word
+	dim tbl_result as en_tbl_status
+	
+	pos1=instr(1,context,chr(ELEMENT_START),3)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	tbl_result= tbl_select(sTemp1)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_update_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_get_tbl_info(table)
+	pos1=instr(pos2,context,"%<I%=",1)+5
+	pos2=instr(pos1,context,"%>",1)
+	sTemp1=mid(context,pos1,pos2-pos1)
+	msw=lval(sTemp1)/65536
+	lsw=lval(sTemp1) mod 65536
+	sTemp1=chr(msw/256)+chr(msw mod 256)+chr(lsw/256)+chr(lsw mod 256)
+	tbl_result=tbl_record_find(NO,sTemp1,"UID",1,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_update_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if	
+	tbl_result=tbl_record_sg(EN_TBL_GET)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_update_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_set_md5()
+	i=2
+	while true
+		pos1=instr(pos2,context,"%<",1)
+		pos2=instr(pos1,context,"%>",1)
+		if pos1 > 0 and pos2 > 0 then
+			sTemp1=mid(context,pos1+2,pos2-pos1-2)
+			if table.Fields(i).FieldType=`D` then 
+				select case table.Fields(i).p1
+				case EN_TBL_DT_DATE:
+				case EN_TBL_DT_TIME1:
+				case EN_TBL_DT_TIME2:
+				case EN_TBL_DT_TIME3:
+				case EN_TBL_DT_DATE_TIME1:
+				case EN_TBL_DT_DATE_TIME2:
+				case EN_TBL_DT_ALL:
+					time_style_format(sTemp1,3,1)
+				end select
+			end if
+			tbl_result=tbl_field_sg(table.Fields(i).FieldName,sTemp1,EN_TBL_SET)
+			if tbl_result <> EN_TBL_STATUS_OK then
+				agg_root_update_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+				if tbl_result=EN_TBL_STATUS_INVALID then
+					if table.Fields(i).FieldType =`S` then
+						agg_root_update_record= chr(ELEMENT_START)+"Field length invalid"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					else
+						agg_root_update_record= chr(ELEMENT_START)+"Field value is not within vaild range"+"("+table.Fields(i).FieldName+")"+chr(ELEMENT_END)
+					end if
+				end if
+				err=YES
+				exit function
+			end if
+
+			i=i+1
+		else 
+			exit while
+		end if
+	wend
+	tbl_result=tbl_record_sg(EN_TBL_SET)
+	if tbl_result <> EN_TBL_STATUS_OK then 
+		agg_root_update_record= chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	tbl_set_md5()
+	agg_root_update_record=""
+	err=NO
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_remove_record(byref context as string, byref err as no_yes) as string(64)
+	dim sTemp1 as string(64)
+	dim pos1,pos2 as byte
+	dim i as byte
+	dim msw, lsw as word
+	dim tbl_result as en_tbl_status
+
+	pos1=instr(1,context,chr(ELEMENT_START),3)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	tbl_result=tbl_select(sTemp1)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_remove_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+
+	pos1=instr(pos2,context,chr(ELEMENT_START),1)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	msw=lval(sTemp1)/65536
+	lsw=lval(sTemp1) mod 65536
+	sTemp1=chr(msw/256)+chr(msw mod 256)+chr(lsw/256)+chr(lsw mod 256)
+	tbl_result=tbl_record_find(NO,sTemp1,"UID",1,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)
+	if tbl_result=EN_TBL_STATUS_OK then 
+		tbl_record_sg(EN_TBL_GET)
+		tbl_result=tbl_record_delete()
+		if tbl_result <> EN_TBL_STATUS_OK then
+			agg_root_remove_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+			err=YES
+			exit function
+		end if		
+		tbl_set_md5()
+	else
+		agg_root_remove_record=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	agg_root_remove_record=""
+	err=NO
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_start_table(context as string, byref err as no_yes) as string(64)
+	dim sTemp1 as string(64)
+	dim pos1,pos2 as byte
+	dim tbl_result as en_tbl_status
+	
+	tbl_select(TEMP_TABLE)
+	tbl_result=tbl_delete()
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_start_table=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if		
+	pos1=instr(1,context,chr(ELEMENT_START),3)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp1=mid(context,pos1+1,pos2-pos1-1)
+	cur_table_name=sTemp1
+	tbl_result=tbl_select(sTemp1)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_start_table=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if		
+
+	tbl_copy_info(cur_table_name,TEMP_TABLE)
+	agg_root_start_table=""
+	err=NO
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_finish_table(byref err as no_yes) as string(64)
+	dim tbl_result as en_tbl_status
+	tbl_result=tbl_replace(cur_table_name,TEMP_TABLE)
+	if tbl_result <> EN_TBL_STATUS_OK then
+		agg_root_finish_table=chr(ELEMENT_START)+agg_tbl_op_msg(tbl_result)+chr(ELEMENT_END)
+		err=YES
+		exit function
+	end if
+	agg_root_finish_table=""
+	err=NO
+end function
+#endif
+
+'------------------------------------------------------------------------------
+sub agg_sg_systime(byref date_time as string(23), op as byte)
+'set or get the rtc time by aggregate command.
+	dim syear as string(4)
+	dim smonth, sdate, shour, smin, ssec as string(2)
+	dim wdaycount, wmincount as word
+	dim bsec as byte
+'GET the RTC time
+	if op=0 then
+		device_rtc_get(wdaycount,wmincount,bsec) '<<<<<<<<<<<<<< rtc_problem
+		time_type_convert(date_time,wdaycount,wmincount,bsec,TIME_TO_STR)
+		time_style_format(date_time,2,op)		
+	else
+'Set the RTC time
+		time_style_format(date_time,2,op)
+		time_type_convert(date_time,wdaycount,wmincount,bsec,STR_TO_TIME)
+		device_rtc_set(wdaycount,wmincount,bsec)	'<<<<<<<<<<<<<< rtc_problem
+	end if
+end sub
+
+'------------------------------------------------------------------------------
+function agg_element_extract(byref pos as byte, byref length as byte, search_str as string(5), byref element_str as string, byref count as byte) as string
+	dim p1, p2, p3 as byte
+	dim s as string
+	dim s1 as string(1)
+	
+	if search_str="" then
+		search_str=chr(ELEMENT_START)
+	end if
+	if count=0 then
+		pos=instr(pos,element_str, search_str,1)
+		if pos > 0 then 
+			count=1
+		else
+			agg_element_extract=""
+			exit function
+		end if
+	end if
+
+	p3=pos+1
+	while count > 0 
+		p1=instr(p3,element_str,chr(ELEMENT_START),1)
+		p2=instr(p3,element_str,chr(ELEMENT_END),1)
+		if p1=0 then
+			if count > 0 then 
+				p1=255
+			else
+				if p2 > 0 then 
+					count=count +1
+					length=p2-pos+1
+				end if
+				agg_element_extract=""
+				exit function
+			end if
+		end if
+		if p1 < p2 then
+			p3=p1+1
+			count=count+1
+		else
+			if p2=0 then
+				if p1 > 0 then 
+					count=count+1
+					length=p1-pos+1
+				end if
+				agg_element_extract=""
+				exit function
+			end if		
+			p3=p2+1
+			count=count-1
+		end if
+	wend
+	length=p3-pos
+	s=mid(element_str,pos,length)
+	agg_element_extract=s
+end function
+
+'------------------------------------------------------------------------------
+function agg_hex_to_hexstr(byref is as string) as string
+	dim ss as string(4)
+	dim f as byte
+
+	agg_hex_to_hexstr=""
+	for f=1 to len(is)
+		ss=hex(asc(mid(is,f,1)))
+		ss=right(ss,len(ss)-2)
+		if len(ss)<2 then
+			ss="0"+ss
+		end if
+		agg_hex_to_hexstr=agg_hex_to_hexstr+ss
+	next f
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_login(byref context as string, byref err as no_yes) as string(64)
+	dim sTemp1,sTemp2,sTemp3 as string(64)
+	dim pos1,pos2 as byte
+
+	context=agg_element_extract(4,"",chr(ELEMENT_START),context,0)
+	if setting_sg("ON",0,sTemp1,EN_STG_GET) <> EN_STG_STATUS_OK then
+		agg_root_login=chr(ELEMENT_START)+SETTING_GET_FAIL+"(Owner Name)"+chr(ELEMENT_END)
+		err=YES
+	end if
+	sTemp2=chr(ELEMENT_START)+sTemp1+chr(ELEMENT_END)
+	if setting_sg("DN",0,sTemp1,EN_STG_GET) <> EN_STG_STATUS_OK then
+		agg_root_login=chr(ELEMENT_START)+SETTING_GET_FAIL+"(Device Name)"+chr(ELEMENT_END)
+		err=YES
+	end if
+	
+	sTemp2=sTemp2 + chr(ELEMENT_START)+sTemp1+chr(ELEMENT_END)
+	pos1=instr(1,context,chr(ELEMENT_START),1)
+	pos2=instr(pos1,context,chr(ELEMENT_END),1)
+	sTemp3=mid(context,pos1+1,pos2-pos1-1)
+	if setting_sg("PW",0,sTemp1,EN_STG_GET) <> EN_STG_STATUS_OK then
+		agg_root_login=chr(ELEMENT_START)+SETTING_GET_FAIL+"(Password)"+chr(ELEMENT_END)
+		err=YES
+	end if
+	sTemp3=sTemp3+sTemp1
+	sTemp1=md5(sTemp3,"",MD5_FINISH,len(sTemp3))
+	sTemp3=agg_hex_to_hexstr(sTemp1)
+	sTemp2=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+sTemp2+chr(ELEMENT_START)+sTemp3+chr(ELEMENT_END)+chr(ELEMENT_END)
+	agg_root_login=sTemp2
+	err=NO
+	login(CMD_MODE_AGGREGATE,"",SOCK_LS)
+
+end function
+
+'------------------------------------------------------------------------------
+function agg_root_operation(byref op as string(KEY_NAME_LEN), byref context as string, byref err as no_yes) as string(64)
+'These are pre-defined Aggregate function calls that have to added to the root level, so the Table data synchronization would work properly
+	dim s as string
+	select case op
+		case "synchronized":
+			agg_connected=YES
+			agg_root_operation=""
+			err=NO
+#if TABLE_DATA=1
+		case "hash":
+			'returns hash value of the table
+			agg_root_operation=agg_root_hash(context,err)
+		case "startTable":
+			'start table synchronization, this function call info device to start replace the whole table
+			agg_root_operation=agg_root_start_table(context, err)
+		case "finishTable":
+			'this function call notify the device that the table synchronization is done.
+			agg_root_operation=agg_root_finish_table(err)
+			if err=YES then exit function
+			agg_root_operation=agg_root_hash(context,err)
+		case "addRecord":
+			'adding single record to the target table
+			agg_root_operation=agg_root_add_record(context,err)
+		case "removeRecord":
+			'remove single record from the target table
+			agg_root_operation=agg_root_remove_record(context,err)
+		case "updateRecord":
+			'modify a single record which is pointed by the table record pointer.
+			agg_root_operation=agg_root_update_record(context,err)						
+		case "putRecords":
+			'this is the function call used to add records to device during total table synchronization.
+			agg_root_operation=agg_root_put_record(context,err)
+#endif
+		case "login":
+			agg_root_operation=agg_root_login(context,err)
+		case "register":
+			if setting_sg("AR",0,s,EN_STG_GET)<>EN_STG_STATUS_OK then
+				agg_root_operation=chr(ELEMENT_START)+SYS_SETTING_FAILURE+chr(ELEMENT_END)
+				err=YES
+				exit function
+			end if
+			if s="1" then
+				if setting_sg("PW",0,s,EN_STG_GET)<>EN_STG_STATUS_OK then
+					agg_root_operation=chr(ELEMENT_START)+SYS_SETTING_FAILURE+chr(ELEMENT_END)
+					err=YES
+					exit function
+				end if
+				agg_root_operation=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+s+chr(ELEMENT_END)+chr(ELEMENT_END)
+				err=NO
+			else
+				agg_root_operation=chr(ELEMENT_START)+"Auto Register Disabled"+chr(ELEMENT_END)
+				err=YES
+			end if
+		case "buzz":
+			device_operation("B")
+			agg_root_operation=""
+			err=NO
+		case "init":
+			s="The device is rebooting after initialization!"
+			agg_root_operation=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+s+chr(ELEMENT_END)+chr(ELEMENT_END)
+			err=NO
+		case "reboot":
+			s="The device is rebooting"
+			agg_root_operation=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+s+chr(ELEMENT_END)+chr(ELEMENT_END)
+			err=NO
+		case else
+			context=device_operation(op)
+			agg_root_operation=device_agg_func_result(op,context, err)
+	end select
+end function
+
+'------------------------------------------------------------------------------
+sub agg_invisible_separators(byref s as string)
+	agg_replace_chr(s,"<",chr(ELEMENT_START))
+	agg_replace_chr(s,">",chr(ELEMENT_END))
+	agg_replace_chr(s,"=",chr(ELEMENT_NAME_VALUE_SEPARATOR))
+	agg_replace_chr(s,"^",chr(TABLE_NULL))
+	agg_replace_chr(s,"%3E%",">")
+	agg_replace_chr(s,"%3D%","=")
+end sub
+
+'------------------------------------------------------------------------------
+sub agg_data_send(s as string)
+	sock.num=SOCK_LS
+	sock.setdata(s)
+	sock.send
+end sub
+'------------------------------------------------------------------------------
+sub agg_mem_struct_fill(script_file as string, byref mem_struct as agg_context(MAX_ENTITY_NUM), max_count as byte)
+'Search through the romfile and store the address of records in the array for later fast access 
+
+	dim s as string
+	dim i, line_end as word
+	dim num_agc, j, k as byte
+	k=0
+	j=0
+	
+	num_agc=0 'will count settings (starting from 0)
+	romfile.open(script_file)				'this file is a setting descriptor table
+	i=romfile.find(romfile.pointer,"::",1)
+	while i<>0
+		'we are now at the "::" pointing at the beginning of one setting descriptor line
+		romfile.pointer=i+2
+		
+		'find the end of this setting descriptor line
+		line_end=romfile.find(romfile.pointer,chr(END_OF_LINE),1)
+		
+		'extract entity name
+		do
+			i=romfile.find(romfile.pointer,chr(FIELD_SEPARATOR),1) 
+			s=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+		loop while s="" 		
+		
+		if len(s) > KEY_NAME_LEN then sys.halt 'the key name is too long
+		mem_struct(num_agc).key_name=s
+		
+		'extract setting type
+		do
+			i=romfile.find(romfile.pointer,chr(FIELD_SEPARATOR),1) 
+			if i = 0 then 
+				romfile.pointer = romfile.size
+				exit do
+			end if
+			s=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+		loop while s=""
+		if s="root" then s=""
+		mem_struct(num_agc).context_name=s
+		
+		'extract the number of members
+		do
+			i=romfile.find(romfile.pointer,chr(FIELD_SEPARATOR),1)
+			if i > line_end or i = 0 then i=line_end			
+			mem_struct(num_agc).romaddr_def=romfile.pointer
+			s=romfile.getdata(i-romfile.pointer)
+			romfile.pointer=i+1
+			if romfile.pointer > line_end then exit do
+			if left(s,2) <> "<R" then s=""
+		loop while s="" 		
+		
+		' move to next one
+		i=romfile.find(line_end,"::",1)
+		num_agc=num_agc+1
+	
+		'exceeded the max lines of scripts?
+		if num_agc>=max_count and i<>0 then
+			sys.halt
+			num_agc=0 'you need to increase MAX_ENTITY_NUM!
+		end if
+	wend
+end sub
+
+'------------------------------------------------------------------------------
+public sub agg_init
+'Descr: AggreGate agent initialization
+'Read from the AggreGate Script files and fill up the address table for main script, event script and function script 
+	dim i, j, k,l,m, pos,p,q,r as byte
+	dim romaddr_start, romaddr_end, romaddr_mid, romaddr_header as word
+	dim s as string
+	dim stemp1, stemp2 as string(64)
+	
+	sock.num=SOCK_LS
+	sock.protocol=PL_SOCK_PROTOCOL_TCP
+	sock.connectiontout=val(setting_get("CT",0)) * 60 * 2
+	sock.targetip=setting_get("DI",0) ' Get IP setting here
+	sock.targetport=val(setting_get("DP",0))
+	sock.txbuffrq(AGG_TX_BUF_SIZE)
+	sock.rxbuffrq(AGG_RX_BUF_SIZE)
+	sys.buffalloc
+	
+ 	agg_mem_struct_fill(LS_MAIN_SCRIPT,agc, MAX_ENTITY_NUM)
+	j=0
+	k=0
+
+	for i=0 to MAX_ENTITY_NUM - 1
+		if agc(i).key_name="events" then
+			if EVENT_TYPE_NUM > 0 then
+				romfile.open(LS_MAIN_SCRIPT)
+				romaddr_start=agc(i).romaddr_def
+				romaddr_end=romfile.find(romaddr_start,chr(END_OF_LINE),1)			
+				for j=0 to EVENT_TYPE_NUM -1
+					romaddr_header=romaddr_start-1
+					do
+						romaddr_header=romaddr_header-1
+						if romfile.find(romaddr_header,chr(TAB),1) <> romaddr_header and romfile.find(romaddr_header,"~",1) <> romaddr_header then 
+							do
+								romaddr_header=romaddr_header-1
+								if romfile.find(romaddr_header,chr(TAB),1)=romaddr_header then goto found_flag
+							loop while true
+						end if
+					loop while true
+found_flag:			romaddr_header=romaddr_header+1
+					romfile.pointer=romaddr_header
+					stemp2=romfile.getdata(romaddr_start-romaddr_header)
+					pos=instr(1,stemp2,chr(COMMA),1)
+					if mid(stemp2,pos+1,1)="Y" then 
+						age(j).disk_event=true 
+					else
+						age(j).disk_event=false
+					end if
+					
+					age(j).context_name=agc(i).context_name
+					romfile.pointer=romaddr_start
+					s=romfile.getdata(romaddr_end-romaddr_start)
+					agg_invisible_separators(s)
+					pos=4
+					stemp1=agg_element_extract(pos,l,"",s,0)
+					age(j).event_name=mid(stemp1,2,l-2)
+					pos=pos+l+1
+					while true
+						stemp1=agg_element_extract(pos,l,"",s,0)
+						pos=pos+l
+						if mid(stemp1,2,1)<>chr(ELEMENT_START) then 
+							exit while
+						else
+							stemp1=agg_element_extract(2,l,"",stemp1,0)
+							stemp1=mid(stemp1,2,l-2)
+							age(j).event_fields(k)=stemp1
+							k=k+1
+						end if
+					wend
+					stemp1=agg_element_extract(pos,l,"",s,0)
+					pos=pos+l
+					stemp1=agg_element_extract(pos,l,"",s,0)
+					pos=pos+l
+					stemp1=agg_element_extract(pos,l,"",s,0)
+					pos=pos+l
+					stemp1=agg_element_extract(pos,l,"",s,0)
+					pos=pos+l				
+					stemp1=mid(stemp1,2,l-2)
+					age(j).event_level=stemp1
+					romaddr_start=romfile.find(romaddr_end,"~~",1)
+					if romaddr_start > 0 then 
+						romaddr_start= romaddr_start+2
+						romaddr_end=romfile.find(romaddr_start,chr(END_OF_LINE),1)
+						k=0
+					end if
+				next j
+			end if
+		end if
+	next i
+	j=0
+	k=0
+	for i=0 to MAX_ENTITY_NUM - 1
+		if agc(i).key_name="variables" then
+			
+			romfile.open(LS_MAIN_SCRIPT)
+			romaddr_start=agc(i).romaddr_def
+			if i < MAX_ENTITY_NUM-1 then 
+				romaddr_end=agc(i+1).romaddr_def
+			else
+				romaddr_end=romfile.size
+			end if
+			r=0
+			do
+				romaddr_mid=romfile.find(romaddr_start,chr(END_OF_LINE),1)
+				romfile.pointer=romaddr_start
+				s=romfile.getdata(romaddr_mid-romaddr_start)
+				agg_invisible_separators(s)
+				stemp1=agg_element_extract(4,l,"",s,0)
+				stemp1=mid(stemp1,2,l-2)
+				
+				if stemp1 <> "modtime" and stemp1 <>"date" and stemp1 <> "version" then
+					romaddr_header=romaddr_start
+					do
+						romaddr_header=romaddr_header-1
+						if romfile.find(romaddr_header,chr(END_OF_LINE),1)=romaddr_header then exit do
+					loop while true
+					romfile.pointer=romaddr_header+2
+					stemp2=romfile.getdata(romaddr_start-romaddr_header)
+					for p=1 to len(stemp2)
+						if mid(stemp2,p,1)<>chr(TAB) then exit for
+					next p
+					stemp2=right(stemp2,len(stemp2)-p+1)
+					p=instr(1,stemp2,chr(COMMA),1)
+					if p=0 then goto next_variable
+					agv(r).variable_name=mid(stemp2,1,p-1)
+					q=p+1
+					p=instr(q,stemp2,chr(COMMA),1)
+					agv(r).variable_type=mid(stemp2,q,p-q)
+					q=p+1
+					p=instr(q,stemp2,chr(TAB),1)
+					agv(r).variable_flag=mid(stemp2,q,p-q)
+#if TABLE_DATA=1					
+					if agv(r).variable_type= "T" then
+						agt(j).table_name=agv(r).variable_name
+						agt(j).context_name=agc(i).context_name
+						pos=l+5
+						k=0
+						while true
+							stemp1=agg_element_extract(pos,m,"",s,0)
+							if mid(stemp1,2,1)<>chr(ELEMENT_START) then 
+								exit while
+							else
+								stemp1=agg_element_extract(2,l,"",stemp1,0)
+								agt(j).table_fields(k)=mid(stemp1,2,l-2)
+								k=k+1
+							end if
+							pos=pos+m
+						wend
+						j= j+1
+					end if
+#endif
+					r=r+1
+				end if
+next_variable:
+				romaddr_mid=romfile.find(romaddr_start,"~~",1)
+				romaddr_start=romaddr_mid+2
+			loop while  romaddr_mid < romaddr_end and romaddr_mid > 0
+		end if
+	next i
+
+#if STORED_EVENT=1
+'---------- look for events ------------
+	event_found=false
+	if tbl_select(LOG_FILE)=EN_TBL_STATUS_OK and tbl_record_find(no,"","",1,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_OK then
+		event_found=true
+	end if		
+#endif
+'---------- Event handle by device ---------------
+	agg_reconn_timer=0
+	agg_connected=NO
+	agg_login_rpl_timer=0
+end sub
+
+'------------------------------------------------------------------------------
+function agg_get_agc_num(key_name as string(KEY_NAME_LEN), context_name as string(CONTEXT_NAME_LEN), byref mem_struct as agg_context(MAX_ENTITY_NUM), max_count as byte)as byte
+'Descr: Find the index of record in the address table
+
+	dim i as byte 
+	for i=0 to max_count - 1
+		if mem_struct(i).key_name=key_name and mem_struct(i).context_name=context_name then 
+			agg_get_agc_num=i
+			exit function
+		end if
+	next i
+	agg_get_agc_num=255
+end function
+
+
+'------------------------------------------------------------------------------
+sub agg_proc_variable(cmd as command)
+	dim num_agc as byte
+	dim romaddr_start, romaddr_end, romaddr_mid, rec_num as word
+	dim s as string
+	dim stemp1, stemp2 as string(64)
+	dim pos1, i, j, k as byte
+	dim result as en_stg_status
+	dim index as byte
+	dim sname as string(KEY_NAME_LEN)
+	
+	select case cmd.record
+	case "modtime":
+		s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)
+		agg_data_send(s)
+		for i=0 to MAX_VARIABLE_NUM-1	
+			stemp1=agv(i).variable_name
+			if stemp1 <> "" and left(agv(i).variable_flag,1)="Y" then
+				device_modtime_sg(sTemp2,stemp1,DEVICE_GET)
+				s=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)+chr(ELEMENT_START)+stemp2+chr(ELEMENT_END)+chr(ELEMENT_END)
+				agg_data_send(s)
+			end if
+		next i
+		s=chr(COMMAND_END)
+		agg_data_send(s)
+		exit sub
+	case "version":
+		sTemp1=FIRMWARE_VERSION
+		sTemp1=mid(sTemp1,2,len(sTemp1)-2)
+		s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)
+		s=s+chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)+chr(ELEMENT_END)+chr(COMMAND_END)
+		agg_data_send(s)
+	case "date":
+		agg_sg_systime(sTemp1,0)
+		sTemp1=sTemp1+".000"
+		s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)
+		s=s+chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)+chr(ELEMENT_END)+chr(COMMAND_END)
+		agg_data_send(s)	
+	case else
+		sname=cmd.record
+		if device_specific_setting_sg(sname,index,stemp1,result,DEVICE_GET)=YES then
+			result=setting_sg(sname,index,stemp1,EN_STG_GET)
+		end if
+		if result=EN_STG_STATUS_OK then
+			s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)			
+			s=s+chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)+chr(ELEMENT_END)+chr(COMMAND_END)
+			agg_data_send(s)
+
+		else
+#if TABLE_DATA=1
+			dim tbl as tbl_type
+			rec_num=1
+			for i=0 to TABLE_TYPE_NUM-1
+				if agt(i).table_name=cmd.record then
+					tbl_select(cmd.record)
+					tbl_get_tbl_info(tbl)
+					agg_data_send(chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR))
+					do
+						if agg_set_data_source(cmd.record,rec_num)<>OK or rec_num=0 then exit do
+						s=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+						if tbl_field_sg("UID",stemp1,EN_TBL_GET)<>EN_TBL_STATUS_OK then exit for
+						s=s+chr(ELEMENT_START)+"I"+chr(ELEMENT_NAME_VALUE_SEPARATOR)+stemp1+chr(ELEMENT_END)
+						for j=0 to TABLE_FIELD_NUM-1
+							for k = 0 to MAX_NUM_FIELD-1
+								if agt(i).table_fields(j)="" then goto record_end
+								if tbl.Fields(k).FieldName=agt(i).table_fields(j) then exit for
+							next k
+							if k>MAX_NUM_FIELD-1 then goto not_found
+							if tbl_field_sg(tbl.Fields(k).FieldName,stemp1,EN_TBL_GET)<>EN_TBL_STATUS_OK then exit for
+							if tbl.Fields(k).FieldType=`D` then
+								select case tbl.Fields(k).p1
+								case EN_TBL_DT_DATE:
+								case EN_TBL_DT_TIME1:
+								case EN_TBL_DT_TIME2:
+								case EN_TBL_DT_TIME3:
+								case EN_TBL_DT_DATE_TIME1:
+								case EN_TBL_DT_DATE_TIME2:
+								case EN_TBL_DT_ALL:
+									time_style_format(sTemp1,3,0)
+								end select
+							end if
+							s=s+chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)
+						next j
+record_end:
+						s=s+chr(ELEMENT_END)
+						agg_data_send(s)
+						rec_num=rec_num+1
+					loop while true
+					agg_data_send(chr(COMMAND_END))
+					exit sub
+				end if
+			next i
+#endif
+not_found:
+			s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(COMMAND_PARAMETERS_SEPARATOR)+"Unable to find the variable"+chr(COMMAND_END)
+			agg_data_send(s)
+		end if
+	end select
+end sub
+
+'------------------------------------------------------------------------------
+function agg_call_function(key_name as string(KEY_NAME_LEN) ,context_name as string(CONTEXT_NAME_LEN), func_input as string, byref err as no_yes) as string
+	dim s as string
+	device_sys_busy(yes)
+	if len(func_input) > 0 then
+		s=key_name+mid(func_input,2,len(func_input)-2)
+	else 
+		s=key_name
+	end if
+	
+	Select case context_name
+	case "":
+		agg_call_function=agg_root_operation(key_name,func_input, err)
+	end select
+	device_sys_busy(no)
+end function
+
+'------------------------------------------------------------------------------
+function agg_rx_getdata(substr as string) as string
+	dim x as byte
+	sock.num=SOCK_LS
+	aggrx=aggrx+sock.getdata(255-len(aggrx))
+	x=instr(1,aggrx,substr,1)
+	if x>0 then
+		agg_rx_getdata=left(aggrx,x-1)
+		aggrx=right(aggrx,len(aggrx)-x)
+	else
+		agg_rx_getdata=""
+	end if
+end function
+
+'------------------------------------------------------------------------------
+sub agg_rx_clr(l as byte)
+	if l > 0 then 
+		sock.num=SOCK_LS
+		aggrx=right(aggrx,len(aggrx)+1-l)
+		aggrx=aggrx+sock.getdata(255-len(aggrx))
+	end if
+end sub
+'------------------------------------------------------------------------------
+public sub agg_proc_command
+'Descr: Process commands from AggreGate server.  
+	dim pos1, pos2, l as byte
+	dim s as string
+	dim field_name as string(RECORD_NAME_LEN)
+	dim stemp1 as string(64)
+	dim num_agc as byte
+	dim romaddr_start, romaddr_end, romaddr_mid, romaddr_nl as word
+	dim err as no_yes
+	dim result as en_stg_status
+	dim index as byte
+	dim sname as string(MAX_SETTING_NAME_LEN+1)
+
+	romfile.open(LS_MAIN_SCRIPT)
+	
+	while true
+		select case agg_proc
+		case AGG_IDLE_PHASE:
+			agg_rx_getdata("")
+			pos1=instr(1,aggrx,chr(COMMAND_START),1)
+			agg_rx_getdata(chr(COMMAND_START))
+			if pos1 > 0 then
+				agg_proc=AGG_TYPE_PHASE
+			else
+				if len(aggrx)=255 then 
+					aggrx=""
+					exit sub
+				end if
+			end if
+		case AGG_TYPE_PHASE:
+			stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			if stemp1 <> "" then
+				cmd.code=stemp1
+				agg_proc=AGG_ID_PHASE
+			else
+				agg_proc=AGG_IDLE_PHASE
+			end if
+		case AGG_ID_PHASE:
+			stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			if stemp1 <> "" then
+				cmd.id=stemp1
+				agg_proc=AGG_OP_PHASE
+			else
+				agg_proc=AGG_IDLE_PHASE
+			end if
+		case AGG_OP_PHASE:
+			stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			if stemp1 <> "" then
+				cmd.messageCode=stemp1
+				select case cmd.messageCode
+				case "S":
+					start_cmd_recieved=start_cmd_recieved+1
+					s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_END)
+					agg_data_send(s)
+					if start_cmd_recieved>1 then 			 'start command is recieved more than once consecutively. command is out of sync
+						sock.close
+						start_cmd_recieved=0
+					else
+						pos2=instr(1,aggrx,chr(COMMAND_END),1)
+						agg_rx_clr(pos2)				
+					end if
+					agg_proc=AGG_IDLE_PHASE	
+					exit sub
+				case "O":
+					start_cmd_recieved=0
+					agg_proc=AGG_SGC_PHASE
+				end select
+			else
+				agg_proc=AGG_IDLE_PHASE
+			end if
+		case AGG_SGC_PHASE:		
+			stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			if stemp1 <> "" then
+				cmd.operationCode=stemp1
+				agg_proc=AGG_ENTITY_PHASE
+			else
+				agg_proc=AGG_IDLE_PHASE
+			end if
+
+		case AGG_ENTITY_PHASE:
+			stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			cmd.context_name=stemp1
+			agg_proc=AGG_RECORD_PHASE
+				
+		case AGG_RECORD_PHASE:
+			select case cmd.operationCode
+			case "S":
+				stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))
+			case "G":
+				stemp1=agg_rx_getdata(chr(COMMAND_END))
+			case "C":
+				stemp1=agg_rx_getdata(chr(COMMAND_PARAMETERS_SEPARATOR))		
+			end select
+			if stemp1 <> "" then
+				cmd.record=stemp1
+				agg_proc=AGG_DATA_PHASE
+			else
+				agg_proc=AGG_IDLE_PHASE
+			end if
+		case AGG_DATA_PHASE:
+		select case cmd.operationCode
+			case "G":
+				agg_rx_getdata(chr(COMMAND_END))
+				num_agc=agg_get_agc_num(cmd.record, cmd.context_name,agc,MAX_ENTITY_NUM)
+				if num_agc=255 then
+					agg_proc_variable(cmd)
+					agg_proc=AGG_IDLE_PHASE
+					exit sub
+				end if
+				romaddr_start=agc(num_agc).romaddr_def
+				romaddr_end=romfile.find(romaddr_start,chr(END_OF_LINE),1)
+				romaddr_nl=romfile.find(romaddr_start,chr(NEW_LINE),1)
+				if romaddr_nl < romaddr_end then 
+					s=""
+				else
+					romfile.pointer=romaddr_start
+					s=romfile.getdata(romaddr_end-romaddr_start)
+					agg_invisible_separators(s)
+				end if
+				s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)+s
+				agg_data_send(s)
+				s=""
+				romaddr_mid=romfile.find(romaddr_start,"~~",1)
+				if num_agc < MAX_ENTITY_NUM-1 then 
+					romaddr_end=agc(num_agc+1).romaddr_def
+				else
+					romaddr_end=romfile.size
+				end if
+				while  romaddr_mid < romaddr_end and romaddr_mid > 0
+					romaddr_start=romaddr_mid+2
+					romaddr_mid=romfile.find(romaddr_start,chr(END_OF_LINE),1)
+					romfile.pointer=romaddr_start
+					s=romfile.getdata(romaddr_mid-romaddr_start)
+					agg_invisible_separators(s)
+					agg_data_send(s)
+					s=""
+					romaddr_mid=romfile.find(romaddr_start,"~~",1)
+					if romaddr_mid=0 then exit while
+				wend 
+				s=chr(COMMAND_END)
+				agg_proc=AGG_IDLE_PHASE
+				agg_data_send(s)
+				exit sub
+			case "S":
+				pos1=1
+rx_read:
+				stemp1=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+				s=agg_element_extract(pos1,l,stemp1,aggrx,0)
+				agg_rx_clr(pos1+l-1)
+				if pos1 > 0 then
+					select case cmd.record
+					case "date":		'set date
+						pos1=4
+						s=agg_element_extract(pos1,l,"",s,0)
+						s=mid(s,2,l-2)
+						agg_sg_systime(s,1)
+					case "modtime":		'set modification time
+						do
+							pos1=4
+							stemp1=agg_element_extract(pos1,l,"",s,0)
+							field_name=mid(stemp1,2,l-2)
+							pos1=l+4
+							stemp1=agg_element_extract(pos1,l,"",s,0)
+							stemp1=mid(stemp1,2,l-2)
+							device_modtime_sg(stemp1,field_name,DEVICE_SET)			
+							pos1=1
+							stemp1=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+							s=agg_element_extract(pos1,l,stemp1,aggrx,0)
+							agg_rx_clr(pos1+l-1)
+						loop while pos1>0
+					case else
+						'cases for special setting modifications
+						stemp1=mid(s,5,len(s)-6)
+						sname=cmd.record
+						if device_specific_setting_sg(sname,index,stemp1,result,DEVICE_SET)=YES then
+							result=setting_sg(sname,index,stemp1,EN_STG_SET)
+							device_modtime_sg("",sname,0)
+						end if
+						if result <> EN_STG_STATUS_OK then
+							if result=EN_STG_STATUS_FAILURE then stemp1="Unable to save the variable"+"("+cmd.record+")"
+							if result=EN_STG_STATUS_INVALID then stemp1="Setting Value is invalid"+"("+cmd.record+")"
+							s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(COMMAND_PARAMETERS_SEPARATOR)+stemp1+chr(COMMAND_END)
+							agg_data_send(s)
+							agg_proc=AGG_IDLE_PHASE
+							exit sub
+						else
+							device_modtime_sg("",cmd.record,DEVICE_SET)
+							device_setting_saved(cmd.record,0,stemp1)
+						end if
+					end select
+				else
+					if len(s) >254 then goto rx_read
+					agg_proc=AGG_IDLE_PHASE
+					exit sub
+				end if
+				s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_END)
+				agg_data_send(s)
+				agg_proc=AGG_IDLE_PHASE
+				exit sub						
+			case "C":	
+				pos1=1
+				stemp1=chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+				
+				s=agg_element_extract(pos1,l,stemp1,aggrx,0)
+				s=agg_call_function(cmd.record,cmd.context_name,s,err)
+				if err=NO then
+					s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(COMMAND_PARAMETERS_SEPARATOR)+s+chr(COMMAND_END)
+				else
+					s=chr(COMMAND_START)+"R"+chr(COMMAND_PARAMETERS_SEPARATOR)+cmd.id+chr(COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(COMMAND_PARAMETERS_SEPARATOR)+s+chr(COMMAND_END)
+				end if
+
+				agg_data_send(s)
+				select case cmd.record
+					case "init":
+						while sock.txlen > 0 
+						wend
+						sock.close
+						device_operation("I")
+						device_operation("E")
+					case "reboot":
+						while sock.txlen > 0 
+						wend
+						sock.close
+						device_operation("E")
+				end select
+				agg_rx_getdata(chr(COMMAND_END))
+				agg_proc=AGG_IDLE_PHASE
+				exit sub
+			end select
+		end select
+	wend
+end sub
+
+#if STORED_EVENT=1
+'------------------------------------------------------------------------------
+public sub agg_proc_stored_events
+'Descr: Process Events, and send them to AggreGate server.
+	dim s as string 
+	dim stemp1 as string(64)	
+	dim i, j as byte
+	dim rec_num as word
+	
+	if agg_connected=NO or event_in_proc=YES or event_found=false then exit sub
+	rec_num=1
+	device_sys_busy(yes)	
+	if tbl_select(LOG_FILE)=EN_TBL_STATUS_OK and tbl_record_find(no,"","",1,EN_TBL_SEARCH_DOWN,PL_FD_FIND_EQUAL)=EN_TBL_STATUS_OK then
+		tbl_field_sg("event_name",stemp1,EN_TBL_GET)
+		for i=0 to EVENT_TYPE_NUM-1
+			if age(i).event_name=stemp1 then exit for
+		next i
+	
+		s=chr(COMMAND_START)+"M//E/"+age(i).context_name+"/"+age(i).event_name+"/"+age(i).event_level+"///"+chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+		if agg_set_data_source(LOG_FILE,rec_num) <> OK or rec_num=0 then 
+			device_sys_busy(no)
+			exit sub
+		end if
+		for j=0 to EVENT_FIELD_NUM-1
+			if age(i).event_fields(j)="" then exit for
+			if device_get_field_val(age(i).context_name, age(i).event_fields(j), stemp1) <> OK then 
+				device_sys_busy(no)
+				exit sub
+			end if
+			s=s + chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)
+		next j
+		agg_replace_chr(s,"/",chr(COMMAND_PARAMETERS_SEPARATOR))
+		s=s+chr(ELEMENT_END)+chr(COMMAND_END)
+		agg_data_send(s)
+		agg_rec_num=rec_num
+		sock.notifysent(0) 
+		event_in_proc=yes
+		device_sys_busy(no)
+		exit sub
+	end if		
+	event_found=false
+	device_sys_busy(no)
+end sub
+#endif
+'------------------------------------------------------------------------------
+public sub agg_proc_cur_events(event_name as string)
+	dim s as string 
+	dim stemp1 as string(64)	
+	dim i, j as byte
+	dim rec_num as word
+	
+	if agg_connected=NO then exit sub
+	rec_num=1
+	for i=0 to EVENT_TYPE_NUM-1
+		if event_name=age(i).event_name then exit for
+	next i
+	if age(i).disk_event=true and event_in_proc=YES then exit sub
+	
+	if i > EVENT_TYPE_NUM-1 then exit sub
+	device_sys_busy(yes)
+	s=chr(COMMAND_START)+"M//E/"+age(i).context_name+"/"+age(i).event_name+"/"+age(i).event_level+"///"+chr(ELEMENT_START)+"R"+chr(ELEMENT_NAME_VALUE_SEPARATOR)
+
+	if age(i).disk_event=true then
+#if STORED_EVENT= 1	
+		if agg_set_data_source(LOG_FILE,rec_num) <> OK or rec_num=0 then 
+			device_sys_busy(no)
+			exit sub
+		end if
+		for j=0 to EVENT_FIELD_NUM-1
+			if age(i).event_fields(j)="" then exit for
+			if device_get_field_val(age(i).context_name, age(i).event_fields(j), stemp1) <> OK then 
+				device_sys_busy(no)
+				exit sub
+			end if
+			s=s + chr(ELEMENT_START)+stemp1+chr(ELEMENT_END)
+		next j
+		cur_event_tbl=event_name
+		agg_rec_num=rec_num
+#endif
+	else
+#if INSTANT_EVENT=1
+		s=s+agg_event_buff
+#endif
+	end if
+	agg_replace_chr(s,"/",chr(COMMAND_PARAMETERS_SEPARATOR))
+	s=s+chr(ELEMENT_END)+chr(COMMAND_END)
+	agg_data_send(s)		
+	sock.notifysent(0)
+	event_in_proc=yes
+	device_sys_busy(no)
+end sub
+'------------------------------------------------------------------------------
+public sub agg_server_conn
+'Descr: Prepaer for AggreGate operations.
+	event_in_proc=NO
+	agg_login_rpl_timer=AGG_RPL_WAIT_TIME
+	agg_proc=AGG_IDLE_PHASE
+	aggrx=""
+	start_cmd_recieved=0
+end sub
+
+'------------------------------------------------------------------------------
+public sub agg_server_disconn
+'Descr: Close Aggregate connection
+	sock.num=SOCK_LS
+	sock.discard
+end sub
+
+'------------------------------------------------------------------------------
+public sub agg_proc_timer
+'Descr: Timer events for the aggregate 
+	dim s as string(1)
+	dim pw as string
+	dim comp_result as login_comparison_codes
+	dim b as byte
+	s=setting_get("AR",0)
+	if s="0" then exit sub
+	sock.num=SOCK_LS
+	select case sock.statesimple
+	case PL_SSTS_CLOSED:
+		if sock.rxlen>0 then 
+			sock.rxclear
+			aggrx=""
+		end if
+		if login_mode=CMD_MODE_AGGREGATE then 
+			logout
+			agg_connected=NO
+		else
+			pw=setting_get("PW",0)
+			comp_result=compare_logins (CMD_MODE_AGGREGATE,pw,SOCK_LS)
+			if comp_result=LC_WILL_ACCEPT or comp_result=LC_WILL_ACCEPT_REPEATED_LOGIN or comp_result=LC_WILL_ACCEPT_LOWER_IN_PROGRESS then
+				if agg_reconn_timer=0 then
+					sock.connect
+					b=asc(random(1))
+					agg_reconn_timer=b/AGG_RECONN_TIME
+				else
+					agg_reconn_timer=agg_reconn_timer - 1
+				end if
+			end if
+		end if
+	case PL_SSTS_EST:
+		comp_result=compare_logins (CMD_MODE_AGGREGATE,pw,SOCK_LS)
+		if comp_result=LC_WILL_REJECT_HIGHER_IN_PROGRESS then
+			sock.close
+		end if 
+		if agg_login_rpl_timer > 0 then 
+			if agg_connected=NO then 
+				agg_login_rpl_timer=agg_login_rpl_timer-1
+				if agg_login_rpl_timer=0 then sock.close
+			else
+				agg_login_rpl_timer=0
+			end if
+		end if
+	end select
+end sub

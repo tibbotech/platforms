@@ -1,0 +1,641 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+
+<HEAD>
+<base href="<?%BaseDir?>"/>
+<style type="text/css">@import url(universal.css);</style>
+<style type="text/css">
+		body 	{font-family: Arial, Helvetica, Sans Serif;}
+		th 		{background-color:yellow;} 
+		td 		{font-size: 15px;}
+		button {width: 75px;} 	
+</style>
+</HEAD>
+
+<BODY bgcolor="#F2F2F2">
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<table border="0" id = "auto_size"><tr bgcolor=#F2F2F2><td> 
+
+<!-- ----------------------------TAB HEADER START---------------------------------------- -->
+<div id="tab_header" >
+		<ul>
+			<!--<li id="selected"><a href="#" onclick="javascript:refresh_tab(0)">General</a></li>-->
+		</ul>
+</div>
+<div id="tab_content" ><br>
+<!-- ------------------------------------------------------------------------------------ -->
+
+
+	<div class="posttext">
+			<!-- ------------------------Fields Display Section---------------------- -->
+			<!-- Entity -->
+			<table> 
+			<!-- -------------------------------------------------------------------- -->
+			<!-- Description: -->
+			<tr>
+			<td><p><span title="header=[Description:] body=[Description of the context, i.e. textual information about its purpose.]">Description:</span></td>
+			<td><input type="text" ID="edit_DESCRIPTION" value="" maxlength="255" onkeypress="javascript:KeyPress(this);"  style="width: 175px"> </p></td>
+			</tr>
+			<!-- -------------------------------------------------------------------- -->
+			<!-- Context Type -->
+			<tr>
+			<td><p><span title="header=[Context Type:] body=[The Context Type helps AggreGate decide if the same operations may be applied to different contexts, such as properties amount them. Context type is a string that may contain only letters, numbers and underscore character.]">Context Type:</span>  </td>
+			<td><input type="text" ID="edit_CONTEXT_TYPE" value="" maxlength="255" onkeypress="javascript:KeyPress(this);" style="width: 175px"> </p></td>
+			</tr>
+			<!-- --------------------------------------------------------------------- -->
+			<tr><td>&nbsp</td><td>&nbsp</td></tr>
+			</table>
+	</div>
+	
+	
+</div>
+<!-- ---------------------------TAB END(div tab_content)----------------------------------- -->
+
+<div align="right" >
+	<br>
+	<button width = "100"  onclick="OnOK()">OK</button> &nbsp;
+	<button width = "100"  onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+	<button width = "100"  style="display : none;" onclick="">IsNumeric</button> &nbsp;
+</div>
+</B></font></td></tr></table>
+
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+var info_structure = new Object();
+
+//ret value to html object
+load_data();//load data on start
+
+//=================================================1.General Operation===================================================
+
+
+//load data record
+function load_data()
+{
+	//document.getElementById("").value = external.Context.Target.TBL_NAME;
+	var tmpobj=decode_info_script(external.Context.Target.Necessary_Script_Set[0].N_SCRIPT);
+	if (tmpobj==null)  								// if ((tmpobj.Description==null)||(tmpobj.Context_type==null)) 
+	{
+		var tmpobj= new Object(); 												//It needs to be redefined, cuz it's null now.
+		tmpobj.Description='';
+		tmpobj.Context_type='';
+	}
+	document.getElementById("edit_DESCRIPTION").value =tmpobj.Description;
+	document.getElementById("edit_CONTEXT_TYPE").value =tmpobj.Context_type;
+	//assign global info object.
+	info_structure=tmpobj;
+}
+
+//ON OK
+function OnOK()
+{
+	//external.Context.Target.NUM_KEY_FIELD=tmp_numkeyf.toString();
+	var tmp_DS_str='';
+	var tmp_CT_str='';
+	tmp_DS_str=document.getElementById("edit_DESCRIPTION").value
+	tmp_CT_str=document.getElementById("edit_CONTEXT_TYPE").value;
+	info_structure.Description=tmp_DS_str.replace(/(^\s*)|(\s*$)/g, "");          //trim
+	info_structure.Context_type=tmp_CT_str.replace(/\s*/g,""); 										//white space is not allowed.
+	
+	
+	if (validate_info(info_structure)==false) return ;
+	
+
+	external.Context.fld_N_SCRIPT.Description=info_structure.Description;
+	external.Context.fld_N_SCRIPT.Context_type=info_structure.Context_type;
+	var tmp_str=encode_info_script(info_structure);
+	external.Context.Target.Necessary_Script_Set[0].N_SCRIPT=tmp_str;
+	external.EndDialog(1);
+}
+
+//========================================================2. validation ======================================================================================
+//validate TableInfo
+function validate_info(obj)
+{
+		var html_DESCRIPTION=document.getElementById("edit_DESCRIPTION");
+		var html_CONTEXT_TYPE=document.getElementById("edit_CONTEXT_TYPE");
+		var info_description =new String();
+		var info_context_type = new String();
+		info_description=obj.Description;
+		info_context_type=obj.Context_type;
+		
+//validation start.
+		if (info_structure.Description.length==0) 
+		{
+			alert('The length of the \'Description\' field cannnot be null.');
+			set_focus(html_DESCRIPTION);
+			return false;
+		}
+		if (info_structure.Context_type.length==0)
+		{
+			alert('The length of the \'Context Type\' field cannnot be null.');
+			set_focus(html_CONTEXT_TYPE);
+			return false;
+		}
+//final validation
+		var tmp_str=encode_info_script(info_structure);
+		if (tmp_str=='')
+		{
+			alert('An error occur while execute encoding sequence.')
+			set_focus(html_DESCRIPTION);
+			return false;
+		}
+/* Disable this section cuz the limitation is overcomed.
+		if (tmp_str.length>255) 
+		{
+			alert('The total length of the both field can\'t not great than 255.  ');
+			set_focus(html_DESCRIPTION);
+			return false;
+		}
+*/
+		return true;
+}
+
+//========================================================3. input control ===================================================================================
+function KeyPress(objTR)
+{
+  //var objTR = element.document.activeElement;                
+  var txtval=objTR.value;                  
+  var key = event.keyCode;
+	var field_name=objTR.id;
+	switch(field_name){
+	case "edit_DESCRIPTION":
+	case "edit_CONTEXT_TYPE":
+    if((key == 60)||(key == 62))
+    {                
+           event.keyCode = 0;
+    }
+    break;
+	default:
+	  break;
+	}
+}
+//========================================================4. the rest of the functions =======================================================================
+
+//return the script string
+function encode_info_script(info_obj)
+{
+		if (!info_obj) return '';
+		var tmp_SCRIPT= new String();
+		tmp_SCRIPT='<'+info_obj.Description+'>';
+		tmp_SCRIPT+='<'+info_obj.Context_type+'>';
+		tmp_SCRIPT='<R='+tmp_SCRIPT+'>';
+		return tmp_SCRIPT;
+}
+
+//get the value form the script, and return the value to the defined data structure.
+function decode_info_script(str)
+{
+	//str.replace(/[^a]/g, "").length //calculate how many occurances in a single string
+	//if return null value means the data is invalid.
+	/* Disable this section cuz the limitation is overcomed.
+	if ((str.length>255)||(str.length==0))
+	{
+		alert('The length of the \'info\' script has to be between 0~255.');
+		return null;
+	}
+	*/
+	if (str.length==0)
+	{
+		alert('The length of the \'info\' script has to be > 0.');
+		return null;
+	}
+
+	
+	var info_exp=/<\s*R\s*=\s*<(.*)>\s*<(\w*)>\s*>\s*/;
+	var temp_array=info_exp.exec(str);
+	if (temp_array===null) 
+	{
+		alert('The \'info\' script is ill-formated or corrpted.');
+		return null;
+	}
+	if (temp_array.length<2)
+	{
+		alert('Detect null value(s) in the \'info\' script.');
+		return null;
+	}
+	var tmp_obj=new Object();
+	tmp_obj.Description=temp_array[1];
+	tmp_obj.Context_type=temp_array[2];
+	return tmp_obj;
+}
+
+//set focus
+function set_focus(elm)
+{
+    if(typeof(elm) == 'string') 
+    {
+        elm = xGetElementById(elm);
+    }
+    if (elm) 
+    {     
+        elm.focus();
+        elm.select();
+    }
+}
+
+//refresh tab
+function refresh_tab(li_index)
+{
+	//var all_tab_content=document.getElementsByID('div');
+	if (tab_content!='undefined')
+	{
+		for (var i=0;i<tab_content.length;i++)
+		{
+			tab_content(i).style.display="none";
+		}
+	}
+	var all_li=document.getElementsByTagName('li');
+	if (all_li)
+	{
+		for (var i=0;i<all_li.length;i++)
+		{
+				all_li[i].id="";
+				if (i==li_index) 
+				{
+					all_li[i].id="selected";
+					if (i<tab_content.length) {tab_content(i).style.display="block";};
+				}
+		}		
+	}
+}
+
+//--------------------------------------------
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='180px'; //def 15
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='11';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9'; 
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='180px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='12';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#fffAAA';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.90'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+</script>
+
+
+</BODY>
+</HTML>

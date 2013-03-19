@@ -1,0 +1,2037 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>TABLE INTERFACE</title>
+<base href="<?%BaseDir?>"/>
+
+
+<style type="text/css">@import url(universal.css);</style>
+
+</head>
+<body oncontextmenu="return false">
+
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------HTML BODY------------------------------------------------------------------------------------------------ -->
+
+<!-- Related Setting Options -->
+<div class="posttext"> 
+		<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img> <div id="VersionTag" class="verRight">Configurator Version(TBL) - 0.9.1.b &#160;&#160;</div> 
+		<h2>Library Options (mouse over for hint)</h2>
+							<!-- Debug Print -->
+							<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="changed_flag=true;reload_sharp_def();validate_all();">  
+							<span title="header=[<img src='info.ico' width='20' height='20'></img>        Debug Print:] body=[When <b>checked</b>, prints debug information into the <B>output pane</B>. Debug printing only works when the project is in the debug mode. However, still <b>uncheck</b> this option for release, as this will save memory and code space.]">
+							Debug Printing</span>&nbsp;&nbsp;</p>		
+							<!-- TBL_AGGREGATE_HASH -->
+			  			<p><input type="checkbox" name="checkbox" id="checkbox" value="checkbox" onclick ="changed_flag=true;reload_sharp_def();validate_all();">  
+			  			<span title="header=[<img src='info.ico' width='20' height='20'></img>        AggreGate Hash:] body=[When <b>checked</b>, AggreGate Hash is supported. ]">
+			  			AggreGate Hash</span>&nbsp;&nbsp;</p>
+							
+</div>
+<!-- Tables Defnition Section -->
+<div class="posttext">   
+				<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img><h2>Table(s) Definitions</h2> 
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" style="display:none;" onclick = "alert(TBL_AGGREGATE_HASH);">test</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Edit(SelectedRow_Table);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_Table);">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('parent','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('parent','down');">Move Down</button>&nbsp;
+						</p>
+						<p>		
+						<table border="1" class="cls_main_table" id ="my_table">
+								<tr  style="background-color:#FFD700">
+								<th>Table Name</th><th>Max Records</th><th>Table Struct</th><th>Number of Key Field(s)</th><th>Comment</th><th bgcolor=#F2F2F2>Status</th>
+								</tr>
+						</table>
+						</p>		
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Edit(SelectedRow_Table);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_Table);">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "tbl_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('parent','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('parent','down');">Move Down</button>&nbsp;
+						</p>
+</div>	
+
+					
+<!-- Fields Defnition Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Field(s) Definitions</h2>
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Edit(SelectedRow_Field);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_Field,'child');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('child','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('child','down');">Move Down</button>&nbsp;
+						</p>
+						<p>
+						<table border="1" class="cls_main_table" id ="my_table2">
+								<tr style="background-color:#FFD700">
+								<th>Field Name</th><th>Type</th><th>P1(min)</th><th>P2(max)</th><th>Default Value</th><th>Comment</th> <th bgcolor=#F2F2F2> Status </th>
+								</tr>
+						</table>
+						</p>
+						<p>
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Add();">Add</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Edit(SelectedRow_Field);">Edit</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(SelectedRow_Field,'child');">Delete</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "fld_Insert();">Insert</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('child','up');">Move Up</button>&nbsp;
+						<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "move_to_next('child','down');">Move Down</button>&nbsp;
+						</p>							
+</div>
+
+<!-- summary_report Section -->
+<div class="posttext">
+				<img class="imgleft" src="tdoc.ico" width="30" height="32"></img><h2>Summary Report</h2>
+						<div id="summary_report">
+						</div>
+</div>
+
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<!-- ----------------------------------------------------------------JAVA SCRIPT------------------------------------------------------------------------------------------------ -->
+<script>
+	
+var TBL_TABLE_STRUCT= new String();
+var TBL_MAX_TABLE_NAME_LEN=0;
+var TBL_MAX_RECORD_SIZE=0; 								//must be a power-of-two value 'this field would occupy up to 2 chars in string form, while you have 'TBL_MAX_FIELD_VALUE_LEN 1'.
+var TBL_MAX_FIELD_NAME_LEN=0;
+var TBL_MAX_NUM_TABLES=0;
+var TBL_MAX_TOTAL_NUM_FIELDS=0;
+var TBL_AGGREGATE_HASH=0;
+var TBL_DESCRIPTOR_FILE= new String;
+var TBL_MAX_FIELD_VALUE_LEN=0;
+var TBL_TIME_TYPE_INCLUDED=1;							//Add "TBL_TIME_TYPE_INCLUDED". Remember the default value in the library is 1. 
+
+
+var field={TABLE_STRUCT:0,FIELD_TYPE:1}; 	//Enum, for ret_alias.
+var err_mark_list2 = new Array(); 				//For showing field error list. we make it public, cuz field error list is dynamic.
+var err_msg_array = new Array();
+var changed_flag=false;                  	//To see if the Doc has been modified.                
+var def_stg={TBL_MAX_TABLE_NAME_LEN:0,TBL_MAX_FIELD_NAME_LEN:0,TBL_MAX_FIELD_VALUE_LEN:0,TBL_MAX_RECORD_SIZE:0,TBL_MAX_NUM_TABLES:0,TBL_MAX_TOTAL_NUM_FIELDS:0}; //for generating setting definition for 'include'.
+
+
+show_sharp_def();
+chk_corrupt();    //Only on beginning
+load_table_def();
+validate_all();
+point_on_first(); //1.Move current pointer to first record  2.This will trigger the function load_field_def 3.better behind the validate_all will get the latest child err_mark_list2
+
+//=================================================General Operation===================================================
+//alert(external.XText.TableSet[0].FieldsDefnition[2].FIELD_NAME);
+//load TableDefnition
+function load_table_def()
+{
+		var obj_record=external.XText.TableSet;
+		var html_table =document.getElementById("my_table");
+		
+		if ( html_table.rows.length > 1) //clear all if in case we may reload it.
+		{
+				var tmp_length=html_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					html_table.deleteRow(1);
+				}
+				
+		}
+		for (var i = 0; i < obj_record.length; i++)
+		{
+				var Row = document.getElementById("my_table").insertRow();
+				
+				Row.onmousedown = function() { Select(this); };
+				Row.ondblclick = function() { tbl_Edit(this); };
+				Row.insertCell(0).innerHTML = obj_record[i].TBL_NAME;
+				Row.insertCell(1).innerHTML = obj_record[i].MAX_RECS;
+				Row.insertCell(2).innerHTML = ret_alias(field.TABLE_STRUCT, obj_record[i].TBL_STRUCT);
+				Row.insertCell(3).innerHTML = obj_record[i].NUM_KEY_FIELD;
+				var tmp_tbl_c=obj_record[i].TBL_COMMENT;
+				if (typeof(tmp_tbl_c)=='undefined')  tmp_tbl_c='&nbsp;';	//for comment(if null)
+				if (tmp_tbl_c=='')  tmp_tbl_c='&nbsp;';	//for comment(if null)
+				Row.insertCell(4).innerHTML = tmp_tbl_c;
+				Row.insertCell(5).innerHTML = '&nbsp;'; //must add this (status)
+				Row.cells(5).style.backgroundColor="#F2F2F2";
+		}
+		//clear all child if in case we might use this function to reload it.
+		var html_field_table =document.getElementById("my_table2");
+		remove_all_rows(html_field_table);  
+}
+
+//load FieldsDefnition
+function load_field_def(tbl_index)
+{
+		if (tbl_index>external.XText.TableSet[tbl_index].length) alert('123');
+		var obj_record=external.XText.TableSet[tbl_index].FieldsDefnition;
+		var html_table =document.getElementById("my_table2");
+		
+		if ( html_table.rows.length > 1) //clear all if in case we may reload it.
+		{
+				var tmp_length =html_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					html_table.deleteRow(1);
+				}
+				
+		}
+		for (var i = 0; i < obj_record.length; i++)
+		{
+				var Row = document.getElementById("my_table2").insertRow();
+				
+				Row.onmousedown = function() { Select(this,"child"); };
+				Row.ondblclick = function() { fld_Edit(this); };
+				Row.insertCell(0).innerHTML = obj_record[i].FIELD_NAME;
+				Row.insertCell(1).innerHTML = ret_alias(field.FIELD_TYPE,obj_record[i].FIELD_TYPE);
+				Row.insertCell(2).innerHTML = obj_record[i].P1;
+				Row.insertCell(3).innerHTML = obj_record[i].P2;
+				Row.insertCell(4).innerHTML = obj_record[i].DEFVAL;
+				var tmp_fld_c=obj_record[i].FLD_COMMENT;;
+				if (typeof(tmp_fld_c)=='undefined')  tmp_fld_c='&nbsp;';	//for comment(if null)
+				if (tmp_fld_c=='')  tmp_fld_c='&nbsp;';	//for comment(if null)
+				Row.insertCell(5).innerHTML = tmp_fld_c;
+				Row.insertCell(6).innerHTML = '&nbsp;'; //must add this (status)
+				Row.cells(6).style.backgroundColor="#F2F2F2";
+		}
+}
+
+//Erase all rows in the html table
+function remove_all_rows(html_table)
+{
+		if ( html_table.rows.length > 1) //leave column header only.
+		{
+				var tmp_length =html_table.rows.length;
+				for (var i = 1; i < tmp_length; i++)
+				{
+					html_table.deleteRow(1);
+				}
+				
+		}
+}
+
+//summary report
+function show_summary_report(ok_flag)
+{
+	var summary_str=new String;
+  var tbl_rows =TBL_MAX_NUM_TABLES;  		//external.XText.TableSet.length;
+	var fld_rows =TBL_MAX_TOTAL_NUM_FIELDS;//external.XText.TableSet.FieldsDefnition.length;
+
+	summary_str="";
+	if (ok_flag)
+	{
+		summary_str='<p>Number of Tables:&nbsp;'+TBL_MAX_NUM_TABLES+'</p>';
+		summary_str+='<p>Total Number of Fields:&nbsp;'+TBL_MAX_TOTAL_NUM_FIELDS+'</p>';
+		summary_str+='<p>Current Max Records Size:&nbsp;'+TBL_MAX_RECORD_SIZE+'&nbsp;bytes</p>';
+	}
+	else
+	{
+		summary_str='<p>Table definitions contain invalid data and the report cannot be generated.</p>';	
+		for (var i = 0; i < err_msg_array.length; i++)
+		{
+				summary_str+=err_msg_array[i];
+		}
+	}
+	document.getElementById('summary_report').innerHTML=summary_str;
+}
+
+//other---------------
+var SelectedRow_Table;
+var SelectedRow_Field;
+
+function Select(Row,Role)
+{
+	 // if Role != 'null' means role=child table
+	if(!Role) 
+	{
+		if (!Row) return;
+		if (SelectedRow_Table) 	SelectedRow_Table.bgColor = 0xffffff;
+		Row.bgColor = 0xff9080;
+		SelectedRow_Table = Row;
+		load_field_def(Row.rowIndex-1);//on select: reload child fieldtable
+		point_on_first("child");
+		//show child validation status
+		var parent_index=SelectedRow_Table.rowIndex-1
+		show_fld_err_mark(parent_index);
+	}
+	else
+	{
+		if (!Row) return;
+		if (SelectedRow_Field) 	SelectedRow_Field.bgColor = 0xffffff;
+		Row.bgColor = 0xff9080;
+		SelectedRow_Field = Row;
+	}
+}
+
+function Delete(Row,Role)
+{	
+	if (!Row)		return;
+
+	
+	if(!Role)  //parent
+	{//Table Def
+			if (Row == SelectedRow_Table) SelectedRow_Table = null; 	//set to null, cuz has been deleted.
+			external.XText.TableSet.splice(Row.rowIndex-1, 1);
+			external.SetModified(true);
+			document.getElementById('my_table').deleteRow(Row.rowIndex);
+			
+			var html_field_table =document.getElementById("my_table2");
+			remove_all_rows(html_field_table);  	//the line is to avoid  the refresh of the field definition table  won't be triggered when Record count is one and the user delete it. 
+			point_on_first(); 										//change the parent pointer to refresh the the child
+	}
+	else     //child
+	{//Field Def
+			var fld_table=document.getElementById('my_table2');
+			if (fld_table.rows.length<2) return;
+			
+			if (!SelectedRow_Table) return; //if parent table is not selected then drop it.
+			// get the parent_table index first
+			var parent_index=SelectedRow_Table.rowIndex-1;
+			var del_flag=chk_fld_deletion(external.XText.TableSet[parent_index]);
+			if (del_flag==true) { return;}; //true=can't delete it.
+			if (Row == SelectedRow_Field) SelectedRow_Field = null;
+			external.XText.TableSet[parent_index].FieldsDefnition.splice(Row.rowIndex-1, 1);
+			external.SetModified(true);
+			fld_table.deleteRow(Row.rowIndex);		//appearance
+			point_on_first("child");
+	}
+	validate_all();
+}
+
+//check if deletion rules 
+//1.the flds can't < num of key field, 
+//2.evenif num of key field=0 the flds can't <1.
+function chk_fld_deletion(single_tbl)
+{
+	var bln_del=false; //true=can't delete it.
+	var field_count=single_tbl.FieldsDefnition.length; //real length
+	if ((single_tbl.NUM_KEY_FIELD > field_count)||(single_tbl.NUM_KEY_FIELD == field_count))
+	{
+		alert('You cannot perform delete operation while you have NUM_KEY_FIELD='+single_tbl.NUM_KEY_FIELD+'.');
+		bln_del=true;
+	}
+	else
+	{
+			if (field_count==1) 
+			{
+				alert('You cannot perform delete operation while you have only one record remains in your field definition table.');
+				bln_del=true;
+			}
+	}
+	return bln_del;
+}
+
+
+function tbl_Edit(Row)
+{	
+	if (!Row)
+		return;
+	
+	var Context = new Object;
+	Context.Target = external.XText.TableSet[Row.rowIndex-1];
+	Context.srcFORMTYPE = 'EDIT';
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	Context.REAL_TBL_SET=external.XText.TableSet; //for checking unique table name
+	
+	var Result = external.ModalDialog("table_edit_T.html", "Edit (Table Definition)", Context);
+	if (Result != 1) 		return;	
+	
+	Row.cells(0).innerHTML = Context.Target.TBL_NAME;
+	Row.cells(1).innerHTML = Context.Target.MAX_RECS;
+	Row.cells(2).innerHTML = ret_alias(field.TABLE_STRUCT, Context.Target.TBL_STRUCT);
+	Row.cells(3).innerHTML = Context.Target.NUM_KEY_FIELD;
+	Row.cells(4).innerHTML = Context.Target.TBL_COMMENT;
+	if (Context.Target.TBL_COMMENT=='') Row.cells(4).innerHTML = '&nbsp';
+	
+	external.SetModified(true);
+	validate_all();
+}
+
+function fld_Edit(Row)
+{	
+	if (!SelectedRow_Table) return; //if parent table is not selected then drop it.
+	var parent_index=SelectedRow_Table.rowIndex-1
+	var owner_name=external.XText.TableSet[parent_index].TBL_NAME;    												//vali
+	
+	if (!Row)
+		return;
+	
+	var Context = new Object;
+	Context.Target = external.XText.TableSet[parent_index].FieldsDefnition[Row.rowIndex-1];
+	Context.srcFORMTYPE = 'EDIT';
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	Context.REAL_SINGLE_TBL=external.XText.TableSet[parent_index]; 														//for checking unique fld name
+	
+	var Result = external.ModalDialog("table_edit_F.html", "Edit (Field Definition)             [ Table : "+owner_name+" ]", Context);
+	if (Result != 1) 		return;	
+	
+	Row.cells(0).innerHTML = Context.Target.FIELD_NAME;
+	Row.cells(1).innerHTML = ret_alias(field.FIELD_TYPE,Context.Target.FIELD_TYPE);
+	Row.cells(2).innerHTML = Context.Target.P1;
+	Row.cells(3).innerHTML = Context.Target.P2;
+	Row.cells(4).innerHTML = Context.Target.DEFVAL;
+	Row.cells(5).innerHTML = Context.Target.FLD_COMMENT;
+	if (Context.Target.FLD_COMMENT=='') Row.cells(5).innerHTML = '&nbsp';
+	external.SetModified(true);
+	validate_all();
+}
+
+function tbl_Add()
+{	
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.srcFORMTYPE = 'ADD';
+	// initial value of ADD dialog box(Note: note that must be by order)
+	Context.Target.TBL_NAME = "";
+	Context.Target.MAX_RECS = "10";
+	Context.Target.TBL_STRUCT = "T";
+	Context.Target.NUM_KEY_FIELD= "0";
+	Context.Target.TBL_COMMENT= "";
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	Context.REAL_TBL_SET=external.XText.TableSet; //for checking unique table name
+	
+	var Result = external.ModalDialog("table_edit_T.html", "Add New (Table Definition)", Context);
+	if (Result != 1) 	return;									 //Cancel
+	
+	Context.Target.FieldsDefnition = new Array;// don't forget this too. the data structure must be the same.
+	//add as many key fields as we defined.
+	add_key_flds(Context.Target.NUM_KEY_FIELD,Context.Target.FieldsDefnition); //dima
+	external.XText.TableSet.push(Context.Target);
+	external.SetModified(true);
+
+	
+	var Row = document.getElementById("my_table").insertRow();
+	Row.onmousedown = function() { Select(Row); };
+	Row.ondblclick = function() { tbl_Edit(Row); };
+	Row.insertCell(0).innerHTML =	Context.Target.TBL_NAME;
+	Row.insertCell(1).innerHTML = Context.Target.MAX_RECS;
+	Row.insertCell(2).innerHTML = ret_alias(field.TABLE_STRUCT, Context.Target.TBL_STRUCT);
+	Row.insertCell(3).innerHTML = Context.Target.NUM_KEY_FIELD;
+	Row.insertCell(4).innerHTML = Context.Target.TBL_COMMENT;
+	if (Context.Target.TBL_COMMENT=='') Row.cells(4).innerHTML = '&nbsp';
+	Row.insertCell(5).innerHTML = '&nbsp;';
+	Row.cells(5).style.backgroundColor="#F2F2F2";	
+	Select(Row); //set focus after each 'adding' process
+	validate_all();
+}
+
+function tbl_Insert()
+{	
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.srcFORMTYPE = 'ADD';
+	// initial value of ADD dialog box(Note: note that must be by order)
+	Context.Target.TBL_NAME = "";
+	Context.Target.MAX_RECS = "10";
+	Context.Target.TBL_STRUCT = "T";
+	Context.Target.NUM_KEY_FIELD= "0";
+	Context.Target.TBL_COMMENT= "";
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	Context.REAL_TBL_SET=external.XText.TableSet; //for checking unique table name
+	
+	var Result = external.ModalDialog("table_edit_T.html", "Add New (Table Definition)", Context);
+	if (Result != 1) 	return;									 //Cancel
+
+	//Start inserting sequence(a.).
+	var Row=SelectedRow_Table;
+	if (!Row)
+	{ 	
+			Context.Target.FieldsDefnition = new Array;// don't forget this too. the data structure must be the same.
+			add_key_flds(Context.Target.NUM_KEY_FIELD,Context.Target.FieldsDefnition); //dima  //add as many key fields as we defined.	
+				
+			var tmp_Row_Index= document.getElementById("my_table").rows.length-1;
+			external.XText.TableSet.push(Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+			Context.Target.FieldsDefnition = new Array;// don't forget this too. the data structure must be the same.
+			add_key_flds(Context.Target.NUM_KEY_FIELD,Context.Target.FieldsDefnition); //dima  //add as many key fields as we defined.		
+		
+			var tmp_Row_Index=Row.rowIndex-1;
+			external.XText.TableSet.splice(tmp_Row_Index, 0,Context.Target); 																												//insert
+			external.SetModified(true);	
+	}
+	
+	refresh_adv_format_table('parent');							//validate_all with in.				
+	point_on_index(tmp_Row_Index,'parent');					//tmp_Row_Index
+}
+
+//for table add new
+function add_key_flds(NUM_KFs,fld_set) 
+{
+		if (NUM_KFs==0)
+		{
+			var fld_obj=new Object();
+			fld_obj.FIELD_NAME = "F1";
+			fld_obj.FIELD_TYPE = "S";
+			fld_obj.P1 = "0";
+			fld_obj.P2 = "16";
+			fld_obj.DEFVAL = "^";
+			fld_obj.FLD_COMMENT="";
+			fld_set.push(fld_obj);	
+			return;		
+		}
+		for (var i=0;i<NUM_KFs;i++)
+		{
+			var fld_obj=new Object();
+			fld_obj.FIELD_NAME = "F"+(i+1);
+			fld_obj.FIELD_TYPE = "S";
+			fld_obj.P1 = "0";
+			fld_obj.P2 = "16";
+			fld_obj.DEFVAL = "^";
+			fld_obj.FLD_COMMENT="";
+			fld_set.push(fld_obj);
+		}
+}
+
+function fld_Add(tbl_Row)
+{	
+	if (!SelectedRow_Table) return; //if parent table is not selected then drop it.
+	var parent_index=SelectedRow_Table.rowIndex-1
+	
+	
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.srcFORMTYPE = 'ADD';
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	
+	Context.Target.FIELD_NAME = "";
+	Context.Target.FIELD_TYPE = "S";
+	Context.Target.P1 = "0";
+	Context.Target.P2 = "16";
+	Context.Target.DEFVAL = "^";
+	Context.Target.FLD_COMMENT="";
+	Context.REAL_SINGLE_TBL=external.XText.TableSet[parent_index]; 													//for checking unique fld name
+	
+	var owner_name=external.XText.TableSet[parent_index].TBL_NAME;   												//vali
+	var Result = external.ModalDialog("table_edit_F.html", "Add New (Field Definition)             [ Table : "+owner_name+" ]", Context);
+	if (Result != 1) 	return;	//Cancel
+
+	
+	external.XText.TableSet[parent_index].FieldsDefnition.push(Context.Target);
+	external.SetModified(true);
+	
+	
+	var Row = document.getElementById("my_table2").insertRow();
+	Row.onmousedown = function() { Select(Row,'child'); };
+	Row.ondblclick = function() { fld_Edit(Row); };
+	Row.insertCell(0).innerHTML = Context.Target.FIELD_NAME;
+	Row.insertCell(1).innerHTML = ret_alias(field.FIELD_TYPE,Context.Target.FIELD_TYPE);
+	Row.insertCell(2).innerHTML = Context.Target.P1;
+	Row.insertCell(3).innerHTML = Context.Target.P2;
+	Row.insertCell(4).innerHTML = Context.Target.DEFVAL;
+	Row.insertCell(5).innerHTML = Context.Target.FLD_COMMENT;
+	if (Context.Target.FLD_COMMENT=='') Row.cells(5).innerHTML = '&nbsp';
+	Row.insertCell(6).innerHTML = '&nbsp;';
+	Row.cells(6).style.backgroundColor="#F2F2F2";	
+	Select(Row,'child'); //set focus after each adding process
+	validate_all();
+}
+
+//filed definition Insert
+function fld_Insert(tbl_Row)
+{	
+	if (!SelectedRow_Table) return; //if parent table is not selected then drop it.
+	var parent_index=SelectedRow_Table.rowIndex-1
+	
+	
+	var Context = new Object;
+	Context.Target =new Object;
+	Context.srcFORMTYPE = 'ADD';
+	Context.TBL_AGGREGATE_HASH=TBL_AGGREGATE_HASH;
+	
+	Context.Target.FIELD_NAME = "";
+	Context.Target.FIELD_TYPE = "S";
+	Context.Target.P1 = "0";
+	Context.Target.P2 = "16";
+	Context.Target.DEFVAL = "^";
+	Context.Target.FLD_COMMENT="";
+	Context.REAL_SINGLE_TBL=external.XText.TableSet[parent_index]; 													//for checking unique fld name
+	
+	var owner_name=external.XText.TableSet[parent_index].TBL_NAME;   												//vali
+	var Result = external.ModalDialog("table_edit_F.html", "Add New (Field Definition)             [ Table : "+owner_name+" ]", Context);
+	if (Result != 1) 	return;	//Cancel
+
+	//Start inserting sequence(a.).
+	var Row=SelectedRow_Field;
+	if (!Row)
+	{ 	
+				
+			var tmp_Row_Index= document.getElementById("my_table2").rows.length-1;
+			external.XText.TableSet[parent_index].FieldsDefnition.push(Context.Target);
+			external.SetModified(true);
+	}
+	else
+	{
+		
+			var tmp_Row_Index=Row.rowIndex-1;
+			external.XText.TableSet[parent_index].FieldsDefnition.splice(tmp_Row_Index, 0,Context.Target); 																												//insert
+			external.SetModified(true);	
+	}
+	
+	refresh_adv_format_table('child');							//validate_all with in.				
+	point_on_index(tmp_Row_Index,'child');					//tmp_Row_Index
+
+}
+
+//set focus on first record
+function point_on_first(Role)
+{
+	if(!Role)  // Role<>null means role=child table
+	{
+			var table =document.getElementById("my_table");
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0) 
+			{
+				var Row=table.rows[1]
+				Select(Row);
+			}
+	}
+	else
+	{
+			var table =document.getElementById("my_table2");
+			var rows = Number(table.rows.length)-1;
+			if (rows!=0) 
+			{
+				var Row=table.rows[1]
+				Select(Row,"child");
+			}	
+	}	
+}
+
+//set focus on the record
+function point_on_index(p_index,src_type)
+{
+	if (!src_type) return;
+	switch(src_type)
+	{
+			case 'parent':
+					if (isNaN(p_index)) return;
+					var table =document.getElementById("my_table");
+					var rows = Number(table.rows.length)-1;
+					if ((rows!=0)&&(p_index<rows+1))
+						{
+								var Row=table.rows[p_index+1]
+								Select(Row);
+						}
+					break;
+			case 'child':
+					if (isNaN(p_index)) return;
+					var table =document.getElementById("my_table2");
+					var rows = Number(table.rows.length)-1;
+					if ((rows!=0)&&(p_index<rows+1))
+						{
+								var Row=table.rows[p_index+1]
+								Select(Row,"child");
+						}
+					break;				
+	}
+}
+
+//---------------------------------------------
+//change the order of the record  in the table
+//move_to_next(which table, up/down)
+//SelectedRow_Table
+//SelectedRow_Field
+//---------------------------------------------
+function move_to_next(src_type, Dir)
+{
+		if (!src_type) return;
+		switch(src_type)
+		{	
+				case 'parent':
+						if (!Dir) return;
+						//0.check eof
+						var dir_offset= new Number();
+						var Row=SelectedRow_Table;
+						
+						if (!Row) return;																																//It means no pointer in the table. Nothing to move.
+						if (!external.XText.TableSet) return;																						//if the XTXT Object is not avaiable, exit function.
+						
+						if (Dir=='up'){
+							if ((Row.rowIndex)<=1) return;																								//Avoid that the index is out of the range.
+							dir_offset=-1;
+						}
+						else{
+							if (external.XText.TableSet.length<=(Row.rowIndex)) return;										//Avoid that the index is out of the range.	
+							dir_offset=1;
+						}
+						
+						//1.get the selected record. then delete it. then insert it.
+						if (Row == SelectedRow_Table)  SelectedRow_Table = null;
+						var tmp_record_obj=external.XText.TableSet[Row.rowIndex-1];											//get the whole record(single).
+						var tmp_Row_Index=Row.rowIndex-1;
+						external.XText.TableSet.splice(tmp_Row_Index, 1); 															//1. delete it first
+						external.XText.TableSet.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 		//2. then insert	
+						external.SetModified(true);	
+																																										
+						//2.refresh(reload) the HTML Table(Parent).
+						refresh_adv_format_table('parent');																									
+						//3.Set the pointer to the record that we just moved. 
+						var cur_fld_index=tmp_Row_Index+dir_offset;																			//tmp_Row_Index+(dir_offset+1)
+						point_on_index(cur_fld_index,'parent');		
+						break;
+				case 'child':
+						//-1
+						if (!Dir) return;
+						if (!SelectedRow_Table) return;								//Important:No parent is selected,then no child.
+						var parent_Index=SelectedRow_Table.rowIndex		//get parent index 
+						
+						//0.check eof
+						var dir_offset= new Number();
+						var Row=SelectedRow_Field;
+						
+						
+						if (!Row) return;																																//It means no pointer in the table. Nothing to move.
+						if (!external.XText.TableSet) return;																						//if the XTXT Object is not avaiable, exit function.
+						if (external.XText.TableSet.length<=parent_Index) return;												//parent_Index must be in the range
+						parent_Index=parent_Index-1;																										//real index in XTXT		
+						if (!external.XText.TableSet[parent_Index].FieldsDefnition) return;
+
+
+						
+						if (Dir=='up'){
+							if ((Row.rowIndex)<=1) return;																								//Avoid that the index is out of the range.
+							dir_offset=-1;
+						}
+						else{
+							if (external.XText.TableSet[parent_Index].FieldsDefnition.length<=(Row.rowIndex)) return;										//Avoid that the index is out of the range.	
+							dir_offset=1;
+						}
+						
+						//1.get the selected record. then delete it. then insert it.
+						if (Row == SelectedRow_Field)  SelectedRow_Field = null;
+						var tmp_record_obj=external.XText.TableSet[parent_Index].FieldsDefnition[Row.rowIndex-1];											//get the whole record(single).
+						var tmp_Row_Index=Row.rowIndex-1;
+						external.XText.TableSet[parent_Index].FieldsDefnition.splice(tmp_Row_Index, 1); 															//1. delete it first
+						external.XText.TableSet[parent_Index].FieldsDefnition.splice(tmp_Row_Index+dir_offset, 0,tmp_record_obj); 		//2. then insert	
+						external.SetModified(true);	
+																																										
+						//2.refresh(reload) the HTML Table(Parent).
+						refresh_adv_format_table('child');																									
+						//3.Set the pointer to the record that we just moved. 
+						var cur_fld_index=tmp_Row_Index+dir_offset;																			//tmp_Row_Index+(dir_offset+1)
+						point_on_index(cur_fld_index,'child');		
+						break;					
+		}						 
+		
+}
+
+function refresh_adv_format_table(src_type)
+{
+		if (!src_type) return;
+		switch(src_type)
+		{
+			case 'parent':
+				load_table_def();	
+				validate_all(); //for update status field. 		
+				break;
+			case 'child':
+				if (!SelectedRow_Table) return;
+				load_field_def(SelectedRow_Table.rowIndex-1);
+				validate_all(); //for update status field. 		
+				break;	
+		}
+}
+
+//return alias
+//ret_alias(field.storage,external.XText[i].STORAGE);
+
+function ret_alias(which_field,src_str) //retrieve alias 
+{
+		var src=src_str.replace(/^\s+|\s+$/g,"");
+		switch (which_field) 
+		{
+		case field.TABLE_STRUCT:
+			switch(src)
+			{
+				case "T":
+					return 'Table';
+				case "L":
+					return 'Log';
+				default:
+					return src;
+			}
+			break;		
+		case field.FIELD_TYPE:
+			switch(src)
+			{
+				case "S":
+					return 'String';
+				case "B":
+					return 'Byte';
+				case "W":
+					return 'Word';
+				case "U":
+					return 'Long'; //32 bits
+				case "T":
+					return 'Date/Time'; 
+				default:
+					return src;
+			}
+			break;
+		default: 
+			return src;
+			break;
+		}
+}
+
+//======================================================== 1.Check if corrupted ======================================================================================
+//corrupted data check(1.must before validation 2.only check null value mainly.)
+function chk_corrupt()
+{
+		//check parent table first
+		
+		var tbl_null_count=0;											//particular for null record
+		var fld_null_count=0;											//particular for null record
+		
+		var table_set=external.XText.TableSet;
+		for (i = 0; i < table_set.length; i++) 
+		{ 
+					var tbl_rec=external.XText.TableSet[i];   //get single record      //.replace(/^\s+|\s+$/g,""); //trim continue; \r\n
+					var err_report='';
+					var f=0;
+					for (var Property in tbl_rec)	
+					{		
+						f++;					
+					}
+					if (f<4) //+1 add comment
+					{
+							alert('Table \"'+tbl_rec.TBL_NAME+'\": descriptor has missing fields. The descriptor will be repaired using default field values.');
+							if (tbl_rec.TBL_NAME=='') 			// incase only '==' in the line.(completely empty)
+							{
+								tbl_rec.TBL_NAME = 'Null-'+tbl_null_count.toString();
+								tbl_null_count++; 
+							}
+							//replace with default value
+							tbl_rec.TBL_NAME = tbl_rec.TBL_NAME.replace(/^\s+|\s+$/g,"");
+							tbl_rec.MAX_RECS = '20';
+							tbl_rec.TBL_STRUCT= "T";
+							tbl_rec.NUM_KEY_FIELD= "0";
+							tbl_rec.TBL_COMMENT="";
+							external.SetModified(true);
+					}
+					//------chk child
+					var field_set=external.XText.TableSet[i].FieldsDefnition;
+					if (field_set)
+					{
+								for (k = 0; k < field_set.length; k++)
+								{
+												var fld_rec=external.XText.TableSet[i].FieldsDefnition[k];   //get single record     
+												var g=0;
+												for (var Property in fld_rec)	
+												{		
+													g++;					
+												}	
+												if (g<5) //+1 add comment
+												{
+														alert('\"Table \"'+tbl_rec.TBL_NAME+'\", field \"'+fld_rec.FIELD_NAME+'\": descriptor has missing fields. The descriptor will be repaired using default field values.');//'+
+														if (fld_rec.FIELD_NAME=='') 			// incase only '==' in the line.(completely empty)
+														{
+															fld_rec.FIELD_NAME = 'Null-'+fld_null_count.toString();
+															fld_null_count++; 
+														}
+														//replace with default value
+														fld_rec.FIELD_NAME = fld_rec.FIELD_NAME.replace(/^\s+|\s+$/g,"");
+														fld_rec.FIELD_TYPE = 'B';
+														fld_rec.P1= "0";
+														fld_rec.P2= "255";
+														fld_rec.DEFVAL= "0";
+														fld_rec.FLD_COMMENT=""
+														external.SetModified(true);
+												}						
+								}
+					}
+		}
+		
+}
+
+//========================================================2. PROCESS SHARP DEF (define settings)  ==============================================================================
+
+
+//get def_setting at beginning
+function show_sharp_def() // 1.show 2.load defset at beginning(if needed) 3.check if it has basic #define(for changed_flag)
+{
+	  var obj=document.getElementsByName("checkbox");//get chk array	  
+	  if (!external.XText.DefSet) return;
+	  var tmp_defset=external.XText.DefSet;
+	  var have_DESCRIPTOR_FILE_NAME=false;
+	  
+		for (i = 0; i < tmp_defset.length; i++)
+		{ 
+				//Table lib has the default value (i.e.#define STG_DEBUG_PRINT 0),
+				//therefore we take a "not" defval as the symbol of enabled function. 
+				var def_value=tmp_defset[i].replace(/^\s+|\s+$/g,""); //trim
+				if (def_value=="#define TBL_DEBUG_PRINT 1") {obj[0].checked = true;};
+				if (def_value=="#define TBL_AGGREGATE_HASH 1") {obj[1].checked = true;TBL_AGGREGATE_HASH=1;};
+				if (def_value=="#define TBL_DESCRIPTOR_FILE \""+external.FileName+"\""){have_DESCRIPTOR_FILE_NAME = true;};
+		}
+		if (have_DESCRIPTOR_FILE_NAME==false) {external.SetModified(true);};
+}
+
+
+//Rewrite all sharp definitions to the XTXT Object.
+function reload_sharp_def()
+{
+	//write all setting def to the handler
+	
+  var chk_obj=document.getElementsByName("checkbox");							//get chk array
+	var tmp_defset=external.XText.DefSet
+	var Obj = new String();
+
+	tmp_defset.length=0;																						//once loaded, remove all.
+	Obj= "#define TBL_DESCRIPTOR_FILE \""+external.FileName+"\"";  	//always add descriptor_file_name.
+	tmp_defset.push(Obj);
+	
+//1.function settings
+		var Obj = '';
+		if (chk_obj[0].checked == true)
+		{	
+	 		Obj= "#define TBL_DEBUG_PRINT 1";
+	 		tmp_defset.push(Obj);
+		}
+		
+		var Obj = '';
+		if (chk_obj[1].checked == true)
+		{	
+	 		Obj= "#define TBL_AGGREGATE_HASH 1";
+	 		tmp_defset.push(Obj);
+	 		TBL_AGGREGATE_HASH=1;
+		}else{TBL_AGGREGATE_HASH=0;}
+		
+		
+		//def_stg.TBL_TIME_TYPE_INCLUDED //TBL_TIME_TYPE_INCLUDED
+		//Add a function that will check if there are date/time records inside the field definition(s).
+		//If so, then make the value of the TBL_TIME_TYPE_INCLUDED be 1. Or make it be 0.
+		//To achieve this, we need to check the whole field set all the time after modifying anything in the table library.
+		
+		if (TBL_TIME_TYPE_INCLUDED==0)
+		{
+			var Obj = new String();
+	 		Obj= "#define TBL_TIME_TYPE_INCLUDED 0";																		//The default value is "1". Therefore, we only need to include this sharp def setting while it's value is zero.
+	 		tmp_defset.push(Obj);
+		}
+		
+		
+		
+//2.Validation settings(validation result ONLY ADD FOR RUNTIME)
+		var Obj = new String;
+		Obj= "#define TBL_MAX_TABLE_NAME_LEN "+def_stg.TBL_MAX_TABLE_NAME_LEN;
+		tmp_defset.push(Obj);
+		var Obj = new String;
+		Obj= "#define TBL_MAX_FIELD_NAME_LEN "+def_stg.TBL_MAX_FIELD_NAME_LEN;
+		tmp_defset.push(Obj);	 	
+		var Obj = new String;
+		Obj= "#define TBL_MAX_FIELD_VALUE_LEN "+def_stg.TBL_MAX_FIELD_VALUE_LEN;
+		tmp_defset.push(Obj);
+		var Obj = new String;
+		Obj= "#define TBL_MAX_RECORD_SIZE "+def_stg.TBL_MAX_RECORD_SIZE;
+		tmp_defset.push(Obj);
+		var Obj = new String;
+		Obj= "#define TBL_MAX_NUM_TABLES "+def_stg.TBL_MAX_NUM_TABLES;
+		tmp_defset.push(Obj);
+		var Obj = new String;
+		Obj= "#define TBL_MAX_TOTAL_NUM_FIELDS "+def_stg.TBL_MAX_TOTAL_NUM_FIELDS;
+		tmp_defset.push(Obj);		
+		
+		//set_content_modify();//external.SetModified(true); //fff
+		if (changed_flag==true) external.SetModified(true); //should setup a flag...
+		
+}
+
+//The function returns a value of boolean type to tell if there is/are date/time type field(s) in the table definitions.
+function has_DT_type()
+{
+		var TBL_Set=external.XText.TableSet;
+		
+		
+		
+		var search_count=0;
+		if (!external.XText.TableSet) return search_count;
+		var real_tbl_set=external.XText.TableSet;
+		for (var i=0;i<real_tbl_set.length;i++)
+		{
+			if (real_tbl_set[i].TBL_NAME==chk_tbl_name) {search_count+=1};
+		}	
+		return search_count;
+		
+		
+		
+		
+		var search_count=0;
+		if (!REAL_SINGLE_TBL) return search_count;
+		if (!REAL_SINGLE_TBL.FieldsDefnition) return search_count;
+		
+		var real_fld_set=REAL_SINGLE_TBL.FieldsDefnition;
+		for (var i=0;i<real_fld_set.length;i++)
+		{
+			if (real_fld_set[i].FIELD_NAME==chk_fld_name) {search_count+=1;}
+		}	
+		return search_count;
+		
+		
+		
+		
+		
+}
+
+//========================================================3. validation ======================================================================================
+//get_proper_record_size
+function get_proper_record_size(new_rec_size)
+{
+	  var aa=0;
+		if (new_rec_size<=2) 	{aa=2;return aa};
+		if (new_rec_size<=4) 	{aa=4;return aa};
+		if (new_rec_size<=8) 	{aa=8;return aa};
+		if (new_rec_size<=16) {aa=16;return aa};
+		if (new_rec_size<=32) {aa=32;return aa};
+		if (new_rec_size<=64) {aa=64;return aa};
+		if (new_rec_size<=128){aa=128;return aa};
+		if (new_rec_size>128) {aa=new_rec_size;return aa;};
+
+}
+
+//should add status property to xtxt?
+function add_status_to_xtxt()
+{
+	// maybe next time
+}
+
+//validate time/date
+function td_str_to_binstr(td_str) 
+{
+	if (isNaN(td_str)==true) return false;
+	
+	var td_length=td_str.length;
+	switch(td_length)
+	{
+		case 0:
+		case 4:
+		case 6:
+		case 8:
+		case 9:
+		case 12:
+		case 14:
+		case 17:			
+		break;
+		default:
+		return false;
+	}	
+	var tmp_time_str =new String();
+	switch(td_length)
+	{
+		case 4://hhmm
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			break;
+		case 6://hhmmss
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;			
+			break;
+		case 8://YYYYMMDD
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			break;
+		case 9://hhmmssmls
+			tmp_time_str=td_str.slice(0,2);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;
+			tmp_time_str=td_str.slice(2,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(6,9);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>999)) return false;	
+			break;						
+		case 12://YYYYMMDDhhmm
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			break;		
+		case 14://YYYYMMDDhhmmss
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			tmp_time_str=td_str.slice(12,14);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;	
+			break;		
+		case 17://YYYYMMDDhhmmssmls
+			tmp_time_str=td_str.slice(0,4);
+			if (isNaN(tmp_time_str)==true) return false;
+			tmp_time_str=td_str.slice(4,6);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<1)||(Number(tmp_time_str)>12)) return false;
+			tmp_time_str=td_str.slice(6,8);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>31)) return false;			
+			tmp_time_str=td_str.slice(8,10);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>23)) return false;	
+			tmp_time_str=td_str.slice(10,12);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;		
+			tmp_time_str=td_str.slice(12,14);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>59)) return false;
+			tmp_time_str=td_str.slice(14,17);
+			if (isNaN(tmp_time_str)==true) return false;
+			if ((Number(tmp_time_str)<0)||(Number(tmp_time_str)>999)) return false;									
+			break;
+		default:
+		return false;
+	}	
+	return true;
+}
+
+//show_table_err_mark
+function show_tbl_err_mark(err_array)
+{
+	if (!err_array) return;
+	for (i = 0; i < err_array.length; i++)
+	{
+		var Row=document.getElementById("my_table").rows[i+1]
+		if (!err_array[i])
+		{
+			Row.cells(5).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			Row.cells(5).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//show_field_err_mark
+function show_fld_err_mark(h) // err_array should be public now, cuz  'show_fld_err_mark' will be triggered dynamically.
+{
+	if (h>err_mark_list2.length-1) return;
+	if (!err_mark_list2) return;
+	if (!err_mark_list2[h]) return;
+
+	if (err_mark_list2)  {};//alert('e04-'+err_mark_list2[h].length);
+	
+	for (var i = 0; i < err_mark_list2[h].length; i++)
+	{
+		var Row=document.getElementById("my_table2").rows[i+1]
+		if (i>(document.getElementById("my_table2").rows.length-2)) break; //Just in case if the err_array is not updated yet. (ex: delete a child record)
+		if (!err_mark_list2[h][i])
+		{
+			Row.cells(6).innerHTML = '<font color=\'red\'><b>INVALID</b></font>';
+		}
+		else
+		{
+			Row.cells(6).innerHTML = '<font color=\'green\'><b>OK</b></font>';
+		}
+	}
+}
+
+//validate Table single record
+function validate_tbl_single(obj)
+{
+	//===Pre-process, ALL VARIABLE MUST BE WELL DEFINED
+		var tbl_name =new String();
+		var tbl_max_recs = new Number();
+		var tbl_struct = new String();
+		var tbl_num_key_field = new Number();
+		var tbl_comment = new String();
+		
+		tbl_name=obj.TBL_NAME;
+		if (isNaN(obj.MAX_RECS))	return false; 																											//in case Nmber(
+		if ((obj.MAX_RECS.indexOf(".")!=-1)||(obj.MAX_RECS.indexOf("-")!=-1)) return false;  					//must be unsigned
+		tbl_max_recs=Number(obj.MAX_RECS);
+		tbl_struct=obj.TBL_STRUCT;
+		if (isNaN(obj.NUM_KEY_FIELD))	{return false;}
+		if ((obj.NUM_KEY_FIELD.indexOf(".")!=-1)||(obj.NUM_KEY_FIELD.indexOf("-")!=-1)) return false; //must be unsigned
+		tbl_num_key_field=Number(obj.NUM_KEY_FIELD);
+		if (typeof(obj.TBL_COMMENT)=='undefined')  obj.TBL_COMMENT='';	//for comment(if null)
+		tbl_comment=obj.TBL_COMMENT;
+	//validate start(1. null check  2. get info ex:len)
+	//table name 
+		if ((tbl_name.length==0)||(tbl_name.length > 32)) return false; 
+		if (tbl_name.length>TBL_MAX_TABLE_NAME_LEN) TBL_MAX_TABLE_NAME_LEN=tbl_name.length;						//get #define 
+		var tblname_count=unique_tbl_name_check(tbl_name); 
+		if (tblname_count>1) return false; 
+
+	//maximum number of records
+		if (tbl_max_recs>65535) //if lval(s)>65535 then
+		{
+			return false;
+		}
+		
+	//structure type of table
+		switch(tbl_struct)
+		{
+		case "L":
+		case "T":
+		break;
+		default:
+		// unknown structure type
+		return false; 
+		}
+	//number of keys field
+		if (tbl_num_key_field>(128-1)) //@@which means can't exceed 128-1=127 //if (tbl_num_key_field>(TBL_MAX_RECORD_SIZE-1))
+		{
+			return false;
+			//exceeded max possible number of key fields
+			//maximum number of fields (and key fields) cannot exceed TBL_MAX_RECORD_SIZE-1
+		}
+	//Table comment
+		if (tbl_comment.length>255)
+		{
+			return false;
+		}
+	//===Postprocess(table loop)
+		record_size=1;	//active flag is 1 byte long
+		if (obj.FieldsDefnition.length==0) return false; //check if no fields.0 fields found
+		tbl_field_num_offset=field_index;// important
+		if (TBL_AGGREGATE_HASH==1) //if AGGREGATE flag enabled, count AGGREGATE field in...
+		{
+				//MD5
+				record_size+=4;
+				//if field_index<TBL_MAX_TOTAL_NUM_FIELDS then //if parent field< TBL_MAX_TOTAL_NUM_FIELDS then assign
+				field_index+=1;  //total number of fields (for all tables)
+				//UID
+				record_size+=4;  
+				//if (field_index<TBL_MAX_TOTAL_NUM_FIELDS) tbl_field_info(field_index)=field_item
+				field_index+=1;  //total number of fields (for all tables)
+		}
+	//=========
+		return true;
+}
+
+//validate Field single record
+function validate_fld_single(child_obj,parent_obj)
+{//we need both.
+//PREPROCESS, ALL VARIABLE MUST BE WELL DEFINED
+		
+		var fld_name =new String();
+		var fld_type = new String();
+		var fld_P1 = new Number();
+		var fld_P2 = new Number();
+		var fld_defval = new String();  //depend on type, let's make it String for now.
+		var fld_comment = new String();
+		fld_name=child_obj.FIELD_NAME;
+		fld_type=child_obj.FIELD_TYPE;
+		if (isNaN(child_obj.P1))	return false;   	
+		if ((child_obj.P1.indexOf(".")!=-1)||(child_obj.P1.indexOf("-")!=-1)) return false; 
+		fld_P1=Number(child_obj.P1);
+		if (isNaN(child_obj.P2))	return false;   
+		if ((child_obj.P2.indexOf(".")!=-1)||(child_obj.P2.indexOf("-")!=-1)) return false; 	
+		fld_P2=Number(child_obj.P2);
+		fld_defval=child_obj.DEFVAL;     //depend on type, let's make it String for now.
+		if (typeof(child_obj.FLD_COMMENT)=='undefined')  child_obj.FLD_COMMENT='';	//for comment(if null)
+		fld_comment=child_obj.FLD_COMMENT;
+		//alert(fld_name+'  fld_comment='+fld_comment);
+//FIELD_NAME
+			//1. missing check
+			if ((fld_name.length==0)||(fld_name.length > 32)) return false;
+			if (fld_name.length>TBL_MAX_FIELD_NAME_LEN) {TBL_MAX_FIELD_NAME_LEN=fld_name.length;};  //get most great number
+			var fldname_count=unique_fld_name_check(fld_name,parent_obj); 
+			if (fldname_count>1) return false; 
+			//alert(TBL_MAX_FIELD_NAME_LEN);
+			//3. get max_fld_name_len	if len(s)>max_fld_name_len then max_fld_name_len=len(s)
+//FIELD_TYPE
+			//1. missing check
+			switch(fld_type)
+			{
+				case "S":
+				case "B":
+				case "W":
+				case "U":
+				case "T":
+				break;
+				default:
+				// unknown structure type
+				return false; 
+			}
+//P1
+
+			//1. missing check
+			switch(fld_type)
+			{
+	
+				case "B":
+					if (fld_P1>255) return false;
+					break;
+				case "W":
+					if (fld_P1>65535) return false;
+					break;
+				case "T":
+					if (fld_P1>6) return false;
+					break;
+				case "U": //add this, but not in library 4294967296
+					if (fld_P1>4294967296) return false;
+					break;
+				case "S":
+					//if (fld_P1>TBL_MAX_FIELD_VALUE_LEN) {};	//need to check again
+					break;
+			}
+//P2
+			//1. missing check
+			switch(fld_type)
+			{
+				
+				case "B":
+					if (fld_P2>255) return false;
+				break;
+				case "W":
+					if (fld_P2>65535) return false;
+				break;
+				case "U": //add this, but not in library 4294967296
+					if (fld_P2>4294967296) return false;
+					break;
+				case "S":
+					//if (fld_P2>TBL_MAX_FIELD_VALUE_LEN) return false;	//need to check again
+					break;
+			}
+//P1,P2
+			if((fld_P2<fld_P1)&&(fld_type!='T')) return false;
+//DEFVAL
+			//1. missing check(should be replace with '^')
+			//2.verify the validity of the default value
+
+			//fld_defval
+			switch(fld_type)
+			{
+				case "B":
+				case "W":
+				case "U":
+					var dw= new Number();
+				
+					if (isNaN(fld_defval))
+					{
+							if(fld_defval=='^'){dw=0;}else{return false;};
+					}
+					else
+					{
+							if ((fld_defval.indexOf(".")!=-1)||(fld_defval.indexOf("-")!=-1)) return false; //must be unsigned
+							dw=Number(fld_defval);
+					}
+					//def value < P1
+					if (dw<fld_P1) return false;
+					if (dw>fld_P2) return false;
+				break;
+				case "S":
+					if (fld_defval=='^')
+					{
+							var k= new Number();
+							k=0;
+					}
+					else
+					{
+							var k= new Number();
+							k=fld_defval.length;
+					}
+					//string length
+					if (k<fld_P1) return false;
+					if (k>fld_P2) return false;
+				break;
+				case "T":
+					if (td_str_to_binstr(fld_defval)==false)
+					{
+						return false;
+					}
+				break;		
+			}
+//Table comment
+			if (fld_comment.length>255)
+			{
+				return false;
+			}
+//===post-process	
+			//alert('TBL_MAX_TOTAL_NUM_FIELDS='+TBL_MAX_TOTAL_NUM_FIELDS  ,  +'field_index'+field_index);
+			var k= new Number();
+			k=tbl_get_field_size(field_index,fld_type,fld_P1,fld_P2);
+			if (k>TBL_MAX_FIELD_VALUE_LEN){TBL_MAX_FIELD_VALUE_LEN=k;} 	//assign VALUE_LEN //k now is the value_len_value //@@//#if TBL_AGGREGATE_HASH #define TBL_MAX_FIELD_VALUE_LEN TBL_MAX_RECORD_SIZE-9?
+			record_size+=k;//alert('GH-max_record_size='+record_size);
+			field_index+=1;
+			
+			
+			
+		return true;
+}
+
+//Returns the size of the field (number of bytes)
+function tbl_get_field_size(field_index,field_type,field_p1,field_p2)
+{
+	var sz = new Number();
+
+			switch(field_type)
+			{
+				case "T":
+						switch(field_p1) //@@
+						{
+							case 0: sz=2;break;//EN_TBL_DT_DATE,						'YYYYMMDD (year,month,date)
+							case 1:	sz=2;break;//EN_TBL_DT_TIME1,					  'hhmm (hour,minutes)
+							case 2: sz=3;break;//EN_TBL_DT_TIME2,					  'hhmmss (hour,minutes,second)
+							case 3:	sz=5;break;//EN_TBL_DT_TIME3,					  'hhmmssmls (hour,minutes,second,milsecond)
+							case 4: sz=4;break;//EN_TBL_DT_DATE_TIME1,			'YYYYMMDDhhmm (year,month,date,hour,minutes)
+							case 5:	sz=5;break;//EN_TBL_DT_DATE_TIME2,			'YYYYMMDDhhmmss (year,month,date,hour,minutes,second)
+							case 6: sz=7;break;//EN_TBL_DT_ALL						  'YYYYMMDDhhmmssmls (year,month,date,hour,minutes,second,milsecond)
+						}
+						break;
+				case "B": sz=1;break;
+				case "W": sz=2;break;
+				case "S": sz=field_p2+1;break;
+				case "U": sz=4;break;
+				default:sz=0;break;
+			}
+			return sz;
+}
+
+
+//unique table name check. The function will return exist name total count.
+function unique_tbl_name_check(chk_tbl_name)
+{		
+	
+	var search_count=0;
+	if (!external.XText.TableSet) return search_count;
+	var real_tbl_set=external.XText.TableSet;
+	for (var i=0;i<real_tbl_set.length;i++)
+	{
+		if (real_tbl_set[i].TBL_NAME==chk_tbl_name) {search_count+=1};
+	}	
+	return search_count;
+}
+
+//unique field name check. The function will return exist name total count.
+function unique_fld_name_check(chk_fld_name,REAL_SINGLE_TBL)
+{		
+
+	var search_count=0;
+	if (!REAL_SINGLE_TBL) return search_count;
+	if (!REAL_SINGLE_TBL.FieldsDefnition) return search_count;
+	
+	var real_fld_set=REAL_SINGLE_TBL.FieldsDefnition;
+	for (var i=0;i<real_fld_set.length;i++)
+	{
+		if (real_fld_set[i].FIELD_NAME==chk_fld_name) {search_count+=1;}
+	}	
+	return search_count;
+}
+
+//global variable for validation
+		var tbl_info_index = new Number();  					//current index of (Global) // will select table_info array member (follows table_num_tables but is limited by array size)
+		var field_index = new Number();     					//(Local)                   // total number of fields (it is a sum number of child field(s) in each table)
+		var record_size = new Number();               //(Local) 
+		var num_fields=new Number();
+		var max_tbl_name_len=new Number();
+		var max_fld_name_len=new Number();
+		var max_record_size=new Number();
+		var tbl_field_num_offset = new Number();	    //@@
+		
+//**validate all records**
+function validate_all()
+{
+//pre_process (Because of chk_corrupt, we don't have to check null field again.)
+		var err_mark_list = new Array(); //table validation list(not include child field)
+		err_mark_list2.length=0; 				 //field validation list
+		err_msg_array.length=0;
+		
+		TBL_MAX_TABLE_NAME_LEN=0;
+		TBL_MAX_RECORD_SIZE=0; 		                  //must be a power-of-two value 'this field would occupy up to 2 chars in string form, while you have 'TBL_MAX_FIELD_VALUE_LEN 1'.
+		TBL_MAX_FIELD_NAME_LEN=0;
+		TBL_MAX_FIELD_VALUE_LEN=0;
+		TBL_MAX_NUM_TABLES=0;         
+		TBL_MAX_TOTAL_NUM_FIELDS=0;
+
+		
+		//init the vale
+		 tbl_info_index = 0;  					
+		 field_index = 0;     					
+		 record_size = 0;
+		 num_fields=0;
+		 max_tbl_name_len=0;
+		 max_fld_name_len=0;
+		 max_record_size=0;
+		 tbl_field_num_offset = 0;	//@@
+		//set to true at beginning...
+		var all_ok=true;
+		
+		
+//validate start
+		var obj_TABLE=external.XText.TableSet; //get all table def data
+		for (var i = 0; i < obj_TABLE.length; i++) 
+		{
+					//1.validate table_info table
+					//---------------------
+					var tmp=obj_TABLE[i];
+					if ((validate_tbl_single(tmp))==false)
+					{
+						all_ok=false;
+						err_mark_list.push(false);
+					}
+					else
+					{
+						err_mark_list.push(true);
+					}
+					
+					
+					var cur_tbl_err_index=err_mark_list.length-1; //current error list index
+					err_mark_list2[cur_tbl_err_index]=new Array;
+					
+					//2.validate child table
+					//---------------------
+					//if(!tmp.FieldsDefnition)
+					
+					for (var h = 0; h < tmp.FieldsDefnition.length; h++) 
+					{
+								var tmp2=tmp.FieldsDefnition[h];
+								if ((validate_fld_single(tmp2,tmp))==false) 				//tmp2=children tmp=parent
+								{
+									all_ok=false;
+									err_mark_list2[cur_tbl_err_index][h]=false;				//alert(err_mark_list2[cur_tbl_err_index][h]);
+									err_mark_list[i]=false; // this line is for that if any child(Field Definition) has invalid data, The parent should show invalid ,too.
+								}
+								else
+								{
+									err_mark_list2[cur_tbl_err_index][h]=true;				//alert(cur_tbl_err_index+','+h+','+err_mark_list2[cur_tbl_err_index][h]);
+									
+								}
+					}
+					
+			//3. =====validate result====
+					num_fields=field_index-tbl_field_num_offset;   						 //field count? singl table field count?
+					if (num_fields==0) {all_ok=false;err_mark_list[i]=false;}; // 0 fields found!  You should have at least one field in the table.  Make it a invalid//@@3
+					if (isNaN(tmp.NUM_KEY_FIELD))  //prevent it is not a number
+					{
+						
+					}
+					else
+					{
+						var tmp_num_key_field=Number(tmp.NUM_KEY_FIELD); 												//defined num_key_field exceed num_fields(real field count)
+						if (tmp_num_key_field>num_fields){all_ok=false;err_mark_list[i]=false;};//the number of key fields is greater than the number of fields  in the table.") number of key fields exceed number of field
+					}
+					
+					
+					//if table struct is Log, recalculate the record size(process only when MAX_RECORD_SIZE cannot be divided by record_size with no remainder...)
+					var tmp_struct=tmp.TBL_STRUCT;  //have already check if in {L,T} set
+					//alert(TBL_MAX_RECORD_SIZE);
+					if (tmp_struct=='L') //if (tbl_item.struct=EN_TBL_STRUCT_LIST)
+					{
+						var k=2;
+						while (((TBL_MAX_RECORD_SIZE % record_size)>0) && (record_size<(TBL_MAX_RECORD_SIZE+1)) && (record_size>0) &&(TBL_MAX_RECORD_SIZE<129))  //prevent unlimited loop
+						{
+							if (record_size>k) 	{k=k*2;} //alert('k=k*2'); power 2
+							else {record_size=k;};       //alert('record_size='+record_size);
+								
+						}
+					}
+					//alert('record_size'+record_size);
+					if (record_size>TBL_MAX_RECORD_SIZE) {TBL_MAX_RECORD_SIZE=get_proper_record_size(record_size);};//@@@@#define TBL_MAX_FIELD_VALUE_LEN TBL_MAX_RECORD_SIZE-9
+					if (record_size>128) //@@ add myself, > 128 then
+					{
+						all_ok=false;
+						err_mark_list[i]=false;
+						err_msg_array.push('Table -\''+obj_TABLE[i].TBL_NAME+'\'   record size is  '+record_size+' bytes which exceed maximum size 128 bytes.<br>');
+						
+					}; 
+					//alert('TBL_MAX_RECORD_SIZE'+TBL_MAX_RECORD_SIZE);
+					if (max_record_size<record_size) max_record_size=record_size;                                   //alert('GH-max_record_size='+record_size+','+TBL_MAX_RECORD_SIZE);
+					if (tbl_info_index<TBL_MAX_NUM_TABLES) {}	;                                                     //@@ if current table index<TBL_MAX_NUM_TABLES, then assign to variable.
+					tbl_info_index=tbl_info_index+1;                                                                //Tables Count
+					
+					
+		  //===============
+		}
+		
+		//assign #define
+		TBL_MAX_NUM_TABLES=obj_TABLE.length;
+		TBL_MAX_TOTAL_NUM_FIELDS=field_index;
+		
+		
+		show_tbl_err_mark(err_mark_list); // field err_mark only show when 
+		
+		//5.----final validation1(the rest of...validate the conclusion)---
+					//err_msg_array.length=0;
+					if (TBL_MAX_NUM_TABLES>255) 			 			//if invalid, the follows info will be displayed in summary.
+					{
+						all_ok=false;
+						err_msg_array.push('Your number of tables can not exceed 255.<br>');
+					}
+					if (TBL_MAX_TOTAL_NUM_FIELDS>255)
+					{
+						all_ok=false;
+						err_msg_array.push('Total fields can not exceed 255.<br>');
+					}	
+					if (TBL_MAX_RECORD_SIZE>128)
+					{
+						all_ok=false;
+						err_msg_array.push('Some of your tables\' record size exceed maximum size 128. You need to delete\/modify some field definitions in the table to reduce the size.<br>');
+					}
+		//------------------------
+		//5.----final validation2(the unique check)---
+					for (var i = 0; i < obj_TABLE.length; i++) 
+					{
+
+					}		
+		//------------------------
+		show_summary_report(all_ok);
+					
+				
+		//generate related #defines
+		if (all_ok)
+		{
+			def_stg.TBL_MAX_TABLE_NAME_LEN=TBL_MAX_TABLE_NAME_LEN;
+			def_stg.TBL_MAX_FIELD_NAME_LEN=TBL_MAX_FIELD_NAME_LEN;
+			def_stg.TBL_MAX_FIELD_VALUE_LEN=TBL_MAX_FIELD_VALUE_LEN;
+			def_stg.TBL_MAX_RECORD_SIZE=TBL_MAX_RECORD_SIZE;
+			def_stg.TBL_MAX_NUM_TABLES=TBL_MAX_NUM_TABLES;
+			def_stg.TBL_MAX_TOTAL_NUM_FIELDS=TBL_MAX_TOTAL_NUM_FIELDS;
+		}
+		else
+		{
+			def_stg.TBL_MAX_TABLE_NAME_LEN=0;
+			def_stg.TBL_MAX_FIELD_NAME_LEN=0;
+			def_stg.TBL_MAX_FIELD_VALUE_LEN=0;
+			def_stg.TBL_MAX_RECORD_SIZE=0;
+			def_stg.TBL_MAX_NUM_TABLES=0;
+			def_stg.TBL_MAX_TOTAL_NUM_FIELDS=0;
+		}
+		
+		reload_sharp_def();  	//necessary step, write to defset
+		//post process//show child validation status
+		if(SelectedRow_Table)
+		{
+			var parent_index=SelectedRow_Table.rowIndex-1
+			show_fld_err_mark(parent_index);
+		}
+		return all_ok;
+}
+
+//========================================================4. input control ===================================================================================
+
+//========================================================5. the rest of the functions =======================================================================
+//tooltip js
+if (typeof document.attachEvent!='undefined') {
+   window.attachEvent('onload',init);
+   document.attachEvent('onmousemove',moveMouse);
+   document.attachEvent('onclick',checkMove); }
+else {
+   window.addEventListener('load',init,false);
+   document.addEventListener('mousemove',moveMouse,false);
+   document.addEventListener('click',checkMove,false);
+}
+
+var oDv=document.createElement("div");
+var dvHdr=document.createElement("div");
+var dvBdy=document.createElement("div");
+var windowlock,boxMove,fixposx,fixposy,lockX,lockY,fixx,fixy,ox,oy,boxLeft,boxRight,boxTop,boxBottom,evt,mouseX,mouseY,boxOpen,totalScrollTop,totalScrollLeft;
+boxOpen=false;
+ox=10;
+oy=10;
+lockX=0;
+lockY=0;
+
+function init() {
+	oDv.appendChild(dvHdr);
+	oDv.appendChild(dvBdy);
+	oDv.style.position="absolute";
+	oDv.style.visibility='hidden';
+	document.body.appendChild(oDv);	
+}
+
+function defHdrStyle() {
+	dvHdr.innerHTML='<img  style="vertical-align:middle"  src="info.gif">&nbsp;&nbsp;'+dvHdr.innerHTML;
+	dvHdr.style.fontWeight='bold';
+	dvHdr.style.width='170px';
+	dvHdr.style.fontFamily='arial';
+	dvHdr.style.border='1px solid #A5CFE9';
+	dvHdr.style.padding='3';
+	dvHdr.style.fontSize='12';
+	dvHdr.style.color='#ffffff';'4B7A98';
+	dvHdr.style.background='#8A0808';//D5EBF9';
+	dvHdr.style.filter='alpha(opacity=100)'; // IE
+	dvHdr.style.opacity='0.85'; // FF
+}
+
+function defBdyStyle() {
+	dvBdy.style.borderBottom='1px solid #A5CFE9';
+	dvBdy.style.borderLeft='1px solid #A5CFE9';
+	dvBdy.style.borderRight='1px solid #A5CFE9';
+	dvBdy.style.width='170px';
+	dvBdy.style.fontFamily='arial';
+	dvBdy.style.fontSize='11';
+	dvBdy.style.padding='3';
+	dvBdy.style.color='#ffffff';
+	dvBdy.style.background='#FA58AC';
+	dvBdy.style.filter='alpha(opacity=100)'; // IE
+	dvBdy.style.opacity='0.85'; // FF
+}
+
+function checkElemBO(txt) {
+if (!txt || typeof(txt) != 'string') return false;
+if ((txt.indexOf('header')>-1)&&(txt.indexOf('body')>-1)&&(txt.indexOf('[')>-1)&&(txt.indexOf('[')>-1)) 
+   return true;
+else
+   return false;
+}
+
+function scanBO(curNode) {
+	  if (checkElemBO(curNode.title)) {
+         curNode.boHDR=getParam('header',curNode.title);
+         curNode.boBDY=getParam('body',curNode.title);
+			curNode.boCSSBDY=getParam('cssbody',curNode.title);			
+			curNode.boCSSHDR=getParam('cssheader',curNode.title);
+			curNode.IEbugfix=(getParam('hideselects',curNode.title)=='on')?true:false;
+			curNode.fixX=parseInt(getParam('fixedrelx',curNode.title));
+			curNode.fixY=parseInt(getParam('fixedrely',curNode.title));
+			curNode.absX=parseInt(getParam('fixedabsx',curNode.title));
+			curNode.absY=parseInt(getParam('fixedabsy',curNode.title));
+			curNode.offY=(getParam('offsety',curNode.title)!='')?parseInt(getParam('offsety',curNode.title)):10;
+			curNode.offX=(getParam('offsetx',curNode.title)!='')?parseInt(getParam('offsetx',curNode.title)):10;
+			curNode.fade=(getParam('fade',curNode.title)=='on')?true:false;
+			curNode.fadespeed=(getParam('fadespeed',curNode.title)!='')?getParam('fadespeed',curNode.title):0.04;
+			curNode.delay=(getParam('delay',curNode.title)!='')?parseInt(getParam('delay',curNode.title)):0;
+			if (getParam('requireclick',curNode.title)=='on') {
+				curNode.requireclick=true;
+				document.all?curNode.attachEvent('onclick',showHideBox):curNode.addEventListener('click',showHideBox,false);
+				document.all?curNode.attachEvent('onmouseover',hideBox):curNode.addEventListener('mouseover',hideBox,false);
+			}
+			else {// Note : if requireclick is on the stop clicks are ignored   			
+   			if (getParam('doubleclickstop',curNode.title)!='off') {
+   				document.all?curNode.attachEvent('ondblclick',pauseBox):curNode.addEventListener('dblclick',pauseBox,false);
+   			}	
+   			if (getParam('singleclickstop',curNode.title)=='on') {
+   				document.all?curNode.attachEvent('onclick',pauseBox):curNode.addEventListener('click',pauseBox,false);
+   			}
+   		}
+			curNode.windowLock=getParam('windowlock',curNode.title).toLowerCase()=='off'?false:true;
+			curNode.title='';
+			curNode.hasbox=1;
+	   }
+	   else
+	      curNode.hasbox=2;   
+}
+
+
+function getParam(param,list) {
+	var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+	var res = reg.exec(list);
+	var returnvar;
+	if(res)
+		return res[2].replace('[[','[').replace(']]',']');
+	else
+		return '';
+}
+
+function Left(elem){	
+	var x=0;
+	if (elem.calcLeft)
+		return elem.calcLeft;
+	var oElem=elem;
+	while(elem){
+		 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderLeftWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderLeftWidth);
+		 x+=elem.offsetLeft;
+		 elem=elem.offsetParent;
+	  } 
+	oElem.calcLeft=x;
+	return x;
+	}
+
+function Top(elem){
+	 var x=0;
+	 if (elem.calcTop)
+	 	return elem.calcTop;
+	 var oElem=elem;
+	 while(elem){		
+	 	 if ((elem.currentStyle)&& (!isNaN(parseInt(elem.currentStyle.borderTopWidth)))&&(x!=0))
+		 	x+=parseInt(elem.currentStyle.borderTopWidth); 
+		 x+=elem.offsetTop;
+	         elem=elem.offsetParent;
+ 	 } 
+ 	 oElem.calcTop=x;
+ 	 return x;
+ 	 
+}
+
+var ah,ab;
+function applyStyles() {
+	if(ab)
+		oDv.removeChild(dvBdy);
+	if (ah)
+		oDv.removeChild(dvHdr);
+	dvHdr=document.createElement("div");
+	dvBdy=document.createElement("div");
+	CBE.boCSSBDY?dvBdy.className=CBE.boCSSBDY:defBdyStyle();
+	CBE.boCSSHDR?dvHdr.className=CBE.boCSSHDR:defHdrStyle();
+	dvHdr.innerHTML=CBE.boHDR;
+	dvBdy.innerHTML=CBE.boBDY;
+	ah=false;
+	ab=false;
+	if (CBE.boHDR!='') {		
+		oDv.appendChild(dvHdr);
+		ah=true;
+	}	
+	if (CBE.boBDY!=''){
+		oDv.appendChild(dvBdy);
+		ab=true;
+	}	
+}
+
+var CSE,iterElem,LSE,CBE,LBE, totalScrollLeft, totalScrollTop, width, height ;
+var ini=false;
+
+// Customised function for inner window dimension
+function SHW() {
+   if (document.body && (document.body.clientWidth !=0)) {
+      width=document.body.clientWidth;
+      height=document.body.clientHeight;
+   }
+   if (document.documentElement && (document.documentElement.clientWidth!=0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+      width=document.documentElement.clientWidth;   
+      height=document.documentElement.clientHeight;   
+   }   
+   return [width,height];
+}
+
+
+var ID=null;
+function moveMouse(e) {
+   //boxMove=true;
+	e?evt=e:evt=event;
+	
+	CSE=evt.target?evt.target:evt.srcElement;
+	
+	if (!CSE.hasbox) {
+	   // Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+	   iElem=CSE;
+	   while ((iElem.parentNode) && (!iElem.hasbox)) {
+	      scanBO(iElem);
+	      iElem=iElem.parentNode;
+	   }	   
+	}
+	
+	if ((CSE!=LSE)&&(!isChild(CSE,dvHdr))&&(!isChild(CSE,dvBdy))){		
+	   if (!CSE.boxItem) {
+			iterElem=CSE;
+			while ((iterElem.hasbox==2)&&(iterElem.parentNode))
+					iterElem=iterElem.parentNode; 
+			CSE.boxItem=iterElem;
+			}
+		iterElem=CSE.boxItem;
+		if (CSE.boxItem&&(CSE.boxItem.hasbox==1))  {
+			LBE=CBE;
+			CBE=iterElem;
+			if (CBE!=LBE) {
+				applyStyles();
+				if (!CBE.requireclick)
+					if (CBE.fade) {
+						if (ID!=null)
+							clearTimeout(ID);
+						ID=setTimeout("fadeIn("+CBE.fadespeed+")",CBE.delay);
+					}
+					else {
+						if (ID!=null)
+							clearTimeout(ID);
+						COL=1;
+						ID=setTimeout("oDv.style.visibility='visible';ID=null;",CBE.delay);						
+					}
+				if (CBE.IEbugfix) {hideSelects();} 
+				fixposx=!isNaN(CBE.fixX)?Left(CBE)+CBE.fixX:CBE.absX;
+				fixposy=!isNaN(CBE.fixY)?Top(CBE)+CBE.fixY:CBE.absY;			
+				lockX=0;
+				lockY=0;
+				boxMove=true;
+				ox=CBE.offX?CBE.offX:10;
+				oy=CBE.offY?CBE.offY:10;
+			}
+		}
+		else if (!isChild(CSE,dvHdr) && !isChild(CSE,dvBdy) && (boxMove))	{
+			// The conditional here fixes flickering between tables cells.
+			if ((!isChild(CBE,CSE)) || (CSE.tagName!='TABLE')) {   			
+   			CBE=null;
+   			if (ID!=null)
+  					clearTimeout(ID);
+   			fadeOut();
+   			showSelects();
+			}
+		}
+		LSE=CSE;
+	}
+	else if (((isChild(CSE,dvHdr) || isChild(CSE,dvBdy))&&(boxMove))) {
+		totalScrollLeft=0;
+		totalScrollTop=0;
+		
+		iterElem=CSE;
+		while(iterElem) {
+			if(!isNaN(parseInt(iterElem.scrollTop)))
+				totalScrollTop+=parseInt(iterElem.scrollTop);
+			if(!isNaN(parseInt(iterElem.scrollLeft)))
+				totalScrollLeft+=parseInt(iterElem.scrollLeft);
+			iterElem=iterElem.parentNode;			
+		}
+		if (CBE!=null) {
+			boxLeft=Left(CBE)-totalScrollLeft;
+			boxRight=parseInt(Left(CBE)+CBE.offsetWidth)-totalScrollLeft;
+			boxTop=Top(CBE)-totalScrollTop;
+			boxBottom=parseInt(Top(CBE)+CBE.offsetHeight)-totalScrollTop;
+			doCheck();
+		}
+	}
+	
+	if (boxMove&&CBE) {
+		// This added to alleviate bug in IE6 w.r.t DOCTYPE
+		bodyScrollTop=document.documentElement&&document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop;
+		bodyScrollLet=document.documentElement&&document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft;
+		mouseX=evt.pageX?evt.pageX-bodyScrollLet:evt.clientX-document.body.clientLeft;
+		mouseY=evt.pageY?evt.pageY-bodyScrollTop:evt.clientY-document.body.clientTop;
+		if ((CBE)&&(CBE.windowLock)) {
+			mouseY < -oy?lockY=-mouseY-oy:lockY=0;
+			mouseX < -ox?lockX=-mouseX-ox:lockX=0;
+			mouseY > (SHW()[1]-oDv.offsetHeight-oy)?lockY=-mouseY+SHW()[1]-oDv.offsetHeight-oy:lockY=lockY;
+			mouseX > (SHW()[0]-dvBdy.offsetWidth-ox)?lockX=-mouseX-ox+SHW()[0]-dvBdy.offsetWidth:lockX=lockX;			
+		}
+		oDv.style.left=((fixposx)||(fixposx==0))?fixposx:bodyScrollLet+mouseX+ox+lockX+"px";
+		oDv.style.top=((fixposy)||(fixposy==0))?fixposy:bodyScrollTop+mouseY+oy+lockY+"px";		
+		
+	}
+}
+
+function doCheck() {	
+	if (   (mouseX < boxLeft)    ||     (mouseX >boxRight)     || (mouseY < boxTop) || (mouseY > boxBottom)) {
+		if (!CBE.requireclick)
+			fadeOut();
+		if (CBE.IEbugfix) {showSelects();}
+		CBE=null;
+	}
+}
+
+function pauseBox(e) {
+   e?evt=e:evt=event;
+	boxMove=false;
+	evt.cancelBubble=true;
+}
+
+function showHideBox(e) {
+	oDv.style.visibility=(oDv.style.visibility!='visible')?'visible':'hidden';
+}
+
+function hideBox(e) {
+	oDv.style.visibility='hidden';
+}
+
+var COL=0;
+var stopfade=false;
+function fadeIn(fs) {
+		ID=null;
+		COL=0;
+		oDv.style.visibility='visible';
+		fadeIn2(fs);
+}
+
+function fadeIn2(fs) {
+		COL=COL+fs;
+		COL=(COL>1)?1:COL;
+		oDv.style.filter='alpha(opacity='+parseInt(100*COL)+')';
+		oDv.style.opacity=COL;
+		if (COL<1)
+		 setTimeout("fadeIn2("+fs+")",20);		
+}
+
+
+function fadeOut() {
+	oDv.style.visibility='hidden';
+	
+}
+
+function isChild(s,d) {
+	while(s) {
+		if (s==d) 
+			return true;
+		s=s.parentNode;
+	}
+	return false;
+}
+
+var cSrc;
+function checkMove(e) {
+	e?evt=e:evt=event;
+	cSrc=evt.target?evt.target:evt.srcElement;
+	if ((!boxMove)&&(!isChild(cSrc,oDv))) {
+		fadeOut();
+		if (CBE&&CBE.IEbugfix) {showSelects();}
+		boxMove=true;
+		CBE=null;
+	}
+}
+
+function showSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+      elements[i].style.visibility='visible';
+   }
+}
+
+function hideSelects(){
+   var elements = document.getElementsByTagName("select");
+   for (i=0;i< elements.length;i++){
+   elements[i].style.visibility='hidden';
+   }
+}
+//trim   function
+function trim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)|(\s*$)/g, ""); //
+}
+function ltrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(^\s*)/g, "");
+}
+function rtrim(stringToTrim) 
+{
+	return stringToTrim.replace(/(\s*$)/g, "");
+}
+
+</script>
+</body>
+</html>

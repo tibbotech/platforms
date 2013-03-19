@@ -1,0 +1,25 @@
+'=============================================================
+'		FLAG.TBS
+'=============================================================
+
+declare sub declare_ip_set
+declare sub declare_ip_obtained
+declare sub declare_error_mode
+
+enum en_x_flags			
+	EN_X_FLAGS_NORMAL=2,'Normal mode (it is always normal)
+	EN_X_FLAGS_PROG,	'Programming mode
+	EN_X_FLAGS_ERROR,	'Error mode
+	EN_X_FLAGS_IP,		'Own IP status
+	EN_X_FLAGS_CONN,	'Connection mode
+	EN_X_FLAGS_ES=8,	'Ethernet-->serial overflow
+	EN_X_FLAGS_SE		'Serial-->Ethernet overflow
+end enum
+'Status codes for setting-related operations
+
+declare sub write_x_flag(flag_num as en_x_flags,byref new_val as string)
+declare sub init_x_flags 
+declare function get_x_flags_net() as string(10)
+
+declare error_mode as no_yes
+ 

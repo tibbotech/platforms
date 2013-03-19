@@ -1,0 +1,63 @@
+
+const HTML_TBL_ITEM_NUM = 10
+const HTML_FLD_DESCR_LEN = 50
+const HTML_TBL_FILENAME_LEN = 30
+const HTML_MAX_TBL_NUM = 2
+const MAX_NUM_CRITERIA = 8
+const MAX_FLD_SZ = 20
+
+enum date_formate_convert_dir
+	STR_TO_VAL
+	VAL_TO_STR
+end enum
+
+enum download_mode
+	DL_RAW
+	DL_CSV
+end enum
+
+enum en_html_tbl_status
+	HTBL_STATUS_OK
+	HTBL_STATUS_NOT_FOUND
+	HTBL_STATUS_FORMAT_ERROR
+	HTBL_STATUS_INTERNAL_ERROR	
+end enum
+
+type html_criteria
+	criteria_name as string(MAX_FLD_NAME_LEN)
+	criteria_value as string(MAX_FLD_SZ)
+	criteria_condition as pl_fd_find_modes
+end type
+
+type html_tbl_fld_descr
+	HtmlId as string (MAX_FLD_NAME_LEN)
+	FieldName as string(MAX_FLD_NAME_LEN)	
+	FieldString	as string(HTML_FLD_DESCR_LEN)		
+	Input as no_yes
+	QueryMode as pl_fd_find_modes
+	Table as no_yes
+	HTMLData_addr as word
+end type
+
+type html_tbl_descr
+	TableName as string(MAX_TBL_NAME_LEN)
+	TableFile as string(HTML_TBL_FILENAME_LEN)
+	Fields(MAX_NUM_CRITERIA) as html_tbl_fld_descr
+end type
+
+declare sub html_tables_init
+declare sub html_tables_add_record(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_input_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_header_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_record_load(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_query_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_print_checkall
+declare sub html_tables_record_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_pagelink_print(page_name as string(20), page_val as string(6))
+declare sub html_tbl_print_error
+declare sub html_table_time_mod(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_clear(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tbl_print_datepicker
+declare sub html_table_download(dl_mode as download_mode)
+declare function html_tbl_upload as string
+declare sub html_tables_record_delete(html_tbl_name as string(MAX_TBL_NAME_LEN))

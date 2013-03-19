@@ -1,0 +1,28 @@
+'=============================================================
+'		LCD_LIBRARY.TBS
+'=============================================================
+
+#ifndef LCD_BACKCOLOR
+#define LCD_BACKCOLOR 0
+#endif
+
+#ifndef LCD_FORECOLOR
+#define LCD_FORECOLOR 65535
+#endif
+
+const LCD_IOMAP_RST = 44
+const LCD_IOMAP_EN = 23
+const LCD_IOMAP_CS1 = 40
+const LCD_IOMAP_CS2 = 41
+const LCD_IOMAP_RW = 42
+const LCD_IOMAP_DI = 43
+const LCD_IOMAP_XX = 4
+const LCD_BACK_LIGHT = 46
+const LCD_CON_1 = 12
+const LCD_CON_2 = 13
+const LCD_CON_3 = 14
+const LCD_CON_4 = 15
+
+declare sub lcd_clear(x as byte, y as byte, width as byte, height as byte)
+declare sub lcd_init(lcd_rotate as no_yes)
+declare sub lcd_print_msg(byref msg as string,x as word, y as word, w as word, h as word, al as pl_lcd_text_alignment, bolder as no_yes)

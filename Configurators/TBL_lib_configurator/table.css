@@ -1,0 +1,103 @@
+/* ==================== GENERAL ================== */
+	body 
+	{
+		  font-family: Times New Roman,Times,serif;
+  		font-size: 1em;/*15px;*/ 
+	}
+
+/* =================== Section ==================== */
+.imgleft	{float: left;
+	margin-right: 15px;
+	margin-bottom: 15px;}
+	
+.posttext	{font-size: 0.875em;
+	line-height: 1.5}
+	
+.posttext h2	{font-size: 1em;
+	margin: 0;
+	margin-bottom: 15px;
+	background-color: #f2f2f2;
+	line-height: 32px;
+	padding-left: 10px;}
+
+.posttext p	{margin: 0;
+	margin-bottom: 16px;}
+	
+/* ==================== Footer ==================== */
+#footer	{width: auto;
+	border-top: solid 5px #f2f2f2;
+	padding-top: 10px;
+	padding-bottom: 20px;}
+
+#footer p	{color: #000000;
+	font-size: 0.75em;
+	margin: 0;}
+
+/*===================== TAB ======================*/
+  #tab_header ul 
+  {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+  }
+
+	#tab_header li 
+	{
+		float: left;
+		border: 1px solid #bbb;
+		border-bottom-width:0;
+		margin: 0;
+  }
+
+	#tab_header a 
+	{
+		text-decoration: none;
+		display: block;
+		background: #eee;
+		padding: 0.24em 1em;
+		color: #00c;
+		width: 8em;
+		text-align: center;
+  }
+    
+	#tab_header a:hover 
+	{
+		background: #F78181;
+	}
+
+	#tab_header #selected 
+	{
+		border-color: black;
+	}
+
+	#tab_header #selected a 
+	{
+		position: relative;
+		top: 1px;
+		background: white;
+		color: black;
+		font-weight: bold;
+	}
+
+	#tab_content 
+	{
+		border: 1px solid black;
+		clear: both;
+		padding: 0 1em;
+		background: white;
+	}
+	
+	h1 
+	{
+		margin: 0;
+		padding: 0 0 1em 0;
+	}
+
+
+	tr:hover { background: #F0E68C; }
+
+
+
+
+
+

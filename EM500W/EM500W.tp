@@ -1,0 +1,33 @@
+[platform]
+description=EM500 Module + GA1000 Wi-Fi add-on
+version=EM500W-3.33
+rom=327680
+ram=17920
+codebits=24
+sector=65536
+
+[transport1]
+name=udp_winpcap
+description=Taiko WinPCap (UDP non-broadcast) Transport
+device=taiko.winpcapdevice
+browsedlg=em202ui.browsedlg
+
+[transport2]
+name=udp_broadcast
+description=Taiko UDP Broadcast Transport
+device=taiko.udpdevice
+browsedlg=em202ui.browsedlg
+
+[define1]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_DISABLED
+
+[define1.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define1.option2]
+description=Enabled
+value=FD_ENABLED
+

@@ -1,0 +1,377 @@
+'*********************************************************************************
+'           ON SCREEN LIST BOX CONTROL
+'
+'	List Box module is used to create a pop up option window.  User can go through
+'	the list and select certain item in the list. Since the key config and layout 
+'	is differ in each device, the printing and operating of the keys are defined in 
+'	the external device specific functions. User can use device_list_box_pre() to 
+'	prepare the list box including printing of button, and use device_lb_key_proc() 
+'	to process the key. 
+'	This list is defined by 'listbox_data'.  The format of the 'listbox_data' is as
+'	below:
+'
+'	value1-description1;value2-description2;value3-description3;
+'
+'	and so on.  The list will be seen as below:
+'	------------------
+'	|-> description1 |
+'	|   description2 |
+'	|   description3 |
+'	------------------
+'
+'	When a list item is selected the correspond item value will be returned.
+'
+'*********************************************************************************
+
+include "global.tbh"
+
+declare sub ui_listbox_string_parse(index as byte, byref listbox_display_string as string)
+declare sub ui_listbox_display(listbox_display_string as string)
+declare sub ui_listbox_cursor_display
+declare sub ui_listbox_up(listbox_display_string as string)
+declare sub ui_listbox_down(listbox_display_string as string)
+declare sub ui_listbox_print_val
+declare sub ui_listbox_scroll(refresh as no_yes)
+declare sub ui_list_box_timer_proc
+declare sub ui_list_box_key_proc(key_event as pl_kp_event_codes, key_code as byte)
+ 
+dim ui_listbox_string as string
+dim listbox_item_val as string(10)
+dim lb_timeout_ctr, lb_timeout as byte
+dim listbox_pos_x, listbox_pos_y, listbox_height, listbox_width as word
+dim listbox_item_spacing, listbox_display_max, listbox_display_index, listbox_item_index, listbox_start_index, listbox_item_count as byte
+dim list_box_result as ui_list_box_results
+#if LIST_BOX_CURSOR_STYLE > 0
+	dim previous_listbox_index as byte
+#endif
+
+'=============================================================
+public function ui_list_box(
+	x_coord as word,		'x coordination
+	y_coord as word,		'y coordination
+	list_width as word,		'list box width
+	list_height as word,	'list box height
+	byref listbox_data as string,		'values and display strings of all list box items
+	byref listbox_value as string(10),	'the value of selected list box item 
+	timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the list box and return to the previous screen. If timeout=0, no time out applies
+	) as ui_list_box_results
+
+	dim i,b, pos1, pos2 as byte
+	dim option as string(10)
+	dim kp_event as pl_kp_event_codes
+	dim kp_code as byte
+	dim t as word
+	dim listbox_display_string as string(DISPLAY_STR_LEN)
+	listbox_pos_x=x_coord
+	listbox_pos_y=y_coord
+	listbox_item_val=listbox_value
+	ui_listbox_string=""
+	listbox_height=list_height
+	listbox_width=list_width
+	listbox_item_spacing=FONT_HEIGHT + ULB_VER_SPACING
+	listbox_display_max=(list_height-2)/listbox_item_spacing
+	lb_timeout_ctr=timeout
+	lb_timeout=timeout  
+	listbox_item_count=1
+	if right(listbox_data,1)=";" then listbox_data=left(listbox_data,len(listbox_data)-1)
+	ui_listbox_string=listbox_data
+	
+	'Extract list item value from listbox_data, and if it is equal to the listbox_value, 
+	'set list_item_index to point to that item.
+	if listbox_value="" then
+		listbox_item_index=0 
+	else
+		for i=0 to len(ui_listbox_string) - 1
+			b=b + 1
+			if i=0 then 
+				option=left(listbox_data,instr(1,listbox_data,"-",1)-1)
+				b=0
+			else
+				pos1=instr(i+1,ui_listbox_string,";",1)+1
+				pos2=instr(pos1,listbox_data,"-",1) 
+				option=mid(listbox_data,pos1,pos2-pos1)
+				i=pos1
+				if pos1=1 or pos2=0 then
+					lcd_print_msg(SYS_ERROR_REBOOT,x_coord,y_coord,list_width,list_height,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,yes)
+					goto err
+				end if			
+			end if
+
+			if listbox_value=option then
+				listbox_item_index=b
+				exit for
+			end if
+		next i 
+	end if
+	if listbox_item_index < listbox_display_max then
+		listbox_start_index=0
+		listbox_display_index=listbox_item_index
+	else
+		listbox_start_index=listbox_item_index - listbox_display_max + 1
+		listbox_display_index=listbox_display_max-1
+	end if
+		
+	for i=0 to len(ui_listbox_string) - 1 
+		i=instr(i+1,ui_listbox_string,";",1)
+		if i > 0 then 
+			i=i - 1
+			listbox_item_count=listbox_item_count + 1
+			ui_listbox_string=left(ui_listbox_string,i) + "`" + right(listbox_data,len(ui_listbox_string)-i-1)
+		else
+			exit for
+		end if
+	next i 
+
+	ui_listbox_string_parse(listbox_start_index,listbox_display_string)
+LCD_LOCK	
+	lcd_clear(listbox_pos_x-SCROLL_BORDER/2,listbox_pos_y-SCROLL_BORDER/2,listbox_width+SCROLL_BORDER,listbox_height+SCROLL_BORDER)
+	ui_listbox_display(listbox_display_string)
+	ui_listbox_scroll(yes)
+	ui_listbox_cursor_display
+	lcd.rectangle(listbox_pos_x-SCROLL_BORDER/2,listbox_pos_y ,listbox_pos_x+listbox_width,listbox_pos_y+listbox_height)	
+	device_list_box_pre(x_coord,y_coord,list_width,list_height,listbox_data,listbox_value,timeout)
+LCD_UNLOCK	
+	if kp.genkpevent=YES then 'using kp pulling method
+		kp.enabled=NO
+		kp.genkpevent=NO
+		kp.enabled=YES
+	end if	
+err:	
+	list_box_result=LIST_BOX_RESULT_TIMEOUT
+wait:
+	device_lb_interrupt()	'allow user to executes other procedures while inside the list box
+	if kp.enabled=NO then kp.enabled=YES
+	if kp.getkey(kp_event,kp_code)=OK then
+		ui_list_box_key_proc(kp_event,kp_code)
+	end if
+
+	if list_box_result<>LIST_BOX_RESULT_TIMEOUT then
+		ui_list_box=list_box_result
+		goto key_pressed
+	end if
+
+	if t<>sys.timercount then
+		t=sys.timercount
+		ui_list_box_timer_proc()
+	end if
+	
+	if timeout=0 then
+		goto wait
+	else
+		if lb_timeout_ctr=0 then	'list box timeout
+			ui_list_box=LIST_BOX_RESULT_TIMEOUT
+key_pressed:		
+			if list_box_result=LIST_BOX_RESULT_OK then
+				ui_listbox_print_val()
+				listbox_value=listbox_item_val
+			end if
+		 	lcd_clear(x_coord-SCROLL_BORDER,y_coord-SCROLL_BORDER,list_width+SCROLL_BORDER*2,list_height+SCROLL_BORDER*2)
+			kp.enabled=NO
+			device_list_box_post(x_coord,y_coord,list_width,list_height,listbox_data,listbox_value,timeout)
+			exit function
+		end if
+		goto wait
+	end if	
+end function
+
+'============================================================= 
+sub ui_list_box_key_proc(key_event as pl_kp_event_codes, key_code as byte)
+'The keypad process for the list box module, 4 keys are used in this module, moving 
+'the cursor up and down in the list box, select, and cancel.
+	dim key_action as list_box_key_action
+	device_lb_key_proc(key_event,key_code,key_action)
+	lb_timeout_ctr=lb_timeout	
+	select case key_action
+	case LIST_BOX_CURSOR_UP:
+		ui_listbox_up(ui_listbox_string)
+		ui_listbox_cursor_display	
+	case LIST_BOX_CURSOR_DOWN:
+		ui_listbox_down(ui_listbox_string)
+		ui_listbox_cursor_display							
+	case LIST_BOX_CONFIRM:
+		list_box_result=LIST_BOX_RESULT_OK	
+	case LIST_BOX_CANCEL:
+		list_box_result=LIST_BOX_RESULT_CANCEL
+	end select
+end sub
+
+'============================================================= 
+sub ui_listbox_cursor_display()
+'Displays the cursor in the list box.  The position of the cursor is refered to the listbox_display_index.
+'Note that the listbox_display_index is the index of the pointed item in the current LCD, 
+'it's not necessary the really index.  The real index is stored in listbox_item_index
+	dim x, y as byte
+#if LIST_BOX_CURSOR_STYLE=0
+	romfile.open(SMALL_ICON_FILE)
+	lcd_clear(listbox_pos_x, listbox_pos_y, SCROLL_CURSOR_WIDTH, listbox_height)
+	x=listbox_pos_x + 1
+	y=listbox_pos_y + listbox_display_index * (FONT_HEIGHT + ULB_VER_SPACING)+(FONT_HEIGHT/2)-3
+	ui_listbox_scroll(no)
+	lcd.bmp(romfile.offset,x,y,19,0,5,8)
+#elif LIST_BOX_CURSOR_STYLE=1
+	x=listbox_pos_x+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH/2
+	if listbox_display_index <> previous_listbox_index then 
+		lcd.forecolor=LCD_BACKCOLOR
+		y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+(previous_listbox_index) * (FONT_HEIGHT + ULB_VER_SPACING-CURSOR_VER_OFFSET)-ULB_VER_SPACING/2-3
+		lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+FONT_HEIGHT+ULB_VER_SPACING)
+	end if
+	lcd.forecolor=LCD_CURSORCOLOR
+	y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+listbox_display_index * (FONT_HEIGHT + ULB_VER_SPACING-CURSOR_VER_OFFSET)-ULB_VER_SPACING/2-3
+	lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+FONT_HEIGHT+ULB_VER_SPACING)
+	lcd.forecolor=LCD_FORECOLOR
+	ui_listbox_scroll(no)
+#else
+#endif
+end sub
+
+'============================================================= 
+sub ui_listbox_string_parse(index as byte, byref listbox_display_string as string)
+'Construct the listbox_display_string.  This is the string used to display list options in the list box.
+	dim pos1,pos2,i as byte
+	dim stemp as string(DISPLAY_STR_LEN)
+	listbox_display_string=""
+	if index > 0 then  
+		pos1=instr(1,ui_listbox_string,"`",index)
+	else
+		pos1=0
+	end if
+	stemp=right(ui_listbox_string,len(ui_listbox_string)- pos1)
+	pos2=1
+	for i=0 to listbox_display_max
+		pos1=instr(pos2,stemp,"-",1)
+		pos2=instr(pos1,stemp,"`",1)
+		listbox_display_string=listbox_display_string+mid(stemp,pos1+1,pos2-pos1)
+		if pos2=0 then exit sub
+	next i
+end sub
+
+'============================================================= 
+sub ui_listbox_display(listbox_display_string as string)
+'Print the listbox_display_string on the LCD 
+	lcd.textalignment=PL_LCD_TEXT_ALIGNMENT_TOP_LEFT
+	romfile.open(LCD_STD_FONT)
+	lcd.setfont(romfile.offset)	
+	lcd.textverticalspacing=ULB_VER_SPACING
+	lcd.texthorizontalspacing=ULB_HOR_SPACING
+LCD_LOCK	
+	lcd_clear(listbox_pos_x+SCROLL_BORDER/2, listbox_pos_y+SCROLL_BORDER, listbox_width - SCROLL_CURSOR_WIDTH*2-SCROLL_BORDER, listbox_height-SCROLL_BORDER*2) 
+	lcd.printaligned(listbox_display_string,listbox_pos_x+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH, listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH,listbox_width-SCROLL_CURSOR_WIDTH*2-SCROLL_BORDER-SCROLL_BAR_WIDTH, listbox_height-SCROLL_CURSOR_WIDTH*2-SCROLL_BORDER) 
+LCD_UNLOCK
+end sub
+
+'=============================================================
+sub ui_listbox_print_val()
+'get value of the list box item
+	dim pos1, pos2 as byte
+	if listbox_item_index=0 then 
+		listbox_item_val=left(ui_listbox_string,instr(1,ui_listbox_string,"-",1)-1)
+	else
+		pos1=instr(1,ui_listbox_string,"`",listbox_item_index)
+		pos2=instr(pos1+1,ui_listbox_string,"-",1)
+		listbox_item_val=mid(ui_listbox_string,pos1+1,pos2-pos1-1)
+	end if
+end sub
+
+'=============================================================
+sub ui_listbox_up(listbox_display_string as string)
+'cursor in the list box moving up
+	dim listbox_prev_start as byte
+	listbox_prev_start=listbox_start_index
+	if listbox_item_index > 0 then
+		listbox_item_index=listbox_item_index - 1
+	else
+		exit sub
+	end if
+	if listbox_display_index=0 and listbox_start_index > 0 then
+		listbox_start_index=listbox_start_index - 1
+		ui_listbox_string_parse(listbox_start_index,listbox_display_string)
+		ui_listbox_display(listbox_display_string)
+	else
+#if LIST_BOX_CURSOR_STYLE=1
+		previous_listbox_index=listbox_display_index
+#endif
+		listbox_display_index=listbox_display_index - 1
+	end if
+	if listbox_prev_start=listbox_start_index then exit sub
+	if listbox_start_index=listbox_item_count-listbox_display_max-1 or listbox_start_index=0 then 
+		ui_listbox_scroll(yes)
+	end if
+end sub
+
+
+'=============================================================
+sub ui_listbox_down(listbox_display_string as string)
+'cursor in the list box moving down
+	dim listbox_prev_start as byte
+	listbox_prev_start=listbox_start_index	
+	listbox_item_index=listbox_item_index + 1
+	if listbox_item_index > listbox_item_count-1 then
+		listbox_item_index=listbox_item_index - 1
+		exit sub
+	end if
+#if LIST_BOX_CURSOR_STYLE=1	
+	previous_listbox_index=listbox_display_index
+#endif	
+	listbox_display_index=listbox_display_index + 1
+	if listbox_display_index > listbox_display_max-1 then
+		listbox_display_index=listbox_display_index - 1
+		listbox_start_index=listbox_item_index - listbox_display_index
+		ui_listbox_string_parse(listbox_start_index,listbox_display_string)
+		ui_listbox_display(listbox_display_string)
+	end if
+	if listbox_prev_start=listbox_start_index then exit sub
+	if listbox_start_index=listbox_item_count-listbox_display_max or listbox_start_index=1 then 
+		ui_listbox_scroll(yes)
+	end if
+end sub
+
+'=============================================================
+sub ui_listbox_scroll(refresh as no_yes)
+'move the scroll cursor of the list box, refresh the list box if necessary
+	dim scroll_cursor as byte
+	dim x, y, h, h1 as word	
+	x=listbox_pos_x + listbox_width - SCROLL_BAR_WIDTH-SCROLL_BORDER*2
+	y=listbox_pos_y
+	h=listbox_height-SCROLL_ARROW_HEIGHT*2-SCROLL_BORDER
+	h1=(h-13)/ listbox_item_count
+	if h1 < 2 then h1=2	
+	if listbox_item_count > 0 and listbox_item_count > listbox_item_index then
+		
+		if listbox_item_index=0 then 
+			scroll_cursor=y+SCROLL_ARROW_HEIGHT+SCROLL_BORDER/2
+		else
+			if listbox_item_index=listbox_item_count-1 then 
+				scroll_cursor=y+h+SCROLL_ARROW_HEIGHT+SCROLL_BORDER-h1
+			else
+				scroll_cursor=y+SCROLL_ARROW_HEIGHT+SCROLL_BORDER/2-1 + (h-SCROLL_BORDER)*listbox_item_index/(listbox_item_count)
+			end if
+		end if
+	else
+		exit sub
+	end if
+
+	lcd.linewidth=SCROLL_BORDER
+	lcd.filledrectangle(x,y+SCROLL_ARROW_HEIGHT,x+SCROLL_BAR_WIDTH,y+h+SCROLL_ARROW_HEIGHT)
+	lcd.fill(x+SCROLL_BORDER/2,scroll_cursor,SCROLL_BAR_WIDTH-SCROLL_BORDER+1,h1)
+	
+	if refresh=NO then exit sub
+	romfile.open(SMALL_ICON_FILE)
+	if listbox_start_index=0 then
+		lcd.bmp(romfile.offset,x+SCROLL_ARROW_X_POS_OFFSET,y+SCROLL_ARROW_Y_POS_OFFSET,39,3,19,10)
+	else
+		lcd.bmp(romfile.offset,x+SCROLL_ARROW_X_POS_OFFSET,y+SCROLL_ARROW_Y_POS_OFFSET,1,2,19,11)
+	end if
+	if listbox_start_index=listbox_item_count-listbox_display_max or listbox_item_count < listbox_display_max then
+		lcd.bmp(romfile.offset,x+SCROLL_ARROW_X_POS_OFFSET,y+h+SCROLL_ARROW_Y_POS_OFFSET+SCROLL_ARROW_HEIGHT,39,6,19,11)	
+	else
+		lcd.bmp(romfile.offset,x+SCROLL_ARROW_X_POS_OFFSET,y+h+SCROLL_ARROW_Y_POS_OFFSET+SCROLL_ARROW_HEIGHT,20,2,19,11)
+	end if
+
+end sub
+'=============================================================
+sub ui_list_box_timer_proc()
+'count list box time out
+	if lb_timeout_ctr>0 then
+		lb_timeout_ctr=lb_timeout_ctr-1
+	end if
+end sub

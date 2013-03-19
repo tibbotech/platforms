@@ -1,0 +1,27 @@
+
+const MAX_ENTITY_NUM = 15		'Maximum lines allowed in the ls_script.txt
+const MAX_CONTEXT_NUM = 2		'Maximum context number (root counts)
+const CONTEXT_NAME_LEN = 5		'Maximum length of the context name
+const RECORD_NAME_LEN = 10		'Maximum length of Record Name (applies to Variables, Events and Functions)
+const EVENT_TYPE_NUM = 1		'Maximum number of events (define how many lines allowed in the ls_event.txt
+const FUNCTION_NUM = 2			'Maximum number of functions (define how many lines allowed in the ls_function.txt
+const LS_EVENT_SZ = 32 
+
+enum LS_state
+	LS_LOGIN_STATE
+	LS_IDLE_STATE
+	LS_PROCESSING_COMMAND_STATE
+	LS_PROCESSING_EVENTS_STATE
+	LS_NO_PRIORITY
+end enum
+
+declare aggregate_login_state as LS_state
+
+declare sub AggreGateInit
+declare sub AggreGateConnected
+declare sub ProcessCommand
+declare sub ProcessEvents
+declare function AddEvent(context_name as string(CONTEXT_NAME_LEN), event_name as string(RECORD_NAME_LEN), event_info as string) as pl_fd_status_codes
+
+declare function GetTime as string(19)
+const EVENT_FILE = "event.txt"

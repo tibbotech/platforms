@@ -1,0 +1,84 @@
+'*************************************************************************************************************************
+'           LCD Library
+'	This library contains all other reusable function that is related to LCD display
+'*************************************************************************************************************************
+
+include "global.tbh"
+
+'=============================================================
+sub lcd_set_contrast(level as byte)
+'Contrast control shares the data bus with the LCD. Initialize LCD first, 
+'then set the contrast (before LCD initialization the bus may be driven by the LCD)
+
+	'enable port, output data
+	io.portnum=PL_IO_PORT_NUM_4
+	io.portenabled=255
+	io.portstate=level
+	
+	'generate strobe for the data register (on the LCD PCB)
+	io.num=PL_IO_NUM_48
+	io.enabled=YES
+	io.state=HIGH
+	io.state=LOW
+	
+	'disable port
+	io.portenabled=0
+end sub
+
+'=============================================================
+public sub lcd_init(lcd_rotate as no_yes)
+'LCD initialize sequence, varies with different LCD type, or different board layout
+	dim s as string(30)
+	dim lcd_map(7) as byte
+	dim x as byte	
+	lcd_map(0) = LCD_IOMAP_RST
+	lcd_map(1) = LCD_IOMAP_EN
+	lcd_map(2) = LCD_IOMAP_CS1
+	lcd_map(3) = LCD_IOMAP_CS2
+	lcd_map(4) = LCD_IOMAP_DI
+	lcd_map(5) = LCD_IOMAP_RW
+    lcd_map(6) = LCD_IOMAP_XX 
+    
+	for x = 0 to 6 
+		if x < 6 then
+			s = s + str(lcd_map(x)) + ","
+			io.num = lcd_map(x)
+			io.enabled = YES
+		else
+			s = s + str(lcd_map(x))
+		end if
+	next x
+	io.num = LCD_BACK_LIGHT
+	io.enabled = YES
+	io.state = HIGH
+	
+	lcd.iomapping = s
+	lcd.rotated= lcd_rotate
+
+	lcd.width=128
+	lcd.height=64
+	lcd.forecolor = 1
+	lcd.inverted= NO
+	lcd.enabled=YES
+	lcd_set_contrast(11)
+end sub
+
+'=============================================================
+public sub lcd_clear(x as byte, y as byte, width as byte, height as byte)
+'clear the section of the lcd defined by parameters.
+	dim color as word
+	color = lcd.forecolor
+	lcd.forecolor = lcd.backcolor
+	lcd.fill(x,y,width,height)
+	lcd.forecolor = color
+end sub
+
+'=============================================================
+public sub lcd_print_msg(byref msg as string,x as word, y as word, w as word, h as word, al as pl_lcd_text_alignment, bolder as no_yes)
+'This is a popup msgbox, it prints a message on the LCD.	
+	lcd_clear(x,y,w,h)
+	lcd.textalignment = al
+	lcd.printaligned(msg,x+3,y,w-3,h)	
+	if bolder = YES then lcd.rectangle(x+1,y+1,x+w-2,y+h-2)
+	'********** ADDITIONAL CODE MAY BE NEEDED **********
+end sub

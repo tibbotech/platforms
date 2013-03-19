@@ -1,0 +1,1108 @@
+include "global.tbh"
+
+dim fld_width as byte
+dim html_item_ptr(HTML_TBL_ITEM_NUM) as word
+dim html_tbl_info as html_tbl_descr(HTML_MAX_TBL_NUM)
+dim is_next_page, is_prev_page as no_yes 
+dim html_log_head, html_log_tail as word
+dim html_tbl_Direct as en_tbl_search_direction
+dim html_tbl_num as byte
+dim html_tbl_status as en_html_tbl_status
+
+public dim log_counter as byte
+
+'=============================================================
+function html_find_table(html_tbl_name as string(MAX_TBL_NAME_LEN)) as no_yes
+	dim i as byte
+	dim addr as word
+	
+	for i=0 to HTML_MAX_TBL_NUM-1
+		if html_tbl_info(i).TableName=html_tbl_name then
+			html_tbl_num=i
+			goto select_table
+		end if
+	next i
+	romfile.open("html_tbl_list.txt")				'this file is a tables descriptor file
+	addr=romfile.find(1,">>"+html_tbl_name,1)
+	if addr>0 then
+		html_tables_init(addr)
+		html_tbl_num=0
+select_table:
+		if tbl_select(html_tbl_name)=EN_TBL_STATUS_OK then
+			html_find_table=YES
+			exit function
+		end if
+	end if
+	html_tbl_status=HTBL_STATUS_NOT_FOUND
+	html_find_table=NO
+end function
+
+'=============================================================
+function html_get_fld_data(html_fld_index as byte) as string
+	dim pos,l as word
+
+	romfile.open(html_tbl_info(html_tbl_num).TableFile)
+	romfile.pointer=html_tbl_info(html_tbl_num).Fields(html_fld_index).HTMLData_addr
+	pos=romfile.find(romfile.pointer,chr(CR),1)
+	l=pos-romfile.pointer
+	if l>255 then l=255
+	html_get_fld_data=romfile.getdata(l)
+	
+end function
+'=============================================================
+sub html_convert_date(byref date_str as string, separator as string(1), byref date_val as word, date_format as string(3), convert_dir as date_formate_convert_dir)
+	dim sDate, sMonth, sYear as string(2)
+	dim wDaycount as word
+	select case convert_dir	
+	case STR_TO_VAL:
+		select case date_format
+		case "dmy":
+			sDate=left(date_str,2)
+			sMonth=mid(date_str,4,2)
+			sYear=right(date_str,2)
+		case "ymd":
+			sDate=right(date_str,2)
+			sMonth=mid(date_str,6,2)
+			sYear=mid(date_str,3,2)
+		case "mdy":
+			sDate=mid(date_str,4,2)
+			sMonth=left(date_str,2)
+			sYear=right(date_str,2)
+		case else:
+			sDate=left(date_str,2)
+			sMonth=mid(date_str,4,2)
+			sYear=right(date_str,2)				
+		end select
+		date_val=daycount(val(sYear),val(sMonth),val(sDate))
+	case VAL_TO_STR:
+		sYear=str(year(date_val))
+		sMonth=str(month(date_val))
+		sDate=str(date(date_val))
+		sYear=strgen(2-len(sYear),"0")+sYear
+		sMonth=strgen(2-len(sMonth),"0")+sMonth
+		sDate=strgen(2-len(sDate),"0")+sDate
+		select case date_format
+		case "dmy": date_str=sDate+separator+sMonth+separator+"20"+sYear
+		case "ymd": date_str="20"+sYear+separator+sMonth+separator+sDate
+		case "mdy": date_str=sMonth+separator+sDate+separator+"20"+sYear
+		case else: date_str="20"+sYear+separator+sMonth+separator+sDate			
+		end select		
+	end select
+end sub
+
+'=============================================================
+sub html_check_for_missing_fields(curr_pos as word, line_end_pos as word)
+	if curr_pos=0 or curr_pos>line_end_pos then
+		sys.halt
+		'one of your descriptor lines has missing fields
+	end if
+end sub
+
+'=============================================================
+sub find_next_descr_parameter(byref rom_addr as word, byref descr as string)
+	dim s as string
+	dim addr as word
+	addr=romfile.find(romfile.pointer,chr(CR),1) 
+	do												
+		rom_addr=romfile.find(romfile.pointer,chr(TAB),1) 
+		html_check_for_missing_fields(rom_addr,addr)
+		if rom_addr=0 then 
+			descr=s
+			exit sub
+		end if
+		s=romfile.getdata(rom_addr-romfile.pointer)
+		if addr>rom_addr then romfile.pointer=rom_addr+1
+	loop while s=""
+	descr=s
+end sub
+
+'=============================================================
+sub html_load_table_descr(
+	rom_addr as word,
+	byref html_id as string(MAX_FLD_NAME_LEN),
+	byref fld_name as string(MAX_FLD_NAME_LEN),
+	byref fld_str as string(HTML_FLD_DESCR_LEN),
+	byref fld_data_addr as word,
+	byref isInput as no_yes, 
+	byref query_mode as pl_fd_find_modes, 
+	byref isTable as no_yes)
+
+	dim s as string
+	dim line_end as word
+	
+	isInput=NO
+	isTable=NO
+	romfile.pointer=rom_addr+2
+	find_next_descr_parameter(rom_addr, html_id)
+	find_next_descr_parameter(rom_addr, fld_name)
+	find_next_descr_parameter(rom_addr, fld_str)
+	find_next_descr_parameter(rom_addr, s)
+	if s="Y" then isInput=YES
+	find_next_descr_parameter(rom_addr,s) 
+	select case s
+		case "=": query_mode=PL_FD_FIND_EQUAL
+		case "<>": query_mode=PL_FD_FIND_NOT_EQUAL
+		case ">": query_mode=PL_FD_FIND_GREATER
+		case ">=": query_mode=PL_FD_FIND_GREATER_EQUAL
+		case "<": query_mode=PL_FD_FIND_LESSER
+		case "<=": query_mode=PL_FD_FIND_LESSER_EQUAL
+		case else: query_mode=255
+	end select
+	find_next_descr_parameter(rom_addr,s)
+	if s="Y" then isTable=YES
+	line_end=romfile.find(rom_addr,chr(CR),1)
+	do
+		rom_addr=rom_addr+1
+		romfile.pointer=rom_addr
+		s=romfile.getdata(line_end-rom_addr)
+		fld_data_addr=rom_addr
+		rom_addr=romfile.find(rom_addr,chr(TAB),1)
+	loop while rom_addr<line_end and rom_addr<>0
+	
+end sub
+
+'=============================================================
+public sub html_tables_init(addr as word)
+	dim i,j as byte
+	dim rom_addr, line_end as word
+	dim s as string
+	dim fld_name,html_id as string(MAX_FLD_NAME_LEN)
+	dim fld_str as string(HTML_FLD_DESCR_LEN)
+	dim fld_data_addr as word
+	dim isInput as no_yes
+	dim query_mode as pl_fd_find_modes
+	dim isTable as no_yes
+	
+	j=0
+	
+	romfile.open(HTML_TABLE_LIST)				'this file is a tables descriptor file
+	rom_addr=romfile.find(addr,">>",1)
+
+	while rom_addr<>0 and j<HTML_MAX_TBL_NUM
+		'we are now at the ">>" pointing at the beginning of one setting descriptor line
+		romfile.pointer=rom_addr+2
+		
+		'find the end of this setting descriptor line
+		line_end=romfile.find(romfile.pointer,chr(CR),1)
+		
+		'extract table name
+		find_next_descr_parameter(rom_addr,s)
+		'name too long?
+		if len(s)>MAX_TBL_NAME_LEN then sys.halt
+		
+		html_tbl_info(j).TableName=s
+
+		'extract the minimum of records
+		do
+			rom_addr=rom_addr+1
+			romfile.pointer=rom_addr
+			s=romfile.getdata(line_end-rom_addr)
+			html_check_for_missing_fields(rom_addr,line_end)
+			rom_addr=romfile.find(rom_addr,chr(TAB),1)
+		loop while rom_addr<line_end and rom_addr<>0
+		
+		if len(s)>HTML_TBL_FILENAME_LEN then sys.halt
+		html_tbl_info(j).TableFile=s
+		rom_addr=romfile.find(romfile.pointer,">>",1)
+		j=j+1				
+	wend
+	for i=0 to HTML_MAX_TBL_NUM-1
+		for j=0 to MAX_NUM_CRITERIA-1
+			html_tbl_info(i).Fields(j).HtmlId=""
+			html_tbl_info(i).Fields(j).FieldString=""
+			html_tbl_info(i).Fields(j).HTMLData_addr=0
+			html_tbl_info(i).Fields(j).Input=no
+			html_tbl_info(i).Fields(j).QueryMode=255
+			html_tbl_info(i).Fields(j).Table=no			
+		next j
+	next i
+	for i=0 to HTML_MAX_TBL_NUM-1
+		romfile.open(html_tbl_info(i).TableFile)
+		j=0
+		rom_addr=1
+		do
+			rom_addr=romfile.find(rom_addr+1,">>",1)
+			if rom_addr=0 then exit do
+			html_load_table_descr(rom_addr,html_id,fld_name,fld_str,fld_data_addr,isInput,query_mode,isTable)
+			html_tbl_info(i).Fields(j).HtmlId=html_id
+			html_tbl_info(i).Fields(j).FieldName=fld_name
+			html_tbl_info(i).Fields(j).FieldString=fld_str
+			html_tbl_info(i).Fields(j).HTMLData_addr=fld_data_addr
+			html_tbl_info(i).Fields(j).Input=isInput
+			html_tbl_info(i).Fields(j).QueryMode=query_mode
+			html_tbl_info(i).Fields(j).Table=isTable
+			
+			j=j+1
+		loop while rom_addr<>0
+	next i
+	html_tbl_status=HTBL_STATUS_OK
+end sub
+
+'=============================================================
+public sub html_table_header_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim num_of_fld as byte
+	dim i as byte
+	dim html_tbl as tbl_type
+	html_find_table(html_tbl_name)
+	if tbl_get_tbl_info(html_tbl)=EN_TBL_STATUS_OK then
+		num_of_fld=0
+		for i=0 to MAX_NUM_CRITERIA-1
+			if html_tbl_info(html_tbl_num).Fields(i).Table=YES then num_of_fld=num_of_fld+1
+		next i
+		if num_of_fld>0 then 
+			fld_width=100/num_of_fld
+		else
+			html_tbl_status=HTBL_STATUS_DISK_ERROR
+			exit sub
+		end if
+		if html_tbl.Struct=EN_TBL_STRUCT_TABLE then
+			sock_setsend("<td><input type='checkbox' id='all' name='all' onclick='checkall_clicked()'></td>")
+		end if
+		for i=0 to MAX_NUM_CRITERIA-1
+			if html_tbl_info(html_tbl_num).Fields(i).Table=YES then sock_setsend("<th width ="+str(fld_width)+"%><b>"+html_tbl_info(html_tbl_num).Fields(i).FieldString+"</b></th>")
+		next i
+	else
+		sock_setsend("<th><b>"+MSG_HTML_TBL_UNKNOWN_TABLE+"</b></th>")
+	end if
+end sub
+
+'=============================================================
+public sub html_table_pagelink_print(page_name as string(20), page_val as string(6))
+'print the hyperlink for the "Bottom" page on the event_query.html
+	dim s,s1 as string
+	dim pos1, pos2, i as byte
+	s=sock.httprqstring
+	s1=mod_http_argument(s,"page",page_val)
+	s1=mod_http_argument(s1,"del","")
+	for i=1 to HTML_TBL_ITEM_NUM
+		if instr(1,s1,"chk"+str(i),1)> 0 then s1=mod_http_argument(s1,"chk"+str(i),"")
+	next i
+	select case page_val
+	case "top": 
+		s="Top"
+		sock_setsend("<a href="+ page_name + s1 + " targe=showframe>"+s+"</a>")
+	case "bottom": 
+		s="Bottom"
+		sock_setsend("<a href="+ page_name + s1 + " targe=showframe>"+s+"</a>")
+	case "prev": 
+		s="Previous"
+		if is_prev_page=YES then sock_setsend("<a href="+ page_name + s1 + " targe=showframe>"+s+"</a>")	
+	case "next": 
+		s="Next"
+		if is_next_page=YES then sock_setsend("<a href="+ page_name + s1 + " targe=showframe>"+s+"</a>")	
+	end select
+end sub
+
+'=============================================================
+public sub html_table_print_checkall
+	dim i as byte
+	sock_setsend("if(document.getElementById('all').checked==true){")
+	for i=0 to HTML_TBL_ITEM_NUM-1
+		sock_setsend("document.getElementById('chk"+str(i+1)+"').checked=true;")
+	next i
+	sock_setsend("}if(document.getElementById('all').checked==false){")
+	for i=0 to HTML_TBL_ITEM_NUM-1
+		sock_setsend("document.getElementById('chk"+str(i+1)+"').checked=false;")
+	next i
+	sock_setsend("}")
+end sub
+
+'=============================================================
+public sub html_tables_record_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim i, j as byte
+	dim pos1, pos2 as word
+	dim html_input_type, html_date_separator, html_data_type as string(1)
+	dim fld_data as string
+	dim custom_id as string(2)
+	dim s, temp as string(128)
+	dim fld_name as string(MAX_FLD_NAME_LEN)
+	dim html_input_len, html_date_format as string(3)
+	dim str_date, str_month, str_year as string(2)
+	dim wDaycount,wSeccount as word
+	dim html_tbl as tbl_type
+	dim syear as string(4)
+	dim smonth, sdate, shour, smin, ssec as string(2)
+	
+	if log_counter=0 then exit sub
+	html_find_table(html_tbl_name)
+	if tbl_get_tbl_info(html_tbl)=EN_TBL_STATUS_OK then
+		for i=0 to log_counter-1
+			if html_tbl_Direct=EN_TBL_SEARCH_UP then
+				tbl_record_ptr_sg(html_item_ptr(i),EN_TBL_SET)
+			else
+				tbl_record_ptr_sg(html_item_ptr(log_counter-i-1),EN_TBL_SET)
+			end if
+			tbl_record_sg(EN_TBL_GET)
+			sock_setsend("<tr>")
+			if html_tbl.Struct=EN_TBL_STRUCT_TABLE then
+				sock_setsend("<td><input type='checkbox' id='chk"+str(i+1)+"' name='chk"+str(i+1)+"'></td>")
+			end if
+			for j=0 to MAX_NUM_CRITERIA - 1
+				if html_tbl_info(html_tbl_num).Fields(j).Table=YES then
+					fld_name=html_tbl_info(html_tbl_num).Fields(j).FieldName
+					fld_data=html_get_fld_data(j)
+					pos1=instr(1,fld_data,chr(COMMA),1)
+					pos2=instr(1,fld_data,chr(COMMA),2)
+					html_data_type=left(fld_data,1)
+					html_input_type=mid(fld_data,pos1+1,1)
+					if tbl_field_sg(fld_name,s,EN_TBL_GET)=EN_TBL_STATUS_INVALID then
+						s="(INVALID)"
+						goto print
+					end if
+					select case html_input_type
+					'if input type is list box(L), then setting data also contain the options for the list box
+					case "L","K":
+					
+						romfile.open(html_tbl_info(html_tbl_num).TableFile)
+						romfile.pointer=html_tbl_info(html_tbl_num).Fields(j).HTMLData_addr+4
+						pos1=romfile.find(romfile.pointer,"-",1)
+						temp=romfile.getdata(pos1-romfile.pointer)
+						pos2=romfile.find(romfile.pointer,chr(CR),1)
+						
+						if s=temp then
+							romfile.pointer=pos1+1
+							pos1=romfile.find(romfile.pointer,";",1)
+							s=romfile.getdata(pos1-romfile.pointer)
+						else
+							temp=";"+s+"-"
+							pos1=romfile.find(pos1,temp,1)
+							if pos1=0 or pos1>pos2 then 
+								s="(INVALID)"
+							else
+								romfile.pointer=pos1+len(s)+2
+								pos1=romfile.find(romfile.pointer,";",1)
+								s=romfile.getdata(pos1-romfile.pointer)							
+							end if
+					
+						end if
+
+					'if input type is input box(I), then setting data also contain the maximum input length
+					case "I":
+						pos1=instr(1,s,chr(NULL),1)
+						if pos1>0 then s=left(s,pos1-1)
+					'if input type is date, use calendar object
+					case "D":
+						html_date_format=mid(fld_data,pos2+1,3)
+						html_date_separator=mid(fld_data,pos2+5,1)
+						select case html_data_type
+						case "S":
+							syear=left(s,4)
+							smonth=mid(s,5,2)
+							sdate=mid(s,7,2)
+							select case html_date_format
+								case "ymd": s=syear+html_date_separator+smonth+html_date_separator+sdate
+								case "dmy": s=sdate+html_date_separator+smonth+html_date_separator+syear
+								case "mdy": s=smonth+html_date_separator+sdate+html_date_separator+syear
+							end select
+						case "W":
+							wDaycount=val(s)
+							html_convert_date(s,html_date_separator,wDaycount,html_date_format,VAL_TO_STR)
+						end select
+					case "T":
+						select case html_data_type
+						case "S":
+							shour=left(s,2)
+							smin=mid(s,3,2)
+							ssec=mid(s,5,2)
+							s=shour+":"+smin+":"+ssec
+						case "W":
+						end select
+					case "C":
+						romfile.open(html_tbl_info(html_tbl_num).TableFile)
+						romfile.pointer=html_tbl_info(html_tbl_num).Fields(j).HTMLData_addr+4
+						temp=s
+						custom_id=romfile.getdata(2)
+						s=device_customized_item(custom_id,html_tbl_info(html_tbl_num).TableFile,temp)
+					end select
+print:
+					if s="" then s="<br>"
+					sock_setsend("<td width ="+str(fld_width)+"%>"+s+"</td>")	
+				end if
+			next j
+			sock_setsend("</tr>")
+		next i
+	end if
+end sub
+
+'=============================================================
+public sub html_tables_query_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim fld_data, temp as string
+	dim s as string(128)
+	dim html_input_len, html_date_format as string(3)
+	dim b, i as byte
+	dim pos1, pos2, pos3 as word
+	dim html_input_type, html_date_separator as string(1)
+	dim bQM as byte
+	b=0
+	if html_find_table(html_tbl_name)=yes then
+		for i=0 to MAX_NUM_CRITERIA-1
+			bQM=html_tbl_info(html_tbl_num).Fields(i).QueryMode
+			if bQM<>255 and html_tbl_info(html_tbl_num).Fields(i).FieldName<>"" then 
+				fld_data=html_get_fld_data(i)
+				b=b+1
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_input_type=mid(fld_data,pos1+1,1)			
+				sock_setsend("<tr><td width=80%><table width=100% border='1'><tr><td width=50%>"+ html_tbl_info(html_tbl_num).Fields(i).FieldString +"</td><td width=50%>")
+
+				select case html_input_type
+				'if input type is list box(L), then setting data also contain the options for the list box
+				case "L":
+					sock_setsend("<select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' size =1 STYLE='width: 100%' tabindex ='"+str(b)+"'>")
+			
+					romfile.open(html_tbl_info(html_tbl_num).TableFile)			
+					pos1=html_tbl_info(html_tbl_num).Fields(i).HTMLData_addr+4
+					pos2=romfile.find(pos1,";",1)
+					pos3=romfile.find(pos1,chr(CR),1)
+					
+					sock_setsend("<option value='' selected='selected'>All</option>")
+					while pos2<>0 and pos2<pos3
+						romfile.pointer=pos1
+						s=romfile.getdata(pos2-romfile.pointer)
+						sock_setsend("<option ")
+						pos1=instr(1,s,"-",1)
+						sock_setsend("value='"+left(s,pos1-1)+"'>"+mid(s,pos1+1,len(s)-pos1)+"</option>")
+						pos1=pos2+1
+						pos2=romfile.find(pos1,";",1)
+					wend
+					sock_setsend("</select>")
+				'if input type is input box(I), then setting data also contain the maximum input length
+				case "I":
+					html_input_len=mid(fld_data,pos2+1,len(fld_data)-pos2)
+					sock_setsend("<input type='text' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' maxlength='"+html_input_len+"' class='input100' tabindex ='"+str(b)+"'>")
+					
+				'if input type is date, use calendar object
+				case "D":
+					pos1=instr(pos2+1,fld_data,chr(COMMA),1)
+					html_date_format=mid(fld_data,pos2+1,3)
+					html_date_separator=mid(fld_data,pos1+1,1)
+					sock_setsend("<table><tr><td><input id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q'></td>")
+					sock_setsend("<td><a href='#' onclick="+chr(34)+"openFormWin('calendar.html?form_name="+html_tbl_name+"_q&fld_ID="+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q&format="+html_date_format+"&separator="+html_date_separator+"');return false;"+chr(34)+">Select Date</a></td></tr></table>")
+				case "T":
+					pos1=instr(pos2+1,fld_data,chr(COMMA),1)
+					sock_setsend("<table><input type ='hidden' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' name='"++html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q'>")
+					sock_setsend("<td><select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_q'>")
+					sock_setsend("<option value='00'>00</option><option value='01'>01</option><option value='02'>02</option><option value='03'>03</option><option value='04'>04</option><option value='05'>05</option>")
+					sock_setsend("<option value='06'>06</option><option value='07'>07</option><option value='08'>08</option><option value='09'>09</option><option value='10'>10</option><option value='11'>11</option>")
+					sock_setsend("<option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option>")
+					sock_setsend("<option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option></select>")
+					sock_setsend(":<select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_q'>")
+					sock_setsend("<option value='00'>00</option><option value='01'>01</option><option value='02'>02</option><option value='03'>03</option><option value='04'>04</option><option value='05'>05</option>")
+					sock_setsend("<option value='06'>06</option><option value='07'>07</option><option value='08'>08</option><option value='09'>09</option><option value='10'>10</option><option value='11'>11</option>")
+					sock_setsend("<option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option>")
+					sock_setsend("<option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option>")
+					sock_setsend("<option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option>")
+					sock_setsend("<option value='30'>30</option><option value='31'>31</option><option value='32'>32</option><option value='33'>33</option><option value='34'>34</option><option value='35'>35</option>")
+					sock_setsend("<option value='36'>36</option><option value='37'>37</option><option value='38'>38</option><option value='39'>39</option><option value='40'>40</option><option value='41'>41</option>")
+					sock_setsend("<option value='42'>42</option><option value='43'>43</option><option value='44'>44</option><option value='45'>45</option><option value='46'>46</option><option value='47'>47</option>")
+					sock_setsend("<option value='48'>48</option><option value='49'>49</option><option value='50'>50</option><option value='51'>51</option><option value='52'>52</option><option value='53'>53</option>")
+					sock_setsend("<option value='54'>54</option><option value='55'>55</option><option value='56'>56</option><option value='57'>57</option><option value='58'>58</option><option value='59'>59</option></select></td>")				
+					sock_setsend("</table>")
+				case "K":
+					sock_setsend("<table><tr><td><input type='checkbox' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q'></td></tr></table>")
+				end select
+				sock_setsend("</td></tr></table></td></tr>")
+			end if
+		next i
+	end if
+
+end sub
+
+'=============================================================
+public sub html_tables_input_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+'Read the html_descr_file and print the settings that is in the file. 
+	dim s, fld_data, html_input_option as string
+	dim html_input_len, html_date_format as string(3)
+	dim b, i as byte
+	dim pos1, pos2, pos3 as word
+	dim html_input_type, html_date_separator as string(1)
+	
+	b=0
+	if html_find_table(html_tbl_name)=yes then
+		for i=0 to MAX_NUM_CRITERIA-1
+			if html_tbl_info(html_tbl_num).Fields(i).Input=YES then 
+				fld_data=html_get_fld_data(i)
+				b=b+1
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_input_type=mid(fld_data,pos1+1,1)			
+				sock_setsend("<tr><td width=80%><table width=100% border='1'><tr><td width=50%>"+ html_tbl_info(html_tbl_num).Fields(i).FieldString +"</td><td width=50%>")
+			
+				select case html_input_type
+				'if input type is list box(L), then setting data also contain the options for the list box
+				case "L":
+				
+					sock_setsend("<select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' size =1 STYLE='width: 100%' tabindex ='"+str(b)+"'>")
+		
+					romfile.open(html_tbl_info(html_tbl_num).TableFile)			
+					pos1=html_tbl_info(html_tbl_num).Fields(i).HTMLData_addr+4
+					pos2=romfile.find(pos1,";",1)
+					pos3=romfile.find(pos1,chr(CR),1)
+					
+					while pos2<>0 and pos2<pos3
+						romfile.pointer=pos1
+						s=romfile.getdata(pos2-romfile.pointer)
+						sock_setsend("<option ")
+						pos1=instr(1,s,"-",1)
+						sock_setsend("value='"+left(s,pos1-1)+"'>"+mid(s,pos1+1,len(s)-pos1)+"</option>")
+						pos1=pos2+1
+						pos2=romfile.find(pos1,";",1)
+					wend
+					
+					sock_setsend("</select>")
+				'if input type is input box(I), then setting data also contain the maximum input length
+				case "I":
+					html_input_len=mid(fld_data,pos2+1,len(fld_data)-pos2)
+					sock_setsend("<input type='text' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' maxlength='"+html_input_len+"' class='input100' tabindex ='"+str(b)+"'>")
+					
+				'if input type is date, use calendar object
+				case "D":
+					pos1=instr(pos2+1,fld_data,chr(COMMA),1)
+					html_date_format=mid(fld_data,pos2+1,3)
+					html_date_separator=mid(fld_data,pos1+1,1)
+					sock_setsend("<table><tr><td><input id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i'></td>")
+					sock_setsend("<td><a href='#' onclick="+chr(34)+"openFormWin('calendar.html?form_name="+html_tbl_name+"_i&fld_ID="+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i&format="+html_date_format+"&separator="+html_date_separator+"');return false;"+chr(34)+">Select Date</a></td></tr></table>")
+				case "T":
+					pos1=instr(pos2+1,fld_data,chr(COMMA),1)
+					sock_setsend("<table><input type ='hidden' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' name='"++html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i'>")
+					sock_setsend("<td><select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_i'>")
+					sock_setsend("<option value='00'>00</option><option value='01'>01</option><option value='02'>02</option><option value='03'>03</option><option value='04'>04</option><option value='05'>05</option>")
+					sock_setsend("<option value='06'>06</option><option value='07'>07</option><option value='08'>08</option><option value='09'>09</option><option value='10'>10</option><option value='11'>11</option>")
+					sock_setsend("<option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option>")
+					sock_setsend("<option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option></select>")
+					sock_setsend(":<select id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_i'>")
+					sock_setsend("<option value='00'>00</option><option value='01'>01</option><option value='02'>02</option><option value='03'>03</option><option value='04'>04</option><option value='05'>05</option>")
+					sock_setsend("<option value='06'>06</option><option value='07'>07</option><option value='08'>08</option><option value='09'>09</option><option value='10'>10</option><option value='11'>11</option>")
+					sock_setsend("<option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option><option value='16'>16</option><option value='17'>17</option>")
+					sock_setsend("<option value='18'>18</option><option value='19'>19</option><option value='20'>20</option><option value='21'>21</option><option value='22'>22</option><option value='23'>23</option>")
+					sock_setsend("<option value='24'>24</option><option value='25'>25</option><option value='26'>26</option><option value='27'>27</option><option value='28'>28</option><option value='29'>29</option>")
+					sock_setsend("<option value='30'>30</option><option value='31'>31</option><option value='32'>32</option><option value='33'>33</option><option value='34'>34</option><option value='35'>35</option>")
+					sock_setsend("<option value='36'>36</option><option value='37'>37</option><option value='38'>38</option><option value='39'>39</option><option value='40'>40</option><option value='41'>41</option>")
+					sock_setsend("<option value='42'>42</option><option value='43'>43</option><option value='44'>44</option><option value='45'>45</option><option value='46'>46</option><option value='47'>47</option>")
+					sock_setsend("<option value='48'>48</option><option value='49'>49</option><option value='50'>50</option><option value='51'>51</option><option value='52'>52</option><option value='53'>53</option>")
+					sock_setsend("<option value='54'>54</option><option value='55'>55</option><option value='56'>56</option><option value='57'>57</option><option value='58'>58</option><option value='59'>59</option></select></td>")				
+					sock_setsend("</table>")
+				case "K":
+					sock_setsend("<table><tr><td><input type='checkbox' id='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i' name='"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i'></td></tr></table>")
+				end select
+				sock_setsend("</td></tr></table></td></tr>")
+			end if
+		next i
+	end if
+end sub
+
+
+'=============================================================
+function html_tables_get_record(html_tbl_name as string(MAX_TBL_NAME_LEN), criteria_arrary as html_criteria(MAX_NUM_CRITERIA),byref addr as word, query_direct as en_tbl_search_direction) as en_tbl_status
+	dim j as byte
+	dim ptr_temp as word
+	dim result as en_tbl_status
+	dim unconditional as no_yes
+	unconditional=YES
+	ptr_temp=addr
+	html_find_table(html_tbl_name)
+	for j=1 to MAX_NUM_CRITERIA
+		if len(criteria_arrary(j-1).criteria_value)>0 then 
+			unconditional=NO
+			exit for
+		end if
+	next j
+	if unconditional=YES then
+		result=tbl_record_find(EN_TBL_RECORD_ACTIVE,"","",addr,query_direct,"")
+		html_tables_get_record=result
+		exit function
+	end if
+	for j=1 to MAX_NUM_CRITERIA
+		if criteria_arrary(j-1).criteria_name<>"" then result=tbl_record_find(EN_TBL_RECORD_ACTIVE,criteria_arrary(j-1).criteria_value,criteria_arrary(j-1).criteria_name,addr,query_direct,criteria_arrary(j-1).criteria_condition)
+		html_tables_get_record=result
+		if result=EN_TBL_STATUS_NOT_FOUND then exit function
+		if query_direct=EN_TBL_SEARCH_DOWN then
+			if addr>ptr_temp then 
+				j=0
+				ptr_temp=addr
+			end if
+		else
+			if addr<ptr_temp then 
+				j=0
+				ptr_temp=addr
+			end if
+		end if	
+	next j
+end function
+
+'=============================================================
+function html_tables_load_buff(html_tbl_name as string(MAX_TBL_NAME_LEN), criteria_arrary as html_criteria(MAX_NUM_CRITERIA), byref head as word, byref tail as word, query_direct as en_tbl_search_direction) as en_tbl_status
+	dim i, j as byte
+	dim ptr_temp, total_rec_num, actual_rec_num as word
+	dim result as en_tbl_status
+	html_find_table(html_tbl_name)
+	log_counter=0
+	tbl_record_number_get(total_rec_num,YES)
+	tbl_record_number_get(actual_rec_num,no)
+	if actual_rec_num=0 then goto done
+	
+	for i=0 to HTML_TBL_ITEM_NUM-1
+		if query_direct=EN_TBL_SEARCH_UP  then
+			result=html_tables_get_record(html_tbl_name,criteria_arrary,tail,EN_TBL_SEARCH_UP)
+			if result= EN_TBL_STATUS_OK then 
+				ptr_temp=tail
+				if i=0 then head=tail 'set first found as head
+				if tail>0 then tail=tail-1
+				goto found
+			else
+				goto done
+			end if
+		else
+			result=html_tables_get_record(html_tbl_name,criteria_arrary,head,EN_TBL_SEARCH_DOWN)
+			if result= EN_TBL_STATUS_OK then 
+				ptr_temp=head
+				if i=0 then tail=head 'set first found as tail
+				if head<=total_rec_num then head=head+1
+				goto found
+			else
+				goto done
+			end if
+		end if
+found: 
+	html_item_ptr(i)=ptr_temp	
+	log_counter=log_counter+1
+	next i
+done:
+	html_tables_load_buff=result
+	if log_counter> 0 then
+		if query_direct=EN_TBL_SEARCH_DOWN then
+			head=html_item_ptr(log_counter-1)
+			tail=html_item_ptr(0)
+		else	
+			tail=html_item_ptr(log_counter-1)
+			head=html_item_ptr(0)
+		end if
+	end if
+end function
+
+'=============================================================
+public sub html_tables_record_delete(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim i, index as byte
+	dim ts as struct_tbl_timestamp
+	dim html_tbl as tbl_type
+	dim tbl_result as en_tbl_status
+	
+	if get_http_argument(sock.httprqstring,"del=")="yes" then
+		html_find_table(html_tbl_name)
+		tbl_get_tbl_info(html_tbl)
+		if html_tbl.Struct=EN_TBL_STRUCT_LIST then
+			tbl_result=tbl_delete()
+			if tbl_result=EN_TBL_STATUS_FAILURE then set_disk_error("html_tables_record_delete 1",html_tbl_name)
+			if tbl_result=EN_TBL_STATUS_OK then table_data_change()
+		else
+			for i=0 to log_counter-1
+				if html_tbl_Direct=EN_TBL_SEARCH_UP then
+					index=i
+				else
+					index=log_counter-i-1
+				end if				
+				if get_http_argument(sock.httprqstring,"chk"+str(index+1)+"=")="on" then 
+					tbl_record_ptr_sg(html_item_ptr(i),EN_TBL_SET)
+					tbl_result=tbl_record_delete()
+					if tbl_result=EN_TBL_STATUS_FAILURE then set_disk_error("html_tables_record_delete 2",html_tbl_name)
+					if tbl_result=EN_TBL_STATUS_OK then
+						rtc.getdata(ts.ts_daycount,ts.ts_mincount,ts.ts_seconds)
+						tbl_timestamp_sg(ts,EN_TBL_SET)
+						table_data_change()
+					end if
+				end if
+			next i
+		end if
+	end if
+end sub
+
+'=============================================================
+public sub html_tables_record_load(html_tbl_name as string(MAX_TBL_NAME_LEN))
+
+	dim pos1, pos2, i as byte
+	dim wDaycount,msb,lsb as word
+	dim fld_data as string
+	dim s as string(128)
+	dim html_input_type, html_data_type,html_date_separator as string(1)
+	dim html_date_format as string(3)
+	dim criteria_arrary as html_criteria(MAX_NUM_CRITERIA)
+	dim sPage as string(6)
+	dim index as byte
+	dim bQM as byte
+	dim sYear, sMonth, sDate as string(2)
+	dim num_of_records, addr as word
+
+	index=0
+	for i=0 to MAX_NUM_CRITERIA-1
+		criteria_arrary(i).criteria_name=""
+	next i
+	if html_find_table(html_tbl_name)=yes then
+		if get_http_argument(sock.httprqstring,"save=")="yes" then goto load_page
+		for i=0 to MAX_NUM_CRITERIA-1
+			bQM=html_tbl_info(html_tbl_num).Fields(i).QueryMode
+			if bQM<>255 then
+				criteria_arrary(index).criteria_condition=html_tbl_info(html_tbl_num).Fields(i).QueryMode
+				fld_data=html_get_fld_data(i)		
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_data_type=left(fld_data,1)
+				html_input_type=mid(fld_data,pos1+1,1)			
+				criteria_arrary(index).criteria_name=html_tbl_info(html_tbl_num).Fields(i).FieldName
+				s=get_http_argument(sock.httprqstring,html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q=")
+				if s<>"" and criteria_arrary(index).criteria_name<>"" then
+					html_spec_chr_convert(s)
+					select case html_input_type
+					case "I","L":
+					case "D":
+						pos2=instr(pos1+1,fld_data,chr(COMMA),1)
+						html_date_separator=mid(fld_data,pos2+5,1)
+						html_date_format=mid(fld_data,pos2+1,3)
+						if html_data_type="W" then
+							html_convert_date(s,html_date_separator,wDaycount,html_date_format,STR_TO_VAL)
+							msb=wDaycount/256
+							lsb=wDaycount mod 256
+							s=chr(msb)+chr(lsb)
+						else
+							select case html_date_format
+							case "dmy":
+								sDate=left(s,2)
+								sMonth=mid(s,4,2)
+								sYear=right(s,2)
+							case "ymd":
+								sDate=right(s,2)
+								sMonth=mid(s,6,2)
+								sYear=mid(s,3,2)
+							case "mdy":
+								sDate=mid(s,4,2)
+								sMonth=left(s,2)
+								sYear=right(s,2)
+							case else:
+								sDate=left(s,2)
+								sMonth=mid(s,4,2)
+								sYear=right(s,2)				
+							end select
+							s="20"+sYear+sMonth+sDate
+						end if
+					case "T":
+						if s="0000" then 
+							s=""
+						else
+							s=s+"00"
+						end if
+					case "K":
+						if s="on" then
+							s="1"
+						else
+							s="0"
+						end if
+					case else
+						html_tbl_status=HTBL_STATUS_INTERNAL_ERROR
+						exit sub
+					end select
+				end if
+				criteria_arrary(index).criteria_value=s
+				index=index+1
+			end if
+		next i
+load_page:
+		sPage=get_http_argument(sock.httprqstring,"page=")
+		tbl_record_number_get(num_of_records,yes)
+		select case sPage
+		case "prev":
+			html_tbl_Direct=EN_TBL_SEARCH_DOWN
+			html_log_tail=html_log_head+1
+			html_log_head=html_log_head+1
+		case "next":
+			html_tbl_Direct=EN_TBL_SEARCH_UP
+			if html_log_tail>0 then
+			html_log_head=html_log_tail-1
+			html_log_tail=html_log_tail-1
+			end if
+		case "","top":
+			html_tbl_Direct=EN_TBL_SEARCH_UP
+			html_log_head=num_of_records
+			html_log_tail=html_log_head
+		case "bottom":
+			html_tbl_Direct =EN_TBL_SEARCH_DOWN 
+			html_log_tail=1
+			html_log_head=html_log_tail
+		end select
+		
+		html_tables_load_buff(html_tbl_name,criteria_arrary,html_log_head, html_log_tail, html_tbl_Direct)
+		
+		is_prev_page=NO
+		is_next_page=NO
+		
+		if html_log_head<num_of_records then
+			addr=html_log_head+1
+			if html_tables_get_record(html_tbl_name,criteria_arrary,addr,EN_TBL_SEARCH_DOWN)<>EN_TBL_STATUS_NOT_FOUND then is_prev_page=YES
+		end if
+		if html_log_tail>0 then
+			addr=html_log_tail-1
+			if html_tables_get_record(html_tbl_name,criteria_arrary,addr,EN_TBL_SEARCH_UP)<>EN_TBL_STATUS_NOT_FOUND then is_next_page=YES
+		end if	
+	else
+	
+	end if
+end sub
+
+'=============================================================
+public sub html_tables_add_record(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim pos1, pos2, i as byte
+	dim wDaycount as word
+	dim s, fld_data as string
+	dim html_input_type as string(1)
+	dim html_data_type as string(1)
+	dim html_date_format as string(3)
+	dim ts as struct_tbl_timestamp
+	dim tbl_result as en_tbl_status
+	
+	if get_http_argument(sock.httprqstring,"save=")<>"yes" then exit sub
+	if html_find_table(html_tbl_name)=yes then
+		for i=0 to MAX_NUM_CRITERIA-1
+			if html_tbl_info(html_tbl_num).Fields(i).Input=YES then
+				fld_data=html_get_fld_data(i)		
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_data_type=left(fld_data,1)
+				html_input_type=mid(fld_data,pos1+1,1)			
+				
+				if html_input_type<>"T" then
+					s=get_http_argument(sock.httprqstring,html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_i=")
+				else
+					s=get_http_argument(sock.httprqstring,html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_i=")+get_http_argument(sock.httprqstring,html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_i=")
+				end if
+				
+				if s="" then
+					tbl_result=tbl_field_get_def(html_tbl_info(html_tbl_num).Fields(i).FieldName,s)
+					if tbl_result<>EN_TBL_STATUS_OK then goto error
+					tbl_result=tbl_field_sg(html_tbl_info(html_tbl_num).Fields(i).FieldName,s,EN_TBL_SET)
+					if tbl_result<>EN_TBL_STATUS_OK then goto error
+				else		
+					select case html_input_type
+					case "L","I":
+						html_spec_chr_convert(s)
+						tbl_result=tbl_field_sg(html_tbl_info(html_tbl_num).Fields(i).FieldName,s,EN_TBL_SET)
+					case "D":
+						if html_data_type="W" then
+							pos2=instr(pos1+1,fld_data,chr(COMMA),1)
+							html_date_format=mid(fld_data,pos2+1,3)
+							html_spec_chr_convert(s)
+							html_convert_date(s,"",wDaycount,html_date_format,STR_TO_VAL)
+							s=str(wDaycount)
+						else
+							html_spec_chr_convert(s)
+							time_style_format(s,7,TIME_SET)
+						end if
+						tbl_result=tbl_field_sg(html_tbl_info(html_tbl_num).Fields(i).FieldName,s,EN_TBL_SET)
+					case "T":
+						tbl_result=tbl_field_sg(html_tbl_info(html_tbl_num).Fields(i).FieldName,s,EN_TBL_SET)
+					case "K":
+						if s="on" then 
+							s="1"
+						else
+							s="0"
+						end if
+						tbl_result=tbl_field_sg(html_tbl_info(html_tbl_num).Fields(i).FieldName,s,EN_TBL_SET)
+					case else
+						sys.halt 'incorrect html description file
+					end select
+					if tbl_result<>EN_TBL_STATUS_OK then goto error 
+				end if
+			end if
+		next i
+		tbl_result=tbl_record_add("")
+		if tbl_result=EN_TBL_STATUS_FAILURE then set_disk_error("html_tables_add_record",html_tbl_name)
+		if tbl_result<>EN_TBL_STATUS_OK then goto error 
+		table_data_change()
+		rtc.getdata(ts.ts_daycount,ts.ts_mincount,ts.ts_seconds)
+		tbl_timestamp_sg(ts,EN_TBL_SET)
+	else
+		tbl_result=EN_TBL_STATUS_UNKNOWN_TABLE
+		goto error
+	end if
+	html_tbl_status=HTBL_STATUS_OK
+	exit sub
+error:
+	select case tbl_result
+	case EN_TBL_STATUS_UNKNOWN_TABLE: html_tbl_status=HTBL_STATUS_NOT_FOUND
+	case EN_TBL_STATUS_INVALID: html_tbl_status=HTBL_STATUS_INVALID_FIELD
+	case EN_TBL_STATUS_KEY_VIOLATION: html_tbl_status=HTBL_STATUS_KEY_VIOLATION
+	case EN_TBL_STATUS_FAILURE: html_tbl_status=HTBL_STATUS_DISK_ERROR
+	case else html_tbl_status=HTBL_STATUS_INTERNAL_ERROR
+	end select
+end sub
+
+'=============================================================
+public sub html_table_time_mod(html_tbl_name as string(MAX_TBL_NAME_LEN))
+	dim i, pos1, pos2 as byte
+	dim fld_data as string
+	dim html_input_type as string(1)
+	dim bQM as byte
+	
+	if html_find_table(html_tbl_name)=yes then
+		for i=0 to MAX_NUM_CRITERIA-1
+			bQM=html_tbl_info(html_tbl_num).Fields(i).QueryMode
+			if html_tbl_info(html_tbl_num).Fields(i).FieldName<>"" and bQM <>255 then 
+				fld_data=html_get_fld_data(i)
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_input_type=mid(fld_data,pos1+1,1)
+				if html_input_type="T" then
+					sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_q').value=document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH_q"+"').value+document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM_q"+"').value"+chr(CR)+chr(LF))
+				end if
+			end if
+		next i
+	end if
+end sub
+
+'=============================================================
+public sub html_table_clear(html_tbl_name as string(MAX_TBL_NAME_LEN),html_tbl_type as en_html_tbl_types)
+	dim i, pos1, pos2 as byte
+	dim fld_data as string
+	dim html_input_type as string(1)
+	dim bQM as byte
+	dim clr_type as string(2)
+	dim correct_type as no_yes
+	
+	if html_find_table(html_tbl_name)=yes then
+		for i=0 to MAX_NUM_CRITERIA-1
+			correct_type=NO
+			select case html_tbl_type
+			case HTBL_TABLE:
+				if html_tbl_info(html_tbl_num).Fields(i).Table=YES then
+					correct_type=YES
+					clr_type="_t"
+				end if
+			case HTBL_INPUT:
+				if html_tbl_info(html_tbl_num).Fields(i).Input=YES then
+					correct_type=YES
+					clr_type="_i"
+				end if				
+			case HTBL_QUERY:
+				bQM=html_tbl_info(html_tbl_num).Fields(i).QueryMode
+				if bQM<>255 then
+					correct_type=YES
+					clr_type="_q"
+				end if					
+			end select
+			if html_tbl_info(html_tbl_num).Fields(i).FieldName<>"" and correct_type=YES then
+				fld_data=html_get_fld_data(i)
+				pos1=instr(1,fld_data,chr(COMMA),1)
+				pos2=instr(1,fld_data,chr(COMMA),2)
+				html_input_type=mid(fld_data,pos1+1,1)
+				select case html_input_type
+				case "I":sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+clr_type+"').value=''"+chr(CR)+chr(LF))
+				case "L":
+					if html_tbl_type=HTBL_QUERY then sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+clr_type+"').value=''"+chr(CR)+chr(LF))
+					if html_tbl_type=HTBL_INPUT then sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+clr_type+"').value='0'"+chr(CR)+chr(LF))
+				case "D":
+					if html_tbl_type=HTBL_QUERY then sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+clr_type+"').value=''"+chr(CR)+chr(LF))
+					if html_tbl_type=HTBL_INPUT then sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+clr_type+"').value='01/01/2000'"+chr(CR)+chr(LF))
+				case "T":
+					if html_tbl_type=HTBL_QUERY then
+						sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH"+clr_type+"').value='--'"+chr(CR)+chr(LF))
+						sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM"+clr_type+"').value='--'"+chr(CR)+chr(LF))
+					end if
+					if html_tbl_type=HTBL_INPUT then
+						sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_HH"+clr_type+"').value='00'"+chr(CR)+chr(LF))
+						sock_setsend("document.getElementById('"+html_tbl_info(html_tbl_num).Fields(i).HtmlId+"_MM"+clr_type+"').value='00'"+chr(CR)+chr(LF))
+					end if
+				end select
+			end if
+		next i
+	end if	
+end sub
+'=============================================================
+public sub html_tbl_print_error()
+	select case html_tbl_status
+	case HTBL_STATUS_KEY_VIOLATION: sock_setsend("<b><font color='red'>"+MSG_HTML_TBL_KEY_VIOLATION_ERROR+"</font></b>")
+	case HTBL_STATUS_INVALID_FIELD: sock_setsend("<b><font color='red'>"+MSG_HTML_TBL_INVALID_ERROR+"</font></b>")
+	case HTBL_STATUS_INTERNAL_ERROR: sock_setsend("<b><font color='red'>"+MSG_HTML_TBL_INTERNAL_ERROR+"</font></b>")
+	case HTBL_STATUS_DISK_ERROR: sock_setsend("<b><font color='red'>"+MSG_HTML_TBL_DISK_ERROR+"</font></b>")
+	case HTBL_STATUS_NOT_FOUND: sock_setsend("<b><font color='red'>"+MSG_HTML_TBL_NOT_FOUND+"</font></b>")
+	end select
+end sub
+
+'=============================================================
+public sub html_tbl_print_datepicker
+	dim fld_ID as string(MAX_FLD_NAME_LEN)
+	dim html_date_format as string(3)
+	dim html_date_separator as string(1)
+	dim form_name as string(32)
+	fld_ID=get_http_argument(sock.httprqstring,"fld_ID=")
+	html_date_format=get_http_argument(sock.httprqstring,"format=")
+	html_date_separator=get_http_argument(sock.httprqstring,"separator=")
+	form_name=get_http_argument(sock.httprqstring,"form_name=")
+	
+	sock_setsend("<html><head><title>Pick a date</title><link rel='stylesheet' type='text/css' href='calendar.css' />")
+	sock_setsend("<script type='text/javascript' src='calendar.js'></script><script language='JavaScript' type='text/javascript'>")
+	sock_setsend("function setMaster() {var "+form_name+"=opener.document."+form_name+";var popForm=document.popForm;var currEl;")
+	sock_setsend("for (var i=0; i<popForm.length; i++) {currEl=popForm[i];if ("+form_name+"[currEl.name]) {"+form_name+"[currEl.name].value=")
+	sock_setsend("popForm[currEl.name].value;}}if (opener && !opener.closed) opener.focus();self.close();}</script></head>")
+	sock_setsend("<body onload="+chr(34)+"displayDatePicker('"+fld_ID+"', false, '"+html_date_format+"', '"+html_date_separator+"');"+chr(34)+">")
+	sock_setsend("<div align='center'>")
+	sock_setsend("<form name='popForm' onsubmit="+chr(34)+"setMaster()"+chr(34)+">")
+	sock_setsend("<input name='"+fld_ID+"' type='text' onclick="+chr(34)+"displayDatePicker('"+fld_ID+"', false, '"+html_date_format+"', '"+html_date_separator+"');"+chr(34)+">")
+	sock_setsend("<br><input type='submit' value='DONE'></form></div></body></html>")
+end sub
+
+'=============================================================
+public sub html_table_download(dl_mode as download_mode)
+	dim sz, i as byte
+	dim daddr as dword
+	dim found_rec as word
+	dim s,stemp as string
+	dim html_tbl_name as string(MAX_TBL_NAME_LEN)
+	dim fld_name as string(MAX_FLD_NAME_LEN)
+	dim html_tbl as tbl_type
+	
+	html_tbl_name=get_http_argument(sock.httprqstring,"tbl_name=")
+	html_find_table(html_tbl_name)
+	if dl_mode=DL_RAW then
+		found_rec=1
+		if tbl_record_find(EN_TBL_RECORD_BOTH,"","",found_rec,EN_TBL_SEARCH_DOWN,"")<>EN_TBL_STATUS_OK or found_rec=0 then exit sub
+		tbl_record_ptr_sg(found_rec,EN_TBL_SET)
+		do	
+			s=""
+			if sock.txfree>255 then
+				sz=255
+			else 
+				sz=sock.txfree
+			end if
+			s=fd.getdata(sz)
+			sock.setdata(s)
+			sock.send
+		loop while len(s)>0 and sock.statesimple=PL_SSTS_EST 
+	else
+		found_rec=0
+		do
+			s=""
+			found_rec=found_rec+1
+			if tbl_record_find(EN_TBL_RECORD_BOTH,"","",found_rec,EN_TBL_SEARCH_DOWN,"")<>EN_TBL_STATUS_OK or found_rec=0 then exit sub
+			tbl_record_ptr_sg(found_rec,EN_TBL_SET)
+			tbl_record_sg(EN_TBL_GET)
+			tbl_get_tbl_info(html_tbl)
+			
+			for i=0 to MAX_NUM_FIELD-3
+				fld_name=html_tbl.Fields(i).FieldName 
+				if fld_name="" then exit for
+				tbl_field_sg(fld_name,stemp,EN_TBL_GET)
+				if i=0 then 
+					s=stemp
+				else
+					s=s+","+stemp
+				end if
+			next i
+			if html_tbl.hash=YES then
+				tbl_field_sg("UID",stemp,EN_TBL_GET)
+				s=stemp+","+s
+				tbl_field_sg("MD5",stemp,EN_TBL_GET)
+				s=stemp+","+s
+			end if
+			s=s+chr(CR)+chr(LF)
+			sock.setdata(s)
+			sock.send
+		loop while found_rec>0
+	end if
+end sub

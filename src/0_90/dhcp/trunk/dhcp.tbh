@@ -1,0 +1,22 @@
+'=============================================================
+'			DHCP.TBS
+'	required device specific properties and methods:
+'		function device_check_dhcp(init as no_yes) as ok_ng
+'		dhcp_lease_time as dword 'this is a counter-down for remaining lease time
+'
+'=============================================================
+#ifndef SOCK_DHCP
+#define SOCK_DHCP 15
+#endif
+
+#ifndef WLN_AVILIABLE
+#define WLN_AVILIABLE 0
+#endif
+
+#ifndef NET_AVILIABLE
+#define NET_AVILIABLE 1
+#endif
+
+declare function dhcp_obtain(byref obtained_ip as string, byref obtained_gateway as string,
+byref obtained_netmask as string, byref obtained_lease_time as dword, device_name as string(32), interface as string(3)) as ok_ng
+

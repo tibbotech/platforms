@@ -1,0 +1,35 @@
+'===========================================================================
+'					login_control library
+'
+'	required device specific properties and methods:
+'		sub device_login_event(op as cmd_modes)
+'		function device_get_timeout(cm as cmd_modes) as word
+'===========================================================================
+
+enum cmd_modes 'in the order of least to highest priority
+	CMD_MODE_NONE,
+	CMD_MODE_AGGREGATE,
+	CMD_MODE_UDP,
+	CMD_MODE_HTTP,
+	CMD_MODE_TCP,	
+	CMD_MODE_SER,	
+	CMD_MODE_TERMINAL
+end enum
+
+enum login_comparison_codes
+	LC_WILL_ACCEPT,
+	LC_WILL_ACCEPT_REPEATED_LOGIN,
+	LC_WILL_ACCEPT_LOWER_IN_PROGRESS,
+	LC_WILL_REJECT_HIGHER_IN_PROGRESS,
+	LC_WILL_REJECT_SAME_IN_PROGRESS
+end enum
+
+declare login_mode as cmd_modes
+declare login_data as string(32)
+declare login_sock as byte
+
+declare function login(new_login as cmd_modes, cmd_data as string(32), socket as byte) as ok_ng
+declare function compare_logins(new_login as cmd_modes, cmd_data as string(32), socket as byte) as login_comparison_codes
+declare sub logout()
+declare sub device_login_timer_proc
+declare sub reset_login_timeout
