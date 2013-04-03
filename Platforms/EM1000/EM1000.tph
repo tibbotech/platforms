@@ -6,8 +6,6 @@
 
 #define PLATFORM_ID 0
 
-#define NET_AVAILABLE 1
-
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).

@@ -27,9 +27,6 @@
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
 
-#define WLN_DISABLED 0
-#define WLN_ENABLED 1
-
 #define SAMSUNG_S6B0108 0
 #define HIMAX_HX8309 1
 #define SOLOMON_SSD1329 2
