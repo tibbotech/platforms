@@ -12,6 +12,11 @@ description=Taiko Serial Transport
 device=taiko.serialdevice
 browsedlg=taiko.serialportsdlg
 
+
+[defineimports]
+import1=../GEN.tp
+
+
 [define1]
 define=OBJECT_LCD
 description=Display (lcd.) object
