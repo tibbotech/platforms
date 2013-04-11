@@ -18,29 +18,29 @@ description=Taiko UDP Broadcast Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
-[define3]
+[define1]
 define=OBJECT_KP
 description=Keypad (kp.) object
 value=KP_ENABLED
 
-[define3.option1]
+[define1.option1]
 description=Disabled
 value=KP_DISABLED
 
-[define3.option2]
+[define1.option2]
 description=Enabled
 value=KP_ENABLED
 
 
-[define4]
+[define2]
 define=OBJECT_FD
 description=Flash disk (fd.) object
 value=FD_ENABLED
 
-[define4.option1]
+[define2.option1]
 description=Disabled
 value=FD_DISABLED
 
-[define4.option2]
+[define2.option2]
 description=Enabled
 value=FD_ENABLED
