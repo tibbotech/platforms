@@ -345,7 +345,7 @@ syscall(525,"05.TDL") instr(frompos as byte,byref sourcestr as string,byref subs
 'Finds the Nth occurrence (defined by num, counting from 1) of a substring substr in a string sourcestr.<br><br>
 'Search is conducted from position frompos (leftmost character has position 1). This function returns position in a string or zero if the
 'Nth occurrence of the substring is not found. Example of use:<br><br>
-'x=<font color="teal"><b>substr(3,"ABCABCDEABC12","BC",2)</b></font>, result will be 10.
+'x=<font color="teal"><b>instr(3,"ABCABCDEABC12","BC",2)</b></font>, result will be 10.
 
 '--------------------------------------------------------------------
 syscall(526,"06.TDL") asc(byref sourcestr as string) as byte
