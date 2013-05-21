@@ -2632,9 +2632,9 @@ syscall(89,"35.TDL") sock.rxbuffrq(numpages as byte) as byte
 '<font color="maroon"><b>sock.rxbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
 'that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer 
 'variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>=
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of ports that are closed.<br><br>
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 'See also <font color="maroon"><b>sock.txbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2648,9 +2648,9 @@ syscall(90,"35.TDL") sock.txbuffrq(numpages as byte) as byte
 '<font color="maroon"><b>sock.txbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
 'that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer 
 'variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>= 
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed. <br><br>
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 'See also <font color="maroon"><b>sock.tx2buffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2664,9 +2664,9 @@ syscall(91,"35.TDL") sock.cmdbuffrq(numpages as byte) as byte
 'Unlike for TX or RX buffers there is no property to read out actual CMD buffer capacity in bytes. This capacity can be calculated as 
 'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.cmdbuffrq</b></font>. 
 '"-16" is because 16 bytes are needed for internal buffer variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>= 
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.<br><br>
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 'See also <font color="maroon"><b>sock.rplbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2680,9 +2680,9 @@ syscall(92,"35.TDL") sock.rplbuffrq(numpages as byte) as byte
 'Unlike for TX or RX buffers there is no property to read out actual RPL buffer capacity in bytes. This capacity can be calculated as 
 'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon">
 '<b>sock.rplbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>=
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 'See also <font color="maroon"><b>sock.cmdbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2696,9 +2696,9 @@ syscall(93,"35.TDL") sock.varbuffrq(numpages as byte) as byte
 'Unlike for TX or RX buffers there is no property to read out actual VAR buffer capacity in bytes. This capacity can be calculated as 
 'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the sock.varbuffrq. 
 '"-16" is because 16 bytes are needed for internal buffer variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>=
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of ports that are closed.<br><br>
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see <font color="maroon"><b>sock.httpmode</b></font> 'roperty, also <font color="maroon"><b>sock.httpportlist</b></font>.
 
 '--------------------------------------------------------------------
@@ -2712,9 +2712,9 @@ syscall(94,"35.TDL") sock.tx2buffrq(numpages as byte) as byte
 'Unlike for TX or RX buffers there is no property to read out actual TX2 buffer capacity in bytes. This capacity can be calculated as 
 'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>
 'sock.tx2buffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer variables.<br><br>
-'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>= 
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of ports that are closed.
+'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
+'<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
+'buffer sizes of sockets that are closed.<br><br>
 
 '--------------------------------------------------------------------
 syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
