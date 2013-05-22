@@ -42,6 +42,9 @@ dim lb_timeout_ctr, lb_timeout as byte
 dim listbox_pos_x, listbox_pos_y, listbox_height, listbox_width as word
 dim listbox_item_spacing, listbox_display_max, listbox_display_index, listbox_item_index, listbox_start_index, listbox_item_count as byte
 dim list_box_result as ui_list_box_results
+dim font_height as byte
+dim lb_interrupt_flag as no_yes
+
 #if LIST_BOX_CURSOR_STYLE > 0
 	dim previous_listbox_index as byte
 #endif
@@ -70,7 +73,8 @@ public function ui_list_box(
 	ui_listbox_string=""
 	listbox_height=list_height
 	listbox_width=list_width
-	listbox_item_spacing=lcd.fontheight + ULB_VER_SPACING
+	font_height=lcd.fontheight
+	listbox_item_spacing=font_height + ULB_VER_SPACING
 	listbox_display_max=(list_height-2)/listbox_item_spacing
 	lb_timeout_ctr=timeout
 	lb_timeout=timeout  
@@ -193,6 +197,168 @@ key_pressed:
 	end if	
 end function
 
+'=============================================================
+public function ui_list_box_ext(
+	x_coord as word,		'x coordination
+	y_coord as word,		'y coordination
+	list_width as word,		'list box width
+	list_height as word,	'list box height
+	byref listbox_data as string,		'values and display strings of all list box items
+	byref listbox_value as string(10),	'the value of selected list box item 
+	byref disable_print as no_yes,
+	timeout as byte						'if no respond from the keypad within the time defined by "timeout", exit the list box and return to the previous screen. If timeout=0, no time out applies
+	) as ui_list_box_results
+
+	dim i,b, pos1, pos2 as byte
+	dim option as string(10)
+	dim kp_event as pl_kp_event_codes
+	dim kp_code as byte
+	dim t as word
+	dim listbox_display_string as string(DISPLAY_STR_LEN)
+	listbox_pos_x=x_coord
+	listbox_pos_y=y_coord
+	listbox_item_val=listbox_value
+	ui_listbox_string=""
+	listbox_height=list_height
+	listbox_width=list_width
+	font_height=lcd.fontheight
+	listbox_item_spacing=font_height + ULB_VER_SPACING
+	listbox_display_max=(list_height-2)/listbox_item_spacing
+	lb_timeout_ctr=timeout
+	lb_timeout=timeout  
+	listbox_item_count=1
+	lb_interrupt_flag=NO
+	if right(listbox_data,1)=";" then listbox_data=left(listbox_data,len(listbox_data)-1)
+	ui_listbox_string=listbox_data
+	
+	'Extract list item value from listbox_data, and if it is equal to the listbox_value, 
+	'set list_item_index to point to that item.
+	if listbox_value="" then
+		listbox_item_index=0 
+	else
+		for i=0 to len(ui_listbox_string) - 1
+			b=b + 1
+			if i=0 then 
+				option=left(listbox_data,instr(1,listbox_data,"-",1)-1)
+				b=0
+			else
+				pos1=instr(i+1,ui_listbox_string,";",1)+1
+				pos2=instr(pos1,listbox_data,"-",1) 
+				option=mid(listbox_data,pos1,pos2-pos1)
+				i=pos1
+				if pos1=1 or pos2=0 then
+					lcd_print_msg(SYS_ERROR_REBOOT,x_coord,y_coord,list_width,list_height,PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,yes)
+					goto err
+				end if			
+			end if
+
+			if listbox_value=option then
+				listbox_item_index=b
+				exit for
+			end if
+		next i 
+	end if
+	if listbox_item_index < listbox_display_max then
+		listbox_start_index=0
+		listbox_display_index=listbox_item_index
+	else
+		listbox_start_index=listbox_item_index - listbox_display_max + 1
+		listbox_display_index=listbox_display_max-1
+	end if
+		
+	for i=0 to len(ui_listbox_string)-1 
+		i=instr(i+1,ui_listbox_string,";",1)
+		if i > 0 then 
+			i=i - 1
+			listbox_item_count=listbox_item_count + 1
+			ui_listbox_string=left(ui_listbox_string,i) + "`" + right(listbox_data,len(ui_listbox_string)-i-1)
+		else
+			exit for
+		end if
+	next i 
+
+	ui_listbox_string_parse(listbox_start_index,listbox_display_string)
+	ui_list_process_esc_seq(listbox_display_string)
+LCD_LOCK	
+	lcd_clear(listbox_pos_x-SCROLL_BORDER/2,listbox_pos_y-SCROLL_BORDER/2,listbox_width+SCROLL_BORDER,listbox_height+SCROLL_BORDER)
+	ui_listbox_display(listbox_display_string,NO)
+	ui_listbox_scroll(YES,NO)
+	ui_listbox_cursor_display(NO)
+	lcd.rectangle(listbox_pos_x-SCROLL_BORDER/2,listbox_pos_y ,listbox_pos_x+listbox_width,listbox_pos_y+listbox_height)	
+	device_list_box_pre(x_coord,y_coord,list_width,list_height,listbox_data,listbox_value,timeout)
+LCD_UNLOCK	
+
+	if kp.enabled=NO or kp.genkpevent<>NO then
+		kp.enabled=NO
+		kp.genkpevent=NO
+		kp.enabled=YES
+	else
+		kp.clearbuffer
+	end if
+
+err:	
+	list_box_result=LIST_BOX_RESULT_TIMEOUT
+wait:
+	doevents
+	device_lb_interrupt()	'allow user to executes other procedures while inside the list box
+	if lb_interrupt_flag=YES then
+		goto timeout_exit
+	end if
+	if kp.enabled=NO then kp.enabled=YES
+	if kp.getkey(kp_event,kp_code)=OK then
+	'The keypad process for device_button_box module
+		ui_list_box_key_proc(kp_event,kp_code)
+		select case kp_event
+		case PL_KP_EVENT_PRESSED:
+			recent_pressed_key=0
+			if kp_code=KEY_STOP then
+				force_engine_off()
+			end if
+		end select
+	end if
+
+	if list_box_result<>LIST_BOX_RESULT_TIMEOUT then
+		ui_list_box_ext=list_box_result
+		goto key_pressed
+	end if
+
+	if t<>sys.timercount then
+		t=sys.timercount
+		ui_list_box_timer_proc()
+	end if
+	
+	if timeout=0 then
+		goto wait
+	else
+		if lb_timeout_ctr=0 then	'list box timeout
+timeout_exit:		
+			ui_list_box_ext=LIST_BOX_RESULT_TIMEOUT
+key_pressed:		
+			if list_box_result=LIST_BOX_RESULT_OK then
+				ui_list_process_esc_seq(listbox_item_val)
+				ui_listbox_print_val()
+				listbox_value=listbox_item_val
+			else
+				listbox_value=""
+			end if
+			
+			device_list_box_post(x_coord,y_coord,list_width,list_height,listbox_data,listbox_value,disable_print,timeout)
+			
+			if disable_print=NO then
+				lcd_clear(x_coord-SCROLL_BORDER,y_coord-SCROLL_BORDER,list_width+SCROLL_BORDER*2,list_height+SCROLL_BORDER*2)
+			else
+				ui_listbox_display(listbox_display_string,YES)
+				ui_listbox_scroll(YES,YES)
+				ui_listbox_cursor_display(YES)
+				lcd.rectangle(listbox_pos_x-SCROLL_BORDER/2,listbox_pos_y ,listbox_pos_x+listbox_width,listbox_pos_y+listbox_height)	
+			end if
+	
+			exit function
+		end if
+		goto wait
+	end if	
+end function
+
 '============================================================= 
 sub ui_list_box_key_proc(key_event as pl_kp_event_codes, key_code as byte)
 'The keypad process for the list box module, 4 keys are used in this module, moving 
@@ -226,19 +392,19 @@ sub ui_listbox_cursor_display(disable as no_yes)
 	romfile.open(SMALL_ICON_FILE)
 	lcd_clear(listbox_pos_x, listbox_pos_y, SCROLL_CURSOR_WIDTH, listbox_height)
 	x=listbox_pos_x + 1
-	y=listbox_pos_y + listbox_display_index * (lcd.fontheight + ULB_VER_SPACING)+(lcd.fontheight/2)-3
+	y=listbox_pos_y + listbox_display_index * (font_height + ULB_VER_SPACING)+(font_height/2)-3
 	ui_listbox_scroll(NO,disable)
 	lcd.bmp(romfile.offset,x,y,19,0,5,8)
 #elif LIST_BOX_CURSOR_STYLE=1
 	x=listbox_pos_x+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH/2
 	if listbox_display_index <> previous_listbox_index then 
 		lcd.forecolor=LCD_BACKCOLOR
-		y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+(previous_listbox_index)*(lcd.fontheight+ULB_VER_SPACING)-ULB_VER_SPACING/2-3
-		lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+lcd.fontheight+ULB_VER_SPACING)
+		y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+(previous_listbox_index)*(font_height+ULB_VER_SPACING)-ULB_VER_SPACING/2-3
+		lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+font_height+ULB_VER_SPACING)
 	end if
 	if disable<>YES then lcd.forecolor=LCD_CURSORCOLOR
-	y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+listbox_display_index * (lcd.fontheight + ULB_VER_SPACING)-ULB_VER_SPACING/2-3
-	lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+lcd.fontheight+ULB_VER_SPACING)
+	y=listbox_pos_y+SCROLL_BORDER/2+SCROLL_CURSOR_WIDTH+listbox_display_index * (font_height + ULB_VER_SPACING)-ULB_VER_SPACING/2-3
+	lcd.rectangle(x,y,x+listbox_width-SCROLL_CURSOR_WIDTH-SCROLL_BAR_WIDTH-SCROLL_BORDER-CURSOR_BAR_LEN_OFFSET,y+font_height+ULB_VER_SPACING)
 	lcd.forecolor=LCD_FORECOLOR
 	ui_listbox_scroll(NO,disable)
 #else
@@ -411,4 +577,9 @@ sub ui_list_process_esc_seq(byref s as string)
 		s=mid(s,1,pos-1)+chr(x)+mid(s,pos+4,255)
 		pos=instr(1,s,"\x5C",1)
 	wend
+end sub
+
+'=============================================================
+sub ui_list_box_interrupt()
+	lb_interrupt_flag=YES
 end sub

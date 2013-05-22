@@ -34,6 +34,7 @@
 #define SOLOMON_SSD1963_FIXED_IO 4
 #define SOLOMON_SSD1305 5
 #define HIMAX_HX8347 6
+#define ILITEK_ILI9341 7
 
 '55x -- "driver" TDL (low-level stuff like setpixel, etc. but without getpixel)
 '56x -- "info" TDL (LCD dimensions, colors, etc.)
@@ -75,6 +76,11 @@
 	#define LCD_DRIVER_TDL2 "56f.TDL"+ 
 	#define LCD_DRIVER_TDL3 "75f.TDL"+ 
 	#define LCD_DRIVER_TDL4 "79f.TDL"+
+#elif LCD_TYPE=ILITEK_ILI9341
+	#define LCD_DRIVER_TDL "55g.TDL"+ 
+	#define LCD_DRIVER_TDL2 "56g.TDL"+ 
+	#define LCD_DRIVER_TDL3 "75g.TDL"+ 
+	#define LCD_DRIVER_TDL4 "79g.TDL"+
 #endif
 
 #if PLATFORM_ID=7

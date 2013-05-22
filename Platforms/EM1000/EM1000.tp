@@ -67,6 +67,11 @@ value=DS1102_OLED
 description=Himax HX8347
 value=HIMAX_HX8347
 
+[define2.option7]
+description=Ilitek ILI9341
+value=ILITEK_ILI9341
+
+
 [define3]
 define=OBJECT_KP
 description=Keypad (kp.) object

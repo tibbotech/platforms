@@ -116,3 +116,16 @@ declare function ui_list_box(
 	byref disable_print as no_yes,
 	timeout as byte
 ) as ui_list_box_results
+
+declare function ui_list_box_ext(
+	x_coord as word,
+	y_coord as word,
+	list_width as word,	
+	list_height as word,
+	byref listbox_data as string,
+	byref listbox_value as string(10),
+	byref disable_print as no_yes,
+	timeout as byte
+) as ui_list_box_results
+
+declare sub ui_list_box_interrupt()
