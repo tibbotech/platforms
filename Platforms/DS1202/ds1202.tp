@@ -18,6 +18,11 @@ description=Taiko UDP Broadcast Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
+
+[defineimports]
+import1=../GEN.tp
+
+
 [define1]
 define=OBJECT_FD
 description=Flash disk (fd.) object

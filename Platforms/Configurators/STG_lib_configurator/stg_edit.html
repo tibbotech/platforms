@@ -129,8 +129,8 @@
 </td></tr>
 <!-- ----------------------------------------------------------------------->
 <tr>
-<td><p><span title="header=[Comment] body=[Any comment you like. Do add comments -- they really help. These get compiled into the final application binary, so having longer commends increases the size of your application.]">Comment:</span></td>
-<td><input type="text" ID="edit_C" value="<?%external.Context.Target.C?>" maxlength="150" style="width: 175px"/> </p></td>
+<td><p><span title="header=[Comment] body=[Any comment you like. Do add comments -- they really help. These get compiled into the final application binary, so having longer comments increases the size of your application.]">Comment:</span></td>
+<td><input type="text" ID="edit_C" value="<?WriteEx(external.Context.Target.C, false);?>" maxlength="150" style="width: 175px"/> </p></td>
 </tr>
 </table>
 </div>
