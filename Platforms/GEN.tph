@@ -1673,7 +1673,7 @@ syscall(13) ser.peekdata(maxinplen as word) as string
 'the data is previed "as is".
 '<br><br>
 'For Wiegand and clock/data mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>1- PL_SER_MODE_WIEGAND</b></font> and
-'<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>2- PL_SER_MODE_CLOCKDATA</b></font>) each character of extracted data
+'<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>2- PL_SER_MODE_CLOCKDATA</b></font>) each data character
 'represents one data bit and only two characters are possible: "0" or "1".
 '<br><br>
 'See also <font color="maroon"><b>ser.getdata </b></font>method.
