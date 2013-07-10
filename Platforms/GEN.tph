@@ -23,6 +23,8 @@
 #define DS1102W 16
 #define DS1100 17
 #define DS1101W 18
+#define TPP2W 19
+#define TPP3W 20
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
@@ -35,6 +37,7 @@
 #define SOLOMON_SSD1305 5
 #define HIMAX_HX8347 6
 #define ILITEK_ILI9341 7
+#define SOLOMON_SSD1963_FIXED_IO2 8
 
 '55x -- "driver" TDL (low-level stuff like setpixel, etc. but without getpixel)
 '56x -- "info" TDL (LCD dimensions, colors, etc.)
@@ -63,6 +66,11 @@
 	#define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963_FIXED_IO
 	#define LCD_DRIVER_TDL "55d2.TDL"+ 
+	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
+	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
+	#define LCD_DRIVER_TDL4 "79d.TDL"+
+#elif LCD_TYPE=SOLOMON_SSD1963_FIXED_IO2
+	#define LCD_DRIVER_TDL "55h.TDL"+ 
 	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
 	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
 	#define LCD_DRIVER_TDL4 "79d.TDL"+

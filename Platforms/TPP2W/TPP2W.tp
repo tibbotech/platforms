@@ -1,6 +1,6 @@
 [platform]
-description=TPB2 Board
-version=TPB2-3.33
+description=TPP2 Board
+version=TPP2-3.33
 rom=983040
 ram=22528
 codebits=24
@@ -83,3 +83,7 @@ value=SOLOMON_SSD1963
 [define5.option1]
 description=Solomon SSD1963 (Winstar WF35)
 value=SOLOMON_SSD1963
+
+[define5.option2]
+description=Solomon SSD1963 (Winstar WF35), fixed I/O-2
+value=SOLOMON_SSD1963_FIXED_IO2
