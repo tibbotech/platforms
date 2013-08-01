@@ -132,10 +132,11 @@ end property
 '--------------------------------------------------------------------
 enum pl_kp_event_codes 
 	PL_KP_EVENT_LONGRELEASED,	'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "longreleased" state.
-	PL_KP_EVENT_RELEASED,		'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "released" state.
+	PL_KP_EVENT_RELEASED,	'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "released" state.
 	PL_KP_EVENT_PRESSED,		'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "pressed" state.
 	PL_KP_EVENT_LONGPRESSED,	'<b>PLATFORM CONSTANT.</b><br><br> The key has transitioned into the "longpressed" state.
-	PL_KP_EVENT_REPEATPRESSED	'<b>PLATFORM CONSTANT.</b><br><br> Auto-repeat for the key.
+	PL_KP_EVENT_REPEATPRESSED,	'<b>PLATFORM CONSTANT.</b><br><br> Auto-repeat for the key.
+	PL_KP_EVENT_LOCKEDUP		'<b>PLATFORM CONSTANT.</b><br><br> The keypad appears to be jammed. Can only be generated when <font color="maroon"><b>kp.mode</b></font>='<font color="olive"><b> 1- PL_KP_MODE_BINARY</b></font>).
 end enum
 
 event(20) on_kp(key_event as pl_kp_event_codes, key_code as byte)
@@ -213,6 +214,27 @@ property kp.repeatdelay
 '<font color="olive"><b>4- PL_KP_EVENT_REPEATPRESSED </b></font> event code will never be generated.
 	get = syscall(435,"68.TDL"+) as byte
 	set = syscall(436,"68.TDL"+) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property kp.lockupdelay
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1000 (10sec).</b><br><br>
+'Defines (in 10ms increments) the time period at which the 
+'<font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>4- PL_KP_EVENT_LOCKEDUP </b></font> event code will be generated once the key reaches the
+'"locked up" state and remains pressed. Value range is 0-65535.
+'<br><br>
+'This property is only relevant when 
+'<font color="maroon"><b>kp.mode</b></font>= 
+'<font color="olive"><b>1- PL_KP_MODE_BINARY</b></font>) as lockup is only tracked for keypads wit "encoded" output.
+'<br><br>
+'This property can only be changed when the keypad is disabled (
+'<font color="maroon"><b>kp.enabled</b></font>= 
+'<font color="olive"><b>0- NO</b></font>). Setting the property to 0 means that the 
+'<font color="teal"><b>on_kp </b></font> event with 
+'<font color="olive"><b>4- PL_KP_EVENT_LOCKEDUP </b></font> event code will never be generated.
+	get = syscall(588,"68.TDL"+) as word
+	set = syscall(589,"68.TDL"+) (value as word)
 end property
 
 '--------------------------------------------------------------------

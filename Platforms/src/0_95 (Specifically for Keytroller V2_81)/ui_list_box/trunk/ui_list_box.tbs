@@ -153,6 +153,11 @@ wait:
 	device_lb_interrupt()	'allow user to executes other procedures while inside the list box
 	if kp.enabled=NO then kp.enabled=YES
 	if kp.getkey(kp_event,kp_code)=OK then
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 		ui_list_box_key_proc(kp_event,kp_code)
 	end if
 
@@ -306,6 +311,11 @@ wait:
 	end if
 	if kp.enabled=NO then kp.enabled=YES
 	if kp.getkey(kp_event,kp_code)=OK then
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 	'The keypad process for device_button_box module
 		ui_list_box_key_proc(kp_event,kp_code)
 		select case kp_event

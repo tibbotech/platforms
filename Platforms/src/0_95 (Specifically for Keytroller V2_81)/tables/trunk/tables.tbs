@@ -686,6 +686,7 @@ tbl_ok:
 	#endif
 	tbl_info(tbl_num).RecPointer=fd.pointer/selected_tbl_RecSize
 	tbl_record_add=EN_TBL_STATUS_OK
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_ADD_REC)
 	goto finish
 tbl_unknown_tbl:
 	tbl_record_add=EN_TBL_STATUS_UNKNOWN_TABLE
@@ -732,6 +733,7 @@ public function tbl_record_edit() as en_tbl_status
 	tbl_mod_HASH(md5_val_old)
 	tbl_mod_HASH(md5_val)
 #endif
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_EDIT_REC)
 	end if
 finish:
 	tbl_record_edit=tbl_result
@@ -781,6 +783,7 @@ fd_error:
 tbl_ok:
 #if TABLE_HASH_ENABLED=1
 	tbl_set_md5()
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_DEL_REC)
 #endif
 	tbl_record_delete=EN_TBL_STATUS_OK
 	goto finish
@@ -838,6 +841,7 @@ fd_error:
 tbl_ok:
 #if TABLE_HASH_ENABLED=1
 	tbl_set_md5()
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_UNDEL_REC)
 #endif
 	tbl_record_undelete=EN_TBL_STATUS_OK
 	goto finish
@@ -1448,6 +1452,7 @@ public function tbl_delete() as en_tbl_status
 	
 tbl_ok:
 	tbl_delete=EN_TBL_STATUS_OK
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_CLR_TABLE)
 	goto finish
 tbl_fail:
 	tbl_delete=EN_TBL_STATUS_FAILURE

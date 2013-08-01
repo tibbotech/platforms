@@ -119,6 +119,11 @@ wait:
 	if ui_menu_exit_flag=YES then goto key_pressed
 	if kp.enabled=NO then kp.enabled=YES
 	if kp.getkey(kp_event,kp_code)=OK then
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 		ui_menu_key_proc(kp_event,kp_code)
 	end if
 

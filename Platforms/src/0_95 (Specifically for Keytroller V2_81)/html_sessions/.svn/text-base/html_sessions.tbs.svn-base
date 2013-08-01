@@ -1,0 +1,126 @@
+include "global.tbh"
+
+public dim html_login_message as html_login_messages
+public dim session as string(SESSION_LEN)
+public dim pass as ok_ng
+dim login_counter as word
+dim login_compare_result as login_comparison_codes
+
+'=============================================================
+public sub html_session_init	
+	html_login_message = HLM_NONE
+	session=""
+	pass = NG
+end sub
+
+'=============================================================
+public sub html_login
+dim b as byte
+	if pass = OK then
+		if login_compare_result <> LC_WILL_REJECT_HIGHER_IN_PROGRESS and login_compare_result <> LC_WILL_REJECT_SAME_IN_PROGRESS then
+			login(CMD_MODE_HTTP,session,sock.num)
+			b = sock.num
+			sock.num = SOCK_LS
+			if sock.statesimple = PL_SSTS_EST then sock.close
+			sock.num = b				
+		end if
+		pass = NG
+	end if
+end sub
+
+'=============================================================
+public function html_login_verify(print_redir as no_yes) as ok_ng
+'Check if there are currently logged user by varifing the session ID.
+	
+	dim sSessionID as string(SESSION_LEN)
+	sSessionID = get_http_argument(sock.httprqstring,"session=")
+
+	if login_mode<>CMD_MODE_HTTP then 
+		html_login_message=HLM_NOT_LOGGED_IN
+		if print_redir = YES then sock_setsend("onload = IndexPage()")
+		html_login_verify = NG
+		exit function
+	end if
+
+	if sSessionID <> login_data then 
+		html_login_message = HLM_INVALID_SESSION
+		if print_redir = YES then sock_setsend("onload = IndexPage()") 
+		html_login_verify = NG
+		exit function
+	end if
+	html_login_verify = OK
+	reset_login_timeout
+end function
+
+
+'=============================================================
+public function password_verify as ok_ng
+'Check the password.  If the password is correct, proceed to the next page (home.html), otherwise, redirect back to index page
+	
+	dim pw as string(6)
+	dim entered_pw as string(6)
+	dim temp, sSessionID as string(SESSION_LEN)
+	dim stg_status as en_stg_status
+	dim i as byte
+	entered_pw = get_http_argument(sock.httprqstring,"pw=")
+	stg_status = setting_sg("PW",0,pw,EN_STG_GET)
+	sSessionID = ""
+	
+	'here, the function checks an http argument call "logout" if it is equal to yes, meaning instead of 
+	'login, the user is logging out.
+
+	if entered_pw = pw then
+		'generating session id
+		temp = random(SESSION_LEN)
+		for i = 1 to SESSION_LEN
+			sSessionID = sSessionID + str(asc( mid(temp,i,1)) mod 9)
+		next i
+		login_compare_result = compare_logins(CMD_MODE_HTTP,sSessionID,sock.num)
+		password_verify = OK
+	else
+		'invalid password
+		password_verify=NG
+	end if
+	session = sSessionID
+end function
+
+'=============================================================
+public sub login_action(pass_varified as ok_ng)
+	if pass_varified = NG then
+		sock_setsend("onload='IndexPage()'")  'redirect back to index page
+		html_login_message = HLM_INVALID_PASSWORD
+	else
+		select case login_compare_result
+		case LC_WILL_ACCEPT, LC_WILL_ACCEPT_REPEATED_LOGIN:
+			sock_setsend("onload ='HomePage()'")   'proceed to the setup page
+		case LC_WILL_ACCEPT_LOWER_IN_PROGRESS:
+			sock_setsend("onload='Redirect()'")  'redirect back to index page	
+		case LC_WILL_REJECT_HIGHER_IN_PROGRESS, LC_WILL_REJECT_SAME_IN_PROGRESS:
+			html_login_message=HLM_PRIORITY_REJECTED
+			sock_setsend("onload='IndexPage()'")  'redirect back to index page
+		end select
+	end if
+end sub
+
+'=============================================================
+public sub print_login_state
+'check current login (error) message and print the error msg on the index.html accordingly
+	select case html_login_message
+		case HLM_LOGGED_OUT:
+			sock_setsend(MSG_HTML_LOGGED_OUT)
+		
+		case HLM_INVALID_PASSWORD:
+			sock_setsend(MSG_HTML_INVALID_LOGIN)
+		
+		case HLM_INVALID_SESSION:
+			sock_setsend(MSG_HTML_INVALID_SESSION)
+			
+		case HLM_PRIORITY_REJECTED:
+			sock_setsend(MSG_HTML_NO_PRIORITY)
+	
+		case HLM_NOT_LOGGED_IN
+			sock_setsend(MSG_HTML_NOT_LOGGED_IN)
+	end select
+	html_login_message = HLM_NONE
+end sub
+

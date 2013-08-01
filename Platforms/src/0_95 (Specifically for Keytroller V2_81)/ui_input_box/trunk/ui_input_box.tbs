@@ -115,7 +115,12 @@ public function ui_input_box(
 wait:
 	device_ib_interrupt()		'allow user to executes other procedures while inside the input box
 	if kp.enabled=NO then kp.enabled=YES
-	if kp.getkey(kp_event,kp_code)=OK then
+	if kp.getkey(kp_event,kp_code)=OK then	
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 		ui_input_box_key_proc(kp_event,kp_code)
 	end if
 	if input_box_result<>INPUT_BOX_RESULT_TIMEOUT then

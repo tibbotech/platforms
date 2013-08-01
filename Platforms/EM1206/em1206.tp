@@ -1,6 +1,6 @@
 [platform]
 description=EM1206 Module
-version=EM1206-3.33
+version=EM1206-3.34
 rom=983040
 ram=22528
 codebits=24

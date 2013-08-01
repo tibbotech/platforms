@@ -178,6 +178,11 @@ wait:
 	device_tb_interrupt()	'allow user to executes other procedures while inside the table box
 	if kp.enabled=NO then kp.enabled=YES
 	if kp.getkey(kp_event,kp_code)=OK then
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 		ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,0,repaint)
 	end if
 	if repaint=NO then goto wait
@@ -215,8 +220,14 @@ states:
 		if state_changed=YES then device_print_tbl(state)
 		
 		while key_normal_op=TBL_BOX_NORMAL_NONE
+wait1:		
 			if kp.enabled=NO then kp.enabled=YES
 			if kp.getkey(kp_event,kp_code)=OK then
+				if kp_event=PL_KP_EVENT_LOCKEDUP then
+					reset_keypad()
+					goto wait1
+				end if	
+			
 				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_normal_op,repaint)
 			end if
 		wend
@@ -278,6 +289,11 @@ add_op_wait:
 		while key_add_op=TBL_BOX_ADD_NONE
 			if kp.enabled=NO then kp.enabled=YES
 			if kp.getkey(kp_event,kp_code)=OK then
+				if kp_event=PL_KP_EVENT_LOCKEDUP then
+					reset_keypad()
+					goto add_op_wait
+				end if	
+			
 				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_add_op,repaint)
 			end if
 		wend
@@ -379,6 +395,11 @@ edit_op_wait:
 		while key_edit_op=TBL_BOX_EDIT_NONE
 			if kp.enabled=NO then kp.enabled=YES
 			if kp.getkey(kp_event,kp_code)=OK then
+				if kp_event=PL_KP_EVENT_LOCKEDUP then
+					reset_keypad()
+					goto edit_op_wait
+				end if	
+			
 				ui_tbl_box_key_proc(kp_event,kp_code,cursor,state,key_edit_op,repaint)
 			end if
 		wend

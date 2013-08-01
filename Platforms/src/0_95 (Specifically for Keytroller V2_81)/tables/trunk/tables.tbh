@@ -124,6 +124,14 @@ enum en_tbl_record_states
 	EN_TBL_RECORD_BOTH
 end enum
 
+enum en_tbl_modify_op
+	EN_TBL_ADD_REC,
+	EN_TBL_DEL_REC,
+	EN_TBL_UNDEL_REC,
+	EN_TBL_EDIT_REC,
+	EN_TBL_CLR_TABLE
+end enum
+
 type tbl_type
 	TableName as string(MAX_TBL_NAME_LEN)
 	Minrecs as word
@@ -170,6 +178,7 @@ declare function tbl_close(tbl_name as string(MAX_TBL_NAME_LEN)) as en_tbl_statu
 declare function tbl_get_tbl_name as string(MAX_TBL_NAME_LEN)
 declare function tbl_is_record_deleted() as no_yes
 
+declare sub callback_tbl_modifed(tbl_name as string(MAX_TBL_NAME_LEN),op as en_tbl_modify_op)
 #if TABLE_HASH_ENABLED=1
 declare function tbl_set_md5 as dword
 declare function tbl_get_hash() as string(10)

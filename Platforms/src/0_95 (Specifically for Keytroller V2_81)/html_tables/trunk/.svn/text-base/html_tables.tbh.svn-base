@@ -1,0 +1,115 @@
+
+'===========================================================================
+'					html_tables library
+'
+'	required device specific properties and methods:
+'	depending libraries:
+'		html_commons
+'
+'	required device specific properties, methods and constants:
+'		function device_customized_item(c_type as string(2),byref tbl_display_file as string(25),byref field_value as string)as string
+'
+'		const MSG_HTML_TBL_KEY_VIOLATION_ERROR="Saving new data would result in a duplicate record."
+'		const MSG_HTML_TBL_INVALID_ERROR="Field value is invalid."
+'		const MSG_HTML_TBL_DISK_ERROR = "Disk data error. Please format the disk or restore it from the backup."
+'		const MSG_HTML_TBL_INTERNAL_ERROR = "Firmware is corrupted, please reload the firmware!"
+'		const MSG_HTML_TBL_NOT_FOUND = "Table is not found, please format the disk!"
+'		const MSG_HTML_TBL_UNKNOWN_TABLE = "Unknown table"
+'===========================================================================
+
+#ifndef HTML_TBL_ITEM_NUM 
+#define HTML_TBL_ITEM_NUM 10
+#endif
+
+#ifndef HTML_FLD_DESCR_LEN 
+#define HTML_FLD_DESCR_LEN 50
+#endif
+
+#ifndef HTML_TBL_FILENAME_LEN 
+#define HTML_TBL_FILENAME_LEN 30
+#endif
+
+#ifndef HTML_MAX_TBL_NUM 
+#define HTML_MAX_TBL_NUM 1
+#endif
+
+#ifndef MAX_NUM_CRITERIA 
+#define MAX_NUM_CRITERIA 10
+#endif
+
+#ifndef MAX_FLD_SZ 
+#define MAX_FLD_SZ 20
+#endif
+
+#ifndef LF
+#define LF 10
+#endif
+
+#ifndef HTML_TABLE_LIST
+#define HTML_TABLE_LIST "html_tbl_list.txt"
+#endif
+
+enum date_formate_convert_dir
+	STR_TO_VAL,
+	VAL_TO_STR
+end enum
+
+enum download_mode
+	DL_RAW,
+	DL_CSV
+end enum
+
+enum en_html_tbl_status
+	HTBL_STATUS_OK,
+	HTBL_STATUS_NOT_FOUND,
+	HTBL_STATUS_INVALID_FIELD,
+	HTBL_STATUS_KEY_VIOLATION,
+	HTBL_STATUS_DISK_ERROR,
+	HTBL_STATUS_INTERNAL_ERROR
+end enum
+
+enum en_html_tbl_types
+	HTBL_QUERY,
+	HTBL_INPUT,
+	HTBL_TABLE
+end enum
+
+type html_criteria
+	criteria_name as string(MAX_FLD_NAME_LEN)
+	criteria_value as string(MAX_FLD_SZ)
+	criteria_condition as pl_fd_find_modes
+end type
+
+type html_tbl_fld_descr
+	HtmlId as string (MAX_FLD_NAME_LEN)
+	FieldName as string(MAX_FLD_NAME_LEN)	
+	FieldString	as string(HTML_FLD_DESCR_LEN)		
+	Input as no_yes
+	QueryMode as pl_fd_find_modes
+	Table as no_yes
+	HTMLData_addr as word
+end type
+
+type html_tbl_descr
+	TableName as string(MAX_TBL_NAME_LEN)
+	TableFile as string(HTML_TBL_FILENAME_LEN)
+	Fields(MAX_NUM_CRITERIA) as html_tbl_fld_descr
+end type
+
+declare sub html_tables_init(addr as word)
+declare sub html_tables_add_record(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_input_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_header_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_record_load(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_tables_query_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_print_checkall
+declare sub html_tables_record_print(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_pagelink_print(page_name as string(20), page_val as string(6))
+declare sub html_tbl_print_error
+declare sub html_table_time_mod(html_tbl_name as string(MAX_TBL_NAME_LEN))
+declare sub html_table_clear(html_tbl_name as string(MAX_TBL_NAME_LEN), html_tbl_type as en_html_tbl_types)
+declare sub html_tbl_print_datepicker
+declare sub html_table_download(dl_mode as download_mode)
+declare sub html_tables_record_delete(html_tbl_name as string(MAX_TBL_NAME_LEN))
+
+declare log_counter as byte

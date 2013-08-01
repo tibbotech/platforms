@@ -65,6 +65,11 @@ wait:
 	device_mb_interrupt()	'allow user to executes other procedures while inside the message box
 	if kp.enabled=NO then kp.enabled=YES
 	if kp.getkey(kp_event,kp_code)=OK then
+		if kp_event=PL_KP_EVENT_LOCKEDUP then
+			reset_keypad()
+			goto wait
+		end if	
+	
 		mb_timeout_ctr=timeout
 		ui_msg_box_key_proc(kp_event,kp_code)
 	end if

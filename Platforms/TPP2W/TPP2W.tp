@@ -1,6 +1,6 @@
 [platform]
 description=TPP2 Board
-version=TPP2-3.33
+version=TPP2-3.34
 rom=983040
 ram=22528
 codebits=24
