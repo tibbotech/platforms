@@ -1302,22 +1302,34 @@ property ser.interface
 end property
 
 '--------------------------------------------------------------------
+enum pl_ser_flowcontrol
+'<b>ENUM. </b><br><br> 
+'Contains the list of constants related to the flow control for the UART mode of serial port (ser.mode= 0- PL_SER_MODE_UART).
+	PL_SER_FC_DISABLED,	'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+				'No flow control.
+	PL_SER_FC_RTSCTS,	'<b>PLATFORM CONSTANT. </b><br><br> 
+				'RTS/CTS flow control.
+	PL_SER_FC_XONOFF	'<b>PLATFORM CONSTANT. </b><br><br> 
+				'XON/XOFF flow control.
+end enum
+
 property ser.flowcontrol
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- DISABLED. </b><br><br> 
 'Sets/returns flow control mode for currently selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>): 
-'<font color="olive"><b>0- DISABLED</b></font>, <font color="olive"><b>1- ENABLED</b></font>. Only relevant when the serial port is in UART 
+'<font color="olive"><b>0- DISABLED</b></font>, <font color="olive"><b>1- PL_SER_FC_RTSCTS</b></font>, or <font color="olive"><b>1- PL_SER_FC_XONXOFF</b></font>. Only relevant when the serial port is in UART 
 'mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>) and full-duplex interface is selected 
 '(<font color="maroon"><b>ser.interface</b></font>= <font color="olive"><b>0- PL_SER_SI_FULLDUPLEX</b></font>).<br><br>
-'Flow control uses two serial port lines- RTS and CTS- to regulate the flow of data between the serial port of your device and another 
-'("attached") serial device. On this platform you can select which I/O line will serve as RTS line and which- as CTS line (see 
+'RTS/CTS flow control uses two serial port lines- RTS and CTS- to regulate the flow of data between the serial port of your device and another 
+'("attached") serial device. On some platforms you can select which I/O line will serve as RTS line and which- as CTS line (see 
 '<font color="maroon"><b>ser.rtsmap </b></font>and <font color="maroon"><b>ser.ctsmap</b></font>).
+'XON/XOFF flow control uses XON (ser.xonchar) and XOFF (ser.xoffchar) characters to pause and resume transmission between devices.
 '<br><br>
 '<b>Platforms with explicit configuration of I/O lines as inputs or outputs:</b>
 '<br><br>
 'The RTS lines are not automatically configured as outputs and CTS- as inputs. You need to do this manually, through 
 'the <font color="maroon"><b>io.enabled </b></font>property of the io object. 
-	get = syscall(110,"80.TDL"+) as dis_en
-	set = syscall(111,"80.TDL"+) (value as dis_en)
+	get = syscall(110,"80.TDL"+) as pl_ser_flowcontrol
+	set = syscall(111,"80.TDL"+) (value as pl_ser_flowcontrol)
 end property
 
 '--------------------------------------------------------------------
@@ -1327,8 +1339,8 @@ property ser.rtsmap
 'Sets/returns the number of the I/O line that will act as RTS/W0out/cout output of currently selected serial port (selection is made through 
 '<font color="maroon"><b>ser.num</b></font>). When the port in in the UART/full-duplex mode (<font color="maroon"><b>ser.mode </b></font>= 
 '<font color="olive"><b>0- PL_SER_MODE_UART </b></font>and <font color="maroon"><b>ser.interface </b></font>= <font color="olive"><b>
-'0- PL_SER_SI_FULLDUPLEX</b></font>) and the flow control is enabled (<font color="maroon"><b>ser.flowcontrol </b></font>=
-'<font color="olive"><b>1- ENABLED</b></font>) the line will act as an RTS output, used for flow control. <br><br>
+'0- PL_SER_SI_FULLDUPLEX</b></font>) and the flow control is set to <font color="maroon"><b>ser.flowcontrol </b></font>=
+'<font color="olive"><b>1- PL_SER_FC_RTSCTS</b></font>) the line will act as an RTS output, used for flow control. <br><br>
 'In the UART/half-duplex mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>and
 '<font color="maroon"><b>ser.interface </b></font>= <font color="olive"><b>1- PL_SER_SI_HALFDUPLEX</b></font>) this line acts as direction 
 'control output (see also <font color="maroon"><b>ser.dircontrol</b></font>). <br><br>
@@ -1353,8 +1365,8 @@ property ser.ctsmap
 'UART1: 1- PL_INT_NUM_1, <br>UART2: 2- PL_INT_NUM_2, <br>UART3: 3- PL_INT_NUM_3. </b><br><br>
 'Sets/returns the number of I/O line that will act as CTS/W0&1in/cin input of currently selected serial port (selection is made through 
 '<font color="maroon"><b>ser.num</b></font>). When the port in in the UART mode (<font color="maroon"><b>ser.mode </b></font>= 
-'<font color="olive"><b>0- PL_SER_MODE_UART</b></font>) and the flow control is enabled (ser.flowcontrol </b></font>= 1- ENABLED</b></font>) 
-'the line will act as a CTS input, used for flow control. In the UART mode, this line has no function when the flow control is disabled.<br><br>
+'<font color="olive"><b>0- PL_SER_MODE_UART</b></font>) and the flow control is set to ser.flowcontrol </b></font>= 1- PL_SER_FC_RTSCTS</b></font>) 
+'the line will act as a CTS input, used for flow control.<br><br>
 'When the port is in the Wiegand mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>1- PL_SER_MODE_WIEGAND</b></font>) 
 'the line will act as a W0in input of Wiegand interface. <br><br>
 'When the port is in the clock/data mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>2- PL_SER_MODE_CLOCKDATA</b>
@@ -1368,6 +1380,25 @@ property ser.ctsmap
 'property of the io object.
 	get = syscall(174,"80.TDL"+) as pl_int_num
 	set = syscall(23,"80.TDL"+) (value as pl_int_num)
+end property
+
+'--------------------------------------------------------------------
+property ser.xonchar
+'<b>PROPERTY (BYTE), DEFAULT VALUE= &h11 (XON character) </b><br><br>
+'Sets/returns the ASCII code of the character that will be used to PAUSE transmission in the XON/XOFF flow control mode (ser.flowcontrol= 2- PL_SER_FC_XONOFF)
+'for the currently selected serial port (selection is made through ser.num).
+	get = syscall(590,"80.TDL"+) as byte
+	set = syscall(591,"80.TDL"+) (value as byte)
+end property
+
+
+'--------------------------------------------------------------------
+property ser.xoffchar
+'<b>PROPERTY (BYTE), DEFAULT VALUE= &h13 (XOFF character) </b><br><br>
+'Sets/returns the ASCII code of the character that will be used to RESUME transmission in the XON/XOFF flow control mode (ser.flowcontrol= 2- PL_SER_FC_XONOFF)
+'for the currently selected serial port (selection is made through ser.num).
+	get = syscall(592,"80.TDL"+) as byte
+	set = syscall(593,"80.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------

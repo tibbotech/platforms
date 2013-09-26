@@ -1,6 +1,6 @@
 [platform]
 description=KLM601 platform
-version=KLM601-3.34
+version=KLM601-3.40
 rom=983040
 ram=21760
 codebits=24
