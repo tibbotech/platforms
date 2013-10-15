@@ -1,6 +1,6 @@
 [platform]
 description=DS1202 Device
-version=DS1202-3.40
+version=DS1202-3.50
 rom=983040
 ram=22528
 codebits=24
