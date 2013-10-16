@@ -1,6 +1,6 @@
 [platform]
 description=TPP3 Board
-version=TPP3-3.40
+version=TPP3-3.50
 rom=983040
 ram=22528
 codebits=24

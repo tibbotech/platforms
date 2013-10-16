@@ -1,6 +1,6 @@
 [platform]
 description=T1000 IC + GA1000 Wi-Fi add-on
-version=T1000W-3.40
+version=T1000W-3.50
 rom=983040
 ram=21760
 codebits=24

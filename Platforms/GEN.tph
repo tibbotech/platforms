@@ -1467,7 +1467,8 @@ property ser.parity
 '<font color="olive"><b>4- PL_SER_PR_SPACE </b></font>(space). <br><br>
 'Mark parity is equivalent to having a second stop-bit (there is no separate property toexplicitly select the number of stop bits). This 
 'property is only relevant when the serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive">
-'<b>0- PL_SER_MODE_UART</b></font>).
+'<b>0- PL_SER_MODE_UART</b></font>) and when NOT in the 7-bit or 8-bit mode (ser.bits= 0- PL_SER_BB_7 or 1- PL_SER_BB_8). It is not possible
+'to have a parity bit when in the 9-bit mode (ser.bits= 2- PL_SER_BB_9).
 	get = syscall(106,"80.TDL"+) as pl_ser_parity
 	set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
 end property
@@ -1478,7 +1479,8 @@ enum pl_ser_bits
 'Contains the list of constants related to the selection of the number of bits in the word TXed/RXed by the serial
 'port in the UART mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
 	PL_SER_BB_7,		'<b>PLATFORM CONSTANT. </b><br><br> Data word TXed/RXed by the serial port is to contain 7 data bits.
-	PL_SER_BB_8		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
+	PL_SER_BB_8,		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
+	PL_SER_BB_9		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 9 data bits (additional parity bit is not possible in this mode).
 end enum
 
 property ser.bits
