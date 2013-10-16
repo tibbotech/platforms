@@ -1,6 +1,6 @@
 [platform]
 description=DS1206 Device
-version=DS1206-3.50
+version=DS1206-3.40
 rom=983040
 ram=22528
 codebits=24
