@@ -1681,7 +1681,7 @@ public function tbl_close(tbl_name as string(MAX_TBL_NAME_LEN)) as en_tbl_status
 	
 	if fd.ready=NO then goto tbl_fail
 	if tbl_name="" then
-		for i=0 to MAX_NUM_TABLES - 1
+		for i=0 to MAX_NUM_TABLES-1
 			fd.filenum=tbl_info(i).fnum
 			if fd.fileopened = YES then
 				if fd.transactionstart()<>PL_FD_STATUS_OK then goto tbl_ok

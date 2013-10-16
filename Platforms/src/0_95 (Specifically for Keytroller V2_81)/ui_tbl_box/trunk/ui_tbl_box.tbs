@@ -51,7 +51,7 @@ public function ui_tbl_box(
 	dim key_add_op as ui_tbl_add_op
 	dim key_edit_op as ui_tbl_edit_op
 	dim add_init as no_yes
-	dim tbl_item_string as string(50)
+	dim tbl_item_string as string(INPUT_VALUE_LEN)
 	dim cmd as string(3)
 	
 	device_tbl_box_pre(x_coord,y_coord,width,height,item_data)

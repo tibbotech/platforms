@@ -19,7 +19,7 @@
 #endif
 
 #ifndef INPUT_VALUE_LEN
-#define INPUT_VALUE_LEN 50
+#define INPUT_VALUE_LEN 64
 #endif
 
 #ifndef UTB_VER_SPACING
