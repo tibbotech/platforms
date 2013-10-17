@@ -1,6 +1,6 @@
 [platform]
 description=DS1100 Device
-version=DS1100-3.50
+version=DS1100-3.40
 rom=327680
 ram=17920
 codebits=24

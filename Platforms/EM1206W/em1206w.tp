@@ -1,6 +1,6 @@
 [platform]
 description=EM1206 Module + GA1000 Wi-Fi add-on
-version=EM1206W-3.50
+version=EM1206W-3.40
 rom=983040
 ram=22528
 codebits=24

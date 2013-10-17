@@ -1,6 +1,6 @@
 [platform]
 description=DS1102 Device + GA1000 Wi-Fi add-on
-version=DS1102W-3.50
+version=DS1102W-3.40
 rom=983040
 ram=22528
 codebits=24
