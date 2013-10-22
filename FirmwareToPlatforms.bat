@@ -1,1 +1,0 @@
-@powershell -ExecutionPolicy RemoteSigned -File ./FirmwareToPlatforms.ps1 -platforms D:\Desktop\Other_Projects\GIT\Platforms\Platforms\
