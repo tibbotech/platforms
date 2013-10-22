@@ -1,1 +1,1 @@
-@powershell -ExecutionPolicy RemoteSigned -File ./FirmwareToPlatforms.ps1 -platforms C:\root\Projects\TIDE\Platforms\Platforms\
+@powershell -ExecutionPolicy RemoteSigned -File ./FirmwareToPlatforms.ps1 -platforms D:\Desktop\Other_Projects\GIT\Platforms\Platforms\
