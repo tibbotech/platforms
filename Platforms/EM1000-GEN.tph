@@ -218,6 +218,12 @@ enum pl_io_num
 	PL_IO_NUM_53,		'PLATFORM CONSTANT.</b><br><br>
 				'General-purpose I/O line 53 (does not belong to any 8-bit port).
 
+	PL_IO_NUM_54,		'PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 54 (does not belong to any 8-bit port). Formerly DBGRX.
+
+	PL_IO_NUM_55,		'PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 55 (does not belong to any 8-bit port). Formerly DBGTX.
+
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
 				'The state of this line is always detected as LOW. Setting this line has no effect.  

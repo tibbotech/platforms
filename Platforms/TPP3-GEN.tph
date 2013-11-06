@@ -1,36 +1,36 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			TPB2 -- COMMON PLATFORM STUFF
+'			TPP3 -- COMMON PLATFORM STUFF
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 enum pl_io_num 
 	PL_IO_NUM_0,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 0 (P0.0) connected to socket 1, line 3.
+				'Socket 1, control line C.
 
 	PL_IO_NUM_1,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 1 (P0.1) connected to socket 3, line 3.
+				'Socket 5, control line C.
 
 	PL_IO_NUM_2,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 2 (P0.2) connected to socket 5, line 3.
+				'Socket 9, control line C.
 
 	PL_IO_NUM_3,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 3 (P0.3) connected to socket 7, line 3.
+				'Socket 13, control line C.
 
 	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT. </b><br><br>
-				'General-purpose I/O line 4 (P0.4) connected to socket 9, line 3.
+				'Socket 3, control line C.
 
 	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 5 (P0.5) connected to socket 11, line 3.
+				'Socket 7, control line C.
 
 	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 6 (P0.6). NOT IMPLEMENTED ON THIS PLATFORM.
+				'Socket 11, control line C.
 
 	PL_IO_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 7 (P0.7). NOT IMPLEMENTED ON THIS PLATFORM.
+				'Socket 15, control line C.
 
 	PL_IO_NUM_8_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 8 (P1.0), connected to socket 1, line 2. Aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'Socket 1, control line B. This line is also the RX/W1in/din input of the serial port 0.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -39,7 +39,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_9_TX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 9 (P1.1), connected to socket 1, line 1. Also the TX/W1out/dout output of the serial port 0.<br><br>
+				'Socket 1, control line A. This line is also the TX/W1out/dout output of the serial port 0.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -48,7 +48,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_10_RX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 10 (P1.2), connected to socket 3, line 2. Aslo the RX/W1in/din input of the serial port 1.<br><br>
+				'Socket 5, control line B. This line is also the RX/W0&1in/din input of the serial port 1.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -57,7 +57,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_11_TX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 11 (P1.3), connected to socket 3, line 1. Also the TX/W1out/dout output of the serial port 1.<br><br>
+				'Socket 5, control line A. This line is also the TX/W1out/dout output of the serial port 1.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -66,7 +66,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_12_RX2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 12 (P1.4), connected to socket 5, line 2. Aslo the RX/W1in/din input of the serial port 2.<br><br>
+				'Socket 9, control line B. This line is also the RX/W0&1in/din input of the serial port 2.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -75,7 +75,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_13_TX2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 13 (P1.5), connected to socket 5, line 1. Also the TX/W1out/dout output of the serial port 2.<br><br>
+				'Socket 9, control line A. This line is also the TX/W1out/dout output of the serial port 2.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -84,7 +84,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_14_RX3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 14 (P1.6), connected to socket 7, line 2. Aslo the RX/W1in/din input of the serial port 3.<br><br>
+				'Socket 13, control line B. This line is also the RX/W0&1in/din input of the serial port 3.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -93,7 +93,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_15_TX3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 15 (P1.7), connected to socket 7, line 1. Also the TX/W1out/dout output of the serial port 3.<br><br>
+				'Socket 13, control line A. This line is also the TX/W1out/dout output of the serial port 3.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -102,131 +102,130 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_16_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 16 (P2.0), connected to socket 1, line 4. Also the interrupt line 0.
+				'Socket 1, control line D. This is also the interrupt line 0.
 
 	PL_IO_NUM_17_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 17 (P2.1), connected to socket 3, line 4. Also the interrupt line 1.
+				'Socket 5, control line D. This is also the interrupt line 1.
 
 	PL_IO_NUM_18_INT2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 18 (P2.2), connected to socket 5, line 4. Also the interrupt line 2.
+				'Socket 9, control line D. This is also the interrupt line 2.
 
 	PL_IO_NUM_19_INT3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 19 (P2.3), connected to socket 7, line 4. Also the interrupt line 3.
+				'Socket 13, control line D. This is also the interrupt line 3.
 
 	PL_IO_NUM_20_INT4,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 20 (P2.4), connected to socket 9, line 4. Also the interrupt line 4.
+				'Socket 3, control line D. This is also the interrupt line 4.
 
 	PL_IO_NUM_21_INT5,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 21 (P2.5), connected to socket 11, line 4. Also the interrupt line 5.
+				'Socket 7, control line D. This is also the interrupt line 5.
 
 	PL_IO_NUM_22_INT6,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 22 (P2.6), also the interrupt line 6. NOT IMPLEMENTED ON THIS PLATFORM.
+				'Socket 11, control line D. This is also the interrupt line 5.
 				
 	PL_IO_NUM_23_INT7,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 23 (P2.7), also the interrupt line 7. NOT IMPLEMENTED ON THIS PLATFORM.
+				'Socket 15, control line D. This is also the interrupt line 5.
 
 	PL_IO_NUM_24,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 24 (P3.0), connected to D0 of the LCD interface.
+				'Socket 17, control line A.
 
 	PL_IO_NUM_25,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 25 (P3.1), connected to D1 of the LCD interface.
+				'Socket 17, control line B.
 
 	PL_IO_NUM_26,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 26 (P3.2), connected to D2 of the LCD interface.
+				'Socket 17, control line C.
 
 	PL_IO_NUM_27,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 27 (P3.3), connected to D3 of the LCD interface.
+				'Socket 17, control line D.
 
 	PL_IO_NUM_28,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 28 (P3.4), connected to D4 of the LCD interface.
+				'Socket 19, control line A.
 				
 	PL_IO_NUM_29,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 29 (P3.5), connected to D5 of the LCD interface.
+				'Socket 19, control line B.
 
 	PL_IO_NUM_30,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 30 (P3.6), connected to D6 of the LCD interface.
+				'Socket 19, control line C.
 
 	PL_IO_NUM_31,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 31 (P3.7), connected to D7 of the LCD interface.
+				'Socket 19, control line D.
 
 	PL_IO_NUM_32,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 32 (P4.0), connected to socket 9, line 1.
+				'Socket 3, control line A.
 
 	PL_IO_NUM_33,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 33 (P4.1), connected to socket 9, line 2.
+				'Socket 3, control line B.
 
 	PL_IO_NUM_34,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 34 (P4.2), connected to socket 11, line 1.
+				'Socket 7, control line A.
 
 	PL_IO_NUM_35,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 35 (P4.3), connected to socket 11, line 2.
+				'Socket 7, control line B.
 
 	PL_IO_NUM_36,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 36 (P4.4), connected to key 1 of the keypad interface.
+				'Socket 11, control line A.
 
 	PL_IO_NUM_37,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 37 (P4.5), connected to key 2 of the keypad interface.
+				'Socket 11, control line B.
 
 	PL_IO_NUM_38,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 38 (P4.6), connected to key 3 of the keypad interface.
+				'Socket 13, control line A.
 
 	PL_IO_NUM_39,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 39 (P4.7), connected to key 4 of the keypad interface.
+				'Socket 13, control line B.
 
 	PL_IO_NUM_40,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 40, connected to CS of the LCD interface.
+				'Socket 21, control line A.
 
 	PL_IO_NUM_41,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 41, connected to RD of the LCD interface.
+				'Socket 21, control line B.
 
 	PL_IO_NUM_42,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 42, connected to WR of the LCD interface.
+				'Socket 21, control line C.
 
 	PL_IO_NUM_43,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 43, connected to DC of the LCD interface.
+				'Socket 21, control line D.
 
 	PL_IO_NUM_44,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 44, connected to RST of the keypad interface.
+				'Socket 25, control line A.
 
 	PL_IO_NUM_45_CO,	'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 45, also a square wave output controlled by the 
-				'beep object. Connected to a beeper (buzzer).<br><br>
+				'A square wave output controlled by the beep object. This output is driving a buzzer.<br><br>
 				'When the beeper pattern starts playing, the line is configured as output automatically. When the beeper pattern
 				'stops playing, the output returns to the input/output and high/low state that it had before the pattern started playing.
 
 	PL_IO_NUM_46,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 46, connected to RST of the signal strength indication circuit.
+				'Signal strength LED bar control circuit, reset line.
 
 	PL_IO_NUM_47,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 47, connected to CLK of the signal strength indication circuit.
+				'Signal strength LED bar control circuit, clock line.
 
 	PL_IO_NUM_48		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 48, connected to DATA of the signal strength indication circuit.
+				'Signal strength LED bar control circuit, data line.
 
 	PL_IO_NUM_49,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 49, connected to CS of the wireless interface.
+				'Wireless add-on socket, CS line.
 
 	PL_IO_NUM_50,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 50, connected to DO of the wireless interface.
+				'Wireless add-on socket, DO line.
 
 	PL_IO_NUM_51,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 51, connected to RST of the wireless interface.
+				'Wireless add-on socket, RST line.
 
 	PL_IO_NUM_52,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 52, connected to DI of the wireless interface.
+				'Wireless add-on socket, DI line.
 
 	PL_IO_NUM_53,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 53, connected to CLK of the wireless interface.
+				'Wireless add-on socket, CLK line.
 
 	PL_IO_NUM_54,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 54, connected to BLE of the LCD interface.
+				'Socket 23, control line A.
 
 	PL_IO_NUM_55,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 55, connected to RST of the LCD interface.
+				'Socket 23, control line B.
 
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
-				'The state of this line is always detected as LOW. Setting this line has no effect.  
+				'The state of this line is always detected as LOW. Setting this line has no effect.
 				
 end enum
 
