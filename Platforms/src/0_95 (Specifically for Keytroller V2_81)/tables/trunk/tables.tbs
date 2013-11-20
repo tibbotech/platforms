@@ -1287,6 +1287,7 @@ public function tbl_record_sg(op as en_tbl_rdwr) as en_tbl_status
 		if fd.laststatus<>PL_FD_STATUS_OK then goto fd_error
 	else
 	'set data
+		tbl_record_string=left(tbl_record_string,selected_tbl_RecSize)
 		if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
 		if fd.setdata(tbl_record_string)<>PL_FD_STATUS_OK then goto fd_error
 		if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error

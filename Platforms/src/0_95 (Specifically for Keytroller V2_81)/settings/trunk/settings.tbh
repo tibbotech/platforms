@@ -42,7 +42,7 @@
 'Save memory -- set the exact number you need!
 'Range: 1-255
 #ifndef STG_MAX_NUM_SETTINGS
-	#define STG_MAX_NUM_SETTINGS 1
+	#define STG_MAX_NUM_SETTINGS 0
 #endif
 
 'If there are volatile settings in your project, set this to the necessary amount of RAM needed

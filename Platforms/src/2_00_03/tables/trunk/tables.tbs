@@ -1132,6 +1132,7 @@ public function tbl_record_sg(byref rec_num as word, op as en_tbl_rdwr) as en_tb
 		if fd.laststatus<>PL_FD_STATUS_OK then goto tbl_fail
 	else
 	'set data
+		tbl_record_string=left(tbl_record_string,tbl_info(tbl_info_index).rec_size)
 		if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
 		if fd.setdata(tbl_record_string)<>PL_FD_STATUS_OK then goto fd_error
 		if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
