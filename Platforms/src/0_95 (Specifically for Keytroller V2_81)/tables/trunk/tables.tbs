@@ -783,8 +783,8 @@ fd_error:
 tbl_ok:
 #if TABLE_HASH_ENABLED=1
 	tbl_set_md5()
-	callback_tbl_modifed(selected_tbl_name,EN_TBL_DEL_REC)
 #endif
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_DEL_REC)
 	tbl_record_delete=EN_TBL_STATUS_OK
 	goto finish
 tbl_fail:
@@ -841,8 +841,8 @@ fd_error:
 tbl_ok:
 #if TABLE_HASH_ENABLED=1
 	tbl_set_md5()
-	callback_tbl_modifed(selected_tbl_name,EN_TBL_UNDEL_REC)
 #endif
+	callback_tbl_modifed(selected_tbl_name,EN_TBL_UNDEL_REC)
 	tbl_record_undelete=EN_TBL_STATUS_OK
 	goto finish
 tbl_fail:
