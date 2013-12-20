@@ -28,6 +28,7 @@ const CH36_64=chr(54)+chr(54)+chr(54)+chr(54)+chr(54)+chr(54)+chr(54)+chr(54)+ch
 const CH5C_64=chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)+chr(92)
 const CYPHER_TKIP=chr(&h00)+chr(&h0F)+chr(&hAC)+chr(&h02)
 const CYPHER_AES=chr(&h00)+chr(&h0F)+chr(&hAC)+chr(&h04)
+const WLN_ASSOCIATION_HOLDOFF_CONST=6 'waiting time in (0.5 sec intervals) until we will try to scan/associate again
 
 '------------------------------------------------------------------------------
 enum en_wln_wpa_key_types
@@ -35,14 +36,10 @@ enum en_wln_wpa_key_types
 	WLN_WPA_KEY_HMAC_SHA1_AES
 end enum
 
-enum en_wln_scan_modes
-	WLN_SCAN_MODE_PASSIVE,
-	WLN_SCAN_MODE_ACTIVE
-end enum
-
 '------------------------------------------------------------------------------
-declare sub wln_start_scan(scan_mode as en_wln_scan_modes)
+declare function wln_start_scan() as ok_ng
 declare function wln_prepare_security(security_mode as pl_wln_security_modes,byref key as string) as en_wln_status_codes
+declare function wln_rescan() as en_wln_status_codes
 declare sub wln_sha1_prf(byref pmk as string, byref label as string, byref data1 as string, byref buf as string, buf_len as byte)
 declare sub wln_wpa_pmk_to_ptk(byref pmk as string, byref label as string, byref addr1 as string, byref addr2 as string, byref nonce1 as string, byref nonce2 as string, byref ptk as string)
 declare sub wln_wpa_supplicant_process_1_of_4(byref snonce as string, byref anonce as string, byref ptk as string)
@@ -86,15 +83,19 @@ dim wln_key as string(32)
 dim wln_bssid_binary as string(6)
 dim wpa_mode as pl_wln_wpa_modes
 dim wln_ap_name as string(32)
-dim wln_dont_scan as no_yes
+dim wln_scan_and_assoc_in_prog as no_yes
 dim wln_init_flag as word
-dim wln_associated as no_yes
+dim wln_associated as pl_wln_check_association_retval
 
 #if WLN_DEBUG_PRINT
 	dim wln_dont_print_stop as no_yes
 #endif
 
 dim wln_rescan_in_prog as no_yes
+dim wln_association_holdoff_timer as byte
+dim wln_rescan_requested as no_yes
+dim wln_updaterssi_requested as no_yes
+dim wln_active_scan as no_yes
 
 '==============================================================================
 public function wln_get_info(info_element as wln_info_elements, byref extra_data as string) as string
@@ -123,7 +124,7 @@ public function wln_get_info(info_element as wln_info_elements, byref extra_data
 end function
 
 '--------------------------------------------------------------------
-public function wln_start(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string,domain as pl_wln_domains) as en_wln_status_codes
+public function wln_start(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string,domain as pl_wln_domains,active_scan as no_yes, scanfilter as pl_wln_scan_filter) as en_wln_status_codes
 	dim x as byte
 
 	if wln_init_flag<>WLN_INIT_SIGNATURE then
@@ -136,6 +137,8 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 	wln_ap_name=ap_name
 	wln_security_mode=security_mode
 	wln_key=key
+	wln_active_scan=active_scan
+	wln.scanfilter=scanfilter
 
 	if wln.enabled=YES then
 		#if WLN_DEBUG_PRINT
@@ -225,10 +228,11 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 	#if WLN_WPA
 		wln_mac_binary=ddval(wln.mac)
 	#endif
+	
+	wln_start=wln_prepare_security(security_mode,key)
+	if wln_start<>WLN_STATUS_OK then goto wln_start_error
 
-	if wln_prepare_security(security_mode,key)<>WLN_STATUS_OK then goto wln_start_error
-
-	wln_start_scan(WLN_SCAN_MODE_ACTIVE) 'scan for access point
+	wln_association_holdoff_timer=1 'will start scanning and associating on the next timer event
 	exit function
 
 wln_start_error:
@@ -250,6 +254,7 @@ end function
 
 '----------------------------------------------------------------------------
 public function wln_change(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string) as en_wln_status_codes
+	dim x as byte
 
 	if wln_init_flag<>WLN_INIT_SIGNATURE then
 		wln_init()
@@ -265,7 +270,7 @@ public function wln_change(byref ap_name as string,security_mode as pl_wln_secur
 	wln_ap_name=ap_name
 	wln_security_mode=security_mode
 	wln_key=key
-	wln_associated=NO
+	wln_associated=WLN_ASSOCIATION_RETVAL_NO
 
 	if wln.enabled=NO then
 		wln_change=WLN_STATUS_NOT_STARTED
@@ -324,8 +329,8 @@ public sub wln_stop()
 	while wln.task<>PL_WLN_TASK_IDLE
 	wend
 
-	wln_dont_scan=NO
-	wln_associated=NO
+	wln_scan_and_assoc_in_prog=NO
+	wln_associated=WLN_ASSOCIATION_RETVAL_NO
 
 	'reset the Wi-Fi module
 	#if WLN_RESET_MODE 
@@ -386,7 +391,7 @@ wait_close_wpa_socket:
 end sub
 
 '----------------------------------------------------------------------------
-public function wln_rescan(byref ap_name as string) as en_wln_status_codes
+function wln_rescan() as en_wln_status_codes
 	
 	if wln_init_flag<>WLN_INIT_SIGNATURE then
 		wln_init()
@@ -396,7 +401,11 @@ public function wln_rescan(byref ap_name as string) as en_wln_status_codes
 	wln_rescan=WLN_STATUS_OK
 
 	#if WLN_DEBUG_PRINT
-		wln_debugprint("---RESCAN---")
+		if wln_active_scan=NO then
+			wln_debugprint("---PASSIVE RESCAN---")
+		else
+			wln_debugprint("---ACTIVE RESCAN---")
+		end if
 	#endif
 
 	if wln.enabled=NO then
@@ -415,12 +424,27 @@ public function wln_rescan(byref ap_name as string) as en_wln_status_codes
 		exit function
 	end if
 
-	wln.activescan(ap_name)
+	if wln_active_scan=NO then
+		wln.scan(wln_ap_name)
+	else
+		wln.activescan(wln_ap_name)
+	end if
+
 	wln_rescan_in_prog=YES
 end function
 
 '----------------------------------------------------------------------------
-function wln_check_association() as pl_wln_association_states
+sub wln_start_rescan()
+	wln_rescan_requested=YES
+end sub
+
+'----------------------------------------------------------------------------
+sub wln_update_rssi()
+	wln_updaterssi_requested=YES
+end sub
+
+'----------------------------------------------------------------------------
+function wln_check_association() as pl_wln_check_association_retval
 	wln_check_association=wln_associated
 end function
 
@@ -432,7 +456,31 @@ public sub wln_proc_timer()
 		exit sub
 	end if
 
-	if wln_associated=YES then
+	if wln.associationstate=PL_WLN_NOT_ASSOCIATED then
+		if wln_scan_and_assoc_in_prog=NO then
+			if wln_association_holdoff_timer>0 then
+				wln_association_holdoff_timer=wln_association_holdoff_timer-1
+				if wln_association_holdoff_timer=0 then
+					wln_start_scan()
+					wln_association_holdoff_timer=WLN_ASSOCIATION_HOLDOFF_CONST
+				end if
+			end if
+		end if
+	end if
+
+	if wln_associated=WLN_ASSOCIATION_RETVAL_YES then
+		if wln.task=PL_WLN_TASK_IDLE then
+			if wln_rescan_requested<>NO then
+				wln_rescan()
+				wln_rescan_requested=NO
+			else if wln_updaterssi_requested<>NO then
+				wln.updaterssi()
+				wln_updaterssi_requested=NO
+			end if
+		end if
+	end if
+
+	if wln_associated=WLN_ASSOCIATION_RETVAL_YES then
 		#if WLN_KEEP_ALIVE
 			if wln_keep_alive_tmr>0 then
 				wln_keep_alive_tmr=wln_keep_alive_tmr-1
@@ -460,7 +508,7 @@ public sub wln_proc_timer()
 					wln_wpa_handshake_timer=wln_wpa_handshake_timer-1
 					if wln_wpa_handshake_timer=0 then
 						if wln.disassociate()<>ACCEPTED then
-							wln_dont_scan=NO
+							wln_scan_and_assoc_in_prog=NO
 							wln_result=WLN_STATUS_UNEXPECTED_ERROR
 							#if WLN_DEBUG_PRINT
 								wln_debug_print_status(wln_result)
@@ -572,7 +620,7 @@ public sub wln_proc_data()
 		if (key_info and &h100)<>0 then
 			kde_gtk=wln_wpa_supplicant_parse_ies(plain)
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise handshake, process step 3 of 4")
+				wln_debugprint("Pairwise step 3/4")
 			#endif			
 			wln_wpa_supplicant_process_3_of_4(key_info,ver,replay_counter,wln_mic_key,wln_g_ptk)
 			if kde_gtk<>"" then
@@ -588,23 +636,23 @@ public sub wln_proc_data()
 					wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_TKIP,wpakey,PL_WLN_WPA_CAST_MULTICAST) ''<<<<<<<<<<<@@@@@	
 				end if
 				
-				wln_associated=YES
+				wln_associated=WLN_ASSOCIATION_RETVAL_YES
 				callback_wln_ok()
 				#if WLN_KEEP_ALIVE=1
 					wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
 				#endif
 				#if WLN_DEBUG_PRINT
-					wln_debugprint("---OK(associated in WPA2-PSK mode)---")
+					wln_debugprint("---ASSOCIATED (WPA2-PSK)---")
 				#endif				
 			end if			
 		else
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise handshake, process step 1 of 4")
+				wln_debugprint("Pairwise step 1/4")
 			#endif		
 			wln_wpa_supplicant_process_1_of_4(snonce,anonce,wln_g_ptk)
 			wln_mic_key=left(wln_g_ptk,16)
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise handshake, process step 2 of 4")
+				wln_debugprint("Pairwise step 2/4")
 			#endif			
 			wln_wpa_supplicant_send_2_of_4(ver,key_len,replay_counter,snonce,wln_mic_key)			
 		end if	
@@ -619,7 +667,7 @@ public sub wln_proc_data()
 			end	if
 			
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("Group key handshake, process step 1 of 2")
+				wln_debugprint("Group key step 1/2")
 			#endif			
 			
 			if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
@@ -642,18 +690,22 @@ public sub wln_proc_data()
 			
 			wln_mic_key=left(wln_g_ptk,16)
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("Group key handshake, process step 2 of 2")
+				wln_debugprint("Group key step 2/2")
 			#endif			
 			wln_wpa_supplicant_send_2_of_2(key_info,ver,replay_counter,wln_mic_key)
+
+			if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
+				wln_associated=WLN_ASSOCIATION_RETVAL_YES
+				callback_wln_ok()
+			end if
+
 			#if WLN_DEBUG_PRINT
 				if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
-					wln_debugprint("---OK(associated in WPA1-PSK mode)---")
+					wln_debugprint("---ASSOCIATED(WPA1-PSK)---")
 				else
-					wln_debugprint("---OK(Group key updated in WPA2-PSK mode)---")
+					wln_debugprint("---GROUP KEY UPDATED(WPA2-PSK)---")
 				end if
 			#endif			
-			wln_associated=YES
-			callback_wln_ok()
 			#if WLN_KEEP_ALIVE=1
 				wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
 			#endif			
@@ -675,7 +727,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 	wln_result=WLN_STATUS_OK
 	
 	select case completed_task
-	case PL_WLN_TASK_ACTIVESCAN:
+	case PL_WLN_TASK_SCAN,PL_WLN_TASK_ACTIVESCAN:
 		if wln_rescan_in_prog=YES then
 			wln_rescan_in_prog=NO
 			if wln.associationstate=PL_WLN_NOT_ASSOCIATED then
@@ -734,6 +786,8 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 			wln_debugprint("ASSOCIATE with "+wln_ap_name+" (bssid: "+wln.scanresultbssid+", ch: "+str(wln.scanresultchannel)+")")
 		#endif
 
+		wln_associated=WLN_ASSOCIATION_RETVAL_INPROG
+		callback_wln_starting_association()
 		if wln.associate(wln.scanresultbssid,wln_ap_name,wln.scanresultchannel,wln.scanresultbssmode)<>ACCEPTED then
 			wln_result=WLN_STATUS_UNEXPECTED_ERROR
 			goto finish
@@ -745,7 +799,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 			#if WLN_WPA
 				if wln_security_mode=WLN_SECURITY_MODE_WPA1 or wln_security_mode=WLN_SECURITY_MODE_WPA2 then
 					#if WLN_DEBUG_PRINT
-						wln_debugprint("Pre-associated for WPA1-PSK or WPA2-PSK, starting handshake process")
+						wln_debugprint("Pre-associated for WPA1/2-PSK, starting handshake")
 					#endif
 					wln_wpa_handshake_timer=WLN_WPA_HANDSHAKE_TIMEOUT
 					goto finish
@@ -757,9 +811,9 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 			#endif
 			
 			#if WLN_DEBUG_PRINT
-				wln_debugprint("---OK(associated in WEP64, WEP128, or no-security mode)---")
+				wln_debugprint("---ASSOCIATED(WEP64, WEP128, or no security)---")
 			#endif
-			wln_associated=YES
+			wln_associated=WLN_ASSOCIATION_RETVAL_YES
 			callback_wln_ok()
 			goto finish
 		else
@@ -768,7 +822,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 		end if
 	
 	case PL_WLN_TASK_DISASSOCIATE:
-		wln_result=WLN_STATUS_ASSOCIATION_FAILURE
+		wln_result=WLN_STATUS_DISASSOCIATION
 		goto finish
 	
 	case else
@@ -776,50 +830,50 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 	end select
 
 finish:
-	wln_dont_scan=NO
+	wln_scan_and_assoc_in_prog=NO
 	if wln_result<>WLN_STATUS_OK then
 		#if WLN_DEBUG_PRINT
 			wln_debug_print_status(wln_result)
 		#endif
-		wln_associated=NO
+		wln_associated=WLN_ASSOCIATION_RETVAL_NO
 		callback_wln_failure(wln_result)
-		wln_start_scan(WLN_SCAN_MODE_ACTIVE)
 	end if
 end sub
 
 '----------------------------------------------------------------------------
 public sub wln_proc_event(wln_event as pl_wln_events)
+	dim x as byte
 
 	if wln_init_flag<>WLN_INIT_SIGNATURE or wln.enabled=NO then
 		exit sub
 	end if
 
-	wln_dont_scan=NO
+	wln_scan_and_assoc_in_prog=NO
 	if wln_event=PL_WLN_EVENT_DISASSOCIATED then
 		#if WLN_DEBUG_PRINT
 			wln_debug_print_status(WLN_STATUS_DISASSOCIATION)
 		#endif
 
-		if wln_associated=YES then
-			wln_associated=NO
+		if wln_associated=WLN_ASSOCIATION_RETVAL_YES then
+			wln_associated=WLN_ASSOCIATION_RETVAL_NO
 			callback_wln_failure(WLN_STATUS_DISASSOCIATION)
 		else
 			callback_wln_failure(WLN_STATUS_ASSOCIATION_FAILURE) 'means we've been kicked out during WPA handshake
 		end if
-
-		wln_start_scan(WLN_SCAN_MODE_ACTIVE)
 	end if
 end sub
 
 '----------------------------------------------------------------------------
-sub wln_start_scan(scan_mode as en_wln_scan_modes)
+function wln_start_scan() as ok_ng
 	dim res as accepted_rejected
 	
-	if wln.enabled<>YES then exit sub
-	if wln_dont_scan=YES then exit sub
-	if wln.task<>PL_WLN_TASK_IDLE then exit sub
+	wln_start_scan=NG
 	
-	if scan_mode=WLN_SCAN_MODE_PASSIVE then
+	if wln.enabled<>YES then exit function
+	if wln_scan_and_assoc_in_prog=YES then exit function
+	if wln.task<>PL_WLN_TASK_IDLE then exit function
+	
+	if wln_active_scan=NO then
 		res=wln.scan(wln_ap_name)
 	else
 		res=wln.activescan(wln_ap_name)
@@ -827,21 +881,21 @@ sub wln_start_scan(scan_mode as en_wln_scan_modes)
 	
 	if res=ACCEPTED then
 		#if WLN_DEBUG_PRINT
-			if scan_mode=WLN_SCAN_MODE_PASSIVE then
+			if wln_active_scan=NO then
 				wln_debugprint("PASSIVE SCAN for "+wln_ap_name)
 			else
 				wln_debugprint("ACTIVE SCAN for "+wln_ap_name)
 			end if
 		#endif
-		wln_dont_scan=YES
+		wln_scan_and_assoc_in_prog=YES
+		wln_start_scan=OK
 	else
 		#if WLN_DEBUG_PRINT
-			wln_debug_print_status(WLN_STATUS_UNEXPECTED_ERROR)
+			wln_debugprint("Wi-Fi is busy, waiting...")
 		#endif
-		wln_associated=NO
-		callback_wln_failure(WLN_STATUS_UNEXPECTED_ERROR)
+		wln_start_scan=NG
 	end if		
-end sub
+end function
 
 '----------------------------------------------------------------------------
 function wln_prepare_security(security_mode as pl_wln_security_modes,byref key as string) as en_wln_status_codes
@@ -1169,7 +1223,7 @@ sub wln_wpa_supplicant_process_3_of_4(key_info as word, ver as word, byref repla
 	
 	mic_key=left(ptk,16)
 	#if WLN_DEBUG_PRINT
-		wln_debugprint("Pairwise handshake, process step 4 of 4")
+		wln_debugprint("Pairwise step 4/4")
 	#endif	
 	wln_wpa_supplicant_send_4_of_4(key_info,ver,replay_counter,mic_key)
 	if (key_info and &h40)<>0 then
@@ -1447,10 +1501,13 @@ end sub
 '----------------------------------------------------------------------------
 sub wln_init()
 'upload the firmware for wifi module and setup WEP
+	dim x as byte
 	
-	wln_dont_scan=NO
-	wln_associated=NO
+	wln_scan_and_assoc_in_prog=NO
+	wln_associated=WLN_ASSOCIATION_RETVAL_NO
 	wln_rescan_in_prog=NO
+	wln_rescan_requested=NO
+	wln_updaterssi_requested=NO
 	
 	#if WLN_DEBUG_PRINT
 		wln_dont_print_stop=NO
@@ -1502,27 +1559,30 @@ sub wln_debug_print_status(status as en_wln_status_codes)
 	dim s as string(64)
 	select case status
 	case WLN_STATUS_OK: s="OK"
-	case WLN_STATUS_OUT_OF_SOCKETS: s="out of sockets"
-	case WLN_STATUS_INSUFFICIENT_BUFFER_SPACE: s="insufficient buffer space"
-	case WLN_STATUS_MISSING_FIRMWARE_FILE: s="missing '"+WLN_FIRMWARE_FILE+"' firmware file"
-	case WLN_STATUS_BOOT_FAILURE: s="boot failure"
-	case WLN_STATUS_INVALID_SECURITY_MODE: s="incorrect security mode"
-	case WLN_STATUS_INVALID_WEP_KEY: s="incorrect WEP key length"
-	case WLN_STATUS_SCANNING_FAILURE: s="access point not found"
-	case WLN_STATUS_ASSOCIATION_FAILURE: s="association failure"
-	case WLN_STATUS_DISASSOCIATION: s="disassociation (or link loss with the access point)"
-	case WLN_STATUS_UNEXPECTED_ERROR: s="unexpected error (Wi-Fi module is busy with the task when it shoudn't be)"
+	case WLN_STATUS_OUT_OF_SOCKETS: s="ERROR: out of sockets"
+	case WLN_STATUS_INSUFFICIENT_BUFFER_SPACE: s="ERROR: insufficient buffer space"
+	case WLN_STATUS_MISSING_FIRMWARE_FILE: s="ERROR: missing '"+WLN_FIRMWARE_FILE+"' firmware file"
+	case WLN_STATUS_BOOT_FAILURE: s="ERROR: boot failure"
+	case WLN_STATUS_INVALID_SECURITY_MODE: s="ERROR: incorrect security mode"
+	case WLN_STATUS_INVALID_WEP_KEY: s="ERROR: incorrect WEP key length"
+	case WLN_STATUS_SCANNING_FAILURE: s="Access point not found"
+	case WLN_STATUS_ASSOCIATION_FAILURE: s="Association failure"
+	case WLN_STATUS_DISASSOCIATION: s="Disassociation (or link loss)"
+	case WLN_STATUS_UNEXPECTED_ERROR: s="ERROR: unexpected error (Wi-Fi module is busy when it shoudn't be)"
 	end select
 
-	wln_debugprint("ERROR: "+s)
+	wln_debugprint(s)
 end sub
 #endif
 
 '------------------------------------------------------------------------------
 #if WLN_DEBUG_PRINT
 sub wln_debugprint(byref print_data as string)
-
-	sys.debugprint(WLN_STAMP+print_data+WLN_CR_LF)
+	#if WLN_DEBUG_REDIR
+		callback_wln_debugprint(print_data)
+	#else
+		sys.debugprint(WLN_STAMP+print_data+WLN_CR_LF)
+	#endif
 end sub
 #endif
 
