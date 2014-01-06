@@ -8,13 +8,13 @@ sector=65536
 
 [transport1]
 name=udp_winpcap
-description=Taiko WinPCap (UDP non-broadcast) Transport
+description=WinPCap (non-broadcast) UDP Transport
 device=taiko.winpcapdevice
 browsedlg=em202ui.browsedlg
 
 [transport2]
 name=udp_broadcast
-description=Taiko UDP Broadcast Transport
+description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
