@@ -8,9 +8,15 @@ sector=256
 
 [transport1]
 name=serial
-description=Taiko Serial Transport
+description=WinPCap (non-broadcast) UDP Transport
 device=taiko.serialdevice
 browsedlg=taiko.serialportsdlg
+
+[transport2]
+name=udp_broadcast
+description=Broadcast UDP Transport
+device=taiko.udpdevice
+browsedlg=em202ui.browsedlg
 
 
 [defineimports]

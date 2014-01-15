@@ -8,7 +8,7 @@ sector=256
 
 [transport1]
 name=serial
-description=Taiko Serial Transport
+description=Serial Transport
 device=taiko.serialdevice
 browsedlg=taiko.serialportsdlg
 
