@@ -103,7 +103,6 @@ dim agg_event_in_proc as no_yes
 dim agg_event_item_index as byte
 dim agg_cur_event_rec_num as word
 dim agg_link_state as en_agg_link_states
-'dim agg_first_conn_failed as no_yes
 dim agg_first_conn as no_yes
 
 '------------------------------------------------------------------------------
@@ -258,13 +257,8 @@ l1:
 	agg_password=password
 	agg_rx=""
 	agg_selected_tbl_info=""
-	'agg_first_conn_failed=NO
 	agg_first_conn=YES
 	agg_start=agg_connect()
-'	i=sys.timercount
-'	while sock.statesimple<>PL_SSTS_EST and sys.timercount-i<30 and sys.timercount>=i
-'	wend	
-'	if sock.statesimple<>PL_SSTS_EST then agg_first_conn_failed=YES	
 end function
 
 '-------------------------------------------------------------
@@ -556,7 +550,6 @@ public sub agg_stop()
 	agg_sock_close()
 	agg_connected=NO
 	agg_sychronized=NO
-	'agg_first_conn_failed=NO
 	agg_first_conn=YES
 	sock.num=agg_sock
 	sock.rxbuffrq(0)
@@ -582,7 +575,6 @@ public sub agg_proc_timer()
 		#if AGG_LOGIN_CONTROL
 			'AggreGate server does not have a logout procedure. logout has to be controled by device, connection is cut only when device logout from AGG mode.
 			
-			'if login_mode<>CMD_MODE_AGGREGATE and agg_first_conn_failed=NO then exit sub
 			comp_result=compare_logins(CMD_MODE_AGGREGATE,pw,agg_sock)
 			if (login_mode<>CMD_MODE_AGGREGATE and agg_first_conn=NO) or comp_result>=LC_WILL_REJECT_HIGHER_IN_PROGRESS then exit sub
 		#endif
@@ -600,7 +592,6 @@ public sub agg_proc_timer()
 			if comp_result=LC_WILL_REJECT_HIGHER_IN_PROGRESS then
 				agg_stop()
 			end if
-			'agg_first_conn_failed=NO
 			agg_first_conn=NO
 		#endif
 		#if AGG_TABLE_CONTROL
@@ -1042,7 +1033,7 @@ public sub agg_proc_stored_events()
 error:			
 					callback_agg_error(EN_AGG_STATUS_TABLE_ERROR,agg_items(agg_stored_event_flag(agg_event_item_index).agg_item_index).item_name)
 					callback_agg_table_error(agg_items(agg_stored_event_flag(agg_event_item_index).agg_item_index).item_name,tbl_result)
-					exit subcXZ V 
+					exit sub 
 				end if
 			end if
 			s=s+chr(AGG_ELEMENT_START)+stemp1+chr(AGG_ELEMENT_END)
