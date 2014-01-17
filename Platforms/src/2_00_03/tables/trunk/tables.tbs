@@ -1212,12 +1212,14 @@ public function tbl_record_add(byref uid as string) as en_tbl_status_codes
 	dim md5_val as dword
 	dim result as en_tbl_status_codes
 
-	result=tbl_generate_uid(uid)
-	if result<>EN_TBL_STATUS_OK then
-		tbl_record_add=result
-		goto finish
+	if tbl_info(tbl_info_index).struct=EN_TBL_STRUCT_TABLE then
+		result=tbl_generate_uid(uid)
+		if result<>EN_TBL_STATUS_OK then
+			tbl_record_add=result
+			goto finish
+		end if
+		md5_val=tbl_set_md5()
 	end if
-	md5_val=tbl_set_md5()
 #endif
 
 	if tbl_check_key_violation(0)=YES then goto tbl_key_violate

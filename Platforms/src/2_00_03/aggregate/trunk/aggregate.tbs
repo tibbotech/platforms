@@ -1983,7 +1983,7 @@ sub agg_date_time_formating(byref td_str as string, tbl_date_time_format as en_t
 			td_len=9
 time_add_formating:
 			if len(td_str)>td_len then
-				td_str=left(td_str,td_len)
+'				td_str=left(td_str,td_len)
 			else
 				td_str=td_str+strgen(td_len-len(td_str),"0")
 			end if
@@ -1998,7 +1998,7 @@ time_add_formating:
 			td_len=17
 date_time_add_formating:
 			if len(td_str)>td_len then
-				td_str=left(td_str,td_len)
+'				td_str=left(td_str,td_len)
 			else
 				td_str=td_str+strgen(td_len-len(td_str),"0")
 			end if
@@ -2021,7 +2021,7 @@ date_time_add_formating:
 			td_len=12
 time_remove_formating:
 			if len(td_str)>td_len then
-				td_str=left(td_str,td_len)
+'				td_str=left(td_str,td_len)
 			else
 				td_str=td_str+strgen(td_len-len(td_str),"0")
 			end if
@@ -2036,7 +2036,7 @@ time_remove_formating:
 			td_len=23
 date_time_remove_formating:
 			if len(td_str)>td_len then
-				td_str=left(td_str,td_len)
+'				td_str=left(td_str,td_len)
 			else
 				td_str=td_str+strgen(td_len-len(td_str),"0")
 			end if
