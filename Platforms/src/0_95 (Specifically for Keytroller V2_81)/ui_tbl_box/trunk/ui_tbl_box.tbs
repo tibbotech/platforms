@@ -774,6 +774,8 @@ sub ui_tbl_box_reload_table(x_coord as word, y_coord as word,width as word, heig
 
 	s2=""
 	value_width=width-SCROLL_CURSOR_WIDTH-offset
+lcd.lock
+	lcd_clear(x_coord, y_coord,width, height)
 	for i=0 to tbl_field_num-1
 		value_too_long=NO
 		if tbl_box_item_data(i).field_value=INVALID_FLAG then 
@@ -800,23 +802,32 @@ sub ui_tbl_box_reload_table(x_coord as word, y_coord as word,width as word, heig
 		romfile.open(LCD_STD_FONT)
 		lcd.setfont(romfile.offset)
 		lcd.texthorizontalspacing=UTB_HOR_SPACING
-		do	
-			wtemp=lcd.getprintwidth(stemp+" ...")+SCROLL_CURSOR_WIDTH+CURSOR_BAR_LEN_OFFSET
-			if wtemp > value_width then
-				stemp=left(stemp,len(stemp)-1)
-				value_too_long=YES
-			end if
-		loop while wtemp > value_width
-		if stemp="" then stemp="<EMPTY>"
-		if value_too_long=YES then 
-			stemp=left(stemp,len(stemp)-1)+"..."
+		'<<<<<<<<<<<<<<<<<<<<<,,
+		'special case for log
+		
+		if tbl_display_file="display_log.txt" and tbl_box_item_data(i).field_name="value" then
+			
+		else
+			do	
+				wtemp=lcd.getprintwidth(stemp+" ...")+SCROLL_CURSOR_WIDTH+CURSOR_BAR_LEN_OFFSET
+				if wtemp > value_width then
+					stemp=left(stemp,len(stemp)-1)
+					value_too_long=YES
+				end if
+			loop while wtemp > value_width
+			if stemp="" then stemp="<EMPTY>"
+			if value_too_long=YES then 
+				stemp=left(stemp,len(stemp)-1)+"..."
+			end if		
 		end if
+
 		s2=s2+stemp+"`"
 	next i
 
 print_record:
 	lcd.forecolor=LCD_FORECOLOR
 	ui_tbl_box_display(x_coord+6,y_coord,width-6,height,record_num,s1,s2,offset)
+lcd.unlock
 	if state<>TBL_BOX_STATE_NORMAL then 
 		ui_tbl_box_cursor_display(x_coord,y_coord,width,height,pre_cursor, cursor,LCD_CURSORCOLOR)
 	else
