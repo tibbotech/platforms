@@ -25,6 +25,7 @@ const AGG_CR_LF=chr(&h0d)+chr(&h0a)
 const AGG_INIT_SIGNATURE=&hEF4E
 const AGG_TX_BUF_SIZE=2 'AGG_TX_BUFF_PAGES
 const AGG_RX_BUF_SIZE=2 'AGG_RX_BUFF_PAGES
+const AGG_FIRMWARE_GET_FAIL_COUNT=250
 
 const AGG_MSG_TBL_STATUS_FAILURE = "Data disk error."
 const AGG_MSG_TBL_STATUS_UNKNOWN_TABLE = "Unknown table."
@@ -52,6 +53,12 @@ enum en_agg_entity
 	EN_AGG_ENTITY_VARIABLES,
 	EN_AGG_ENTITY_FUNCTIONS,
 	EN_AGG_ENTITY_EVENTS
+end enum
+
+enum en_agg_element_get_status
+	EN_ELEMENT_FOUND,
+	EN_ELEMENT_NOT_FOUND,
+	EN_ELEMENT_TOO_LONG
 end enum
 
 type agg_entity
@@ -104,7 +111,11 @@ dim agg_event_item_index as byte
 dim agg_cur_event_rec_num as word
 dim agg_link_state as en_agg_link_states
 dim agg_first_conn as no_yes
+dim agg_reboot_timer as byte
 
+#if AGG_REMOTE_FIRMWARE_UPLOAD
+	dim agg_firmware_recieved as no_yes
+#endif
 '------------------------------------------------------------------------------
 declare function agg_init() as en_agg_status_codes
 declare function agg_get_descriptor_field(line_end_pos as word, byref field_start_pos as word) as string
@@ -117,15 +128,19 @@ declare sub agg_rx_clr(l as byte)
 declare sub agg_send_script()
 declare sub agg_get_items()
 declare sub agg_data_send(s as string)
-declare function agg_element_get(byref element_level as string, byref element_str as string, byref opening_chr as string, byref closing_chr as string ) as string
+declare function agg_element_get(byref element_level as string, byref element_str as string, byref opening_chr as string, byref closing_chr as string, byref element_result_str as string) as en_agg_element_get_status
 declare function agg_entity_get(byref s as string) as en_agg_entity
 declare sub agg_invisible_separators(byref s as string)
 declare sub agg_replace_chr(byref s as string, byref a as string, byref b as string)
 declare function agg_call_function(byref op as string ,byref context_name as string, byref func_input as string, byref msg as string) as ok_ng
 declare function agg_root_login(byref function_input as string) as string
 declare function agg_hex_to_hexstr(byref is as string) as string
-
 declare function agg_send_all_record(byref tbl_name as string) as ok_ng
+
+#if AGG_REMOTE_FIRMWARE_UPLOAD
+	declare function agg_firmware_upload() as ok_ng
+	declare sub agg_convert_data_block(byref data_string as string, byref left_over_str as string)
+#endif
 
 #if AGG_CUSTOM_RTC<2
 	declare function agg_modtime_sg(selected_item as agg_item, byref date_time as string, op as en_agg_rdwr) as ok_ng
@@ -168,7 +183,7 @@ public function agg_record_decode(byref encode_string as string, field_index as 
 	dim s as string
 	dim l as byte
 	
-	s=agg_element_get("1/"+str(field_index+1)+"/",encode_string,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+	agg_element_get("1/"+str(field_index+1)+"/",encode_string,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),s)
 	l=len(s)
 	
 	agg_record_decode=mid(s,2,l-2)
@@ -274,6 +289,11 @@ public function agg_init() as en_agg_status_codes
 	agg_init=EN_AGG_STATUS_OK
 	agg_sock=255
 	agg_link_state=EN_AGG_LINK_STATE_IDLE
+	agg_reboot_timer=0
+	
+	#if AGG_REMOTE_FIRMWARE_UPLOAD
+		agg_firmware_recieved=NO
+	#endif
 	
 	#if AGG_DEBUG_PRINT
 		agg_debugprint("---START---")
@@ -597,7 +617,22 @@ public sub agg_proc_timer()
 		#if AGG_TABLE_CONTROL
 			agg_proc_stored_events()
 		#endif
-	end select	
+	end select
+	
+	#if AGG_REMOTE_FIRMWARE_UPLOAD
+		if agg_firmware_recieved=YES then
+			if fd.open(AGG_FIRMWARE_FILENAME)=PL_FD_STATUS_OK then
+				fd.copyfirmwarefromfile
+			end if
+		end if
+	#endif
+	
+	if agg_reboot_timer>0 then
+		agg_reboot_timer=agg_reboot_timer-1
+		if agg_reboot_timer=0 then
+			sys.reboot
+		end if
+	end if
 end sub
 
 '------------------------------------------------------------------------------
@@ -644,6 +679,7 @@ public sub agg_proc_data()
 	dim i,stg_num as byte
 	dim endless_loop_count as byte
 	dim t as word
+	dim element_result as en_agg_element_get_status
 	
 	if sock.num<>agg_sock then exit sub
 	if agg_init_flag<>AGG_INIT_SIGNATURE then exit sub
@@ -759,7 +795,7 @@ reset_socket:
 	case "S":
 	
 rx_read:		
-		stemp2=agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+		agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
 		stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
 		pos1=instr(1,agg_rx,stemp1,1)
 		agg_rx_clr(pos1+len(stemp2))
@@ -768,7 +804,7 @@ rx_read:
 			select case agg_cmd.item_name
 			case "date":		'set date
 				#if AGG_CUSTOM_RTC<2
-					stemp2=agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+					agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
 					stemp2=mid(stemp2,2,len(stemp2)-2)
 					agg_systime_sg(stemp2,EN_AGG_SET)
 				#endif
@@ -776,9 +812,9 @@ rx_read:
 				do
 proc_modtime:		
 					#if AGG_CUSTOM_RTC<2
-						stemp1=agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+						agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 						item_name_temp=mid(stemp1,2,len(stemp1)-2)
-						stemp1=agg_element_get("1/2/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+						agg_element_get("1/2/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 						stemp1=mid(stemp1,2,len(stemp1)-2)
 
 						for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
@@ -788,7 +824,7 @@ proc_modtime:
 						next i
 					#endif
 					
-					stemp2=agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+					agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
 					stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
 					endless_loop_count=0
 find_command_close:	
@@ -821,7 +857,7 @@ find_command_close:
 				loop while pos1>0
 				
 			case "children","events":
-				stemp1=agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+				agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 				stemp1=mid(stemp1,2,len(stemp1)-2)
 				
 			case else
@@ -839,7 +875,7 @@ find_command_close:
 						
 						if stg_get_num_members(agg_cmd.item_name,stg_num)=EN_STG_STATUS_OK then	'get number of settings
 							for i=0 to stg_num-1
-								stemp1=agg_element_get("1/"+str(i+1)+"/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+								agg_element_get("1/"+str(i+1)+"/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 								stemp1=mid(stemp1,2,len(stemp1)-2)
 								stg_result=agg_settings_sg(agg_cmd.item_name,stemp1,i,EN_AGG_SET)
 								if stg_result<>EN_STG_STATUS_OK then exit for
@@ -878,8 +914,11 @@ find_command_close:
 		stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_END)
 		agg_data_send(stemp2)
 		exit sub						
-	case "C":	
-		stemp1=agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+	case "C":
+		element_result=agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
+		if element_result=EN_ELEMENT_TOO_LONG then
+			stemp1=agg_rx
+		end if
 		if agg_call_function(agg_cmd.item_name,agg_cmd.context_name,stemp1, stemp2)=OK then
 			stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp2+chr(AGG_COMMAND_END)
 		else
@@ -1443,13 +1482,13 @@ not_found:
 end sub
 
 '------------------------------------------------------------------------------
-function agg_element_get(byref element_level as string, byref element_str as string, byref opening_chr as string, byref closing_chr as string ) as string
+function agg_element_get(byref element_level as string, byref element_str as string, byref opening_chr as string, byref closing_chr as string, byref element_result_str as string) as en_agg_element_get_status
 	dim temp,i as byte
 	dim pos1, pos2,pos3,pos4,pos5 as byte
-
+	
+	agg_element_get=EN_ELEMENT_FOUND
 	if element_level="" then
-		agg_element_get=""
-		exit function
+		goto not_found
 	end if
 	pos1=0
 	pos4=0
@@ -1476,6 +1515,11 @@ function agg_element_get(byref element_level as string, byref element_str as str
 		else
 			pos2=instr(pos1+1,element_str,closing_chr,1)
 			pos1=instr(pos1+1,element_str,opening_chr,1)
+			if pos1>0 and pos2=0 then
+				element_result_str=""
+				agg_element_get=EN_ELEMENT_TOO_LONG
+				exit function
+			end if
 			if pos1=0 or pos2<pos1 then goto not_found		
 		end if
 
@@ -1483,7 +1527,8 @@ function agg_element_get(byref element_level as string, byref element_str as str
 	
 	if pos1=0 then
 not_found:
-		agg_element_get=""
+		element_result_str=""
+		agg_element_get=EN_ELEMENT_NOT_FOUND
 		exit function
 	end if
 	pos2=pos1
@@ -1492,7 +1537,7 @@ not_found:
 		pos2=instr(pos2+1,element_str,opening_chr,1)
 		pos3=instr(pos3+1,element_str,closing_chr,1)
 	loop while pos2<pos3 and pos2>0	
-	agg_element_get=mid(element_str,pos1,pos3-pos1+1)
+	element_result_str=mid(element_str,pos1,pos3-pos1+1)
 end function
 
 '------------------------------------------------------------------------------
@@ -2095,32 +2140,46 @@ function agg_call_function(byref op as string ,byref context_name as string, byr
 				msg=chr(AGG_ELEMENT_START)+"Auto register disabled."+chr(AGG_ELEMENT_END)
 				agg_call_function=NG
 			end if
-#if AGG_TABLE_CONTROL
-		case "hash":
-			'returns hash value of the table
-			agg_call_function=agg_tbl_hash(func_input,msg)
-		case "startTable":
-			'start table synchronization, this function call info device to start replace the whole table
-			agg_call_function=agg_tbl_start_table(func_input, msg)
-		case "finishTable":
-			'this function call notify the device that the table synchronization is done.
-			agg_call_function=agg_tbl_finish_table(func_input,msg)
-			if agg_call_function<>OK then exit function
-			agg_call_function=agg_tbl_hash(func_input,msg)
-		case "addRecord":
-			'adding single record to the target table
-			agg_call_function=agg_tbl_add_record(func_input,msg)
-		case "removeRecord":
-			'remove single record from the target table
-			agg_call_function=agg_tbl_remove_record(func_input,msg)
-		case "updateRecord":
-			'modify a single record which is pointed by the table record pointer.
-			agg_call_function=agg_tbl_update_record(func_input,msg)						
-		case "putRecords":
-			'this is the function call used to add records to device during total table synchronization.
-			agg_call_function=agg_tbl_put_record(func_input,msg)
-
-#endif
+			
+		#if AGG_REMOTE_FIRMWARE_UPLOAD
+			case "upload":
+				agg_call_function=agg_firmware_upload()
+				
+				#if AGG_DEBUG_PRINT
+					if agg_call_function=OK then
+						agg_debugprint("Firmware uploaded successful")
+					else
+						agg_debugprint("Firmware uploaded failed")
+					end if					
+				#endif
+		#endif
+		
+		#if AGG_TABLE_CONTROL
+			case "hash":
+				'returns hash value of the table
+				agg_call_function=agg_tbl_hash(func_input,msg)
+			case "startTable":
+				'start table synchronization, this function call info device to start replace the whole table
+				agg_call_function=agg_tbl_start_table(func_input, msg)
+			case "finishTable":
+				'this function call notify the device that the table synchronization is done.
+				agg_call_function=agg_tbl_finish_table(func_input,msg)
+				if agg_call_function<>OK then exit function
+				agg_call_function=agg_tbl_hash(func_input,msg)
+			case "addRecord":
+				'adding single record to the target table
+				agg_call_function=agg_tbl_add_record(func_input,msg)
+			case "removeRecord":
+				'remove single record from the target table
+				agg_call_function=agg_tbl_remove_record(func_input,msg)
+			case "updateRecord":
+				'modify a single record which is pointed by the table record pointer.
+				agg_call_function=agg_tbl_update_record(func_input,msg)						
+			case "putRecords":
+				'this is the function call used to add records to device during total table synchronization.
+				agg_call_function=agg_tbl_put_record(func_input,msg)
+		#endif
+		
 		case else				'device specific operations
 			agg_call_function=callback_agg_device_function(op,context_name,func_input, msg)
 		end select
@@ -2134,7 +2193,7 @@ end function
 function agg_root_login(byref function_input as string) as string
 	dim stemp1,stemp2,stemp3 as string(128)
 
-	stemp1=agg_element_get("1/1/",function_input,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END))
+	agg_element_get("1/1/",function_input,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 	stemp2=chr(AGG_ELEMENT_START)+agg_owner_name+chr(AGG_ELEMENT_END)	
 	stemp2=stemp2+chr(AGG_ELEMENT_START)+agg_device_name+chr(AGG_ELEMENT_END)
 	stemp3=mid(stemp1,2,len(stemp1)-2)
@@ -2186,17 +2245,35 @@ end sub
 '------------------------------------------------------------------------------
 sub agg_replace_chr(byref s as string, byref a as string, byref b as string)
 'replace sub-string a with sub-string b in the target string s
-
 	dim pos as byte
+	dim len_a, len_b as byte
+	dim stemp as string
 	
-	pos=instr(1,s,a,1)
-
-	while pos>0
-		if mid(s,pos-1,1)<>"%" then
-			insert(s,pos,b)	
-		end if
+	len_a=len(a)
+	len_b=len(b)
+	pos=0
+	
+	do 
 		pos=instr(pos+1,s,a,1)
-	wend
+		if pos>0 then
+			if len_a=len_b then
+				insert(s,pos,b)
+			else
+				stemp=left(s,pos-1)
+				
+				if right(stemp,1)="%" then
+						stemp=left(stemp,len(stemp)-1)
+					s=right(s,len(s)-(pos-1))	
+					s=stemp+s
+					pos=pos+1
+				else
+					s=right(s,len(s)-(pos-1)-len_a)	
+					s=stemp+b+s
+				end if				
+								
+			end if
+		end if
+	loop while pos>0
 end sub
 
 '------------------------------------------------------------------------------
@@ -2214,6 +2291,172 @@ function agg_hex_to_hexstr(byref is as string) as string
 		agg_hex_to_hexstr=agg_hex_to_hexstr+ss
 	next f
 end function
+
+'----------------------------------------------------------------------------
+#if AGG_REMOTE_FIRMWARE_UPLOAD
+sub agg_convert_data_block(byref data_string as string, byref left_over_str as string)
+	dim b,length as byte
+	dim s as string
+	dim checking_byte as string(1)
+	dim binary_str1, binary_str2 as string(10)
+	dim i as word
+	
+	s=""
+	data_string=left_over_str+data_string
+	left_over_str=""
+	
+	length=len(data_string)
+	for i=1 to length
+		checking_byte=mid(data_string,i,1)
+		b=asc(checking_byte)
+		
+		if b>127 then
+			if i=length then
+				left_over_str=checking_byte
+				goto proc_esc_chr
+			else
+				binary_str1=bin(b)
+				b=asc(mid(data_string,i+1,1))
+				binary_str2=bin(b)
+				binary_str1=right(binary_str1,2)+right(binary_str2,6)
+				checking_byte=chr(val("&b"+binary_str1))
+				i=i+1
+			end if
+		end if	
+
+		s=s+checking_byte
+	next i
+		
+proc_esc_chr:	
+	data_string=s
+	b=0
+	
+	do
+		b=instr(b+1,data_string,"%",1)
+		length=len(data_string)
+		
+		if b>0 then
+			if left_over_str="" then
+				if b=length then
+					left_over_str=right(data_string,1)
+					data_string=left(data_string,length-1)		
+					exit do
+				end if
+				if b=length-1 then
+					if right(data_string,1)="%" then
+						left_over_str=right(data_string,2)
+						data_string=left(data_string,length-2)
+						exit do
+					end if
+				end if
+			end if
+			
+			checking_byte=mid(data_string,b+1,1)
+			s=left(data_string,b-1)
+			select case checking_byte
+			case "^":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x02"+data_string
+			case "$":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x0d"+data_string				
+			case "/":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x17"+data_string				
+			case "<":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x1c"+data_string				
+			case ">":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x1d"+data_string				
+			case "=":
+				data_string=right(data_string,length-b-1)	
+				data_string=s+"\x1e"+data_string				
+			case "%":
+				if mid(data_string,b+2,1)="%" then
+					data_string=right(data_string,length-b)	
+					data_string=s+data_string	
+				else
+					data_string=right(data_string,length-b-1)	
+					data_string=s+"%"+data_string
+					
+				end if				
+			case else
+
+			end select
+			
+		end if
+	loop while b>0
+	
+end sub
+
+'----------------------------------------------------------------------------
+function agg_firmware_upload() as ok_ng
+	dim remain_file_size as dword
+	dim data as string
+	dim pos1, pos2, data_size as byte
+	dim fail_counter as byte
+	dim left_over_byte as string(2)
+	
+	agg_firmware_upload=NG
+	if fd.formatj(fd.availableflashspace-100,16,100)<>PL_FD_STATUS_OK then exit function
+	if fd.mount<>PL_FD_STATUS_OK then exit function
+	if fd.create(AGG_FIRMWARE_FILENAME)<>PL_FD_STATUS_OK then exit function
+	if fd.open(AGG_FIRMWARE_FILENAME)<>PL_FD_STATUS_OK then exit function
+	
+	agg_firmware_upload=OK
+	left_over_byte=""
+	pos1=instr(1,agg_rx,"/",4)
+	pos2=instr(1,agg_rx,"/",5)
+	if pos1>0 and pos2>pos1 then
+		data=mid(agg_rx,pos1+1,pos2-pos1-1)
+		
+		remain_file_size=lval(data)
+		agg_convert_data_block(agg_rx,left_over_byte)
+
+		if remain_file_size<len(agg_rx) then
+			data_size=remain_file_size
+		else
+			data_size=253
+		end if
+		
+		data=mid(agg_rx,pos2+1,data_size)
+		fd.setdata(data)
+		remain_file_size=remain_file_size-len(data)
+				
+		while remain_file_size>0
+			if remain_file_size>253 then
+				data=sock.getdata(253)
+			else
+				data_size=remain_file_size
+				data=sock.getdata(data_size)
+			end if
+
+			agg_convert_data_block(data,left_over_byte)
+					
+			fd.setdata(data)
+			data_size=len(data)	
+			if data_size=0 then
+				fail_counter=+1
+				if fail_counter>AGG_FIRMWARE_GET_FAIL_COUNT then
+					agg_firmware_upload=NG
+					exit while
+				end if
+			else
+				fail_counter=0
+			end if
+			if remain_file_size>=data_size then
+				remain_file_size=remain_file_size-data_size
+			end if	
+		wend
+		agg_firmware_recieved=YES
+		fd.close
+	else
+		agg_firmware_upload=NG
+	end if
+	
+end function
+#endif
 
 '----------------------------------------------------------------------------
 #if AGG_CUSTOM_RTC<2

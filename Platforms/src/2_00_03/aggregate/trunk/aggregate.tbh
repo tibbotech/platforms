@@ -70,6 +70,8 @@
 	#define AGG_CUSTOM_RTC 0	'0:standard RTC, 1:external RTC, 2:no RTC
 #endif
 
+const AGG_FIRMWARE_FILENAME="firmware.bin"
+
 '------------------------------------------------------------------------------
 enum en_agg_rdwr
 	EN_AGG_GET,

@@ -171,7 +171,8 @@ public function tbl_start() as en_tbl_status_codes
 		if fd.transactioncapacityremaining<16 then
 			#if TBL_DEBUG_PRINT
 				tbl_debugprint("ERROR: Current flash disk formatting doesn't support transactions. Use 'fd.formatj()' with maxjournalsectors>=16 (currently "+str(fd.transactioncapacityremaining)+").")
-			#endif			
+			#endif
+			tbl_start=EN_TBL_STATUS_INV_PARAM
 			exit function
 		end if		
 	end if
