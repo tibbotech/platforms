@@ -100,7 +100,6 @@
 #endif
 
 
-
 'Size of TCP and UDP packets that the GPRS interface will be able to carry, expressed in 256-byte units.
 'Do not set >4 or <1.
 #ifndef GPRS_PAYLOAD_SIZE

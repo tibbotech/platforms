@@ -75,7 +75,7 @@ enum gprs_phases
 	GPRS_AT_AT,
 	GPRS_AT_IPR,
 	GPRS_AT_ICF,
-	GPRS_AT_Q3,
+	'GPRS_AT_Q3,
 	GPRS_AT_CGDCONT,
 	GPRS_AT_CGQMIN,
 	GPRS_AT_DT,
@@ -198,7 +198,7 @@ public function gprs_start(byref at_dt_command_param as string, byref apn as str
 	sys.buffalloc
 	
 	ser.txclear
-	ser.baudrate = ser.div9600/4
+	ser.baudrate = ser.div9600/(38400/9600)
 	ser.flowcontrol=ENABLED
 	ser.rtsmap=GPRS_SER_PORT_RTSMAP
 	ser.ctsmap=GPRS_SER_PORT_CTSMAP
@@ -414,10 +414,10 @@ public sub gprs_proc_ser_data()
 				gprs_next_phase()
 			end if
 		
-		case GPRS_AT_Q3:
-			if gprs_reply=GPRS_REPLY_OK then
-				gprs_next_phase()
-			end if
+		'case GPRS_AT_Q3:
+		'	if gprs_reply=GPRS_REPLY_OK then
+		'		gprs_next_phase()
+		'	end if
 		
 		case GPRS_AT_CGDCONT:
 			if gprs_reply=GPRS_REPLY_OK then
@@ -703,8 +703,8 @@ sub gprs_proc_timer_2()
 			case GPRS_AT_ICF:
 				gprs_at_command("+ICF=3",GPRS_STD_TOUT)
 			
-			case GPRS_AT_Q3:
-				gprs_at_command(chr(`\`)+"Q3",GPRS_STD_TOUT)
+			'case GPRS_AT_Q3:
+			'	gprs_at_command(chr(`\`)+"Q3",GPRS_STD_TOUT)
 			
 			case GPRS_AT_CGDCONT:
 				gprs_at_command("+CGDCONT=1,"+chr(`"`)+"IP"+chr(`"`)+","+chr(`"`)+gprs_apn+chr(`"`),GPRS_STD_TOUT)
@@ -1153,7 +1153,7 @@ sub gprs_debug_print_phase(phase as gprs_phases)
 	case GPRS_AT_AT: s="AT"
 	case GPRS_AT_IPR: s="IPR"
 	case GPRS_AT_ICF: s="ICF"
-	case GPRS_AT_Q3: s="Q3"
+	'case GPRS_AT_Q3: s="Q3"
 	case GPRS_AT_CGDCONT: s="CGDCONT"
 	case GPRS_AT_CGQMIN: s="CGQMIN"
 	case GPRS_AT_DT: s="DT"
