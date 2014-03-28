@@ -106,7 +106,7 @@ syscall(364,"60.TDL") lcd.bmp(offset as dword, x as word, y as word, x_offset as
 '<font color="olive"><b>1- NG </b></font>if you try to display any other type of BMP file. Compressed BMP files will be rejected too.
 
 '--------------------------------------------------------------------
-syscall(19,"60.TDL") lcd.bmpfromfile(offset as dword, x as word, y as word, x_offset as word, y_offset as word, maxwidth as word, maxheight as word) as ok_ng
+syscall(19,"60.TDL") lcd.bmpfromfile(ignored_parameter as dword, x as word, y as word, x_offset as word, y_offset as word, maxwidth as word, maxheight as word) as ok_ng
 
 '--------------------------------------------------------------------
 property lcd.enabled
