@@ -985,7 +985,7 @@ public sub agg_proc_stored_events()
 'API procedure, process events, and send them to AggreGate server.  It is called from the agg_proc_timer() for more instant effect, user can also call this function whenever a new event is added to the table.
 
 	dim s as string 
-	dim stemp1 as string(64)
+	dim stemp1 as string(128)
 	dim j as byte
 	dim rec_num as word
 	dim tbl_result as en_tbl_status_codes

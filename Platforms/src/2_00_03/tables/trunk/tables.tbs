@@ -34,7 +34,7 @@ const TBL_INIT_SIGNATURE=&h54F1
 declare function tbl_info_find(byref table_name_or_num as string, byref index as byte) as en_tbl_status_codes
 declare function tbl_check_key_violation(byref key_ptr as word) as no_yes
 declare function tbl_field_find(field_name as string, byref field_index as word) as en_tbl_status_codes
-declare function tbl_generate_uid(byref id_string as string) as en_tbl_status_codes
+declare function tbl_generate_uid(id_string as string(16)) as en_tbl_status_codes
 declare function tbl_get_descriptor_field(line_end_pos as word, byref field_start_pos as word) as string
 declare function tbl_adjust_size() as en_tbl_status_codes
 declare function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4),byref attri_val as string,op as en_tbl_rdwr) as pl_fd_status_codes
@@ -1175,7 +1175,7 @@ finish:
 end function
 
 '------------------------------------------------------------------------------
-public function tbl_record_add(byref uid as string) as en_tbl_status_codes
+public function tbl_record_add(uid as string(16)) as en_tbl_status_codes
 'tbl_select() must be used
 
 'API procedure, a selected data file is required, stores the data in the record buffer (tbl_record_string) to the selectd data file.
@@ -2780,7 +2780,7 @@ end sub
 
 '------------------------------------------------------------------------------
 #if TBL_AGGREGATE_HASH
-function tbl_generate_uid(byref id_string as string) as en_tbl_status_codes
+function tbl_generate_uid(id_string as string(16)) as en_tbl_status_codes
 
 	dim result as en_tbl_status_codes
 	dim msw, lsw as word
