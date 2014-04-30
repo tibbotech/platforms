@@ -43,11 +43,11 @@ const GPRS_PPP_IPCP_MESSAGE_IP=3
 const GPRS_PPP_IPCP_MESSAGE_DNS=129
 const GPRS_PPP_IPCP_MESSAGE_DNS2=131
 
-const GPRS_LCP_CONFREQ_STR=chr(&h01)+ chr(&h04)+ chr(&h00)+ chr(&hC8)
+const GPRS_LCP_CONFREQ_STR=chr(&h02)+ chr(&h06)+ chr(&h0)+ chr(&h0)+ chr(&h0)+ chr(&h0)
 const GPRS_PAP_CONFREQ_STR=chr(&h00)+ chr(&h00)
 const GPRS_CCP_CONFREQ_STR=""
-const GPRS_IPCP_CONFREQ_STR=chr(&h03)+ chr(&h06)+chr(&h00)+ chr(&h00)+ chr(&h00)+ chr(&h00)
 
+const GPRS_IPCP_CONFREQ_STR=chr(&h03)+ chr(&h06)+chr(&h00)+ chr(&h00)+ chr(&h00)+ chr(&h00)
 const PING_STR="45 00 00 20 9a 00 00 00 20 01 00 00 00 00 00 00 00 00 00 00 08 00 30 39 02 00 01 00 61 62 63 64 "
 '                                             -cs-- --our ip--- --ping ip-- 
 
@@ -74,7 +74,7 @@ enum gprs_phases
 	GPRS_POST_RESET,
 	GPRS_AT_AT,
 	GPRS_AT_IPR,
-	GPRS_AT_ICF,
+	'GPRS_AT_ICF,
 	'GPRS_AT_Q3,
 	GPRS_AT_CGDCONT,
 	GPRS_AT_CGQMIN,
@@ -110,7 +110,9 @@ declare sub gprs_insert_escape(byref command as string, pos as byte, replacement
 declare sub gprs_start_over()
 declare sub gprs_init()
 declare sub gprs_debug_print_phase(gprs_phase as gprs_phases)
+declare sub gprs_ppp_decode(byref log_string as string, byref full_command as string)
 declare sub gprs_debugprint(byref print_data as string)
+declare function gprs_print_hex(byref ss as string) as string
 
 '--------------------------------------------------------------------
 dim gprs_running as no_yes
@@ -230,7 +232,8 @@ public function gprs_start(byref at_dt_command_param as string, byref apn as str
 			gprs_debugprint("INFO: GPRS module is external, skipping 0-RESET and 1-POST RESET")
 		#endif
 		gprs_phase=GPRS_AT_AT
-		gprs_tout_ctr=1
+		gprs_tout_ctr=GPRS_STD_TOUT*8 'absolutely essential. Modem takes a log time to get ready.
+		gprs_debugprint("INFO: DELAY to allow the modem to recover")
 	#else
 		'Switch to GPRS
 		io.num=GPRS_SWITCH 
@@ -407,12 +410,12 @@ public sub gprs_proc_ser_data()
 		case GPRS_AT_IPR:
 			if gprs_reply=GPRS_REPLY_OK then
 				gprs_next_phase()
-			end if
+		end if
 		
-		case GPRS_AT_ICF:
-			if gprs_reply=GPRS_REPLY_OK then
-				gprs_next_phase()
-			end if
+		'case GPRS_AT_ICF:
+		'	if gprs_reply=GPRS_REPLY_OK then
+		'		gprs_next_phase()
+		'end if
 		
 		'case GPRS_AT_Q3:
 		'	if gprs_reply=GPRS_REPLY_OK then
@@ -465,7 +468,8 @@ public sub gprs_proc_ser_data()
 				end if
 				log_string=log_string+s
 			next f
-			gprs_debugprint(log_string)
+			gprs_ppp_decode(log_string,gprs_reply)
+			gprs_debugprint("RX "+log_string)
 		#endif
 
 		'verify length
@@ -513,6 +517,7 @@ public sub gprs_proc_ser_data()
 			select case asc(mid(gprs_reply,3,1))
 			case GPRS_PPP_CONFACK:
 				if gprs_phase=GPRS_PPP_PAP then
+					gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					gprs_next_phase()
 				end if	
 
@@ -700,8 +705,8 @@ sub gprs_proc_timer_2()
 			case GPRS_AT_IPR:
 				gprs_at_command("+IPR=38400",GPRS_STD_TOUT)
 				
-			case GPRS_AT_ICF:
-				gprs_at_command("+ICF=3",GPRS_STD_TOUT)
+			'case GPRS_AT_ICF:
+			'	gprs_at_command("+ICF=3",GPRS_STD_TOUT)
 			
 			'case GPRS_AT_Q3:
 			'	gprs_at_command(chr(`\`)+"Q3",GPRS_STD_TOUT)
@@ -735,6 +740,9 @@ sub gprs_proc_timer_2()
 			case GPRS_PPP_IPCP_1:
 				gprs_tout_ctr=GPRS_STD_TOUT
 				gprs_cmd_try=gprs_cmd_try+1
+				gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				
+				
 			
 			case GPRS_PPP_IPCP_2:
 				gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT)
@@ -1007,7 +1015,8 @@ sub gprs_ppp_send(ppp_protocol as word, ppp_code as gprs_ppp_codes, byref data a
 			end if
 			log_string=log_string+s
 		next f
-		gprs_debugprint(log_string)
+		gprs_ppp_decode(log_string,full_command)
+		gprs_debugprint("TX "+log_string)
 	#endif
 	
 	full_command=chr(&hFF)+chr(&h03)+full_command
@@ -1077,6 +1086,8 @@ end sub
 
 '--------------------------------------------------------------------
 sub gprs_start_over()
+	dim i as word
+	dim s as string(10)
 
 	ppp.enabled=NO
 	gprs_linkup_in_prog=YES
@@ -1090,8 +1101,32 @@ sub gprs_start_over()
 		#if GPRS_DEBUG_PRINT
 			gprs_debugprint("INFO: GPRS module is external, skipping 0-RESET and 1-POST RESET")
 		#endif
+		
+		ser.flowcontrol=PL_SER_FC_DISABLED
+		i=sys.timercount
+		'this is a fixed delay of at least 1 second
+		while sys.timercount-i<3
+		wend
+		'escape sequence
+		ser.setdata("+++")
+		ser.send
+		'this is a fixed delay of at least 1 second
+		while sys.timercount-i<3
+		wend
+		ser.rxclear	
+		gprs_at_command("+CFUN=1,1",GPRS_STD_TOUT)
+		'wait for OK (but limit the time we are waiting)
+		i=sys.timercount
+		while ser.rxlen=0 and sys.timercount-i<6
+		wend
+		while ser.rxlen>0
+			s=ser.getdata(255)
+		wend
+		
 		gprs_phase=GPRS_AT_AT
-		gprs_tout_ctr=1
+		gprs_tout_ctr=GPRS_STD_TOUT*8 'absolutely essential. Modem takes a log time to get ready.
+		gprs_debugprint("INFO: DELAY to allow the modem to recover")
+		
 	#else
 		'Switch to GPRS
 		io.num=GPRS_SWITCH 
@@ -1152,7 +1187,7 @@ sub gprs_debug_print_phase(phase as gprs_phases)
 	case GPRS_POST_RESET: s="POST RESET (wait for GPRS to 'recover')"
 	case GPRS_AT_AT: s="AT"
 	case GPRS_AT_IPR: s="IPR"
-	case GPRS_AT_ICF: s="ICF"
+	'case GPRS_AT_ICF: s="ICF"
 	'case GPRS_AT_Q3: s="Q3"
 	case GPRS_AT_CGDCONT: s="CGDCONT"
 	case GPRS_AT_CGQMIN: s="CGQMIN"
@@ -1167,6 +1202,333 @@ sub gprs_debug_print_phase(phase as gprs_phases)
 	end select
 	gprs_debugprint("PHASE: "+str(phase)+"-"+s)
 end sub
+#endif
+
+#if GPRS_DEBUG_PRINT
+sub gprs_ppp_decode(byref log_string as string, byref full_command as string)
+	dim proto,i as word
+	dim pos,f,code,otype, olen as byte
+	dim flen as word
+	dim s as string(3)
+	
+	log_string=""
+	
+	proto=asc(mid(full_command,1,1))*256+asc(mid(full_command,2,1))
+	select case proto
+	case &hC021:
+		log_string=log_string+" LCP/"
+	
+	case &hC023:
+		log_string=log_string+" PAP/"
+	
+	case &h8021:
+		log_string=log_string+" IPCP/"
+	
+	case &h0021:
+		log_string=log_string+"ARP"
+	
+	case else:
+		log_string=log_string+" proto_"+mid(hex(proto),3,255)+"/"
+		
+	end select
+
+	pos=3
+	
+	select case proto
+	
+	case &hC021: '----- LCP -----
+		while pos<=len(full_command)
+			code=asc(mid(full_command,pos,1))
+			select case code
+			case 1:    log_string=log_string+"CONF-REQ"
+			case 2:    log_string=log_string+"CONF-ACK"
+			case 3:    log_string=log_string+"CONF-NAK"
+			case 4:    log_string=log_string+"CONF-REJ"
+			case 5:    log_string=log_string+"TERM-REQ"
+			case 6:    log_string=log_string+"TERM-ACK"
+			case 7:    log_string=log_string+"CODE-REJ"
+			case 8:    log_string=log_string+"PROT-REJ"
+			case 9:    log_string=log_string+"ECHO-REQ"
+			case 10:   log_string=log_string+"ECHO-RPL"
+			case 11:   log_string=log_string+"DISC-REQ"
+			case else: log_string=log_string+"code_"+str(code)
+			end select
+			
+			pos=pos+1
+			log_string=log_string+" #"+str(asc(mid(full_command,pos,1)))
+			
+			pos=pos+1
+			flen=asc(mid(full_command,pos,1))*256+asc(mid(full_command,pos+1,1))
+					
+			pos=pos+2
+			if flen>4 then
+				flen=flen-4
+				log_string=log_string+" "+str(flen)+": ["
+				f=1
+				while f<flen
+					log_string=log_string+"("
+					otype=asc(mid(full_command,pos,1))
+					select case otype
+					case 0:    log_string=log_string+"rsrvd"
+					case 1:    log_string=log_string+"m-r-u"	'maximum-receive-unit
+					case 2:	   log_string=log_string+"a-ccm"	'async-control-character-map
+					case 3:    log_string=log_string+"au-pr"	'authentication-type (protocol)
+					case 4:    log_string=log_string+"qu-pr"	'quality-protocol
+					case 5:    log_string=log_string+"magic"	'magic-number
+					case 6:    log_string=log_string+"l-q-m"	'link-quality-monitoring
+					case 7:    log_string=log_string+"p-f-c"	'protocol-field-compression
+					case 8:    log_string=log_string+"a-f-c"	'address-and-control-field-compression
+					case 9:    log_string=log_string+"fcs-a"	'FCS-alternatives
+					case 10:   log_string=log_string+"s-d-p"	'self-describing-padding 
+					case 13:   log_string=log_string+"cback"	'callback
+					case 15:   log_string=log_string+"c-fra"	'compaund-frames
+					
+					case else: log_string=log_string+"option_"+str(otype)
+					end select
+					
+					pos=pos+1
+					f=f+1
+					olen=asc(mid(full_command,pos,1))
+					
+					pos=pos+1
+					f=f+1
+					if olen>=2 then
+						olen=olen-2
+						if olen>0 then
+							log_string=log_string+" "+str(olen)+": "
+						end if
+
+						select case otype
+						case 0: 
+						
+						case 1: 
+							log_string=log_string+str(asc(mid(full_command,pos,1))*256+asc(mid(full_command,pos+1,1)))
+						
+						case 2:
+							log_string=log_string+gprs_print_hex(mid(full_command,pos,1))+","+gprs_print_hex(mid(full_command,pos+1,1))+","+gprs_print_hex(mid(full_command,pos+2,1))+","+gprs_print_hex(mid(full_command,pos+3,1))
+						
+						case 3: 
+							i=hex(asc(mid(full_command,pos,1))*256+asc(mid(full_command,pos+1,1)))
+							if i=GPRS_PPP_PROTO_PAP then
+								log_string=log_string+"PAP"
+							else
+								log_string=log_string+mid(hex(i),3,255)+"(?)"
+							end if
+												
+						case 4:
+						
+						case 5:	
+							log_string=log_string+gprs_print_hex(mid(full_command,pos,1))+"-"+gprs_print_hex(mid(full_command,pos+1,1))+"-"+gprs_print_hex(mid(full_command,pos+2,1))+"-"+gprs_print_hex(mid(full_command,pos+3,1))
+						
+						case 7:
+						
+						case 8:
+						
+						case 9:
+						
+						case 10:
+						
+						case 13:
+						
+						case 15:
+						
+						case else:
+						
+						end select
+						
+						pos=pos+olen
+						f=f+olen
+					else	
+						log_string=log_string+" error!"
+					end if
+					
+					log_string=log_string+")"
+				wend
+				log_string=log_string+"]"
+				
+			else
+				log_string=log_string+" error!"
+			end if
+		wend
+
+	
+	case &hC023: '------ PAP -----
+		code=asc(mid(full_command,pos,1))
+		select case code
+		case 1:    log_string=log_string+"AUTH-REQ"
+		case 2:    log_string=log_string+"AUTH-ACK"
+		case 3:    log_string=log_string+"AUTH-NAK"
+		case else: log_string=log_string+"code_"+str(code)
+		end select
+		
+		pos=pos+1
+		log_string=log_string+" #"+str(asc(mid(full_command,pos,1)))
+		
+		pos=pos+1
+		flen=asc(mid(full_command,pos,1))*256+asc(mid(full_command,pos+1,1))
+				
+		pos=pos+2
+
+		select case code
+		case 1:
+			if flen>4 then
+				flen=flen-4
+				log_string=log_string+" "+str(flen)+": ["
+				f=1
+				while f<=flen
+					log_string=log_string+"("
+					olen=asc(mid(full_command,pos,1))
+					pos=pos+1
+					f=f+1
+					if olen>=1 then
+						olen=olen-1
+						if olen>0 then
+							log_string=log_string+" "+str(olen)+": "
+						
+						end if
+					end if
+					
+					log_string=log_string+")"
+				wend
+				log_string=log_string+"]"
+				
+			else
+				log_string=log_string+" error!"
+			end if
+
+		case 2,3:
+			if flen>1 then
+				flen=flen-1
+				log_string=log_string+" "+str(flen)+": ["
+				olen=asc(mid(full_command,pos,1))
+				pos=pos+1
+				f=f+1
+				if olen>=1 then
+					log_string=log_string+" "+str(olen)+": "
+					log_string=log_string+mid(full_command,pos,olen)
+				end if
+				log_string=log_string+"]"
+			else
+				log_string=log_string+" error!"
+			end if
+
+		case else:
+		end select
+
+
+	case &h8021: '----- IPCP -----
+		while pos<=len(full_command)
+			code=asc(mid(full_command,pos,1))
+			select case code
+			case 1:    log_string=log_string+"CONF-REQ"
+			case 2:    log_string=log_string+"CONF-ACK"
+			case 3:    log_string=log_string+"CONF-NAK"
+			case 4:    log_string=log_string+"CONF-REJ"
+			case 5:    log_string=log_string+"TERM-REQ"
+			case 6:    log_string=log_string+"TERM-ACK"
+			case 7:    log_string=log_string+"CODE-REJ"
+			case 8:    log_string=log_string+"PROT-REJ"
+			case 9:    log_string=log_string+"ECHO-REQ"
+			case 10:   log_string=log_string+"ECHO-RPL"
+			case 11:   log_string=log_string+"DISC-REQ"
+			case else: log_string=log_string+"code_"+str(code)
+			end select
+			
+			pos=pos+1
+			log_string=log_string+" #"+str(asc(mid(full_command,pos,1)))
+			
+			pos=pos+1
+			flen=asc(mid(full_command,pos,1))*256+asc(mid(full_command,pos+1,1))
+					
+			pos=pos+2
+			if flen>4 then
+				flen=flen-4
+				log_string=log_string+" "+str(flen)+": ["
+				f=1
+				while f<flen
+					log_string=log_string+"("
+					otype=asc(mid(full_command,pos,1))
+					select case otype
+					case 1:    log_string=log_string+"ip-ss"	'ip-addresses (obsolete)
+					case 2:	   log_string=log_string+"i-c-p"	'ip-compression-protocol
+					case 3:    log_string=log_string+"ip-ad"	'ip-address
+					case else: log_string=log_string+"option_"+str(otype)
+					end select
+					
+					pos=pos+1
+					f=f+1
+					olen=asc(mid(full_command,pos,1))
+					
+					pos=pos+1
+					f=f+1
+					if olen>=2 then
+						olen=olen-2
+						if olen>0 then
+							log_string=log_string+" "+str(olen)+": "
+						end if
+
+						select case otype
+						case 2:
+							log_string=log_string+gprs_print_hex(mid(full_command,pos,1))+" "+gprs_print_hex(mid(full_command,pos+1,1))
+							
+						case 3: 
+							log_string=log_string+str(asc(mid(full_command,pos,1)))+"."+str(asc(mid(full_command,pos+1,1)))+"."+str(asc(mid(full_command,pos+2,1)))+"."+str(asc(mid(full_command,pos+3,1)))
+												
+						case 4:
+						
+						case 5:	
+						
+						case 7:
+						
+						case 8:
+						
+						case 9:
+						
+						case 10:
+						
+						case 13:
+						
+						case 15:
+						
+						case else:
+						
+						end select
+						
+						pos=pos+olen
+						f=f+olen
+					else	
+						log_string=log_string+" error!"
+					end if
+					
+					log_string=log_string+")"
+				wend
+				log_string=log_string+"]"
+				
+			else
+				log_string=log_string+" error!"
+			end if
+		wend
+	
+	case else:
+
+	end select
+
+end sub
+#endif
+
+'------------------------------------------------------------------------------
+#if GPRS_DEBUG_PRINT
+function gprs_print_hex(byref ss as string) as string
+	dim s as string
+	dim f as byte
+	
+	gprs_print_hex=""
+	for f=1 to len(ss)
+		s=mid(hex(asc(mid(ss,f,1))),3,2)
+		if len(s)=1 then s="0"+s
+		gprs_print_hex=gprs_print_hex+s
+	next f
+end function
 #endif
 
 '------------------------------------------------------------------------------
