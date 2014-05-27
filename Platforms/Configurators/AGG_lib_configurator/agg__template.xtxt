@@ -1,7 +1,8 @@
 Entity			Context				Script
 ==info	root	<R=<Device><apoint>>
-==variables	root	<R=<version><<<version><S>> <M=1> <X=1>><Version><1><0><^><remote|General><^>>
-~~<R=<date><<<date><D>> <M=1> <X=1>><Date/Time><1><0><^><remote|General><^>>
+==variables	root	<R=<date><<<date><D>> <M=1> <X=1>><Date/Time><1><0><^><^><^>>
+~~<R=<version><<<version><S>> <M=1> <X=1>><Version><1><0><^><remote|General><^>>
+~~<R=<datex><<<datex><D>> <M=1> <X=1>><Date/Time><1><0><^><remote|General><^>>
 ~~<R=<modtime><<<variable><S>> <<modtime><D><F=N>>><Modification time><1><0><^><^><^>>
 ==functions	root	<R=<hash><<<context><S>><<variable><S>><M=1><X=1>><<<hash><I>><M=1><X=1>><Table Hash><^><^>>
 ~~<R=<finishTable><<<context><S>><<variable><S>><M=1><X=1>><<<hash><I>><M=1><X=1>><Finish Table><^><^>>

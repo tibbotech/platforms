@@ -802,7 +802,7 @@ rx_read:
 		
 		if pos1>0 then
 			select case agg_cmd.item_name
-			case "date":		'set date
+			case "date","datex":		'set date
 				#if AGG_CUSTOM_RTC<2
 					agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
 					stemp2=mid(stemp2,2,len(stemp2)-2)
@@ -1409,7 +1409,7 @@ sub agg_get_items()
 		s=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)+chr(AGG_ELEMENT_START)+s+chr(AGG_ELEMENT_END)+chr(AGG_ELEMENT_END)+chr(AGG_COMMAND_END)
 		agg_data_send(s)
 	
-	case "date":
+	case "date","datex":
 		#if AGG_CUSTOM_RTC<2
 			agg_systime_sg(s,EN_AGG_GET)
 			s=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)+chr(AGG_ELEMENT_START)+s+chr(AGG_ELEMENT_END)+chr(AGG_ELEMENT_END)+chr(AGG_COMMAND_END)
