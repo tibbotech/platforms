@@ -38,12 +38,18 @@ const GPRS_PPP_PROTO_IP=&h0021
 const GPRS_PPP_LCP_MESSAGE_02=2 'I have no idea what it is
 const GPRS_PPP_LCP_MESSAGE_AUTH=3
 const GPRS_PPP_LCP_MESSAGE_MAGIC=5
+const GPRS_PPP_LCP_MESSAGE_PFC=7
+const GPRS_PPP_LCP_MESSAGE_AFC=8
 
 const GPRS_PPP_IPCP_MESSAGE_IP=3
 const GPRS_PPP_IPCP_MESSAGE_DNS=129
 const GPRS_PPP_IPCP_MESSAGE_DNS2=131
 
 const GPRS_LCP_CONFREQ_STR=chr(&h02)+ chr(&h06)+ chr(&h0)+ chr(&h0)+ chr(&h0)+ chr(&h0)
+const GPRS_LCP_OPTION_PFC_STR=chr(&h07)+ chr(&h02) 'used when constructing option reject
+const GPRS_LCP_OPTION_AFC_STR=chr(&h08)+ chr(&h02) 'used when constructing option reject
+
+
 const GPRS_PAP_CONFREQ_STR=chr(&h00)+ chr(&h00)
 const GPRS_CCP_CONFREQ_STR=""
 
@@ -101,7 +107,7 @@ declare sub gprs_next_phase()
 declare sub gprs_proc_timer_2()
 declare function gprs_parse_ping_reply() as ok_ng
 declare function gprs_parse_ppp_message() as string
-declare function gprs_parse_lcp_message(byref lcp_message as string, ppp_protocol as word, code as gprs_ppp_codes) as gprs_lcp_parse_results
+declare function gprs_parse_lcp_message(byref lcp_message as string, ppp_protocol as word, code as gprs_ppp_codes, byref rej_str as string) as gprs_lcp_parse_results
 declare sub gprs_at_command(byref command as string, delay as byte)
 declare sub gprs_ping_send()
 declare sub gprs_ppp_send(ppp_protocol as word, ppp_code as gprs_ppp_codes, byref data as string, ser_num as byte, delay as byte)
@@ -110,6 +116,7 @@ declare function gprs_fcs_value(x as byte) as word
 declare sub gprs_insert_escape(byref command as string, pos as byte, replacement_char as byte)
 declare sub gprs_start_over()
 declare sub gprs_init()
+declare sub gprs_eliminate_lf(byref s as string)
 declare sub gprs_debug_print_phase(gprs_phase as gprs_phases)
 declare sub gprs_ppp_decode(byref log_string as string, byref full_command as string)
 declare sub gprs_debugprint(byref print_data as string)
@@ -123,6 +130,7 @@ dim gprs_tout_ctr as byte
 dim gprs_cmd_try as byte
 dim gprs_cmd as string(GPRS_MAX_CMD_REPLY_LEN)
 dim gprs_reply as string(GPRS_MAX_CMD_REPLY_LEN)
+dim gprs_rej as string(GPRS_MAX_CMD_REPLY_LEN)
 dim gprs_ppp_peer_ip as string(4)
 dim gprs_ppp_ip as string(4)
 dim gprs_msg_ser_num_out as byte
@@ -131,6 +139,7 @@ dim gprs_at_dt_command as string(16)
 dim gprs_init_flag as word
 dim gprs_socket as byte
 dim gprs_apn as string(GPRS_MAX_APN_LEN)
+dim gprs_pap_required as no_yes
 
 #if GPRS_DEBUG_PRINT
 	dim gprs_dont_print_stop as no_yes
@@ -262,6 +271,7 @@ public function gprs_start(byref at_dt_command_param as string, byref apn as str
 
 	gprs_running=YES
 	gprs_linkup_in_prog=YES
+	gprs_pap_required=NO
 	exit function
 	
 gprs_start_error:
@@ -372,7 +382,9 @@ public sub gprs_proc_ser_data()
 		'general part for all AT replies
 		gprs_reply=gprs_reply+ser.getdata(255)
 	
-		'correct reply will start with echoed command (but leftover garbage counld be before it)
+		'correct reply will start with echoed command (but leftover garbage could be before it)
+		gprs_eliminate_lf(gprs_reply)		'get rid of LFs
+		gprs_eliminate_lf(gprs_cmd)			'get rid of LFs
 		x=instr(1,gprs_reply,gprs_cmd,1)
 		if x=0 then
 			'this is essential, was added later. We may have some much leftover TCP garbage that nothing new fits in
@@ -385,13 +397,13 @@ public sub gprs_proc_ser_data()
 		'remove garbage before the echo
 		gprs_reply=mid(gprs_reply,x,255)
 
-		'a full reply will contain three CR/LF sequences
-		if instr(1,gprs_reply,GPRS_CR_LF,3)=0 then
+		'a full reply will contain three CRs (we already got rid of LFs)
+		if instr(1,gprs_reply,chr(13),3)=0 then
 			exit sub 
 		end if
 
 		'remove echo and all CR/LFs
-		gprs_reply=mid(gprs_reply,len(gprs_cmd)+3,len(gprs_reply)-len(gprs_cmd)-4)
+		gprs_reply=mid(gprs_reply,len(gprs_cmd)+2,len(gprs_reply)-len(gprs_cmd)-2)
 
 		#if GPRS_DEBUG_PRINT
 			gprs_debugprint("[AT__IN]: "+gprs_reply)
@@ -494,15 +506,24 @@ public sub gprs_proc_ser_data()
 			case GPRS_PPP_CONFREQ:
 				msg_ser_num_in=asc(mid(gprs_reply,4,1))
 				gprs_reply=mid(gprs_reply,7,255) 'leave requested items only
-				
-				select case gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_LCP,GPRS_PPP_CONFREQ)
+			
+			
+			
+			
+				select case gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_LCP,GPRS_PPP_CONFREQ,gprs_rej)
 				case GPRS_LCP_PARSE_RESULT_ACK:
-					gprs_ppp_send(GPRS_PPP_PROTO_LCP,GPRS_PPP_CONFACK,gprs_reply,msg_ser_num_in,GPRS_STD_TOUT)
-					gprs_peer_request_confirmed=YES
-					if gprs_our_request_confirmed=YES and gprs_phase=GPRS_PPP_LCP then
-						gprs_next_phase()
+					if gprs_rej<>"" then
+						'there are some options that need to be rejected
+						gprs_ppp_send(GPRS_PPP_PROTO_LCP,GPRS_PPP_CONFREJ,gprs_rej,msg_ser_num_in,GPRS_STD_TOUT)
+					else
+						gprs_ppp_send(GPRS_PPP_PROTO_LCP,GPRS_PPP_CONFACK,gprs_reply,msg_ser_num_in,GPRS_STD_TOUT)
+						gprs_peer_request_confirmed=YES
+						if gprs_our_request_confirmed=YES and gprs_phase=GPRS_PPP_LCP then
+							if gprs_pap_required=NO then gprs_phase=gprs_phase+1 'skip PAP
+							gprs_next_phase()
+						end if
 					end if
-				
+					
 				case GPRS_LCP_PARSE_RESULT_NAK, GPRS_LCP_PARSE_RESULT_REJ, GPRS_LCP_PARSE_RESULT_DISCARD:
 					goto lcp_failed 'simplified handling -- we don't try to negotiate further
 				
@@ -512,6 +533,7 @@ public sub gprs_proc_ser_data()
 				'could only be acknowledging what we asked for
 				gprs_our_request_confirmed=YES
 				if gprs_peer_request_confirmed=YES and gprs_phase=GPRS_PPP_LCP then
+					if gprs_pap_required=NO then gprs_phase=gprs_phase+1 'skip PAP
 					gprs_next_phase()
 				end if	
 
@@ -540,7 +562,7 @@ public sub gprs_proc_ser_data()
 			case GPRS_PPP_CONFREQ:
 				msg_ser_num_in=asc(mid(gprs_reply,4,1))
 				gprs_reply=mid(gprs_reply,7,255) 'leave requested items only
-				select case gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ)
+				select case gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,gprs_rej)
 				case GPRS_LCP_PARSE_RESULT_ACK:
 					gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFACK,gprs_reply,msg_ser_num_in,GPRS_STD_TOUT)
 
@@ -555,14 +577,14 @@ public sub gprs_proc_ser_data()
 
 			case GPRS_PPP_CONFNAK:
 				gprs_reply=mid(gprs_reply,7,255) 'leave requested items only
-				gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFACK)
+				gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFACK,gprs_rej)
 				if gprs_phase=GPRS_PPP_IPCP_2 then
 					gprs_next_phase()
 				end if	
 
 			case GPRS_PPP_CONFACK:
 				gprs_reply=mid(gprs_reply,7,255) 'leave requested items only
-				gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFACK)
+				gprs_parse_lcp_message(gprs_reply,GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFACK,gprs_rej)
 				if gprs_phase=GPRS_PPP_IPCP_3 then
 					gprs_next_phase()
 					#if GPRS_SEND_PING=0
@@ -882,10 +904,11 @@ function gprs_parse_ppp_message() as string
 end function
 
 '--------------------------------------------------------------------
-function gprs_parse_lcp_message(byref lcp_message as string, ppp_protocol as word, code as gprs_ppp_codes) as gprs_lcp_parse_results
+function gprs_parse_lcp_message(byref lcp_message as string, ppp_protocol as word, code as gprs_ppp_codes, byref rej_str as string) as gprs_lcp_parse_results
 	dim	option_length as byte
 	dim lcp_message_copy as string(128)
 	
+	rej_str=""
 	lcp_message_copy=lcp_message
 	while lcp_message_copy<>""
 
@@ -906,10 +929,17 @@ function gprs_parse_lcp_message(byref lcp_message as string, ppp_protocol as wor
 					gprs_parse_lcp_message=GPRS_LCP_PARSE_RESULT_NAK
 					exit function
 				end if
+				gprs_pap_required=YES
 			
 			case GPRS_PPP_LCP_MESSAGE_MAGIC:
 				'---
 
+			case GPRS_PPP_LCP_MESSAGE_PFC:
+				rej_str=rej_str+GPRS_LCP_OPTION_PFC_STR
+							
+			case GPRS_PPP_LCP_MESSAGE_AFC:
+				rej_str=rej_str+GPRS_LCP_OPTION_AFC_STR
+			
 			case else: 'unrecognized stuff
 				gprs_parse_lcp_message=GPRS_LCP_PARSE_RESULT_REJ
 				exit function
@@ -1175,6 +1205,21 @@ sub gprs_init()
 		io.state=LOW
 		io.enabled=YES
 	#endif
+end sub
+
+sub gprs_eliminate_lf(byref s as string)
+		dim f as byte
+		dim c as string(1)
+		dim so as string(GPRS_MAX_CMD_REPLY_LEN)
+		
+		so=""
+		for f=1 to len(s)
+			c=mid(s,f,1)
+			if c<>chr(10) then
+				so=so+c
+			end if
+		next f
+		s=so
 end sub
 
 '--------------------------------------------------------------------
