@@ -52,6 +52,7 @@ const PING_STR="45 00 00 20 9a 00 00 00 20 01 00 00 00 00 00 00 00 00 00 00 08 0
 '                                             -cs-- --our ip--- --ping ip-- 
 
 const GPRS_INIT_SIGNATURE=&h125D
+const GPRS_MAX_CMD_REPLY_LEN=128
 
 '--------------------------------------------------------------------
 enum gprs_ppp_codes
@@ -120,8 +121,8 @@ dim gprs_linkup_in_prog as no_yes
 dim gprs_phase as gprs_phases
 dim gprs_tout_ctr as byte
 dim gprs_cmd_try as byte
-dim gprs_cmd as string(128)
-dim gprs_reply as string(128)
+dim gprs_cmd as string(GPRS_MAX_CMD_REPLY_LEN)
+dim gprs_reply as string(GPRS_MAX_CMD_REPLY_LEN)
 dim gprs_ppp_peer_ip as string(4)
 dim gprs_ppp_ip as string(4)
 dim gprs_msg_ser_num_out as byte
@@ -309,6 +310,9 @@ public sub gprs_stop()
 	ppp.enabled=NO
 	ser.enabled=NO
 
+	sock_release(gprs_socket)
+
+
 	'release buffer
 	ppp.buffrq(0)
 	ser.rxbuffrq(0)
@@ -371,6 +375,10 @@ public sub gprs_proc_ser_data()
 		'correct reply will start with echoed command (but leftover garbage counld be before it)
 		x=instr(1,gprs_reply,gprs_cmd,1)
 		if x=0 then
+			'this is essential, was added later. We may have some much leftover TCP garbage that nothing new fits in
+			if len(gprs_reply)=GPRS_MAX_CMD_REPLY_LEN then
+				gprs_reply="" 
+			end if
 			exit sub
 		end if
 		
@@ -517,7 +525,7 @@ public sub gprs_proc_ser_data()
 			select case asc(mid(gprs_reply,3,1))
 			case GPRS_PPP_CONFACK:
 				if gprs_phase=GPRS_PPP_PAP then
-					gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) 
 					gprs_next_phase()
 				end if	
 
@@ -740,9 +748,7 @@ sub gprs_proc_timer_2()
 			case GPRS_PPP_IPCP_1:
 				gprs_tout_ctr=GPRS_STD_TOUT
 				gprs_cmd_try=gprs_cmd_try+1
-				gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				
-				
+				gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT) 
 			
 			case GPRS_PPP_IPCP_2:
 				gprs_ppp_send(GPRS_PPP_PROTO_IPCP,GPRS_PPP_CONFREQ,GPRS_IPCP_CONFREQ_STR,gprs_msg_ser_num_out,GPRS_STD_TOUT)
