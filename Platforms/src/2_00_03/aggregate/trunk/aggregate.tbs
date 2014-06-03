@@ -2437,7 +2437,7 @@ function agg_firmware_upload() as ok_ng
 			fd.setdata(data)
 			data_size=len(data)	
 			if data_size=0 then
-				fail_counter=+1
+				fail_counter=fail_counter+1
 				if fail_counter>AGG_FIRMWARE_GET_FAIL_COUNT then
 					agg_firmware_upload=NG
 					exit while
