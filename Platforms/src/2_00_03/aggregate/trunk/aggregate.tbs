@@ -623,6 +623,7 @@ public sub agg_proc_timer()
 		if agg_firmware_recieved=YES then
 			if fd.open(AGG_FIRMWARE_FILENAME)=PL_FD_STATUS_OK then
 				fd.copyfirmwarefromfile
+				sys.reboot
 			end if
 		end if
 	#endif
