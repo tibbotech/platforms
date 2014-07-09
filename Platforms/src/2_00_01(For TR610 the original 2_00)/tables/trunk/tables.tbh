@@ -96,14 +96,6 @@ enum en_tbl_record_states
 	EN_TBL_RECORD_BOTH
 end enum
 
-enum en_tbl_modified_operation
-	EN_TBL_MODIFIED_ADD,
-	EN_TBL_MODIFIED_DELETE,
-	EN_TBL_MODIFIED_UNDELETE,
-	EN_TBL_MODIFIED_EDIT,
-	EN_TBL_MODIFIED_REPLACE,
-	EN_TBL_MODIFIED_CLEAR
-end enum
 '--------------------------------------------------------------------------------
 type tbl_field_type
 	field_name as string(TBL_MAX_FIELD_NAME_LEN)
@@ -167,4 +159,3 @@ declare function tbl_select(byref table_name_or_num as string, byref file_name a
 declare sub callback_tbl_error(status as en_tbl_status_codes)
 declare function callback_tbl_fail_to_open(byref filename as string, status as pl_fd_status_codes, filenum as byte) as no_yes
 declare sub callback_tbl_field_error(byref file_name as string,byref field_name as string,tbl_result as en_tbl_status_codes)
-declare sub callback_tbl_modified(byref file_name as string, modified_operation as en_tbl_modified_operation)

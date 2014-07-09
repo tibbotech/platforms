@@ -171,8 +171,7 @@ public function tbl_start() as en_tbl_status_codes
 		if fd.transactioncapacityremaining<16 then
 			#if TBL_DEBUG_PRINT
 				tbl_debugprint("ERROR: Current flash disk formatting doesn't support transactions. Use 'fd.formatj()' with maxjournalsectors>=16 (currently "+str(fd.transactioncapacityremaining)+").")
-			#endif
-			tbl_start=EN_TBL_STATUS_INV_PARAM
+			#endif			
 			exit function
 		end if		
 	end if
@@ -917,6 +916,7 @@ end function
 
 '------------------------------------------------------------------------------
 public function tbl_close(byref file_name as string)as en_tbl_status_codes
+	dim i as byte
 
 '<<<<<<<<<<<<<<<<<<<<<<<<<<< UNFINISHED
 
@@ -968,7 +968,6 @@ public function tbl_clear() as en_tbl_status_codes
 	if tbl_clear<>EN_TBL_STATUS_OK then goto finish 
 	if tbl_active_rc_sg(tbl_selected_active_rc,EN_TBL_GET)<>PL_FD_STATUS_OK then goto tbl_fail
 	if fd.transactioncommit()<>PL_FD_STATUS_OK then goto tbl_fail
-	callback_tbl_modified(tbl_selected_file_name,EN_TBL_MODIFIED_CLEAR)
 	goto tbl_ok
 	
 tbl_ok:
@@ -1038,7 +1037,7 @@ public function tbl_replace(byref old_file_name as string, byref new_file_name a
 	
 	if fd.rename(new_file_name,old_file_name)<>PL_FD_STATUS_OK then goto fd_error
 	if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
-	callback_tbl_modified(old_file_name,EN_TBL_MODIFIED_REPLACE)
+
 	goto tbl_ok
 	
 fd_error:
@@ -1133,13 +1132,10 @@ public function tbl_record_sg(byref rec_num as word, op as en_tbl_rdwr) as en_tb
 		if fd.laststatus<>PL_FD_STATUS_OK then goto tbl_fail
 	else
 	'set data
-		tbl_record_string=left(tbl_record_string,tbl_info(tbl_info_index).rec_size)
 		if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
 		if fd.setdata(tbl_record_string)<>PL_FD_STATUS_OK then goto fd_error
 		if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
-		callback_tbl_modified(tbl_selected_file_name,EN_TBL_MODIFIED_EDIT)
 	end if
-	
 	goto tbl_ok
 	
 fd_error:
@@ -1213,14 +1209,12 @@ public function tbl_record_add(byref uid as string) as en_tbl_status_codes
 	dim md5_val as dword
 	dim result as en_tbl_status_codes
 
-	if tbl_info(tbl_info_index).struct=EN_TBL_STRUCT_TABLE then
-		result=tbl_generate_uid(uid)
-		if result<>EN_TBL_STATUS_OK then
-			tbl_record_add=result
-			goto finish
-		end if
-		md5_val=tbl_set_md5()
+	result=tbl_generate_uid(uid)
+	if result<>EN_TBL_STATUS_OK then
+		tbl_record_add=result
+		goto finish
 	end if
+	md5_val=tbl_set_md5()
 #endif
 
 	if tbl_check_key_violation(0)=YES then goto tbl_key_violate
@@ -1264,7 +1258,6 @@ public function tbl_record_add(byref uid as string) as en_tbl_status_codes
 	if add_to_del_pos=NO then tbl_selected_all_rc=tbl_selected_all_rc+1
 	if tbl_active_rc_sg(tbl_selected_active_rc,EN_TBL_SET)<>PL_FD_STATUS_OK then goto fd_error
 	if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error
-	callback_tbl_modified(tbl_selected_file_name,EN_TBL_MODIFIED_ADD)
 	goto tbl_ok
 	
 fd_error:	
@@ -1387,6 +1380,7 @@ public function tbl_record_read_active(byref rec_num as word) as en_tbl_status_c
 'API procedure, a selected data file is required, load the record buffer(tbl_record_string) with the record that pointed by record pointer(tbl_record_ptr)
 
 	dim daddr as dword
+	dim sflag as string(1)
 
 	if tbl_init_flag<>TBL_INIT_SIGNATURE then
 		tbl_record_read_active=EN_TBL_STATUS_NOT_STARTED
@@ -1481,8 +1475,7 @@ public function tbl_record_delete(byref rec_num as word) as en_tbl_status_codes
 		#if TBL_ADJUST_LIST_WHEN_FULL=0
 			if tbl_adjust_size()<>EN_TBL_STATUS_OK then goto fd_error
 		#endif
-		if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error
-		callback_tbl_modified(tbl_selected_file_name,EN_TBL_MODIFIED_DELETE)
+		if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error	
 	else
 		goto tbl_deleted
 	end if
@@ -1573,8 +1566,7 @@ public function tbl_record_undelete(byref rec_num as word) as en_tbl_status_code
 	if fd.setdata(TBL_ACTIVE_FLAG)<>PL_FD_STATUS_OK then goto fd_error
 	tbl_selected_active_rc=tbl_selected_active_rc+1
 	if tbl_active_rc_sg(tbl_selected_active_rc,EN_TBL_SET)<>PL_FD_STATUS_OK then goto fd_error
-	if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error
-	callback_tbl_modified(tbl_selected_file_name,EN_TBL_MODIFIED_UNDELETE)
+	if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error	
 	goto tbl_ok
 	
 fd_error:
@@ -2110,7 +2102,7 @@ public function tbl_get_field_def(byref table_name_or_num as string, byref field
 'API procedure, a selected table is required, returns the default value of selected field.
 	
 	dim i,f as word
-	dim j as byte
+	dim j,def_len as byte
 	dim pos1, pos2 as word
 	
 	if tbl_init_flag<>TBL_INIT_SIGNATURE then
@@ -2757,9 +2749,11 @@ end function
 sub tbl_mod_hash(byref d as dword)
 'Update the hash value that is stored in the file attribute.
 
+	dim pos as byte
 	dim msw, lsw as word
 	dim hash_val as dword
 	dim hash as string(4)
+	dim rec_num as word
 	
 	'read the current table hash from the file attribute
 	tbl_attributes_sg(tbl_selected_file_name,"HASH",hash,EN_TBL_GET)
