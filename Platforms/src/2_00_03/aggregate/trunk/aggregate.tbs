@@ -2453,8 +2453,7 @@ function agg_firmware_upload() as ok_ng
 			if data_size=0 then
 				fail_counter=fail_counter+1
 				if fail_counter>AGG_FIRMWARE_GET_FAIL_COUNT then
-					agg_firmware_upload=NG
-					exit while
+					goto upload_fail
 				end if
 			else
 				fail_counter=0
@@ -2463,6 +2462,22 @@ function agg_firmware_upload() as ok_ng
 				remain_file_size=remain_file_size-data_size
 			end if	
 		wend
+		fd.setpointer(65537)
+		data=fd.getdata(4)
+		if data<>"TBIN" then
+			goto upload_fail
+		end if
+		
+		fd.setpointer(fd.filesize-3)
+		data=fd.getdata(4)
+		if data<>"TBIN" then
+upload_fail:
+			agg_firmware_upload=NG
+			fd.close()
+			fd.delete(AGG_FIRMWARE_FILENAME)
+			exit function			
+		end if
+
 		agg_firmware_recieved=YES
 		fd.close
 	else
