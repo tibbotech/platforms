@@ -171,7 +171,8 @@ public function tbl_start() as en_tbl_status_codes
 		if fd.transactioncapacityremaining<16 then
 			#if TBL_DEBUG_PRINT
 				tbl_debugprint("ERROR: Current flash disk formatting doesn't support transactions. Use 'fd.formatj()' with maxjournalsectors>=16 (currently "+str(fd.transactioncapacityremaining)+").")
-			#endif			
+			#endif
+			tbl_start=EN_TBL_STATUS_INV_PARAM
 			exit function
 		end if		
 	end if
@@ -2784,19 +2785,17 @@ function tbl_generate_uid(byref id_string as string) as en_tbl_status_codes
 	dim result as en_tbl_status_codes
 	dim msw, lsw as word
 	dim l as long
-	dim s as string(16)
 	
-	if len(id_string)=0 then
+	if id_string="" then
 		do
-			s=random(4)
-			msw=asc(left(s,1))*256+asc(mid(s,2,1))
-			lsw=asc(mid(s,3,1))*256+asc(mid(s,4,1))
+			id_string=random(4)
+			msw=asc(left(id_string,1))*256+asc(mid(id_string,2,1))
+			lsw=asc(mid(id_string,3,1))*256+asc(mid(id_string,4,1))
 			l=msw*65536 + lsw
 			if l < 0 then l=l*-1
-			s=lstri(l)
-			result=tbl_field_sg("UID",s,EN_TBL_SET)
+			id_string=lstri(l)
+			result=tbl_field_sg("UID",id_string,EN_TBL_SET)
 		loop while result=EN_TBL_STATUS_KEY_VIOLATION
-		id_string=s
 	else
 		result=tbl_field_sg("UID",id_string,EN_TBL_SET)
 	end if

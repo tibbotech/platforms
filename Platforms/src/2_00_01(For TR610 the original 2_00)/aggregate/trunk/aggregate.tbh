@@ -1,0 +1,131 @@
+'***********************************************************************************************************
+'			AGGREGATE AGENT LIBRARY
+'***********************************************************************************************************
+
+#ifndef AGG_DEBUG_PRINT
+	#define AGG_DEBUG_PRINT 0
+#endif
+
+#ifndef AGG_LOGIN_CONTROL
+	#define AGG_LOGIN_CONTROL 0
+#endif
+
+#ifndef AGG_TABLE_CONTROL
+	#define AGG_TABLE_CONTROL 0
+#endif
+
+#ifndef AGG_SETTING_CONTROL
+	#define AGG_SETTING_CONTROL 0
+#endif
+
+#ifndef AGG_DESCRIPTOR_FILE
+	#define AGG_DESCRIPTOR_FILE "aggregate.txt"
+#endif
+
+#ifndef AGG_MAX_CONTEXT_NAME_LEN 
+	#define AGG_MAX_CONTEXT_NAME_LEN 4		
+#endif
+
+#ifndef AGG_MAX_ITEM_NAME_LEN 
+	#define AGG_MAX_ITEM_NAME_LEN 12
+#endif
+
+#ifndef AGG_MAX_NUM_ENTITIES
+	#define AGG_MAX_NUM_ENTITIES 2
+#endif
+
+#ifndef AGG_MAX_NUM_ITEMS
+	#define AGG_MAX_NUM_ITEMS 0
+#endif
+
+#ifndef AGG_MAX_NUM_EVENT_FIELDS
+	#define AGG_MAX_NUM_EVENT_FIELDS 1
+#endif
+
+#ifndef AGG_MAX_EVENT_FIELD_VAL_LEN
+	#define AGG_MAX_EVENT_FIELD_VAL_LEN 1
+#endif
+
+#ifndef AGG_TBL_TEMP
+	#define AGG_TBL_TEMP "ATmp"
+#endif
+
+#ifndef AGG_WAIT_TIME
+	#define AGG_WAIT_TIME 15
+#endif
+
+#ifndef AGG_MAX_COMMAND_NAME_LEN
+	#define AGG_MAX_COMMAND_NAME_LEN 12
+#endif
+
+#ifndef AGG_MULTI_NODE
+	#define AGG_MULTI_NODE 1
+#endif
+
+#ifndef AGG_SEND_WAIT_TIME
+	#define AGG_SEND_WAIT_TIME 10
+#endif
+
+'------------------------------------------------------------------------------
+enum en_agg_rdwr
+	EN_AGG_GET,
+	EN_AGG_SET
+end enum
+
+enum en_agg_status_codes
+	EN_AGG_STATUS_OK,
+	EN_AGG_STATUS_NOT_STARTED,
+	EN_AGG_STATUS_WRONG_DESCRIPTOR,
+	EN_AGG_STATUS_OUT_OF_SOCKETS,
+	EN_AGG_STATUS_INVALID_INTERFACE,
+	EN_AGG_STATUS_INSUFFICIENT_BUFFER_SPACE,
+	EN_AGG_STATUS_CONNECTION_LOST,
+	EN_AGG_STATUS_SETTING_ERROR,
+	EN_AGG_STATUS_TABLE_ERROR,
+	EN_AGG_STATUS_FUNCTION_ERROR,
+	EN_AGG_STATUS_ITEM_NOT_FOUND
+end enum
+
+enum en_agg_link_states
+	EN_AGG_LINK_STATE_IDLE,
+	EN_AGG_LINK_STATE_CONNECTING,
+	EN_AGG_LINK_STATE_SYNCRONIZING,
+	EN_AGG_LINK_STATE_DISCONNECTED,
+	EN_AGG_LINK_STATE_ESTABLISHED
+end enum
+
+'------------------------------------------------------------------------------
+type agg_instant_event_buffer
+	field_value(AGG_MAX_NUM_EVENT_FIELDS) as string(AGG_MAX_EVENT_FIELD_VAL_LEN)
+end type
+
+'------------------------------------------------------------------------------
+declare function agg_init() as en_agg_status_codes
+declare function agg_start(interface as pl_sock_interfaces, byref on as string, byref dn as string, byref pw as string, byref agg_server_ip as string, byref agg_server_port as string, agg_server_tout as word, auto_reg as no_yes) as en_agg_status_codes
+declare sub agg_stop()
+declare sub agg_proc_timer()
+declare sub agg_proc_data()
+declare sub agg_proc_sock_event(sock_state as pl_sock_state, sock_state_simple as pl_sock_state_simple)
+declare sub agg_add_instant_events(byref context_name as string, byref event_name as string, byref instant_event_buff as agg_instant_event_buffer, num_of_fields as byte)
+declare sub agg_get_connection_state(byref link_state as en_agg_link_states, byref sock_state as pl_sock_state_simple)
+
+declare sub callback_agg_pre_buffrq(x as byte)
+declare sub callback_agg_buff_released()
+declare sub callback_agg_error(failure_code as en_agg_status_codes, byref error_item as string)
+declare function callback_agg_device_specific_operation(byref op as string ,byref context_name as string, byref func_input as string, byref msg as string) as ok_ng
+declare sub callback_agg_rtc_sg(byref wdaycount as word, byref wmincount as word, byref bsec as byte, byref wmilsec as word, op as en_agg_rdwr)
+declare sub callback_agg_stg_mod_sg(byref stg_name as string, index as byte, byref stg_val as string, op as en_agg_rdwr)
+declare sub callback_agg_ok()
+
+#if AGG_SETTING_CONTROL
+	declare function callback_agg_setting_saved(byref setting_name as string, byref setting_val as string) as en_stg_status_codes
+	declare sub callback_agg_stg_error(byref setting_name as string, error_code as en_stg_status_codes)
+#endif
+
+#if AGG_TABLE_CONTROL
+	declare sub callback_agg_tbl_fld_mod_sg(byref tbl_name as string, byref fld_name as string, byref fld_val as string, op as en_agg_rdwr)
+	
+	declare sub agg_check_stored_events()
+	declare sub agg_proc_data_sent()
+	declare sub callback_agg_tbl_error(byref table_name as string, error_code as en_tbl_status_codes)
+#endif

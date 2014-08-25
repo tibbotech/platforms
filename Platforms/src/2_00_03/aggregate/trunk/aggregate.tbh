@@ -66,9 +66,15 @@
 	#define AGG_STORED_EVENT_LVL_FIELD "AEL"
 #endif
 
+#ifndef AGG_REMOTE_FIRMWARE_UPLOAD
+	#define AGG_REMOTE_FIRMWARE_UPLOAD 1
+#endif
+
 #ifndef AGG_CUSTOM_RTC
 	#define AGG_CUSTOM_RTC 0	'0:standard RTC, 1:external RTC, 2:no RTC
 #endif
+
+const AGG_FIRMWARE_FILENAME="firmware.bin"
 
 '------------------------------------------------------------------------------
 enum en_agg_rdwr

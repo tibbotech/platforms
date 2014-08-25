@@ -144,7 +144,20 @@ syscall(0,FD_COPYFIRMWARE) fd.copyfirmware(numsectors as word)
 'fd.getsector,
 'fd.setsector,
 'fd.checksum,
-'fd.copyfirmwarelzo
+'fd.copyfirmwarelzo,
+'fd.copyfirmwarefromfile
+
+'--------------------------------------------------------------------
+syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
+'<b>METHOD.</b><br><br>
+'Copies the currently selected file from the flash disk into the firmware/application area (starting from physical sector 0) of the flash memory, then reboots the device to make it run the new firmware/application.
+'<br><br>
+'<b>This method is not supported on the EM500 platform.</b>
+'<br><br>
+'<b>BE VERY CAREFUL! </b>Using the fd.copyfirmwarefromfile on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
+'<br><br>
+'<b>See also: </b>
+'fd.copyfirmware
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID=KLM601
@@ -670,12 +683,6 @@ property fd.totalsize
 '<b>See also: </b>
 'fd.capacity, fd.numservicesectors, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
 	get = syscall(421,"63.TDL"+) as word
-end property
-
-'--------------------------------------------------------------------
-property !fd.norandom
-	get = syscall(422,"63.TDL"+) as no_yes
-	set = syscall(423,"63.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
