@@ -229,6 +229,7 @@ end enum
 syscall(506,"87.TDL")  !jmptbl(value as integer, byref table)
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
+'--------------------------------------------------------------------
 syscall(510,"69.TDL")  !gotohtml(offset as word)
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
