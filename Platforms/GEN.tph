@@ -25,6 +25,7 @@
 #define DS1101W 18
 #define TPP2W 19
 #define TPP3W 20
+#define TPP2N 21
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
@@ -225,6 +226,10 @@ end enum
 '		BUILT-IN FUNCTIONS
 '**************************************************************************************************
 
+syscall(506,"87.TDL")  !jmptbl(value as integer, byref table)
+'<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
+
+'--------------------------------------------------------------------
 syscall(510,"69.TDL")  !gotohtml(offset as word)
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
