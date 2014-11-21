@@ -2406,14 +2406,17 @@ end sub
 
 '----------------------------------------------------------------------------
 function agg_firmware_upload() as ok_ng
-	dim remain_file_size as dword
+	dim remain_file_size, total_file_size as dword
 	dim data as string
 	dim pos1, pos2, data_size as byte
 	dim fail_counter as byte
 	dim left_over_byte as string(2)
+	dim x as word
 	
 	agg_firmware_upload=NG
-	if fd.formatj(fd.availableflashspace-100,16,100)<>PL_FD_STATUS_OK then exit function
+	
+	x=fd.availableflashspace-2066
+	if fd.format(fd.availableflashspace-x,16)<>PL_FD_STATUS_OK then exit function
 	if fd.mount<>PL_FD_STATUS_OK then exit function
 	if fd.create(AGG_FIRMWARE_FILENAME)<>PL_FD_STATUS_OK then exit function
 	if fd.open(AGG_FIRMWARE_FILENAME)<>PL_FD_STATUS_OK then exit function
@@ -2426,6 +2429,7 @@ function agg_firmware_upload() as ok_ng
 		data=mid(agg_rx,pos1+1,pos2-pos1-1)
 		
 		remain_file_size=lval(data)
+		total_file_size=remain_file_size
 		agg_convert_data_block(agg_rx,left_over_byte)
 
 		if remain_file_size<len(agg_rx) then
@@ -2445,7 +2449,7 @@ function agg_firmware_upload() as ok_ng
 				data_size=remain_file_size
 				data=sock.getdata(data_size)
 			end if
-
+			
 			agg_convert_data_block(data,left_over_byte)
 					
 			fd.setdata(data)
@@ -2459,9 +2463,11 @@ function agg_firmware_upload() as ok_ng
 				fail_counter=0
 			end if
 			if remain_file_size>=data_size then
+				callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 				remain_file_size=remain_file_size-data_size
-			end if	
+			end if
 		wend
+		
 		fd.setpointer(65537)
 		data=fd.getdata(4)
 		if data<>"TBIN" then
@@ -2477,7 +2483,7 @@ upload_fail:
 			fd.delete(AGG_FIRMWARE_FILENAME)
 			exit function			
 		end if
-
+		callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 		agg_firmware_recieved=YES
 		fd.close
 	else
