@@ -183,7 +183,3 @@ declare sub callback_agg_synchronized()
 	'Procedure body has to be created elsewhere in the project (externally with respect to the library).
 	
 #endif
-
-#if AGG_REMOTE_FIRMWARE_UPLOAD
-	declare sub callback_agg_firmware_upload_progress(total_size as dword, remain_size as dword)
-#endif

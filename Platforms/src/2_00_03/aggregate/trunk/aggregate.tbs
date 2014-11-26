@@ -2463,7 +2463,6 @@ function agg_firmware_upload() as ok_ng
 				fail_counter=0
 			end if
 			if remain_file_size>=data_size then
-				callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 				remain_file_size=remain_file_size-data_size
 			end if
 		wend
@@ -2483,7 +2482,6 @@ upload_fail:
 			fd.delete(AGG_FIRMWARE_FILENAME)
 			exit function			
 		end if
-		callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 		agg_firmware_recieved=YES
 		fd.close
 	else

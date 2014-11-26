@@ -900,17 +900,17 @@ public function stg_restore_multiple(init_mode as en_stg_init_modes) as en_stg_s
 		dim fd_status as pl_fd_status_codes
 	#endif
 
-	romfile.open(STG_DESCRIPTOR_FILE)
-	
-	#if STG_STORAGE_MEMORY<>0
-		fd.filenum=stg_filenum
-		suspend_flushing=YES
-	#endif
-
 	if stg_num_settings>0 then
 		for f=0 to stg_num_settings-1
 			'do we need to initialize this setting?
+
+			romfile.open(STG_DESCRIPTOR_FILE)
 			
+			#if STG_STORAGE_MEMORY<>0
+				fd.filenum=stg_filenum
+				suspend_flushing=YES
+			#endif
+	
 			select case init_mode
 			case EN_STG_INIT_MODE_NORMAL:
 				'Initialize (or keep) settings according to the INI field in setting definition file
