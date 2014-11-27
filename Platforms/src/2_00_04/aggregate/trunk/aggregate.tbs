@@ -112,6 +112,7 @@ dim agg_cur_event_rec_num as word
 dim agg_link_state as en_agg_link_states
 dim agg_first_conn as no_yes
 dim agg_reboot_timer as byte
+dim agg_keepalive_timer as byte
 
 #if AGG_REMOTE_FIRMWARE_UPLOAD
 	dim agg_firmware_recieved as no_yes
@@ -274,6 +275,7 @@ l1:
 	agg_selected_tbl_info=""
 	agg_first_conn=YES
 	agg_start=agg_connect()
+	agg_keepalive_timer=0
 end function
 
 '-------------------------------------------------------------
@@ -961,6 +963,19 @@ public sub agg_fire_instant_event(byref context_name as string, byref event_name
 			agg_data_send(s)
 		end if
 	next i	
+end sub
+
+'------------------------------------------------------------------------------
+public sub agg_keep_alive()
+	sock.num=agg_sock
+	if sock.statesimple<>PL_SSTS_EST then exit sub
+	if agg_keepalive_timer=0 then	
+		sock.setdata("*")
+		sock.send
+		agg_keepalive_timer=AGG_KEEPALIVE_TMR_CTR
+	else
+		agg_keepalive_timer=agg_keepalive_timer-1
+	end if	
 end sub
 
 '------------------------------------------------------------------------------
@@ -2463,6 +2478,7 @@ function agg_firmware_upload() as ok_ng
 				fail_counter=0
 			end if
 			if remain_file_size>=data_size then
+				callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 				remain_file_size=remain_file_size-data_size
 			end if
 		wend
@@ -2482,6 +2498,7 @@ upload_fail:
 			fd.delete(AGG_FIRMWARE_FILENAME)
 			exit function			
 		end if
+		callback_agg_firmware_upload_progress(total_file_size, remain_file_size)
 		agg_firmware_recieved=YES
 		fd.close
 	else
