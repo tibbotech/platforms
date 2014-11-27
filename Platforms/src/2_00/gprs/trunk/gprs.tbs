@@ -16,7 +16,7 @@ const GPRS_REPLY_CONNECT="CONNECT"
 
 const GPRS_PPP_BUFF_SIZE=GPRS_PAYLOAD_SIZE+1
 const GPRS_SER_BUFF_SIZE=GPRS_PAYLOAD_SIZE*2+1
-const GPRS_STD_TOUT=4
+const GPRS_STD_TOUT=8 '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<     =4
 const GPRS_ECHO_TOUT=60
 const GPRS_POST_RESET_TOUT=60
 const GPRS_MAX_CMD_TRIES=5
@@ -82,7 +82,7 @@ enum gprs_phases
 	GPRS_AT_AT,
 	GPRS_AT_IPR,
 	'GPRS_AT_ICF,
-	'GPRS_AT_Q3,
+	GPRS_AT_IFC,
 	GPRS_AT_CGDCONT,
 	GPRS_AT_CGQMIN,
 	GPRS_AT_DT,
@@ -117,6 +117,7 @@ declare sub gprs_insert_escape(byref command as string, pos as byte, replacement
 declare sub gprs_start_over()
 declare sub gprs_init()
 declare sub gprs_eliminate_lf(byref s as string)
+declare sub gprs_eliminate_double_cr(byref s as string)
 declare sub gprs_debug_print_phase(gprs_phase as gprs_phases)
 declare sub gprs_ppp_decode(byref log_string as string, byref full_command as string)
 declare sub gprs_debugprint(byref print_data as string)
@@ -254,10 +255,10 @@ public function gprs_start(byref at_dt_command_param as string, byref apn as str
 		gprs_phase=GPRS_TOGGLE_POWER_1
 		gprs_tout_ctr=GPRS_STD_TOUT
 		io.num=GPRS_POWER
-		io.state=HIGH
+		io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		
 		io.num=GPRS_RESET
-		io.state=LOW
+		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	#endif
 
 	'reset variables
@@ -313,7 +314,7 @@ public sub gprs_stop()
 	#if GPRS_MODULE_EXTERNAL=0
 		'put the GPRS module in reset
 		io.num=GPRS_RESET
-		io.state=HIGH
+		io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	#endif
 
 	'serial port can now be used for normal traffic again
@@ -383,27 +384,37 @@ public sub gprs_proc_ser_data()
 		gprs_reply=gprs_reply+ser.getdata(255)
 	
 		'correct reply will start with echoed command (but leftover garbage could be before it)
-		gprs_eliminate_lf(gprs_reply)		'get rid of LFs
-		gprs_eliminate_lf(gprs_cmd)			'get rid of LFs
+		gprs_eliminate_lf(gprs_reply)			'get rid of LFs
+		gprs_eliminate_double_cr(gprs_reply)	'get rid of double CRs
+		gprs_eliminate_lf(gprs_cmd)				'get rid of LFs
+		gprs_eliminate_double_cr(gprs_cmd)		'get rid of double CRs
+		
 		x=instr(1,gprs_reply,gprs_cmd,1)
 		if x=0 then
-			'this is essential, was added later. We may have some much leftover TCP garbage that nothing new fits in
+			'this is essential, was added later. We may have so much leftover TCP garbage that nothing new fits in
 			if len(gprs_reply)=GPRS_MAX_CMD_REPLY_LEN then
 				gprs_reply="" 
 			end if
+			
+			'also added: modem may send info strings, which we must get rid of
+			x=instr(1,gprs_reply,chr(13),1)
+			while x>0
+				gprs_reply=mid(gprs_reply,x+1,255)
+				x=instr(1,gprs_reply,chr(13),1)
+			wend
 			exit sub
 		end if
 		
 		'remove garbage before the echo
 		gprs_reply=mid(gprs_reply,x,255)
 
-		'a full reply will contain three CRs (we already got rid of LFs)
-		if instr(1,gprs_reply,chr(13),3)=0 then
+		'a full reply will contain two CRs (we already got rid of LFs)
+		if instr(1,gprs_reply,chr(13),2)=0 then
 			exit sub 
 		end if
 
 		'remove echo and all CR/LFs
-		gprs_reply=mid(gprs_reply,len(gprs_cmd)+2,len(gprs_reply)-len(gprs_cmd)-2)
+		gprs_reply=mid(gprs_reply,len(gprs_cmd)+1,len(gprs_reply)-len(gprs_cmd)-1)
 
 		#if GPRS_DEBUG_PRINT
 			gprs_debugprint("[AT__IN]: "+gprs_reply)
@@ -416,7 +427,7 @@ public sub gprs_proc_ser_data()
 			'start the reset
 			gprs_phase=GPRS_RESET_PULSE
 			io.num=GPRS_RESET
-			io.state=HIGH
+			io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 			gprs_tout_ctr=GPRS_STD_TOUT
 			#if GPRS_DEBUG_PRINT
 				gprs_debug_print_phase(gprs_phase)			
@@ -437,10 +448,10 @@ public sub gprs_proc_ser_data()
 		'		gprs_next_phase()
 		'end if
 		
-		'case GPRS_AT_Q3:
-		'	if gprs_reply=GPRS_REPLY_OK then
-		'		gprs_next_phase()
-		'	end if
+		case GPRS_AT_IFC:
+			if gprs_reply=GPRS_REPLY_OK then
+				gprs_next_phase()
+			end if
 		
 		case GPRS_AT_CGDCONT:
 			if gprs_reply=GPRS_REPLY_OK then
@@ -628,7 +639,7 @@ public sub gprs_proc_timer()
 				if gprs_phase=GPRS_TOGGLE_POWER_1 or gprs_phase=GPRS_TOGGLE_POWER_2 then
 					#if GPRS_MODULE_EXTERNAL=0
 						io.num=GPRS_POWER
-						io.state=LOW
+						io.state=HIGH 'io.state=LOW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					#endif
 					
 					gprs_phase=gprs_phase+1
@@ -655,7 +666,7 @@ public sub gprs_proc_timer()
 					'take the module out of reset
 					#if GPRS_MODULE_EXTERNAL=0
 						io.num=GPRS_RESET
-						io.state=LOW
+						io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<
 					#endif
 					
 					gprs_phase=gprs_phase+1
@@ -717,7 +728,7 @@ sub gprs_proc_timer_2()
 			select case gprs_phase
 			case GPRS_PROBE_1:
 				io.num=GPRS_POWER
-				io.state=HIGH
+				io.state=LOW 'io.state=HIGH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 				gprs_phase=gprs_phase+1
 				gprs_tout_ctr=GPRS_STD_TOUT
 			
@@ -738,8 +749,8 @@ sub gprs_proc_timer_2()
 			'case GPRS_AT_ICF:
 			'	gprs_at_command("+ICF=3",GPRS_STD_TOUT)
 			
-			'case GPRS_AT_Q3:
-			'	gprs_at_command(chr(`\`)+"Q3",GPRS_STD_TOUT)
+			case GPRS_AT_IFC:
+				gprs_at_command("+IFC=2,2",GPRS_STD_TOUT)
 			
 			case GPRS_AT_CGDCONT:
 				gprs_at_command("+CGDCONT=1,"+chr(`"`)+"IP"+chr(`"`)+","+chr(`"`)+gprs_apn+chr(`"`),GPRS_STD_TOUT)
@@ -1172,9 +1183,9 @@ sub gprs_start_over()
 		gprs_phase=GPRS_TOGGLE_POWER_1
 		gprs_tout_ctr=GPRS_STD_TOUT
 		io.num=GPRS_POWER
-		io.state=HIGH
+		io.state=LOW	'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		io.num=GPRS_RESET
-		io.state=LOW
+		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 		#if GPRS_DEBUG_PRINT
 			gprs_debug_print_phase(gprs_phase)				
@@ -1198,11 +1209,11 @@ sub gprs_init()
 	'put the module in reset
 	#if GPRS_MODULE_EXTERNAL=0
 		io.num=GPRS_RESET
-		io.state=LOW
+		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<
 		io.enabled=YES
 		
 		io.num=GPRS_POWER
-		io.state=LOW
+		io.state=HIGH 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		io.enabled=YES
 	#endif
 end sub
@@ -1217,6 +1228,28 @@ sub gprs_eliminate_lf(byref s as string)
 			c=mid(s,f,1)
 			if c<>chr(10) then
 				so=so+c
+			end if
+		next f
+		s=so
+end sub
+
+sub gprs_eliminate_double_cr(byref s as string)
+		dim f as byte
+		dim c as string(1)
+		dim so as string(GPRS_MAX_CMD_REPLY_LEN)
+		dim cr_encountered as no_yes=NO
+		
+		so=""
+		for f=1 to len(s)
+			c=mid(s,f,1)
+			if c<>chr(13) or cr_encountered=NO then
+				so=so+c
+			end if
+		
+			if c=chr(13) then
+				cr_encountered=YES
+			else	
+				cr_encountered=NO
 			end if
 		next f
 		s=so
@@ -1239,7 +1272,7 @@ sub gprs_debug_print_phase(phase as gprs_phases)
 	case GPRS_AT_AT: s="AT"
 	case GPRS_AT_IPR: s="IPR"
 	'case GPRS_AT_ICF: s="ICF"
-	'case GPRS_AT_Q3: s="Q3"
+	case GPRS_AT_IFC: s="Q3"
 	case GPRS_AT_CGDCONT: s="CGDCONT"
 	case GPRS_AT_CGQMIN: s="CGQMIN"
 	case GPRS_AT_DT: s="DT"
