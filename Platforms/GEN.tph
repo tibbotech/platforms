@@ -26,6 +26,8 @@
 #define TPP2W 19
 #define TPP3W 20
 #define TPP2N 21
+#define EM1001 22
+#define EM1001W 23
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1

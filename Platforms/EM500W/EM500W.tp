@@ -1,6 +1,6 @@
 [platform]
 description=EM500 Module + GA1000 Wi-Fi add-on
-version=EM500W-3.50
+version=EM500W-3.60
 rom=327680
 ram=17920
 codebits=24

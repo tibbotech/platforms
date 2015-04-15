@@ -16,7 +16,7 @@ const GPRS_REPLY_CONNECT="CONNECT"
 
 const GPRS_PPP_BUFF_SIZE=GPRS_PAYLOAD_SIZE+1
 const GPRS_SER_BUFF_SIZE=GPRS_PAYLOAD_SIZE*2+1
-const GPRS_STD_TOUT=8 '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<     =4
+const GPRS_STD_TOUT=8
 const GPRS_ECHO_TOUT=60
 const GPRS_POST_RESET_TOUT=60
 const GPRS_MAX_CMD_TRIES=5
@@ -255,10 +255,7 @@ public function gprs_start(byref at_dt_command_param as string, byref apn as str
 		gprs_phase=GPRS_TOGGLE_POWER_1
 		gprs_tout_ctr=GPRS_STD_TOUT
 		io.num=GPRS_POWER
-		io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		
-		io.num=GPRS_RESET
-		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		io.state=HIGH
 	#endif
 
 	'reset variables
@@ -310,12 +307,6 @@ public sub gprs_stop()
 	gprs_linkup_in_prog=NO
 
 	ser.num=GPRS_SER_PORT
-
-	#if GPRS_MODULE_EXTERNAL=0
-		'put the GPRS module in reset
-		io.num=GPRS_RESET
-		io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	#endif
 
 	'serial port can now be used for normal traffic again
 	ppp.enabled=NO
@@ -424,11 +415,8 @@ public sub gprs_proc_ser_data()
 		
 		case GPRS_PROBE_1,GPRS_PROBE_2:
 			'this is the reply to our AT command, so we now know that the module is ON
-			'start the reset
-			gprs_phase=GPRS_RESET_PULSE
-			io.num=GPRS_RESET
-			io.state=LOW 'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-			gprs_tout_ctr=GPRS_STD_TOUT
+			gprs_phase=GPRS_POST_RESET
+			gprs_tout_ctr=GPRS_POST_RESET_TOUT 'override standard reset in gprs_next_phase()	
 			#if GPRS_DEBUG_PRINT
 				gprs_debug_print_phase(gprs_phase)			
 			#endif
@@ -639,11 +627,11 @@ public sub gprs_proc_timer()
 				if gprs_phase=GPRS_TOGGLE_POWER_1 or gprs_phase=GPRS_TOGGLE_POWER_2 then
 					#if GPRS_MODULE_EXTERNAL=0
 						io.num=GPRS_POWER
-						io.state=HIGH 'io.state=LOW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						io.state=LOW
 					#endif
 					
 					gprs_phase=gprs_phase+1
-					gprs_tout_ctr=1 'override standard reset in gprs_next_phase()	
+					gprs_tout_ctr=GPRS_STD_TOUT
 					#if GPRS_DEBUG_PRINT
 						gprs_debug_print_phase(gprs_phase)			
 					#endif
@@ -663,12 +651,6 @@ public sub gprs_proc_timer()
 	else if gprs_phase=GPRS_RESET_PULSE or gprs_phase=GPRS_POST_RESET then
 		if gprs_tout_ctr=0 then
 				if gprs_phase=GPRS_RESET_PULSE then
-					'take the module out of reset
-					#if GPRS_MODULE_EXTERNAL=0
-						io.num=GPRS_RESET
-						io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<
-					#endif
-					
 					gprs_phase=gprs_phase+1
 					gprs_tout_ctr=GPRS_POST_RESET_TOUT 'override standard reset in gprs_next_phase()	
 					#if GPRS_DEBUG_PRINT
@@ -728,7 +710,7 @@ sub gprs_proc_timer_2()
 			select case gprs_phase
 			case GPRS_PROBE_1:
 				io.num=GPRS_POWER
-				io.state=LOW 'io.state=HIGH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+				io.state=HIGH
 				gprs_phase=gprs_phase+1
 				gprs_tout_ctr=GPRS_STD_TOUT
 			
@@ -1123,7 +1105,6 @@ function gprs_fcs_value(x as byte) as word
 			gprs_fcs_value=gprs_fcs_value/2
 		end if
 	next f
-	return gprs_fcs_value
 end function
 
 '--------------------------------------------------------------------
@@ -1183,9 +1164,7 @@ sub gprs_start_over()
 		gprs_phase=GPRS_TOGGLE_POWER_1
 		gprs_tout_ctr=GPRS_STD_TOUT
 		io.num=GPRS_POWER
-		io.state=LOW	'io.state=HIGH<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		io.num=GPRS_RESET
-		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		io.state=HIGH
 
 		#if GPRS_DEBUG_PRINT
 			gprs_debug_print_phase(gprs_phase)				
@@ -1209,11 +1188,11 @@ sub gprs_init()
 	'put the module in reset
 	#if GPRS_MODULE_EXTERNAL=0
 		io.num=GPRS_RESET
-		io.state=LOW 'io.state=LOW<<<<<<<<<<<<<<<<<<<<
+		io.state=LOW
 		io.enabled=YES
 		
 		io.num=GPRS_POWER
-		io.state=HIGH 'io.state=LOW<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		io.state=HIGH
 		io.enabled=YES
 	#endif
 end sub
