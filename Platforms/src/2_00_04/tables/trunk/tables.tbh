@@ -45,6 +45,8 @@
 #ifndef TBL_TIME_TYPE_INCLUDED	'must include time library
 	#define TBL_TIME_TYPE_INCLUDED 1
 #endif
+
+const PL_FD_FIND_PARTIAL_EQUAL=7	'extending the fd.find mode
 '--------------------------------------------------------------------------------
 enum en_tbl_search_direction
 	EN_TBL_SEARCH_DOWN,
