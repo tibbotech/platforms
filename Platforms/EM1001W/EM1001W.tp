@@ -1,6 +1,6 @@
 [platform]
 description=EM1001 Module + GA1000 Wi-Fi add-on
-version=EM1001W-3.50
+version=EM1001W-3.60
 rom=3080192
 ram=22528
 codebits=24
@@ -18,10 +18,8 @@ description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
-
 [defineimports]
 import1=../GEN.tp
-
 
 [define1]
 define=OBJECT_LCD
@@ -35,7 +33,6 @@ value=LCD_DISABLED
 [define1.option2]
 description=Enabled
 value=LCD_ENABLED
-
 
 [define2]
 define=LCD_TYPE
@@ -74,14 +71,28 @@ value=KP_ENABLED
 
 
 [define4]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_ENABLED
+
+[define4.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define4.option2]
+description=Enabled
+value=FD_ENABLED
+
+
+[define5]
 define=OBJECT_WLN
 description=Wi-Fi (wln.) object
 value=WLN_ENABLED
 
-[define4.option1]
+[define5.option1]
 description=Disabled
 value=WLN_DISABLED
 
-[define4.option2]
+[define5.option2]
 description=Enabled
 value=WLN_ENABLED

@@ -1,6 +1,6 @@
 [platform]
 description=NB1010 Board
-version=NB1010-3.50
+version=NB1010-3.60
 rom=983040
 ram=22528
 codebits=24

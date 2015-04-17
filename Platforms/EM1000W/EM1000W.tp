@@ -1,6 +1,6 @@
 [platform]
 description=EM1000 Module + GA1000 Wi-Fi add-on
-version=EM1000W-3.50
+version=EM1000W-3.60
 rom=983040
 ram=22528
 codebits=24
@@ -18,10 +18,8 @@ description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
-
 [defineimports]
 import1=../GEN.tp
-
 
 [define1]
 define=OBJECT_LCD
@@ -35,7 +33,6 @@ value=LCD_DISABLED
 [define1.option2]
 description=Enabled
 value=LCD_ENABLED
-
 
 [define2]
 define=LCD_TYPE
@@ -58,7 +55,6 @@ value=SOLOMON_SSD1329
 description=Solomon SSD1963 (Winstar WF35)
 value=SOLOMON_SSD1963
 
-
 [define3]
 define=OBJECT_KP
 description=Keypad (kp.) object
@@ -72,7 +68,6 @@ value=KP_DISABLED
 description=Enabled
 value=KP_ENABLED
 
-
 [define4]
 define=OBJECT_FD
 description=Flash disk (fd.) object
@@ -85,7 +80,6 @@ value=FD_DISABLED
 [define4.option2]
 description=Enabled
 value=FD_ENABLED
-
 
 [define5]
 define=OBJECT_WLN
