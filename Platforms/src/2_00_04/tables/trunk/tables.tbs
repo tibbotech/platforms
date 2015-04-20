@@ -1747,7 +1747,17 @@ public function tbl_record_find(
 			end if
 		next i
 query:		
-		daddr=daddr+daddr_offset		
+		'extended partial equal string search
+		if find_method=PL_FD_FIND_PARTIAL_EQUAL then
+			if tbl_field_info(field_index).field_type<>`S` then
+				goto tbl_not_found
+			end if
+			s=right(s,len(s)-1)
+			daddr_offset=daddr_offset+1
+			find_method=PL_FD_FIND_EQUAL
+		end if
+		
+		daddr=daddr+daddr_offset
 		daddr_temp=fd.find(daddr,s,1,direction,tbl_info(tbl_info_index).rec_size,find_method)
 		if daddr_temp=0 then
 			goto tbl_not_found
