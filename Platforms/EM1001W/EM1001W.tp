@@ -55,7 +55,6 @@ value=SOLOMON_SSD1329
 description=Solomon SSD1963 (Winstar WF35)
 value=SOLOMON_SSD1963
 
-
 [define3]
 define=OBJECT_KP
 description=Keypad (kp.) object
@@ -69,7 +68,6 @@ value=KP_DISABLED
 description=Enabled
 value=KP_ENABLED
 
-
 [define4]
 define=OBJECT_FD
 description=Flash disk (fd.) object
@@ -82,7 +80,6 @@ value=FD_DISABLED
 [define4.option2]
 description=Enabled
 value=FD_ENABLED
-
 
 [define5]
 define=OBJECT_WLN
