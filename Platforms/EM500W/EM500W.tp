@@ -1,10 +1,10 @@
 [platform]
 description=EM500 Module + GA1000 Wi-Fi add-on
 version=EM500W-3.60
-rom=327680
+rom=1048576
 ram=17920
 codebits=24
-sector=65536
+sector=131072
 
 [transport1]
 name=udp_winpcap

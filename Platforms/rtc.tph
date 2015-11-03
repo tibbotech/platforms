@@ -12,7 +12,6 @@ object rtc
 'not "clock". This platform includes a set of convenient date and time conversion functions that can be used to transform RTC
 'data into current weekday, date, and time (see <font color="teal"><b>weekday</b></font>, <font color="teal"><b>year</b></font>, <font color="teal"><b>month</b></font>, <font color="teal"><b>date</b></font>, <font color="teal"><b>hours</b></font>, minutes).
 
-
 '--------------------------------------------------------------------
 syscall(175,"27.TDL") rtc.getdata(byref daycount as word, byref mincount as word, byref seconds as byte)
 '<b>METHOD. </b><br><br> 
@@ -43,3 +42,34 @@ property rtc.running
 'cannot be used to reliably check RTC state in this situation.
 	get = syscall(177,"29.TDL"+) as no_yes
 end property
+
+'--------------------------------------------------------------------
+property rtc.clock512
+	get = syscall(614) as dis_en
+	set = syscall(615) (value as dis_en)
+end property
+
+'--------------------------------------------------------------------
+property rtc.calibration
+	get = syscall(616) as char
+	set = syscall(617) (value as char)
+end property
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

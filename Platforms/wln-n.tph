@@ -22,7 +22,7 @@ enum pl_wln_bss_modes
 end enum
 
 '--------------------------------------------------------------------
-syscall(488,"71.TDL") wln.associate(byref bssid as string, byref ssid as string, channel as byte, bssmode as pl_wln_bss_modes) as accepted_rejected
+syscall(488,"71N.TDL") wln.associate(byref bssid as string, byref ssid as string, channel as byte, bssmode as pl_wln_bss_modes) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to attempt association with the wireless network specified by the arguments.
@@ -87,7 +87,7 @@ syscall(451,"70N.TDL") wln.boot(offset as dword) as ok_ng
 'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
 
 '--------------------------------------------------------------------
-syscall(503,"35.TDL") wln.buffrq(numpages as byte) as byte
+syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
 '<br><br>
 'Pre-requests a number of buffer pages (1 page= 256 bytes) for the TX buffer of the wln. object.
@@ -108,7 +108,7 @@ property wln.buffsize
 'Returns current capacity (in bytes) of the wln object's TX buffer.
 '<br><br>
 'Buffer capacity is set using wln.buffrq method.
-	get = syscall(504,"72.TDL"+) as word
+	get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -385,7 +385,7 @@ syscall(581,"71.TDL") wln.updaterssi() as accepted_rejected
 'Causes the Wi-Fi interface to commence RSSI value updating.
 
 '--------------------------------------------------------------------
-syscall(489,"71.TDL") wln.scan(byref ssid as string) as accepted_rejected
+syscall(489,"71N.TDL") wln.scan(byref ssid as string) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence either the search for available wireless networks or obtainment of additional information about a particular network specified by its SSID (name).
