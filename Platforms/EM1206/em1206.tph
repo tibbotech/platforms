@@ -6,6 +6,9 @@
 
 #define PLATFORM_ID 4
 
+#define BUFF_PAGE_TYPE byte
+#define BUFF_SIZE_TYPE word
+
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).

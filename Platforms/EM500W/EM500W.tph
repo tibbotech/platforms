@@ -8,6 +8,9 @@
 
 #define PLATFORM_ID 15
 
+#define BUFF_PAGE_TYPE byte
+#define BUFF_SIZE_TYPE word
+
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
 	#define __cfgstr "<FD>"

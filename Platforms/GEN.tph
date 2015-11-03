@@ -28,6 +28,7 @@
 #define TPP2N 21
 #define EM1001 22
 #define EM1001W 23
+#define EM2000 24
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
@@ -41,6 +42,7 @@
 #define HIMAX_HX8347 6
 #define ILITEK_ILI9341 7
 #define SOLOMON_SSD1963_FIXED_IO2 8
+#define SITRONIX_ST7789S 9
 
 '55x -- "driver" TDL (low-level stuff like setpixel, etc. but without getpixel)
 '56x -- "info" TDL (LCD dimensions, colors, etc.)
@@ -73,9 +75,9 @@
 	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
 	#define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963_FIXED_IO2
-	#define LCD_DRIVER_TDL "55h.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
+	#define LCD_DRIVER_TDL "55h.TDL"+
+	#define LCD_DRIVER_TDL2 "56d.TDL"+
+	#define LCD_DRIVER_TDL3 "75d.TDL"+
 	#define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1305
 	#define LCD_DRIVER_TDL "55e.TDL"+
@@ -92,6 +94,12 @@
 	#define LCD_DRIVER_TDL2 "56g.TDL"+ 
 	#define LCD_DRIVER_TDL3 "75g.TDL"+ 
 	#define LCD_DRIVER_TDL4 "79g.TDL"+
+#elif LCD_TYPE=SITRONIX_ST7789S
+	#define LCD_DRIVER_TDL "55k.TDL"+ 
+	#define LCD_DRIVER_TDL2 "56k.TDL"+ 
+	#define LCD_DRIVER_TDL3 "75k.TDL"+ 
+	#define LCD_DRIVER_TDL4 "79k.TDL"+
+
 #endif
 
 #if PLATFORM_ID=7
@@ -166,6 +174,11 @@ end enum
 enum ver_hor 
 	PL_VERTICAL,	'PLATFORM CONSTANT. Vertical.
 	PL_HORIZONTAL	'PLATFORM CONSTANT. Horizontal.
+end enum
+
+enum ris_fal 
+	RISING,			'<b>GENERIC PLATFORM CONSTANT. </b>
+	FALLING			'<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 
@@ -696,7 +709,15 @@ syscall(62,"51.TDL") !initobj(byref obj, rtti as word)
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
-syscall(63,"51.TDL") !gotoidx(byref obj,count as byte,i1 as word,i2 as word,i3 as word,i4 as word,i5 as word,i6 as word,i7 as word,i8 as word) as word
+syscall(249,"51.TDL") !objtostr(byref obj, byref s as string)
+'<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
+
+'--------------------------------------------------------------------
+syscall(250,"51.TDL") !strtoobj(byref obj, byref s as string)
+'<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
+
+'--------------------------------------------------------------------
+syscall(63,"51.TDL") !gotoidx(byref obj,count as byte,i1 as word,i2 as word,i3 as word,i4 as word,i5 as word,i6 as word,i7 as word,i8 as word) as dword '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
@@ -787,7 +808,8 @@ syscall(549,"09.TDL") insert(byref dest_str as string,pos as byte,byref insert_s
 'not allow the source_str to fit within the current length of the dest_string.
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>EM500W and PLATFORM_ID<>DS1100
+#if PLATFORM_ID<>EM500W
+	#if PLATFORM_ID<>DS1100
 syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Encrypts data in 16-byte blocks according to the AES128 algorithm. Returns encrypted data (which will consist of complete 16-character blocks).
@@ -798,10 +820,12 @@ syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as st
 '<br><br>
 'Not supported on the EM500W platform.
 '<b>See also: </b>aes128dec, rc4.
+	#endif
 #endif
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>EM500W and PLATFORM_ID<>DS1100
+#if PLATFORM_ID<>EM500W
+	#if PLATFORM_ID<>DS1100
 syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Decrypts data in 16-byte blocks according to the AES128 algorithm. Returns decrypted data (which will consist of complete 16-character blocks).
@@ -813,6 +837,7 @@ syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as s
 'Not supported on the EM500W platform.
 '<br><br>
 '<b>See also: </b>aes128dec, rc4.
+	#endif
 #endif
 
 '--------------------------------------------------------------------
@@ -1050,14 +1075,14 @@ event(6)  on_sock_overrun
 '--------------------------------------------------------------------
 event(8)  on_pat
 '<b>EVENT of the pat object. </b><br><br>
-'Generated when LED pattern finishes "playing". This can only happened for "non-looped" patterns.
+'Generated when an LED pattern finishes "playing". This can only happened for "non-looped" patterns.
 '<br><br>
-'Multiple <font color="teal"><b>on_pat </b></font>events may be waiting in the event queue.
-'When the event handler for this event is entered the
-'<font color="maroon"><b>pat.channel </b></font>
-'property is automatically set to the channel for which this event was generated. 
-
-
+'Multiple on_pat events may be waiting in the event queue (but not exceeding one per channel).
+'<br><br>
+'On entering the event handler, pat.channel will be set to the channel number for which this event was generated. 
+'<br><br>
+'The event won't be generated if the current pattern is superseded (overwritten) by a new call to pat.play.
+ 
 '--------------------------------------------------------------------
 event(9)  on_ser_esc
 '<b>EVENT of the ser object. </b><br><br> 
@@ -1134,15 +1159,11 @@ event(13) on_sock_data_sent
 '--------------------------------------------------------------------
 event(16) on_button_released
 '<b>EVENT of the button object. </b><br><br> 
-'Generated when the button on your device is released. Multiple <font color="teal"><b>on_button_released </b></font>
-'events may be waiting in the event queue. <br><br>
-'You can check the time elapsed since the previous <font color="teal"><b> on_button_pressed</b></font> event by reading the 
-'value of the <font color="maroon"><b>button.time </b></font>read-only property.
+'Generated when the MD button on your device is released (MD line goes HIGH).
 '<br><br>
-'Note that the button object performs "debouncing" which rejects very brief transitions of the button state.
-'This event will not be generated for such spurious transitions.
+'Multiple on_button_released events may be waiting in the event queue.
 '<br><br>
-'See also: <font color="teal"><b>on_button_pressed </b></font>event.
+'You can check the time elapsed since the preceding on_button_pressed event by reading the value of the button.time read-only property.
 
 '--------------------------------------------------------------------
 event(18)  on_sock_tcp_packet_arrival(len as word)
@@ -1165,15 +1186,12 @@ event(18)  on_sock_tcp_packet_arrival(len as word)
 '--------------------------------------------------------------------
 event(31) on_button_pressed
 '<b>EVENT of the button object. </b><br><br> 
-'Generated when the button on your device is pressed. Multiple <font color="teal"><b>on_button_pressed </b></font>
-'events may be waiting in the event queue.<br><br>
-'You can check the time elapsed since the previous <font color="teal"><b> on_button_released </b></font>event by reading the
-'value of the <font color="maroon"><b>button.time </b></font>read-only property.
+'Generated when the MD button on your device is pressed (MD line goes LOW).
 '<br><br>
-'Note that the button object performs "debouncing" which rejects very brief transitions of the button state.
-'This event will not be generated for such spurious transitions.
+'Multiple on_button_pressed events may be waiting in the event queue.
 '<br><br>
-'See also: <font color="teal"><b>on_button_released </b></font>event.
+'You can check the time elapsed since the preceding on_button_released event (or execution start) by reading the value of the button.time read-only property.
+
 
 
 '**************************************************************************************************
@@ -1609,7 +1627,7 @@ property ser.rxbuffsize
 'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.rxbuffrq</b></font>.
 '"-16" is because 16 bytes are needed for internal buffer variables. <br><br>
 'The serial port cannot RX data when the RX buffer has zero capacity.
-	get = syscall(122,"38.TDL"+) as word
+	get = syscall(122,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1623,7 +1641,7 @@ property ser.txbuffsize
 'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.txbuffrq</b></font>. 
 '"-16" is because 16 bytes are needed for internal buffer variables. <br><br>
 'The serial port cannot TX data when the TX buffer has zero capacity.
-	get = syscall(123,"38.TDL"+) as word
+	get = syscall(123,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1641,7 +1659,7 @@ property ser.rxlen
 'Notice that the RX buffer of the serial port employes "data committing" based on the amount of data in the buffer and intercharacter delay 
 '(<font color="maroon"><b>ser.interchardelay</b></font>). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
 'to your application and is not included in the count returned by the  <font color="maroon"><b>ser.rxlen</b></font>).
-	get = syscall(124,"37.TDL"+) as word
+	get = syscall(124,"37.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1654,7 +1672,7 @@ property ser.txlen
 'on_ser_data_sent </b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the
 '<font color="maroon"><b>ser.notifysent </b></font> method. <br><br>
 'See also <font color="maroon"><b>ser.newtxlen</b></font>.
-	get = syscall(125,"37.TDL"+) as word
+	get = syscall(125,"37.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1666,7 +1684,7 @@ property ser.txfree
 'be able to store more data than this amount.<br><br>
 'To achieve asynchronous data processing, use the <font color="maroon"><b>ser.notifysent</b></font> method to get <font color="teal">
 '<b>on_ser_data_sent </b></font>event once the TX buffer gains required amount of free space.
-	get = syscall(127) as word
+	get = syscall(127) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1676,7 +1694,7 @@ property ser.newtxlen
 'in bytes.<br><br>
 'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>ser.setdata </b></font>method but not yet committed
 'using the <font color="maroon"><b>ser.send</b></font>) method.
-	get = syscall(133) as word
+	get = syscall(133) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1753,6 +1771,14 @@ syscall(132) ser.send()
 '<font color="maroon"><b>ser.notifysent </b></font>method and the <font color="teal"><b>on_ser_data_sent </b></font>event. 
 
 '--------------------------------------------------------------------
+syscall(635) !ser.gettxdata(maxinplen as word) as string
+syscall(636) !ser.setcommitrxdata(byref txdata as string)
+syscall(637) !sock.gettxdata(maxinplen as word) as string
+syscall(638) !sock.setcommitrxdata(byref txdata as string)
+syscall(639) !sock.setcommitcmddata(byref txdata as string)
+syscall(640) !sock.getrpldata(maxinplen as word) as string
+
+'--------------------------------------------------------------------
 syscall(134) ser.notifysent(threshold as word)
 '<b>METHOD. </b><br><br>
 'Using this method for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) will cause the 
@@ -1764,7 +1790,7 @@ syscall(134) ser.notifysent(threshold as word)
 'Just like with <font color="maroon"><b>ser.txfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
 
 '--------------------------------------------------------------------
-syscall(85,"35.TDL"+) ser.rxbuffrq(numpages as byte) as byte
+syscall(85,"35.TDL"+) ser.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num </b></font>) pre-requests "numpages" number of 
 'buffer pages (1 page= 256 bytes) for the RX buffer of the serial port. Returns actual number of pages that can be allocated.
@@ -1780,7 +1806,7 @@ syscall(85,"35.TDL"+) ser.rxbuffrq(numpages as byte) as byte
 'See also <font color="maroon"><b>ser.txbuffrq </b></font>method.
 
 '--------------------------------------------------------------------
-syscall(86,"35.TDL"+) ser.txbuffrq(numpages as byte) as byte
+syscall(86,"35.TDL"+) ser.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num </b></font>) pre-requests "numpages" number of 
 'buffer pages (1 page= 256 bytes) for the TX buffer of the serial port. Returns actual number of pages that can be allocated.
@@ -2333,7 +2359,7 @@ property sock.rxbuffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>. "-16" is 
 'because 16 bytes are needed for internal buffer variables. <br><br>
 'The socket cannot RX data when the RX buffer has zero capacity.
-	get = syscall(230,"36.TDL"+) as word
+	get = syscall(230,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2347,8 +2373,32 @@ property sock.txbuffsize
 '"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-16" is because 16
 'bytes are needed for internal buffer variables.<br><br>
 'The socket cannot TX data when the TX buffer has zero capacity.
-	get = syscall(231,"36.TDL"+) as word
+	get = syscall(231,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
+
+#if EXTENDED_SOCK=1
+
+property sock.cmdbuffsize
+'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+	get = syscall(631,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
+property sock.rplbuffsize
+'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+	get = syscall(632,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
+property sock.varbuffsize
+'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+	get = syscall(633,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
+property sock.tx2buffsize
+'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+	get = syscall(634,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
+#endif
 
 '--------------------------------------------------------------------
 property sock.rxlen
@@ -2361,7 +2411,7 @@ property sock.rxlen
 'is handled. If, during the <font color="teal"><b>on_sock_data_arrival </b></font>event handler execution, not all data is extracted from the 
 'RX buffer, another <font color="teal"><b>on_sock_data_arrival </b></font>event is generated immediately after the <font color="teal"><b>
 'on_sock_data_arrival </b></font>event handler is exited.
-	get = syscall(232,"36.TDL"+) as word
+	get = syscall(232,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2374,7 +2424,7 @@ property sock.txlen
 '</b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the <font color="maroon"><b>
 'sock.notifysent</b></font> method. <br><br>
 'See also <font color="maroon"><b>sock.newtxlen</b></font>.
-	get = syscall(233,"36.TDL"+) as word
+	get = syscall(233,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2386,7 +2436,7 @@ property sock.txfree
 'Your application will not be able to store more data than this amount. To achieve asynchronous data processing, use the <font color="maroon">
 '<b>sock.notifysent</b></font> method to get <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains required 
 'amount of free space.
-	get = syscall(235,"36.TDL"+) as word
+	get = syscall(235,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2395,7 +2445,7 @@ property sock.newtxlen
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of uncommitted TX data in 
 'bytes. Uncommitted data is the one that was added to the TX buffer with the <font color="maroon"><b>sock.setdata </b></font> method but not 
 'yet committed using the <font color="maroon"><b>sock.send </b></font>method.
-	get = syscall(242) as word
+	get = syscall(242) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2462,7 +2512,7 @@ property sock.cmdlen
 'to be processed in the CMD buffer. This buffer accumulates incoming inband commands (messages) and may contain more than one such command.
 'Use <font color="maroon"><b>sock.getinband </b></font> method to extract the data from the CMD buffer. <br><br>
 'See also <font color="maroon"><b>sock.rpllen </b></font> and <font color="maroon"><b>sock.inbandcommands</b></font>.
-	get = syscall(96,"36.TDL"+) as word
+	get = syscall(96,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2474,7 +2524,7 @@ property sock.rpllen
 'inband replies may be waiting in the RPL buffer.<br><br>
 'See also <font color="maroon"><b>sock.cmdlen</b></font>, <font color="maroon"><b>sock.rplfree </b></font> and <font color="maroon"><b>
 'sock.inbandcommands</b></font>.
-	get = syscall(97,"36.TDL"+) as word
+	get = syscall(97,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2486,7 +2536,7 @@ property sock.rplfree
 'replies may be waiting in the RPL buffer.<br><br>
 'See also <font color="maroon"><b>sock.cmdlen</b></font>, <font color="maroon"><b>sock.rpllen </b></font> and <font color="maroon"><b>
 'sock.inbandcommands</b></font>.
-	get = syscall(99,"36.TDL"+) as word
+	get = syscall(99,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2497,7 +2547,7 @@ property sock.tx2len
 '(<font color="maroon"><b>sock.inbandcommands</b></font>= <font color="olive"><b>1- YES</b></font>).<br><br>
 'If your application needs to make sure that all data is actually sent out then it must verify that both TX and TX2 buffers are empty.<br><br>
 'See also <font color="maroon"><b>sock.txlen</b></font> and <font color="maroon"><b>sock.txfree</b></font>.
-	get = syscall(98,"36.TDL"+) as word
+	get = syscall(98,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2676,7 +2726,7 @@ syscall(229) sock.discard()
 'See also <font color="maroon"><b>sock.close </b></font> and <font color="maroon"><b>sock.reset </b></font> methods.
 
 '--------------------------------------------------------------------
-syscall(89,"35.TDL") sock.rxbuffrq(numpages as byte) as byte
+syscall(89,"35.TDL") sock.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the RX buffer of the socket. Returns actual number of pages that can be allocated.<br><br>
@@ -2692,7 +2742,7 @@ syscall(89,"35.TDL") sock.rxbuffrq(numpages as byte) as byte
 'See also <font color="maroon"><b>sock.txbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
-syscall(90,"35.TDL") sock.txbuffrq(numpages as byte) as byte
+syscall(90,"35.TDL") sock.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the TX buffer of the socket. Returns actual number of pages that can be allocated.<br><bR>
@@ -2708,7 +2758,7 @@ syscall(90,"35.TDL") sock.txbuffrq(numpages as byte) as byte
 'See also <font color="maroon"><b>sock.tx2buffrq </b></font> method.
 
 '--------------------------------------------------------------------
-syscall(91,"35.TDL") sock.cmdbuffrq(numpages as byte) as byte
+syscall(91,"35.TDL") sock.cmdbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the CMD buffer of the socket; this is the buffer that accumulates incoming inband commands (messages). Returns actual 
@@ -2724,7 +2774,7 @@ syscall(91,"35.TDL") sock.cmdbuffrq(numpages as byte) as byte
 'See also <font color="maroon"><b>sock.rplbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
-syscall(92,"35.TDL") sock.rplbuffrq(numpages as byte) as byte
+syscall(92,"35.TDL") sock.rplbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the RPL buffer of the socket; this is the buffer that stores outgoing inband replies (messages). Returns actual number
@@ -2740,7 +2790,7 @@ syscall(92,"35.TDL") sock.rplbuffrq(numpages as byte) as byte
 'See also <font color="maroon"><b>sock.cmdbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
-syscall(93,"35.TDL") sock.varbuffrq(numpages as byte) as byte
+syscall(93,"35.TDL") sock.varbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the VAR buffer of the socket; this is the buffer that stores the HTTP request string. Returns actual number of pages 
@@ -2756,7 +2806,7 @@ syscall(93,"35.TDL") sock.varbuffrq(numpages as byte) as byte
 'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see <font color="maroon"><b>sock.httpmode</b></font> 'roperty, also <font color="maroon"><b>sock.httpportlist</b></font>.
 
 '--------------------------------------------------------------------
-syscall(94,"35.TDL") sock.tx2buffrq(numpages as byte) as byte
+syscall(94,"35.TDL") sock.tx2buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) pre-requests "numpages" number of buffer pages
 '(1 page= 256 bytes) for the TX2 buffer of the socket; this buffer is required when inband commands are enabled (<font color="maroon"><b>
@@ -2925,93 +2975,97 @@ end property
 '**************************************************************************************************
 
 object romfile
-'The romfile object allows you to access resource (ROM) files that you have added to your project. Resource files appear in
-'the "Resource Files" folder of your project tree. Resource files are not processed by the compiler in any way, they are just added
-'to the compiled project binary "as is".
+'The romfile object allows you to access resource (fixed) files that you have added to your project.
+'Resource files appear under the "Resource Files" branch of your project tree.
+'Resource files are not processed by the compiler in any way, they are just added to the compiled project binary "as is".
 '<br><br>
 'Resource files are ideal for storing permanent data that never changes.
 
 '--------------------------------------------------------------------
 syscall(53,"16.TDL") romfile.find(frompos as dword, byref substr as string, num as word) as word
-'<b>METHOD. </b><br><br> 
-'Locates the Nth occurrence of a substring within the currently opened resource (ROM) file.
+'<b>METHOD. [LEGACY]</b><br><br> 
+'Locates the Nth occurrence of a substring within the currently opened resource file. <b>Will not work correctly for files exceeding 64K bytes.</b>
 '<br><br>
 'Returns a <i>16-bit </i>value indicating the file position at which the specified occurrence of the substring was found or 0 if the specified occurrence wasn't found.
-'If the specified occurrence was found at file position 65535 or higher, the value of 65535 will be returned.
+'<b>The output is truncated to 16 bits. This is why this method will only work for files not exceeding 64K bytes.</b>
 '<br><br>
-'<b>Frompos </b>-- starting search position in the file (1 to romfile.size).
+'For this method to work, a resource file must first be successfully opened with romfile.open.
+'<br><br>
+'<b>Frompos </b>-- starting search position in the file. File positions are counted from 1.
 '<br><br>
 '<b>Substr </b>-- substring to search for.
 '<br><br>
 '<b>Num </b>-- substring occurrence to search for.
 '<br><br>
-'Bytes in the resource files are counted from 1.
-'Use romfile.find32 if you are searching within a file larger than 65535 bytes. 
+'This method was preserved for compatibility with previously developed applications. You are recommended to use romfile.find32 -- it has no file size limitations. 
 
 '--------------------------------------------------------------------
 syscall(509,"16.TDL") romfile.find32(frompos as dword, byref substr as string, num as word) as dword
 '<b>METHOD. </b><br><br> 
-'Locates the Nth occurrence of a substring within the currently opened resource (ROM) file.
+'Locates the Nth occurrence of a substring within the currently opened resource file.
 '<br><br>
 'Returns a <i>32-bit </i>value indicating the file position at which the specified occurrence of the substring was found or 0 if the specified occurrence wasn't found.
 '<br><br>
-'<b>Frompos </b>-- starting search position in the file (1 to romfile.size).
+'For this method to work, a resource file must first be successfully opened with romfile.open.
+'<br><br>
+'<b>Frompos </b>-- starting search position in the file. File positions are counted from 1.
 '<br><br>
 '<b>Substr </b>-- substring to search for.
 '<br><br>
 '<b>Num </b>-- substring occurrence to search for.
-'<br><br>
-'Bytes in the resource files are counted from 1.
-'When searching inside files that do not exceed 65535 bytes, use romfile.find instead -- this will speed up your application.
 
 '--------------------------------------------------------------------
 syscall(57,"17.TDL") romfile.getdata(maxinplen as byte) as string
 '<b>METHOD. </b><br><br> 
-'Reads data from a currently opened resource (ROM) file.
+'Reads the specified amount of bytes (characters) from the currently opened resource file, from the location pointed at by the file pointer (romfile.pointer32).
 '<br><br>
-'<b>Maxinplen </b>-- maximum number of characters to read from the file.
+'Returns a string containing a part of the resource file's data.
 '<br><br>
-'The actual return string length is limited by three factors, whichever is smaller:
-'the capacity of the receiving string, the amount of remaining data in the file (romfile.size+1-romfile.pointer),
-'and the maxinplen argument.
+'For this method to work, a resource file must first be successfully opened with romfile.open.
 '<br><br>
 'Invoking this method moves the current pointer position forward by the actual number of bytes read.
+'<br><br>
+'<b>Maxinplen </b>-- maximum number of characters to read from the file.
+'The length of the returned string is also limited by two other factors: the receiving string capacity, and the amount of remaining data in the file (romfile.size+1-romfile.pointer).
 
 '--------------------------------------------------------------------
 property romfile.offset
 '<b>R/O PROPERTY (DWORD)</b>.
 '<br><br>
-'For the currently opened resource (ROM) file returns the absolute file offset in the compiled project binary.
+'For the currently opened resource file returns the absolute file offset of this file in the compiled project binary.
+'<br><br>
+'For this property to return meaningful data, a resource file must first be successfully opened with romfile.open.
 	get = syscall(61) as dword
 end property
 
 '--------------------------------------------------------------------
 syscall(52,"15.TDL") romfile.open(byref filename as string)
 '<b>METHOD. </b><br><br> 
-'Opens or re-opens a resource (ROM) file.
+'Opens or re-opens a resource file.
 '<br><br>
-'<b>Filename </b>-- name of the resource file to open.
+'After the file is successfully opened (or re-opened), romfile.offset and romfile.size will start to return meaningful values.
+'In addition, the file pointer (romfile.pointer, romfile.pointer32) will be set to 1.
+'It will also become possible to use romfile.find, romfile.find32, and romfile.getdata methods.
 '<br><br>
-'If the file exists and is not empty, the romfile.pointer and romfile.pointer32 properties are set to 1 (each time you (re)open the file).
-'If the file doesn't exist or is empty, these two properties are set to 0.
+'<b>Filename </b>-- name of the resource file to open. Files that can be opened with this method are those appearing under the "Resource Files" branch of your project tree. 
 '<br><br>
 'There is no method (or need) to explicitly close resource files. Only one resource file can be opened at any given time.
 
 '--------------------------------------------------------------------
 property romfile.pointer
-'<b>PROPERTY (WORD). </b><br><br>
-'Sets/returns the current pointer position in the resource (ROM) file.
+'<b>PROPERTY (WORD) [LEGACY]. </b><br><br>
+'Sets/returns the current pointer position in the currently opened resource file. <b>Will not work correctly for files exceeding 64K bytes.</b>
 '<br><br>
-'When the file is (re)opened with the romfile.open method,
-'the pointer is reset to the first character of the file (position 1). If the file is not found or contains no data,
-'the pointer is set to 0.
+'If no file is opened, the file is empty, or the file opening fails (because the file with the specified name does not exist), the pointer is set to 0.
+'For successfully opened non-empty resource files, the pointer value range is from 1 (first file position) to romfile.size+1 (past the last file position).
 '<br><br>
-'Pointer position cannot exceed romfile.size+1. When you read from the file with romfile.getdata, the pointer is automatically
-'moved forward by the number of bytes that have been read out.
+'For this property to work, a non-empty resource file must first be successfully opened with romfile.open.
 '<br><br>
-'Since this property is of the <i>word </i>type, the maximum pointer value you can set with it is 65535.
-'Reading the current pointer position with this property will return 65535 for all pointer positions from 65535 and up.
-'To navigate within the files that exceed 65535 bytes, use romfile.pointer32 instead. 
+'When a non-empty file is (re)opened with the romfile.open method, the pointer is reset to the first character of the file (position 1).
+'<br><br>
+'When you read from the file with romfile.getdata, the pointer is automatically moved forward by the number of bytes (characters) that have been read out.
+'<br><br>
+'This method was preserved for compatibility with previously developed applications. You are recommended to use romfile.pointer32 -- it has no file size limitations.
 	get = syscall(55) as word
 	set = syscall(56) (value as word)
 end property
@@ -3019,17 +3073,16 @@ end property
 '--------------------------------------------------------------------
 property romfile.pointer32
 '<b>PROPERTY (DWORD). </b><br><br>
-'Sets/returns the current pointer position in the resource (ROM) file.
+'Sets/returns the current pointer position in the currently opened resource file.
 '<br><br>
-'When the file is (re)opened with the romfile.open method,
-'the pointer is reset to the first character of the file (position 1). If the file is not found or contains no data,
-'the pointer is set to 0.
+'If no file is opened, the file is empty, or the file opening fails (because the file with the specified name does not exist), the pointer is set to 0.
+'For successfully opened non-empty resource files, the pointer value range is from 1 (first file position) to romfile.size+1 (past the last file position).
 '<br><br>
-'Pointer position cannot exceed romfile.size+1. When you read from the file with romfile.getdata, the pointer is automatically
-'moved forward by the number of bytes that have been read out.
+'For this property to work, a non-empty resource file must first be successfully opened with romfile.open.
 '<br><br>
-'To navigate within files that do not exceed 65535 bytes, use romfile.pointer instead -- this will speed up your application. 
-
+'When a non-empty file is (re)opened with the romfile.open method, the pointer is reset to the first character of the file (position 1).
+'<br><br>
+'When you read from the file with romfile.getdata, the pointer is automatically moved forward by the number of bytes (characters) that have been read out.
 	get = syscall(507,"17.TDL"+) as dword
 	set = syscall(508,"17.TDL"+) (value as dword)
 end property
@@ -3037,8 +3090,11 @@ end property
 '--------------------------------------------------------------------
 property romfile.size
 '<b>R/O PROPERTY (DWORD). </b><br><br>
-'Returns the size of the currently opened resource (ROM) file. Zero size is returned when the file does not exist or the
-'file is empty.
+'Returns the size of the currently opened resource file.
+'<br><br>
+'Zero size is returned if no file is opened of the file opening fails (because the file with the specified name does not exist). 
+'<br><br>
+'For this property to return meaningful data, a resource file must first be successfully opened with romfile.open.
 	get = syscall(54) as dword
 end property
 
@@ -3117,136 +3173,198 @@ property stor.size
 end property
 
 '**************************************************************************************************
-'		PAT (Status LED patterns) object
+'		PAT. (LED pattern) object
 '**************************************************************************************************
 
+#if PLATFORM_ID=DS1100
 object pat
-'The pat object allows you to "play" signal patters on up to five LED pairs, each pair consisting of a green and red LED.
+'The pat. object allows you to "play" blink patters on up to five LED pairs or channels, each pair typically consisting of red and green LEDs.
 '<br><br>
-'The first channel (channel 0) is the primary channel of your system.
-'It utilizes green and red status LEDs. All Tibbo devices have such LEDs (or LED control lines).
-'Note that when your application is not running, the same LEDs are used by the system to display various status information. 
+'Patterns only play when your application is executing and pause when you application is not running.
 '<br><br>
-'The remaining four channels (1-4) use regular I/O lines.
-'Flexible mapping allows you to select which I/O lines will be used for LED control.
+'Channel 0 is the primary channel of your system. It utilizes green and red status LEDs (or LED lines) that are present on all programmable Tibbo devices.
+'Channel 0 requires no configuration -- your code can proceed straight to playing patterns.
+'<br><br>
+'The remaining four channels (1-4) use regular I/O lines of Tibbo devices.
+'Mapping properties allow you to select control I/O lines for LEDs of channels 1-4.
+
+#elif PLATFORM_ID=EM500W
+
+object pat
+'The pat. object allows you to "play" blink patters on up to five LED pairs or channels, each pair typically consisting of red and green LEDs.
+'<br><br>
+'Patterns only play when your application is executing and pause when you application is not running.
+'<br><br>
+'Channel 0 is the primary channel of your system. It utilizes green and red status LEDs (or LED lines) that are present on all programmable Tibbo devices.
+'Channel 0 requires no configuration -- your code can proceed straight to playing patterns.
+'<br><br>
+'The remaining four channels (1-4) use regular I/O lines of Tibbo devices.
+'Mapping properties allow you to select control I/O lines for LEDs of channels 1-4.
+
+#else
+
+object pat
+'The pat. object allows you to "play" blink patters on up to five LED pairs or channels, each pair typically consisting of red and green LEDs.
+'<br><br>
+'Patterns only play when your application is executing and pause when you application is not running.
+'<br><br>
+'Channel 0 is the primary channel of your system. It utilizes green and red status LEDs (or LED lines) that are present on all programmable Tibbo devices.
+'Channel 0 requires no configuration -- your code can proceed straight to playing patterns.
+'<br><br>
+'The remaining four channels (1-4) use regular I/O lines of Tibbo devices.
+'Mapping properties allow you to select control I/O lines for LEDs of channels 1-4.
+'<br><br>
+'<b>On this platform you need to configure LED control lines of channels 1-4 as outputs. This is done through the io.enabled property.</b>
+
+#endif
 
 '--------------------------------------------------------------------
 enum pl_pat_int 
-	PL_PAT_NOINT,		'<b>PLATFORM CONSTANT. </b><br><br> Tells the <font color="maroon"><b>pat.play </b></font>method that the new
-				'pattern can only be loaded if no pattern is playing at the moment (no interrupting of previous pattern).
-	PL_PAT_CANINT		'<b>PLATFORM CONSTANT. </b><br><br> Tells the <font color="maroon"><b>pat.play </b></font>method that the new
-				'pattern can be loaded even if another pattern is currently playing (previous pattern can be interrupted).
+	PL_PAT_NOINT,		'<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can only be loaded if no pattern is playing at the moment.
+	PL_PAT_CANINT		'<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can be loaded even if another pattern is currently playing.
 end enum
 
 syscall(184,"31.TDL") pat.play(byref pattern as string, patint as pl_pat_int)
 '<b>METHOD. </b><br><br> 
-'Loads new LED pattern to play on the currently selected LED channel (selection is made through the
-'<font color="maroon"><b>pat.channel</b></font>).
+'For the currently selected pattern channel (selection is made through the pat.channel property), loads a new LED pattern to play.
 '<br><br>
-'The pattern string defines the pattern to play, for example: "R-G-B", where '-'
-'means "both red and green off", 'R' means red LED on, 'G' means green LED on, and 'B' means both LEDs on.
-'Maximum pattern length is 16 "steps".
+'The pattern string defines the pattern, for example: "R-G-B~*".
 '<br><br>
-'Additionally, '~' can be added to specify that the pattern should loop indefinitely (not just play once).
-''*' can be used to make the pattern "play" at double speed, or quadruple speed ("**").
-''~' and '*' can be added anywhere in the pattern string.
+'The meaning of characters:
 '<br><br>
-'The second parameter defines whether the <font color="maroon"><b>pat.play </b></font>
-'method is allowed to interrupt another pattern that is already playing: <font color="olive"><b>0- PL_PAT_NOINT </b></font>(cannot interrupt), 
-'<font color="olive"><b>1-  PL_PAT_CANINT </b></font>(can interrupt). The <font color="teal"><b> on_pat event</b></font>
-'is generated once the pattern finishes playing.	
+''-': Both LEDs are off.
 '<br><br>
-'Note that correct green and red line mapping must be specified for channels 1-4. Selected I/O lines must also be configured for output. See
-'<font color="maroon"><b>pat.greenmap </b></font>and
-'<font color="maroon"><b>pat.redmap </b></font>
-'properties for details. Channel 0 operates on main status LEDs of the device. No mapping or configuration is required for this channel.
+''R' or 'r': Red LED on (green LED off).
+'<br><br>
+''G' or 'g': Green LED on (red LED off).
+'<br><br>
+''B' or 'b': Both LEDs on.
+'<br><br>
+''~': Looped pattern. This character can be inserted anywhere in the pattern string. 
+'<br><br>
+''*': Double the speed of playing this pattern. Can be inserted anywhere in the pattern string. Applies to the entire string. You can use up to two * characters, meaning that you can quadruple the normal speed of the output. 
+'<br><br>
+'The patint argument determines if this method's invocation is allowed to interrupt another pattern that is already playing. 
 
 '--------------------------------------------------------------------
 property pat.channel
 '<b>PROPERTY (BYTE), DEFAULT VALUE= 0 (channel 0). </b><br><br>
-'Selects/returns the LED channel (status LED pair) to work with.
-'Channels are enumerated from 0. All other properties, methods, and an event of this object relate to the currently selected channel.
-'Note that this property's value will be set automatically when the event handler for the
-'<font color="teal"><b>on_pat </b></font> event is entered.
+'Selects/returns the pattern channel to work with. This selection is related to the pat.play method, as well as io.redmap and io.greenmap properties.
+'<br><br>
+'Note that this property's value will be set automatically when the event handler for the on_pat event is entered.
 	get = syscall(5,"31.TDL"+) as byte
 	set = syscall(6,"31.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID=DS1100
+
 property pat.greenmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
-'For the selected LED channel (selection is made through the
-'<font color="maroon"><b>pat.channel </b></font> property),
-'sets/returns the number of the I/O line that will act as a green LED control line.
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
 '<br><br>
-'Channel 0 is special -- its LED control lines can't be remapped.
-'This is because channel 0 uses standard green and red status LEDs (they are called SG and SR).
-'For channel 0, reading the property always returns (-1), and writing has no effect.
-'<br><br>
-'All other channels use regular I/O lines.
-'Any I/O line can be selected to be the green control line of the selected channel.
-'Remap as needed and don't forget to configure the selected I/O line as an output -- this won't happen automatically.
-'<br><br>
-'See also: <font color="maroon"><b>pat.redmap </b></font> property.
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
 	get = syscall(7,"31.TDL"+) as pl_io_num
 	set = syscall(8,"31.TDL"+) (value as pl_io_num)
 end property
 
+#elif PLATFORM_ID=EM500W
+
+property pat.greenmap
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
+'<br><br>
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
+	get = syscall(7,"31.TDL"+) as pl_io_num
+	set = syscall(8,"31.TDL"+) (value as pl_io_num)
+end property
+
+#else
+
+property pat.greenmap
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
+'<br><br>
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4.
+'<br><br>
+'<b>On this platform you must also configure I/O lines of channels 1-4 as outputs. This is done through the io.enabled property of the io. object.</b>
+	get = syscall(7,"31.TDL"+) as pl_io_num
+	set = syscall(8,"31.TDL"+) (value as pl_io_num)
+end property
+
+#endif
+
 '--------------------------------------------------------------------
+#if PLATFORM_ID=DS1100
+
 property pat.redmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
-'For the selected LED channel (selection is made through the
-'<font color="maroon"><b>pat.channel </b></font> property),
-'sets/returns the number of the I/O line that will act as a red LED control line.
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
 '<br><br>
-'Channel 0 is special -- its LED control lines can't be remapped.
-'This is because channel 0 uses standard green and red status LEDs (they are called SG and SR).
-'For channel 0, reading the property always returns (-1), and writing has no effect.
-'<br><br>
-'All other channels use regular I/O lines.
-'Any I/O line can be selected to be the red control line of the selected channel.
-'Remap as needed and don't forget to configure the selected I/O line as an output -- this won't happen automatically.
-'<br><br>
-'See also: <font color="maroon"><b>pat.greenmap </b></font> property.
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
 	get = syscall(9,"31.TDL"+) as pl_io_num
 	set = syscall(10,"31.TDL"+) (value as pl_io_num)
 end property
 
+#elif PLATFORM_ID=EM500W
+
+property pat.redmap
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
+'<br><br>
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
+	get = syscall(9,"31.TDL"+) as pl_io_num
+	set = syscall(10,"31.TDL"+) (value as pl_io_num)
+end property
+
+#else
+
+property pat.redmap
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
+'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
+'<br><br>
+'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4.
+'<br><br>
+'<b>On this platform you must also configure I/O lines of channels 1-4 as outputs. This is done through the io.enabled property of the io. object.</b>
+	get = syscall(9,"31.TDL"+) as pl_io_num
+	set = syscall(10,"31.TDL"+) (value as pl_io_num)
+end property
+
+#endif
 
 '**************************************************************************************************
 '		BUTTON object
 '**************************************************************************************************
 
 object button
-'All Tibbo devices have a setup button (or line for connecting such a button externally).
-'This object allows you to monitor button state.
+'All programmable boards, programmable serial controllers, and Tibbo Project System (TPS) devices offered by Tibbo feature a button referred to as the "setup" or "MD" button ("MD" stands for "mode").
 '<br><br>
-'The button does not require any pre-configuration and works always.
-
-'--------------------------------------------------------------------
-property button.time
-'<b>R/O PROPERTY (BYTE).</b><br><br>
-'Returns the time (in 0.5 second intervals) elapsed since the button was last pressed or released (whichever happened) later.
-'It only makes sense to read this property inside the <font color="teal"><b>on_button_pressed </b></font>or 
-'<font color="teal"><b>on_button_released </b></font>event handlers.
+'All programmable Tibbo modules have a line for connecting this button externally.
 '<br><br>
-'Once the value of this property reaches 255 
-'(127 seconds) it stays at 255 (there is no roll-over to 0). Elapsed time is not counted when the execution of your application is paused.
-'<br><br>
-'Note that button state detection employes "debouncing" which rejects very brief transitions of the button state.
-	get = syscall(21) as byte
-end property
+'When a programmable Tibbo device is executing a Tibbo BASIC/C application, the MD button can be used as a general-purpose input button.
 
 '--------------------------------------------------------------------
 property button.pressed
 '<b>R/O PROPERTY (BYTE).</b><br><br>
-'Returns the current button state. This reflects an immediate state of the hardware at the very moment the property is read --
-'no "debouncing" performed. This is different from the
-'<font color="teal"><b>on_button_pressed </b></font>and <font color="teal"><b>on_button_released </b></font>events, as well as the
-'<font color="maroon"><b>button.time </b></font>
-'R/O property, which all take debouncing into the account.
+'Returns the current button state.
+'<br><br>
+'This property reflects the immediate state of the hardware at the very moment the property is read -- no "debouncing" performed.
 	get = syscall(1) as no_yes
 end property
+
+'--------------------------------------------------------------------
+property button.time
+'<b>R/O PROPERTY (BYTE).</b><br><br>
+'Returns the time (in 0.5 second intervals) elapsed since the button was last pressed or released (whichever happened more recently).
+'<br><br>
+'This property will only show a meaningful value when read inside the on_button_pressed or on_button_released event handler.
+'<br><br>
+'The value of this property maxes out at 255 (127.5 seconds).
+'<br><br>
+'The elapsed time is not counted while the execution of your application is paused (during debugging).
+	get = syscall(21) as byte
+end property
+
 
 '**************************************************************************************************
 '		PPP object
@@ -3281,7 +3399,7 @@ property ppp.portnum
 end property
 
 '--------------------------------------------------------------------
-syscall(371,"35.TDL") ppp.buffrq(numpages as byte) as byte
+syscall(371,"35.TDL") ppp.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
 '<br><br>
 'Pre-requests "numpages" number of buffer pages (1 page= 256 bytes) for the buffer of the ppp object.
@@ -3305,7 +3423,7 @@ property ppp.buffsize
 'Buffer capacity can be changed through the ppp.buffrq method followed by the sys.buffalloc method invocation.
 '<br><br>
 'The PPP object will be unable to operate properly if its buffer has inadequate capacity. Recommended buffer size is 5 pages.
-	get = syscall(355,"57.TDL"+) as word
+	get = syscall(355,"57.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -3319,3 +3437,12 @@ property ppp.ip
 	get = syscall(490,"39.TDL"+) as string
 	set = syscall(491,"40.TDL"+) (byref ipstr as string)
 end property
+
+'--------------------------------------------------------------------
+syscall(422,"88.TDL") !debug.tx(byref s as string)
+'<b>METHOD.</b>
+
+'--------------------------------------------------------------------
+syscall(423,"88.TDL") !debug.rx() as string
+'<b>METHOD.</b>
+

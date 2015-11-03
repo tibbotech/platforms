@@ -6,6 +6,9 @@
 
 #define PLATFORM_ID 18
 
+#define BUFF_PAGE_TYPE byte
+#define BUFF_SIZE_TYPE word
+
 '--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0_RX0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 

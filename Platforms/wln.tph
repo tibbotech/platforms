@@ -85,7 +85,7 @@ syscall(451,"70.TDL") wln.boot(offset as dword) as ok_ng
 'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
 
 '--------------------------------------------------------------------
-syscall(503,"35.TDL") wln.buffrq(numpages as byte) as byte
+syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
 '<br><br>
 'Pre-requests a number of buffer pages (1 page= 256 bytes) for the TX buffer of the wln. object.
@@ -106,7 +106,7 @@ property wln.buffsize
 'Returns current capacity (in bytes) of the wln object's TX buffer.
 '<br><br>
 'Buffer capacity is set using wln.buffrq method.
-	get = syscall(504,"72.TDL"+) as word
+	get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
