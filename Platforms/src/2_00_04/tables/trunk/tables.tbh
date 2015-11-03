@@ -42,6 +42,10 @@
 	#define TBL_ADJUST_LIST_WHEN_FULL 1
 #endif
 
+#ifndef TBL_DISCARD_OLD_RECORD_WHEN_FULL
+	#define TBL_DISCARD_OLD_RECORD_WHEN_FULL 0
+#endif
+
 #ifndef TBL_TIME_TYPE_INCLUDED	'must include time library
 	#define TBL_TIME_TYPE_INCLUDED 1
 #endif
@@ -147,7 +151,7 @@ declare function tbl_select(byref table_name_or_num as string, byref file_name a
 	declare function tbl_clear() as en_tbl_status_codes
 	declare function tbl_get_hash() as string
 	declare function tbl_record_sg(byref rec_num as word, op as en_tbl_rdwr) as en_tbl_status_codes
-	declare function tbl_record_add(byref uid as string) as en_tbl_status_codes
+	declare function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 	declare function tbl_record_edit(byref rec_num as word) as en_tbl_status_codes
 	declare function tbl_record_read_active(byref rec_num as word) as en_tbl_status_codes
 	declare function tbl_record_delete(byref rec_num as word) as en_tbl_status_codes

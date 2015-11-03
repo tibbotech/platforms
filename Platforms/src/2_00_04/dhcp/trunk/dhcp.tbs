@@ -66,6 +66,7 @@ dim dhcp_host_name(NUM_INTERFACES) as string(DHCP_MAX_HOST_NAME_LEN)
 #if WLN_AVAILABLE
 	dim dhcp_wln_exchange_delay as byte
 #endif
+dim dhcp_ingnore_link_disconnects(NUM_INTERFACES) as no_yes
 
 '==============================================================================
 public function dhcp_get_info(info_element as dhcp_info_elements, byref extra_data as string) as string
@@ -199,6 +200,22 @@ dhcp_stop_continue:
 end function
 
 '------------------------------------------------------------------------------
+public sub dhcp_set_link_disconnect_behavior(interface as pl_sock_interfaces, behavior as no_yes)
+'API procedure, sets the behavior in case a network interface becomes disconnected
+'(Ethernet cable unplugged or Wi-Fi disassociated). Behavior=NO means that when the link is
+'reestablished the DHCP will be repeated for this interface. YES means that reestablishing the link
+'will not lead to the DHCP restart.
+	dim dhcp_i as byte
+	
+	if NUM_INTERFACES=1 then
+		dhcp_i=0
+	else
+		dhcp_i=interface-1
+	end if
+	dhcp_ingnore_link_disconnects(dhcp_i)=behavior
+end sub
+
+'------------------------------------------------------------------------------
 public sub dhcp_proc_timer()
 'Event procedure, call it from the on_sys_timer() event handler.
 
@@ -242,6 +259,8 @@ sub dhcp_proc_one_interface(interface as pl_sock_interfaces)
 		if interface=PL_SOCK_INTERFACE_NET then
 			if dhcp_phase(dhcp_i)<>DHCP_PHASE_OFF then
 				if net.linkstate=PL_NET_LINKSTAT_NOLINK then
+					if dhcp_ingnore_link_disconnects(dhcp_i)<>NO then exit sub
+					
 					dhcp_phase(dhcp_i)=DHCP_PHASE_IDLE
 					dhcp_renew(dhcp_i)=NO
 					dhcp_timer(dhcp_i)=1
@@ -266,6 +285,8 @@ sub dhcp_proc_one_interface(interface as pl_sock_interfaces)
 		if interface=PL_SOCK_INTERFACE_WLN then
 			if dhcp_phase(dhcp_i)<>DHCP_PHASE_OFF then
 				if wln_check_association()=PL_WLN_NOT_ASSOCIATED then
+					if dhcp_ingnore_link_disconnects(dhcp_i)<>NO then exit sub
+					
 					dhcp_wln_exchange_delay=DHCP_WLN_EXCHANGE_DELAY_CONST
 					dhcp_phase(dhcp_i)=DHCP_PHASE_IDLE
 					dhcp_renew(dhcp_i)=NO
@@ -907,6 +928,7 @@ sub dhcp_init()
 		#if DHCP_DEBUG_PRINT
 			dhcp_media_linked(f)=YES 'correct, it is YES
 		#endif
+		dhcp_ingnore_link_disconnects(f)=NO
 	next f
 	dhcp_current_interface=0
 	

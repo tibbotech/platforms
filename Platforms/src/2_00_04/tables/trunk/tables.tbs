@@ -1175,7 +1175,7 @@ finish:
 end function
 
 '------------------------------------------------------------------------------
-public function tbl_record_add(byref uid as string) as en_tbl_status_codes
+public function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 'tbl_select() must be used
 
 'API procedure, a selected data file is required, stores the data in the record buffer (tbl_record_string) to the selectd data file.
@@ -1228,13 +1228,26 @@ public function tbl_record_add(byref uid as string) as en_tbl_status_codes
 	'find the first deleted record, if not found move the pointer to the end of file and set data
 	if tbl_info(tbl_info_index).struct=EN_TBL_STRUCT_LIST then
 		'check if table is full
+		
+		dwtemp=tbl_info(tbl_info_index).rec_size
+		dwtemp=dwtemp*tbl_info(tbl_info_index).maxrecs
+		
+		#if TBL_DISCARD_OLD_RECORD_WHEN_FULL
+			dim rec_num,count as word
+			rec_num=1
+			count=256/tbl_info(tbl_info_index).rec_size
+			while not(fd.filesize<dwtemp) and count>0
+				tbl_record_delete(rec_num)
+				count=count-1
+			wend
+			
+		#endif			
+		
 		#if TBL_ADJUST_LIST_WHEN_FULL
 			if fd.transactionstart<>PL_FD_STATUS_OK then goto fd_error
 			if tbl_adjust_size()<>EN_TBL_STATUS_OK then goto fd_error
 			if fd.transactioncommit<>PL_FD_STATUS_OK then goto fd_error
 		#endif		
-		dwtemp=tbl_info(tbl_info_index).rec_size
-		dwtemp=dwtemp*tbl_info(tbl_info_index).maxrecs
 		if not(fd.filesize<dwtemp) then goto tbl_full
 		daddr1=fd.filesize+1
 		add_to_del_pos=NO

@@ -567,7 +567,9 @@ public sub agg_stop()
 	#endif
 
 	#if AGG_LOGIN_CONTROL
-		logout()
+		if login_mode=CMD_MODE_AGGREGATE then
+			logout()
+		end if
 	#endif
 	agg_sock_close()
 	agg_connected=NO
@@ -2187,6 +2189,7 @@ function agg_call_function(byref op as string ,byref context_name as string, byr
 			case "hash":
 				'returns hash value of the table
 				agg_call_function=agg_tbl_hash(func_input,msg)
+				callback_agg_device_function(op,context_name,func_input, msg)
 			case "startTable":
 				'start table synchronization, this function call info device to start replace the whole table
 				agg_call_function=agg_tbl_start_table(func_input, msg)
@@ -2195,6 +2198,7 @@ function agg_call_function(byref op as string ,byref context_name as string, byr
 				agg_call_function=agg_tbl_finish_table(func_input,msg)
 				if agg_call_function<>OK then exit function
 				agg_call_function=agg_tbl_hash(func_input,msg)
+				callback_agg_device_function(op,context_name,func_input, msg)
 			case "addRecord":
 				'adding single record to the target table
 				agg_call_function=agg_tbl_add_record(func_input,msg)

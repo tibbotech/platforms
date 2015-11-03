@@ -51,6 +51,7 @@ end enum
 declare function dhcp_get_info(info_element as dhcp_info_elements, byref extra_data as string) as string
 declare function dhcp_start(interface as pl_sock_interfaces, byref requested_ip as string, byref host_name as string) as en_dhcp_status_codes
 declare function dhcp_stop(interface as pl_sock_interfaces) as en_dhcp_status_codes
+declare sub dhcp_set_link_disconnect_behavior(interface as pl_sock_interfaces, behavior as no_yes)
 declare sub dhcp_proc_timer()
 declare sub dhcp_proc_data()
 

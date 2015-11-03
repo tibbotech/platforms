@@ -148,7 +148,8 @@ sub dns_disconnect()
 	sock.num=dns_sock
 	#if DNS_DEBUG_PRINT
 		dns_debugprint("disc from "+sock.targetip+":"+str(sock.targetport))
-	#endif	
+	#endif
+	dns_conn_tmr=0
 	sock.close()	
 end sub
 
