@@ -1484,19 +1484,38 @@ enum pl_ser_parity
 	PL_SER_PR_SPACE		'<b>PLATFORM CONSTANT. </b><br><br> Parity bit always at "0".
 end enum
 
+#if SER_7BIT_LIMITATION=0
+
 property ser.parity
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_PR_NONE (no parity). </b><br><br>
-'Sets/returns parity mode for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>):<br>
-'<font color="olive"><b>0- PL_SER_PR_NONE </b></font>(no parity),<br> <font color="olive"><b>1- PL_SER_PR_EVEN </b></font>(even parity),<br> 
-'<font color="olive"><b>2- PL_SER_PR_ODD </b></font>(odd parity),<br> <font color="olive"><b>3- PL_SER_PR_MARK </b></font>(mark),<br>
-'<font color="olive"><b>4- PL_SER_PR_SPACE </b></font>(space). <br><br>
-'Mark parity is equivalent to having a second stop-bit (there is no separate property toexplicitly select the number of stop bits). This 
-'property is only relevant when the serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive">
-'<b>0- PL_SER_MODE_UART</b></font>) and when NOT in the 7-bit or 8-bit mode (ser.bits= 0- PL_SER_BB_7 or 1- PL_SER_BB_8). It is not possible
-'to have a parity bit when in the 9-bit mode (ser.bits= 2- PL_SER_BB_9).
+'Sets/returns the parity mode for the selected serial port (selection is made through ser.num): 0- PL_SER_PR_NONE (no parity),
+'1- PL_SER_PR_EVEN (even parity), 2- PL_SER_PR_ODD (odd parity), 3- PL_SER_PR_MARK (mark), 4- PL_SER_PR_SPACE (space).
+'<br><br>
+'Mark parity is equivalent to having a second stop-bit (there is no separate property to explicitly select the number of stop bits).
+'<br><br>
+'This property is only relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
 	get = syscall(106,"80.TDL"+) as pl_ser_parity
 	set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
 end property
+
+#else
+
+property ser.parity
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_PR_NONE (no parity). </b><br><br>
+'Sets/returns the parity mode for the selected serial port (selection is made through ser.num): 0- PL_SER_PR_NONE (no parity),
+'1- PL_SER_PR_EVEN (even parity), 2- PL_SER_PR_ODD (odd parity), 3- PL_SER_PR_MARK (mark), 4- PL_SER_PR_SPACE (space).
+'<br><br>
+'Mark parity is equivalent to having a second stop-bit (there is no separate property to explicitly select the number of stop bits).
+'<br><br>
+'This property is only relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+'<br><br>
+'<b>On this platform there is a limitation on the 7-bit no-parity mode: the hardware will only be able to correctly receive data if the
+'sender is transmitting two stop bits (or uses MARK parity). All other word length /parity modes combinations operate without limitations.</b>
+	get = syscall(106,"80.TDL"+) as pl_ser_parity
+	set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
+end property
+
+#endif
 
 '--------------------------------------------------------------------
 enum pl_ser_bits
@@ -1504,20 +1523,37 @@ enum pl_ser_bits
 'Contains the list of constants related to the selection of the number of bits in the word TXed/RXed by the serial
 'port in the UART mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
 	PL_SER_BB_7,		'<b>PLATFORM CONSTANT. </b><br><br> Data word TXed/RXed by the serial port is to contain 7 data bits.
-	PL_SER_BB_8,		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
-	PL_SER_BB_9		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 9 data bits (additional parity bit is not possible in this mode).
+	PL_SER_BB_8			'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
 end enum
+
+#if SER_7BIT_LIMITATION=0
 
 property ser.bits
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- PL_SER_BB_8 (8 bits). </b><br><br>
-'Specifies the number of data bits in a word TXed/RXed by the serial port for the currently selected port (selection is made through
-'<font color="maroon"><b>ser.num</b></font>):<br> <font color="olive"><b>0- PL_SER_BB_7 </b></font>(7 bits/word),<br>
-'<font color="olive"><b>1- PL_SER_BB_8 </b></font>(8 bits/word). <br><br>
-'This property is only relevant when the serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= 
-'<font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
+'Specifies the number of data bits in a word TXed/RXed by the currently selected serial port (selection is made through ser.num):
+'<br>0- PL_SER_BB_7 (7 bits/word), or 1- PL_SER_BB_8 (8 bits/word).
+'<br><br>
+'This property is only relevant when the serial port is in the UART mode (ser.mode = 0- PL_SER_MODE_UART).
 	get = syscall(108,"80.TDL"+) as pl_ser_bits
 	set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
 end property
+
+#else
+
+property ser.bits
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- PL_SER_BB_8 (8 bits). </b><br><br>
+'Specifies the number of data bits in a word TXed/RXed by the currently selected serial port (selection is made through ser.num):
+'<br>0- PL_SER_BB_7 (7 bits/word), or 1- PL_SER_BB_8 (8 bits/word).
+'<br><br>
+'This property is only relevant when the serial port is in the UART mode (ser.mode = 0- PL_SER_MODE_UART).
+'<br><br>
+'<b>On this platform there is a limitation on the 7-bit no-parity mode: the hardware will only be able to correctly receive data if the
+'sender is transmitting two stop bits (or uses MARK parity). All other word length /parity modes combinations operate without limitations.</b>
+	get = syscall(108,"80.TDL"+) as pl_ser_bits
+	set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
+end property
+
+#endif
 
 '--------------------------------------------------------------------
 property ser.interchardelay
@@ -1623,9 +1659,10 @@ property ser.rxbuffsize
 'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>ser.rxbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method.<br><br>
 'The <font color="maroon"><b>ser.rxbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>ser.rxbuffsize</b></font>=num_pages*256-16 (or =0 
+'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>ser.rxbuffsize</b></font>=num_pages*256-X (or =0 
 'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.rxbuffrq</b></font>.
-'"-16" is because 16 bytes are needed for internal buffer variables. <br><br>
+' "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms. <br><br>
 'The serial port cannot RX data when the RX buffer has zero capacity.
 	get = syscall(122,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
@@ -1637,9 +1674,10 @@ property ser.txbuffsize
 'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>ser.txbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method. <br><br>
 'The <font color="maroon"><b>ser.txbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>ser.txbuffsize</b></font>=num_pages*256-16 (or =0 
+'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>ser.txbuffsize</b></font>=num_pages*256-X (or =0 
 'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.txbuffrq</b></font>. 
-'"-16" is because 16 bytes are needed for internal buffer variables. <br><br>
+' "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The serial port cannot TX data when the TX buffer has zero capacity.
 	get = syscall(123,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
@@ -1777,6 +1815,14 @@ syscall(637) !sock.gettxdata(maxinplen as word) as string
 syscall(638) !sock.setcommitrxdata(byref txdata as string)
 syscall(639) !sock.setcommitcmddata(byref txdata as string)
 syscall(640) !sock.getrpldata(maxinplen as word) as string
+syscall(641) !sock.setcommitvardata(byref txdata as string)
+syscall(642) !sock.setcommittx2data(byref txdata as string)
+syscall(643) !sock.gettx2data(maxinplen as word) as string
+
+property !sys.limitbuffersize
+	get = syscall(644) as no_yes
+	set= syscall(645) (value as no_yes)
+end property
 
 '--------------------------------------------------------------------
 syscall(134) ser.notifysent(threshold as word)
@@ -1797,12 +1843,15 @@ syscall(85,"35.TDL"+) ser.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
 'The serial port is unable to RX data if its RX buffer has 0 capacity. Actual current buffer capacity can be checked through the
 '<font color="maroon"><b>ser.rxbuffsize </b></font> which returns buffer capacity in bytes. <br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>ser.rxbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.rxbuffrq</b></font>. "-16" is because 16 
-'bytes are needed for internal buffer variables.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>ser.rxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.rxbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>=
 '<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.<br><br>
+'buffer sizes of ports that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>ser.txbuffrq </b></font>method.
 
 '--------------------------------------------------------------------
@@ -1813,12 +1862,15 @@ syscall(86,"35.TDL"+) ser.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
 'The serial port is unable to TX data if its TX buffer has 0 capacity. Actual current buffer capacity can be checked through the 
 '<font color="maroon"><b>ser.txbuffsize </b></font> which returns buffer capacity in bytes.<br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>ser.txbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.txbuffrq</b></font>. "-16" is because 16
-'bytes are needed for internal buffer variables.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>ser.txbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>ser.txbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the serial port to which this buffer belongs is opened (<font color="maroon"><b>ser.enabled</b></font>= 
 '<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.<br><br>
+'buffer sizes of ports that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>ser.rxbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2355,9 +2407,9 @@ property sock.rxbuffsize
 'bytes.<br><br>
 'Buffer capacity can be changed through the <font color="maroon"><b>sock.rxbuffrq</b></font>. The <font color="maroon"><b>sock.rxbuffrq
 '</b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.<br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>sock.rxbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), 
-'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>. "-16" is 
-'because 16 bytes are needed for internal buffer variables. <br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.rxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), 
+'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>.  "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The socket cannot RX data when the RX buffer has zero capacity.
 	get = syscall(230,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
@@ -2369,9 +2421,9 @@ property sock.txbuffsize
 'bytes. Buffer capacity can be changed through the <font color="maroon"><b>sock.txbuffrq </b></font> method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font> method.<br><br>
 'The <font color="maroon"><b>sock.txbuffrq </b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.
-'Relationship between the two is as follows: <font color="maroon"><b>sock.txbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-16" is because 16
-'bytes are needed for internal buffer variables.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.txbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The socket cannot TX data when the TX buffer has zero capacity.
 	get = syscall(231,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
@@ -2513,6 +2565,15 @@ property sock.cmdlen
 'Use <font color="maroon"><b>sock.getinband </b></font> method to extract the data from the CMD buffer. <br><br>
 'See also <font color="maroon"><b>sock.rpllen </b></font> and <font color="maroon"><b>sock.inbandcommands</b></font>.
 	get = syscall(96,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+property sock.varlen
+'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the length of data (in bytes) waiting
+'to be processed in the VAR buffer. This buffer accumulates incoming HTTP request string.
+'Use <font color="maroon"><b>sock.gethttprqstring </b></font> method to extract the data from the CMD buffer. <br><br>
+	get = syscall(95,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -2733,12 +2794,16 @@ syscall(89,"35.TDL") sock.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. The socket is unable to RX data if its RX
 'buffer has 0 capacity. Actual current buffer capacity can be checked through the <font color="maroon"><b>sock.rxbuffsize </b></font> which
 'returns buffer capacity in bytes. Relationship between the two is as follows:<br><br>
-'<font color="maroon"><b>sock.rxbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
-'that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer 
-'variables.<br><br>
+'<font color="maroon"><b>sock.rxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
+'that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.
+'<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>sock.txbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2749,12 +2814,15 @@ syscall(90,"35.TDL") sock.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font>method is used. The socket is unable to TX data if its TX 
 'buffer has 0 capacity. Actual current buffer capacity can be checked through the <font color="maroon"><b>sock.txbuffsize </b></font> which
 'returns buffer capacity in bytes. Relationship between the two is as follows: <br><br>
-'<font color="maroon"><b>sock.txbuffsize</b></font>=num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
-'that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer 
-'variables.<br><br>
+'<font color="maroon"><b>sock.txbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages
+'that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>sock.tx2buffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2766,11 +2834,15 @@ syscall(91,"35.TDL") sock.cmdbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. The socket is unable to receive inband
 'commands if its CMD buffer has 0 capacity.<br><br>
 'Unlike for TX or RX buffers there is no property to read out actual CMD buffer capacity in bytes. This capacity can be calculated as 
-'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.cmdbuffrq</b></font>. 
-'"-16" is because 16 bytes are needed for internal buffer variables.<br><br>
+'num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.cmdbuffrq</b></font>. 
+' "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>sock.rplbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2782,11 +2854,15 @@ syscall(92,"35.TDL") sock.rplbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font>method is used. The socket is unable to send inband replies
 'if its RPL buffer has 0 capacity.<br><br>
 'Unlike for TX or RX buffers there is no property to read out actual RPL buffer capacity in bytes. This capacity can be calculated as 
-'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon">
-'<b>sock.rplbuffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer variables.<br><br>
+'num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon">
+'<b>sock.rplbuffrq</b></font>.  "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'See also <font color="maroon"><b>sock.cmdbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
@@ -2798,11 +2874,15 @@ syscall(93,"35.TDL") sock.varbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. The socket is unable to receive HTTP 
 'request string if its VAR buffer has 0 capacity. <br><br>
 'Unlike for TX or RX buffers there is no property to read out actual VAR buffer capacity in bytes. This capacity can be calculated as 
-'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the sock.varbuffrq. 
-'"-16" is because 16 bytes are needed for internal buffer variables.<br><br>
+'num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the sock.varbuffrq. 
+' "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'<br><br>
 'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see <font color="maroon"><b>sock.httpmode</b></font> 'roperty, also <font color="maroon"><b>sock.httpportlist</b></font>.
 
 '--------------------------------------------------------------------
@@ -2814,11 +2894,14 @@ syscall(94,"35.TDL") sock.tx2buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 'Returns actual number of pages that can be allocated. Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font>
 'method is used.<br><br>
 'Unlike for TX or RX buffers there is no property to read out actual TX2 buffer capacity in bytes. This capacity can be calculated as 
-'num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>
-'sock.tx2buffrq</b></font>. "-16" is because 16 bytes are needed for internal buffer variables.<br><br>
+'num_pages*256-X (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>
+'sock.tx2buffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'Buffer allocation will not work if the socket to which this buffer belongs is not idle (<font color="maroon"><b>sock.statesimple</b></font><>
 '<font color="olive"><b>0- PL_SSTS_CLOSED</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change 
-'buffer sizes of sockets that are closed.<br><br>
+'buffer sizes of sockets that are closed.
+'<br><br>
+'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
 
 '--------------------------------------------------------------------
 syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
