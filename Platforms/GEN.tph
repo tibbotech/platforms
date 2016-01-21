@@ -1824,6 +1824,10 @@ property !sys.limitbuffersize
 	set= syscall(645) (value as no_yes)
 end property
 
+property !io.intcheck
+	get = syscall(646) as no_yes
+end property
+
 '--------------------------------------------------------------------
 syscall(134) ser.notifysent(threshold as word)
 '<b>METHOD. </b><br><br>
