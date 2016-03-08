@@ -16,6 +16,7 @@ event(19)  on_io_int(linestate as byte)
 'Generated when a change of state (from LOW to HIGH or from HIGH to LOW) on one of the enabled interrupt lines is detected.
 '<br><br>
 'Each bit of the linestate argument corresponds to one interrupt line in the order, in which these lines are declared in the pl_int_num enum.
+'A bit value of 1 indicates that this line has CHANGED. Several lines may be reported as changed in a single call to on_io_int.
 '<br><br>
 'All interrupt lines are disabled by default and must be enabled individually through the io.intenabled property.
 '<br><br>

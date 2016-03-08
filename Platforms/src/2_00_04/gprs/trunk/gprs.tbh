@@ -38,30 +38,54 @@
 'Defines below intentionally use I/O pin numbers instead of names.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_SER_PORT_RTSMAP
-	#if GPRS_SER_PORT=0
-		#define GPRS_SER_PORT_RTSMAP 0
-	#elif GPRS_SER_PORT=1
-		#define GPRS_SER_PORT_RTSMAP 1
-	#elif GPRS_SER_PORT=2
-		#define GPRS_SER_PORT_RTSMAP 2
-	#elif GPRS_SER_PORT=3
-		#define GPRS_SER_PORT_RTSMAP 3
-	#endif	
+	#if PLATFORM_ID=TPP2W	
+		#if GPRS_SER_PORT=0
+			#define GPRS_SER_PORT_RTSMAP 0
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SER_PORT_RTSMAP 2
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif	
+	#else
+		#if GPRS_SER_PORT=0
+			#define GPRS_SER_PORT_RTSMAP 0
+		#elif GPRS_SER_PORT=1
+			#define GPRS_SER_PORT_RTSMAP 1
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SER_PORT_RTSMAP 2
+		#elif GPRS_SER_PORT=3
+			#define GPRS_SER_PORT_RTSMAP 3
+		#endif	
+	#endif
 #endif
 
 'The mapping of the CTS line connected to the GPRS modem.
 'Defines below intentionally use I/O pin numbers instead of names.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_SER_PORT_CTSMAP
-	#if GPRS_SER_PORT=0
-		#define GPRS_SER_PORT_CTSMAP 0
-	#elif GPRS_SER_PORT=1
-		#define GPRS_SER_PORT_CTSMAP 1
-	#elif GPRS_SER_PORT=2
-		#define GPRS_SER_PORT_CTSMAP 2
-	#elif GPRS_SER_PORT=3
-		#define GPRS_SER_PORT_CTSMAP 3
-	#endif	
+	#if PLATFORM_ID=TPP2W	
+		#if GPRS_SER_PORT=0
+			#define GPRS_SER_PORT_CTSMAP 0
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SER_PORT_CTSMAP 2
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif	
+	#else	
+		#if GPRS_SER_PORT=0
+			#define GPRS_SER_PORT_CTSMAP 0
+		#elif GPRS_SER_PORT=1
+			#define GPRS_SER_PORT_CTSMAP 1
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SER_PORT_CTSMAP 2
+		#elif GPRS_SER_PORT=3
+			#define GPRS_SER_PORT_CTSMAP 3
+		#endif	
+	#endif
 #endif
 
 
@@ -89,16 +113,63 @@
 'Only relevant when GPRS_MODULE_EXTERNAL is 0.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_RESET
-	#define GPRS_RESET PL_IO_NUM_55
+	#if PLATFORM_ID=TPP2W
+		#if GPRS_SER_PORT=0
+			#define GPRS_RESET PL_IO_NUM_1
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_RESET PL_IO_NUM_3
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif
+	#elif PLATFORM_ID=TPP3W
+		#if GPRS_SER_PORT=0
+			#define GPRS_RESET PL_IO_NUM_4
+		#elif GPRS_SER_PORT=1
+			#define GPRS_RESET PL_IO_NUM_5
+		#elif GPRS_SER_PORT=2
+			#define GPRS_RESET PL_IO_NUM_6
+		#elif GPRS_SER_PORT=3
+			#define GPRS_RESET PL_IO_NUM_7
+		#endif
+	#elif PLATFORM_ID=NB1010 or PLATFORM_ID=NB1010W
+		#define GPRS_RESET PL_IO_NUM_55
+	#else
+		#define GPRS_RESET PL_IO_NULL
+	#endif
 #endif
 
 'GPIO line that is used for TOGGLING the GPRS module ON/OFF.
 'Only relevant when GPRS_MODULE_EXTERNAL is 0.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_POWER
-	#define GPRS_POWER PL_IO_NUM_7
+	#if PLATFORM_ID=TPP2W
+		#if GPRS_SER_PORT=0
+			#define GPRS_POWER PL_IO_NUM_10_RX1
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_POWER PL_IO_NUM_14_RX3
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif
+	#elif PLATFORM_ID=TPP3W
+		#if GPRS_SER_PORT=0
+			#define GPRS_POWER PL_IO_NUM_33
+		#elif GPRS_SER_PORT=1
+			#define GPRS_POWER PL_IO_NUM_35
+		#elif GPRS_SER_PORT=2
+			#define GPRS_POWER PL_IO_NUM_37
+		#elif GPRS_SER_PORT=3
+			#define GPRS_POWER PL_IO_NUM_39
+		#endif
+	#elif PLATFORM_ID=NB1010 or PLATFORM_ID=NB1010W
+		#define GPRS_POWER PL_IO_NUM_33
+	#else
+		#define GPRS_POWER PL_IO_NULL
+	#endif
 #endif
-
 
 
 'Size of TCP and UDP packets that the GPRS interface will be able to carry, expressed in 256-byte units.

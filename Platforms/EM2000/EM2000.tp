@@ -104,3 +104,18 @@ value=FD_DISABLED
 [define4.option2]
 description=Enabled
 value=FD_ENABLED
+
+
+[define5]
+define=OBJECT_WLN
+description=Wi-Fi (wln.) object
+value=WLN_ENABLED
+
+[define5.option1]
+description=Disabled
+value=WLN_DISABLED
+
+[define5.option2]
+description=Enabled
+value=WLN_ENABLED
+
