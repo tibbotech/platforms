@@ -10,7 +10,7 @@
 
 'Maximum length of the socket user's signature string
 #ifndef SOCK_MAX_SIGNATURE_LEN
-	#define SOCK_MAX_SIGNATURE_LEN 0
+	#define SOCK_MAX_SIGNATURE_LEN 3
 #endif
 
 '------------------------------------------------------------------------------

@@ -588,7 +588,10 @@ public sub agg_proc_timer()
 
 	dim pw as string
 	dim b as byte
-	dim comp_result as login_comparison_codes
+	
+	#if AGG_LOGIN_CONTROL
+		dim comp_result as login_comparison_codes
+	#endif
 	
 	if agg_init_flag<>AGG_INIT_SIGNATURE then exit sub
 	

@@ -141,7 +141,6 @@ sub dns_disconnect()
 		#if DNS_DEBUG_PRINT
 			dns_debug_print_status(EN_STATUS_DNS_NOT_STARTED)
 		#endif		
-		callback_dns_failure(EN_STATUS_DNS_NOT_STARTED)
 		exit sub
 	end if
 	

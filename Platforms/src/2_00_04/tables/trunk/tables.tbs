@@ -916,6 +916,138 @@ finish:
 end function
 
 '------------------------------------------------------------------------------
+public function tbl_select_for_read(byref table_name_or_num as string, byref file_name as string) as en_tbl_status_codes
+'API procedure, selecting the data file that is used in following table operations, if such data file does not exist, a new file will be created, 
+'based on the table info provided(table_name_or_num)
+'if file is created then attributes set to NULL
+'fills tbl_record_string with default values
+
+	dim fd_status as pl_fd_status_codes
+	dim f as byte
+	dim i,j as word
+	dim s as string
+
+	if tbl_init_flag<>TBL_INIT_SIGNATURE then
+		tbl_select_for_read=EN_TBL_STATUS_NOT_STARTED
+		#if TBL_DEBUG_PRINT
+			tbl_debug_print_error("tbl_select_for_read("+table_name_or_num+")",tbl_select_for_read)
+		#endif		
+		exit function
+	end if
+	
+	if len(table_name_or_num)>TBL_MAX_TABLE_NAME_LEN or len(file_name)>TBL_MAX_FILE_NAME_LEN then
+		tbl_select_for_read=EN_TBL_STATUS_INV_PARAM
+		#if TBL_DEBUG_PRINT
+			tbl_debug_print_error("tbl_select_for_read("+table_name_or_num+")",tbl_select_for_read)
+		#endif
+		exit function
+	end if
+	
+	if fd.ready=NO then goto tbl_fail
+	'find table
+	
+	#if TBL_DEBUG_PRINT
+		tbl_do_not_debug_print=YES
+	#endif
+	if tbl_info_find(table_name_or_num,f)<>EN_TBL_STATUS_OK then
+		#if TBL_DEBUG_PRINT
+			tbl_do_not_debug_print=NO
+		#endif
+		goto tbl_unknown_tbl
+	end if
+		
+	#if TBL_DEBUG_PRINT
+		tbl_do_not_debug_print=NO
+	#endif
+
+	'open file (or switch filenum)
+file_open:
+	i=filenum_open("TBL",file_name,fd_status)	
+	select case fd_status
+	case PL_FD_STATUS_NOT_FOUND:
+		'need to create this file
+		
+		if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
+		fd_status=fd.create(file_name)
+		if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
+		if fd_status<>PL_FD_STATUS_OK then
+			goto tbl_fail
+		end if
+		
+		'reset all attribute
+		if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
+		tbl_attributes_sg(file_name,"","",EN_TBL_SET)
+		if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
+		
+		i=filenum_open("TBL",file_name,fd_status)
+		if fd_status<>PL_FD_STATUS_OK then
+			goto fail_to_open
+		end if
+
+	case PL_FD_STATUS_OK,PL_FD_STATUS_ALREADY_OPENED:
+		if i=255 then goto fail_to_open
+		
+	case else
+		'some other problem
+fail_to_open:		
+		if callback_tbl_fail_to_open(file_name,fd_status,i)=YES then
+			goto file_open
+		else
+			goto tbl_fail
+		end if
+	end select
+
+	fd.filenum=i
+
+	'skip the rest if it is currently selected table.
+	if f=tbl_info_index and file_name=tbl_selected_file_name then
+		goto tbl_ok
+	end if
+	
+	tbl_info_index=f
+	tbl_selected_file_name=file_name
+	tbl_get_num_records(tbl_selected_all_rc,yes)
+	
+	if fd.transactionstart()<>PL_FD_STATUS_OK then goto fd_error
+	if tbl_active_rc_sg(tbl_selected_active_rc,EN_TBL_GET)<>PL_FD_STATUS_OK then goto fd_error
+	if fd.transactioncommit()<>PL_FD_STATUS_OK then goto fd_error
+	
+	goto tbl_ok
+	
+fd_error:
+	select case fd.laststatus
+	case PL_FD_STATUS_OK: goto tbl_ok
+	case PL_FD_STATUS_ALREADY_OPENED: goto tbl_ok
+	case PL_FD_STATUS_DUPLICATE_NAME: goto tbl_ok
+	case PL_FD_STATUS_NOT_FOUND: goto tbl_unknown_file
+	case PL_FD_STATUS_NOT_OPENED: goto tbl_unknown_file
+	case else goto tbl_fail
+	end select
+	
+tbl_ok:
+	tbl_select_for_read=EN_TBL_STATUS_OK
+	goto finish
+tbl_fail:
+	tbl_select_for_read=EN_TBL_STATUS_FAILURE
+	goto finish
+tbl_unknown_file:
+	tbl_select_for_read=EN_TBL_STATUS_UNKNOWN_FILE
+	goto finish
+tbl_unknown_tbl:
+	tbl_select_for_read=EN_TBL_STATUS_UNKNOWN_TABLE
+	goto finish
+finish:
+	if fd.transactionstarted=YES then fd.transactioncommit
+	if fd.ready=NO then tbl_select_for_read=EN_TBL_STATUS_FAILURE
+	if tbl_select_for_read<>EN_TBL_STATUS_OK then 
+		callback_tbl_error(tbl_select_for_read)
+		#if TBL_DEBUG_PRINT
+			tbl_debug_print_error("tbl_select_for_read("+table_name_or_num+")",tbl_select_for_read)
+		#endif
+	end if
+end function
+
+'------------------------------------------------------------------------------
 public function tbl_close(byref file_name as string)as en_tbl_status_codes
 
 '<<<<<<<<<<<<<<<<<<<<<<<<<<< UNFINISHED
