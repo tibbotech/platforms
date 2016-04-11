@@ -1,7 +1,7 @@
 [platform]
 description=EM2000 Module
 version=EM2000-3.60
-rom=983040
+rom=786432
 ram=86784
 codebits=24
 databits=32

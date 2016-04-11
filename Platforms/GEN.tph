@@ -43,6 +43,7 @@
 #define ILITEK_ILI9341 7
 #define SOLOMON_SSD1963_FIXED_IO2 8
 #define SITRONIX_ST7789S 9
+#define SOLOMON_SSD1963_ALT_COLOR 10
 
 '55x -- "driver" TDL (low-level stuff like setpixel, etc. but without getpixel)
 '56x -- "info" TDL (LCD dimensions, colors, etc.)
@@ -99,7 +100,11 @@
 	#define LCD_DRIVER_TDL2 "56k.TDL"+ 
 	#define LCD_DRIVER_TDL3 "75k.TDL"+ 
 	#define LCD_DRIVER_TDL4 "79k.TDL"+
-
+#elif LCD_TYPE=SOLOMON_SSD1963_ALT_COLOR
+	#define LCD_DRIVER_TDL "55d.TDL"+ 
+	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
+	#define LCD_DRIVER_TDL3 "75l.TDL"+ 
+	#define LCD_DRIVER_TDL4 "79d.TDL"+
 #endif
 
 #if PLATFORM_ID=7

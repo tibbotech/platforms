@@ -55,6 +55,11 @@ value=SOLOMON_SSD1329
 description=Solomon SSD1963 (Winstar WF35)
 value=SOLOMON_SSD1963
 
+[define2.option5]
+description=Solomon SSD1963 (Winstar WF35 with alt. color setting)
+value=SOLOMON_SSD1963_ALT_COLOR
+
+
 [define3]
 define=OBJECT_KP
 description=Keypad (kp.) object
