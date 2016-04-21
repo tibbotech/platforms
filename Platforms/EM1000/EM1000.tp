@@ -76,6 +76,10 @@ value=HIMAX_HX8347
 description=Ilitek ILI9341
 value=ILITEK_ILI9341
 
+[define2.option8]
+description=Solomon SSD1963 (Winstar WF35, alt. color)
+value=SOLOMON_SSD1963_ALT_COLOR
+
 
 [define3]
 define=OBJECT_KP
