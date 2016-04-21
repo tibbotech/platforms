@@ -3475,8 +3475,8 @@ function decode_variables_script(agg_script)
 	base_script=base_script.replace(/\s*[>]\s*/g, ">");
 	base_script=base_script.replace(/\s*[=]\s*/g, "=");
 	//The following line is oringinal
-	//pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
-	pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+	//pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+	pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){1,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>\s]+>)(<[^<>\s]+>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
 	base_Array = pat_base.exec(base_script);
 	//if (base_Array==null) {alert('The script is corrupted.');return null;}
 	if (base_Array==null) {return null;}
@@ -3498,7 +3498,7 @@ function decode_variables_script(agg_script)
 	
 	//second layer
 	//record format= (field format).....+ record format flags.										
-	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; 	//pattern of getting all fields' formats //@@
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; 	//pattern of getting all fields' formats //@@
 	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;											////The following line is oringinal one -	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]>)/g;								 																										//pattern of getting the rest of the flags in record format layer
 	//2.get each field format string
 	//push every field_format
@@ -3526,8 +3526,8 @@ function decode_variables_script(agg_script)
 	//5.get all flags in each field format
 	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
 	{		                                                   
-		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; 	//pattern of getting details in single field format (extract name type)//@@
-		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; 	//pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
 		//pat_field_format_detail.compile(pat_field_format_detail);	
 		pat_field_format_flag.compile(pat_field_format_flag);	
 		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
@@ -3636,7 +3636,7 @@ base_script=agg_script.replace(/\s*[<]\s*/g, "<"); //clear all white space excep
 base_script=base_script.replace(/\s*[>]\s*/g, ">");
 base_script=base_script.replace(/\s*[=]\s*/g, "=");
 
-pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
+pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]+>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[^<>\s]+>)>/;
 
 base_Array = pat_base.exec(base_script);					 	 
 if (base_Array==null) {return null;}
@@ -3660,7 +3660,7 @@ if (base_Array==null) {return null;}
 
 //inputformat
 	//second layer - record format= (field format).....+ record format flags.										
-	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
 	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;																 		 //pattern of getting the rest of the flags in record format layer
 	var arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats Input-Format
 	if (arr_field_format!=null) 																															 //add null check.
@@ -3682,8 +3682,8 @@ if (base_Array==null) {return null;}
 	//third layer
 	for (var i=0;i<obj_variable.inputformat.field_format_set.length;i++)
 	{		                                                   
-		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
-		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
 		//pat_field_format_detail.compile(pat_field_format_detail);	
 		pat_field_format_flag.compile(pat_field_format_flag);	
 		var tmppArray = pat_field_format_detail.exec(obj_variable.inputformat.field_format_set[i].original_string);	
@@ -3708,7 +3708,7 @@ if (base_Array==null) {return null;}
 	
 //outputformat (redo)
 	//second layer - record format= (field format).....+ record format flags.										
-	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
 	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]+>)/g;																 		 //pattern of getting the rest of the flags in record format layer
 	var arr_field_format =base_Array[7].match(pat_field_format);                            	 //separate all fields' formats Input-Format
 	if (arr_field_format!=null) 																															 //Function: In "functions", the field_format could be null, so need to add null check.
@@ -3729,8 +3729,8 @@ if (base_Array==null) {return null;}
 	//third layer
 	for (var i=0;i<obj_variable.outputformat.field_format_set.length;i++)
 	{		                                                   
-		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
-		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
 		//pat_field_format_detail.compile(pat_field_format_detail);	
 		pat_field_format_flag.compile(pat_field_format_flag);	
 		var tmppArray = pat_field_format_detail.exec(obj_variable.outputformat.field_format_set[i].original_string);	
@@ -3848,7 +3848,7 @@ base_script=agg_script.replace(/\s*[<]\s*/g, "<");
 base_script=base_script.replace(/\s*[>]\s*/g, ">");
 base_script=base_script.replace(/\s*[=]\s*/g, "=");
 
-pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[0-5]>)(<[^<>\s]+>)>/;
+pat_base=/<R=<([^<>\s]+)>(<(<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>){0,}(<[MX]=[0-9]+>|<[F]=[0RU]>){2,}>)(<[^<>]+>)(<[^<>]+>)(<[0-5]>)(<[^<>\s]+>)>/;
 
 base_Array = pat_base.exec(base_script);
 if (base_Array==null) {return null;}
@@ -3868,7 +3868,7 @@ if (base_Array==null) {return null;}
 //Format
 	//second layer
 	//record format= (field format).....+ record format flags.										
-	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
+	pat_field_format=/<<[^<>\s]+><[SILBFDTCA]>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/g; //pattern of getting all fields' formats //@@
 	pat_record_format_flag=/(<[MX]=[0-9]+>|<[F]=[0RU]>)/g;																 //pattern of getting the rest of the flags in record format layer
 	arr_field_format =base_Array[2].match(pat_field_format);                            	 //separate all fields' formats and push every field_format.
 	if (arr_field_format!=null) 																															 //add null check.
@@ -3892,8 +3892,8 @@ if (base_Array==null) {return null;}
 	//third layer
 	for (var i=0;i<obj_variable.format.field_format_set.length;i++)
 	{		                                                   
-		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
-		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,8}\s\d{1,8}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
+		pat_field_format_detail=/<<([^<>\s]+)><([SILBFDTCA])>(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>){0,}>/; //pattern of getting details in single field format (extract name type)//@@
+		pat_field_format_flag=/(<[FADH]=[^<>]+>|<[V]=<[L]=\d{1,10}\s\d{1,10}>>|<[S]=(<[^<>]+=[^<>\s]+>)+>|<[E]=[^<>\s]+>|<[O]=[^<>=]+>)/g;																		//pattern of getting the rest of the flags in field format layer
 		//pat_field_format_detail.compile(pat_field_format_detail);	
 		pat_field_format_flag.compile(pat_field_format_flag);	
 		var tmppArray = pat_field_format_detail.exec(obj_variable.format.field_format_set[i].original_string);	
@@ -4435,7 +4435,7 @@ function on_link_state_change()
 function extract_P1P2(L_script)
 {
 	if (L_script=='') return null;
-	pat=/[L]=(\d{1,8})\s(\d{1,8})/;
+	pat=/[L]=(\d{1,10})\s(\d{1,10})/;
 	result_Array = pat.exec(L_script);
 	if (result_Array==null) return null;
 	if (result_Array.length<3) return null;

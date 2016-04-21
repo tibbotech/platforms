@@ -366,7 +366,7 @@ function update_adv_chkbox(fff_index)
 function extract_P1P2(L_script)
 {
 	if (L_script=='') return null;
-	pat=/[L]=(\d{1,8})\s(\d{1,8})/;
+	pat=/[L]=(\d{1,10})\s(\d{1,10})/;
 	result_Array = pat.exec(L_script);
 	if (result_Array==null) return null;
 	if (result_Array.length<3) return null;
@@ -874,7 +874,7 @@ function chk_DateTime_valid(td_str)
 		
 		var YYYY=td_str.substr(0,4);
 		var MM=td_str.substr(5,2);
-		var DD=td_str.substr(8,2);
+		var DD=td_str.substr(1,2);
 		var hh=td_str.substr(11,2);
 		var mm=td_str.substr(14,2);
 		var ss=td_str.substr(17,2);	

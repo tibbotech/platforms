@@ -1348,12 +1348,16 @@ function agg_modtime_sg(selected_item as agg_item, byref date_time as string, op
 					end if
 					stg_set_ts(selected_item.item_name)
 					exit function
+				else
+					goto fail
 				end if
 			else
 				if stg_sg(selected_item.item_name,0,"",EN_STG_GET)=EN_STG_STATUS_OK then
 					td_to_str(date_time,stg_timestamp.ts_daycount, stg_timestamp.ts_mincount,stg_timestamp.ts_seconds,stg_timestamp.ts_milsec)
 					td_str_date_time_reformat(date_time,TD_STR_ADD_FORMATTING,TD_DATE_FORMAT_YYYYMMDD)
 					exit function
+				else
+					goto fail
 				end if
 			end if
 		end if
@@ -1372,6 +1376,8 @@ function agg_modtime_sg(selected_item as agg_item, byref date_time as string, op
 					end if
 					tbl_timestamp_sg(tbl_ts,EN_TBL_SET)
 					exit function
+				else
+					goto fail
 				end if
 			else
 				if tbl_select(selected_item.item_name,selected_item.item_name)=EN_TBL_STATUS_OK then
@@ -1379,6 +1385,8 @@ function agg_modtime_sg(selected_item as agg_item, byref date_time as string, op
 					td_to_str(date_time,tbl_ts.ts_daycount, tbl_ts.ts_mincount,tbl_ts.ts_seconds,tbl_ts.ts_milsec)
 					td_str_date_time_reformat(date_time,TD_STR_ADD_FORMATTING,TD_DATE_FORMAT_YYYYMMDD)
 					exit function
+				else
+					goto fail
 				end if
 			end if
 		end if
@@ -1387,7 +1395,7 @@ function agg_modtime_sg(selected_item as agg_item, byref date_time as string, op
 	if callback_agg_external_data_modtime_sg(selected_item.p1, selected_item.item_name, date_time, op)=OK then
 		exit function
 	end if
-	
+fail:	
 	agg_modtime_sg=NG
 end function
 #endif
@@ -1399,6 +1407,7 @@ sub agg_get_items()
 	dim i as byte
 	dim j,stg_num as byte
 	
+	stemp=""
 	select case agg_cmd.item_name
 	case "info","children","variables","functions","events":
 		agg_send_script()
@@ -1411,7 +1420,16 @@ sub agg_get_items()
 		for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
 			if agg_items(i).entity_type=EN_AGG_ENTITY_VARIABLES and agg_cmd.context_name=agg_items(i).context_name then
 				#if AGG_CUSTOM_RTC<2
-					if agg_modtime_sg(agg_items(i),s,EN_AGG_GET)<>OK then goto not_found
+					if agg_modtime_sg(agg_items(i),s,EN_AGG_GET)<>OK then
+						if agg_items(i).p1="T" then
+							stemp=str(fd.laststatus)
+							stemp=agg_items(i).item_name+":"+stemp
+						else
+							stemp=agg_items(i).item_name
+						end if	
+						stemp="("+stemp+")"
+						goto not_found
+					end if
 					if s<>"" then
 						s=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)+chr(AGG_ELEMENT_START)+agg_items(i).item_name+chr(AGG_ELEMENT_END)+chr(AGG_ELEMENT_START)+s+chr(AGG_ELEMENT_END)+chr(AGG_ELEMENT_END)
 					end if
@@ -1443,7 +1461,9 @@ sub agg_get_items()
 			if agg_items(i).entity_type=EN_AGG_ENTITY_VARIABLES and agg_cmd.context_name=agg_items(i).context_name and agg_cmd.item_name=agg_items(i).item_name then
 				#if AGG_TABLE_CONTROL
 					if agg_items(i).p1="T" then
-						if agg_send_all_record(agg_cmd.item_name)<>OK then goto not_found
+						if agg_send_all_record(agg_cmd.item_name)<>OK then 
+							goto not_found
+						end if
 						agg_data_send(chr(AGG_COMMAND_END))
 						exit sub				
 					end if
@@ -1490,7 +1510,7 @@ sub agg_get_items()
 	end select
 	exit sub
 not_found:
-	s=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"Unable to find the item."+chr(AGG_COMMAND_END)
+	s=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"Unable to find the item."+stemp+chr(AGG_COMMAND_END)
 	agg_data_send(s)
 	callback_agg_error(EN_AGG_STATUS_ITEM_NOT_FOUND,agg_cmd.item_name)			
 	#if AGG_DEBUG_PRINT

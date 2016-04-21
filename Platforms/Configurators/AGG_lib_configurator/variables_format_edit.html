@@ -377,7 +377,7 @@ function update_adv_chkbox(fff_index)
 function extract_P1P2(L_script)
 {
 	if (L_script=='') return null;
-	pat=/[L]=(\d{1,8})\s(\d{1,8})/;
+	pat=/[L]=(\d{1,10})\s(\d{1,10})/;
 	result_Array = pat.exec(L_script);
 	if (result_Array==null) return null;
 	if (result_Array.length<3) return null;
