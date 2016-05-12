@@ -13,6 +13,11 @@
 #define EXTENDED_SOCK 1
 
 '--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
+
+'--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
 	PL_SOCK_INTERFACE_WLN=2,	'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
