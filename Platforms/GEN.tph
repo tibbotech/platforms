@@ -1659,7 +1659,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.rxbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>)returns current RX buffer capacity 
 'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>ser.rxbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method.<br><br>
@@ -1674,7 +1674,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.txbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) returns current TX buffer capacity 
 'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>ser.txbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method. <br><br>
@@ -1689,7 +1689,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.rxlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) returns total number of committed bytes
 'currently waiting in the RX buffer to be extracted and processed by your application. <br><br>
 'The <font color="teal"><b>on_ser_data_arrival </b></font>event is generated once the RX buffer is not empty, i.e. there is data to
@@ -1707,7 +1707,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.txlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) returns total number of committed bytes
 'currently found in the TX buffer. The data in the TX buffer does not become committed until you use the  <font color="maroon"><b>ser.send
 '</b></font>) method. <br><br>
@@ -1720,7 +1720,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.txfree
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num </b></font>)returns the amount of free space in the TX
 'buffer in bytes, not taking into account uncommitted data. <br><br>
 'Actual free space is <font color="maroon"><b>ser.txfree</b></font> - <font color="maroon"><b>ser.newtxlen</b></font>. Your application will not
@@ -1732,7 +1732,7 @@ end property
 
 '--------------------------------------------------------------------
 property ser.newtxlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) returns the amount of uncommitted TX data
 'in bytes.<br><br>
 'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>ser.setdata </b></font>method but not yet committed
@@ -1902,7 +1902,8 @@ property ser.div9600
 'Returns the value to which the <font color="maroon"><b>ser.baudrate </b></font>property must be set in order to achieve the baudrate of 
 '9600bps under present operating conditions. <br><br>
 'This property will return a different value depending on the PLL mode of the device (see<font color="maroon"><b>sys.currentpll</b></font>).<br><br>
-'"Smart" applications will use this property to set baudrates independently of present operating conditions.
+'"Smart" applications will use this property to set baudrates independently of present operating conditions.<br><br>
+'The value may also differ between the serial ports on the same device.
 	get = syscall(126) as word
 end property
 
@@ -2411,7 +2412,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.rxbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current RX buffer capacity in
 'bytes.<br><br>
 'Buffer capacity can be changed through the <font color="maroon"><b>sock.rxbuffrq</b></font>. The <font color="maroon"><b>sock.rxbuffrq
@@ -2425,7 +2426,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.txbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current TX buffer capacity in
 'bytes. Buffer capacity can be changed through the <font color="maroon"><b>sock.txbuffrq </b></font> method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font> method.<br><br>
@@ -2439,31 +2440,67 @@ end property
 
 #if EXTENDED_SOCK=1
 
+'--------------------------------------------------------------------
 property sock.cmdbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
-	get = syscall(631,"36.TDL"+) as BUFF_SIZE_TYPE
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current CMD buffer capacity in
+'bytes.<br><br>
+'Buffer capacity can be changed through the <font color="maroon"><b>sock.cmdbuffrq</b></font>. The <font color="maroon"><b>sock.rxbuffrq
+'</b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.cmdbuffsize</b></font>=num_pages*256-33 (or =0 when num_pages=0), 
+'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.cmdbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
+'variables.<br><br>
+'The CMD buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
+	get = syscall(631) as BUFF_SIZE_TYPE
 end property
 
+'--------------------------------------------------------------------
 property sock.rplbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
-	get = syscall(632,"36.TDL"+) as BUFF_SIZE_TYPE
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current RPL buffer capacity in
+'bytes.<br><br>
+'Buffer capacity can be changed through the <font color="maroon"><b>sock.rplbuffrq</b></font>. The <font color="maroon"><b>sock.rplbuffrq
+'</b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.rplbuffsize</b></font>=num_pages*256-33 (or =0 when num_pages=0), 
+'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rplbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
+'variables.<br><br>
+'The RPL buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
+	get = syscall(632) as BUFF_SIZE_TYPE
 end property
 
+'--------------------------------------------------------------------
 property sock.varbuffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
-	get = syscall(633,"36.TDL"+) as BUFF_SIZE_TYPE
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current VAR buffer capacity in
+'bytes.<br><br>
+'Buffer capacity can be changed through the <font color="maroon"><b>sock.varbuffrq</b></font>. The <font color="maroon"><b>sock.varbuffrq
+'</b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.varbuffsize</b></font>=num_pages*256-33 (or =0 when num_pages=0), 
+'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.varbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
+'variables.<br><br>
+'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see sock.httpmode property, also sock.httpportlist.
+	get = syscall(633) as BUFF_SIZE_TYPE
 end property
 
+'--------------------------------------------------------------------
 property sock.tx2buffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
-	get = syscall(634,"36.TDL"+) as BUFF_SIZE_TYPE
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns current TX2 buffer capacity in
+'bytes.<br><br>
+'Buffer capacity can be changed through the <font color="maroon"><b>sock.tx2buffrq</b></font>. The <font color="maroon"><b>sock.tx2buffrq
+'</b></font> requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>sock.tx2buffsize</b></font>=num_pages*256-33 (or =0 when num_pages=0), 
+'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.tx2buffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
+'variables.<br><br>
+'The TX2 buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
+	get = syscall(634) as BUFF_SIZE_TYPE
 end property
 
 #endif
 
 '--------------------------------------------------------------------
 property sock.rxlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns total number of bytes currently waiting
 'in the RX buffer to be extracted and processed by your application. <br><br>
 'The <font color="teal"><b>on_sock_data_arrival </b></font>event is generated once the RX buffer is not empty, i.e. there is data to process. 
@@ -2477,7 +2514,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.txlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns total number of committed bytes 
 'currently found in the TX buffer. The data in the TX buffer does not become committed until you use the <font color="maroon"><b>sock.send 
 '</b></font>method. <br><br>
@@ -2490,7 +2527,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.txfree
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of free space in the TX 
 'buffer in bytes, not taking into account uncommitted data. Actual free space is <font color="maroon"><b>sock.txfree</b></font>-
 '<font color="maroon"><b>sock.newtxlen</b></font>. <br><br>
@@ -2502,7 +2539,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.newtxlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of uncommitted TX data in 
 'bytes. Uncommitted data is the one that was added to the TX buffer with the <font color="maroon"><b>sock.setdata </b></font> method but not 
 'yet committed using the <font color="maroon"><b>sock.send </b></font>method.
@@ -2568,7 +2605,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.cmdlen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the length of data (in bytes) waiting
 'to be processed in the CMD buffer. This buffer accumulates incoming inband commands (messages) and may contain more than one such command.
 'Use <font color="maroon"><b>sock.getinband </b></font> method to extract the data from the CMD buffer. <br><br>
@@ -2587,7 +2624,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.rpllen
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the length of data (in bytes) waiting
 'to be send out from the RPL buffer; this is the buffer that keeps outgoing inband replies (messages). <br><br>
 'Your application adds inband replies to the RPL buffer with the <font color="maroon"><b>sock.setsendinband </b></font> method. Several 
@@ -2599,7 +2636,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.rplfree
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the free space (in bytes) available in
 'the RPL buffer; this is the buffer that stores outgoing inband replies (messages). <br><br>
 'Your application adds inband replies to the RPL buffer with the <font color="maroon"><b>sock.setsendinband </b></font> method. Several inband
@@ -2611,7 +2648,7 @@ end property
 
 '--------------------------------------------------------------------
 property sock.tx2len
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of data waiting to be sent
 'out in the TX2 buffer; this is the buffer that is needed to transmit outgoing TCP data when inband commands (messages) are enabled
 '(<font color="maroon"><b>sock.inbandcommands</b></font>= <font color="olive"><b>1- YES</b></font>).<br><br>
@@ -3508,7 +3545,7 @@ syscall(371,"35.TDL") ppp.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 
 '--------------------------------------------------------------------
 property ppp.buffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).</b>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes).</b>
 '<br><br>
 'Returns the current capacity (in bytes) of the ppp. object's buffer.
 '<br><br>

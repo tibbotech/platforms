@@ -2,7 +2,7 @@
 '		TPRAM (Tamper-proof non-volatile RAM) object
 '**************************************************************************************************
 
-#define TPRAM_AVAILABLE 1
+#define TPRAM_AVAILABLE 0
 
 object tpram
 

@@ -1,0 +1,29 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			KLM601 WITH WI-FI INTERFACE
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#define __notdl
+
+#define PLATFORM_ID 7
+
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
+#define EXTENDED_SOCK 1
+
+'--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
+
+'--------------------------------------------------------------------
+enum pl_sock_interfaces
+	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
+	PL_SOCK_INTERFACE_WLN=2,	'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP=3		'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+end enum
+
+'====================================================================
+include "..\T1000-GEN.tph"
+include "..\WLN.tph"

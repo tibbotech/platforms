@@ -1,0 +1,155 @@
+'**************************************************************************************************
+'		SOCK (Socket) object
+'**************************************************************************************************
+
+object lsock
+
+'--------------------------------------------------------------------
+property lsock.acceptbcast
+	get = syscall(647) as no_yes
+	set = syscall(648) (acceptbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property lsock.bcast
+	get = syscall(649) as no_yes
+end property
+
+'--------------------------------------------------------------------
+property lsock.connectiontout
+	get = syscall(650) as word
+	set = syscall (651) (connectiontout as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.inconenabledmaster
+	get = syscall(652) as no_yes
+	set= syscall(653) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+enum pl_lsock_inconmode
+'<b>ENUM. </b><br><br> 
+'Contains the list of constants related to whether the socket accepts any incoming connections and, if yes, from which sources.
+	PL_SOCK_INCONMODE_NONE,			'<b>PLATFORM CONSTANT. </b><br><br> The socket does not accept any incoming connections.
+	PL_SOCK_INCONMODE_SPECIFIC_IPPORT,	'<b>PLATFORM CONSTANT. </b><br><br> 
+										'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+										'<b>sock.targetip</b></font>) and specific port (matching <font color="maroon"><b>
+										'sock.targetport</b></font>)
+	PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT,	'<b>PLATFORM CONSTANT. </b><br><br> 
+											'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+											'<b>sock.targetip</b></font>), but any port.
+	PL_SOCK_INCONMODE_ANY_IP_ANY_PORT	'<b>PLATFORM CONSTANT. </b><br><br> 
+										'The socket will accept an incoming connection from any IP and any port.
+end enum
+
+property lsock.inconmode
+	get = syscall(654) as pl_lsock_inconmode
+	set = syscall(655) (inconmode as pl_lsock_inconmode)
+end property
+
+'--------------------------------------------------------------------
+property sock.localport
+	get = syscall(656) as word
+	set = syscall(657) (local_port as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.num
+	get = syscall(658) as byte
+	set = syscall(659) (sock as byte)
+end property
+
+'--------------------------------------------------------------------
+property lsock.numofsock
+	get = syscall(660) as byte
+end property
+
+'--------------------------------------------------------------------
+property lsock.outport
+	get = syscall(661) as word
+	set = syscall(662) (outport as word)
+end property
+
+'--------------------------------------------------------------------
+enum pl_lsock_protocol
+'<b>ENUM. </b><br><br> 
+	PL_SOCK_PROTOCOL_UDP,		'<b>PLATFORM CONSTANT. </b><br><br> Specifies UDP transport protocol for the socket.
+	PL_SOCK_PROTOCOL_TCP		'<b>PLATFORM CONSTANT. </b><br><br> Specifies TCP transport protocol for the socket.
+end enum
+
+property lsock.protocol
+	get = syscall(663) as pl_lsock_protocol
+	set = syscall(664) (proto as pl_lsock_protocol)
+end property
+
+'--------------------------------------------------------------------
+property lsock.remoteip
+	get = syscall(665) as string
+end property
+
+'--------------------------------------------------------------------
+property lsock.remotemac
+	get = syscall(666) as string
+end property
+
+'--------------------------------------------------------------------
+property lsock.remoteport
+	get = syscall(667) as word
+end property
+
+'--------------------------------------------------------------------
+property lsock.rxpacketlen
+	get = syscall(668) as word
+end property
+
+'--------------------------------------------------------------------
+property lsock.sinkdata
+	get = syscall(669) as no_yes
+	set= syscall(670) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+enum pl_lsock_state_simple
+	PL_SSTS_CLOSED,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed. <br><br>Applies both to UDP and TCP.
+	PL_SSTS_ARP,		'<b>PLATFORM CONSTANT. </b><br><br> ARP resolution is an progress (it is an active open).
+						'<br><br>Applies both to UDP and TCP.
+	PL_SSTS_PO,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is a passive open).
+						'<br><br>Applies only to TCP.
+	PL_SSTS_AO,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
+						'<br><br>Applies only to TCP.
+	PL_SSTS_EST,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is established. <br><br>Applies both to UDP and TCP.  
+	PL_SSTS_PC,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
+						'<br><br>Applies only to TCP. 
+	PL_SSTS_AC			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
+						'<br><br>Applies only to TCP.
+end enum
+
+property lsock.state
+	get = syscall(671) as pl_lsock_state
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetbcast
+	get = syscall(672) as no_yes
+	set = syscall(673) (targetbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetip
+	get = syscall(674) as string
+	set = syscall(675) (byref targetip as string)
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetport
+	get = syscall(676) as word
+	set = syscall(677) (targetport as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.toutcounter
+	get = syscall(678) as word
+end property
+
+

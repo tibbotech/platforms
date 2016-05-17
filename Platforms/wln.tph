@@ -101,7 +101,7 @@ syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 
 '--------------------------------------------------------------------
 property wln.buffsize
-'<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).</b>
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes).</b>
 '<br><br>
 'Returns current capacity (in bytes) of the wln object's TX buffer.
 '<br><br>

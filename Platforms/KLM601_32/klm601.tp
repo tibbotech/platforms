@@ -1,0 +1,79 @@
+[platform]
+description=KLM601 platform
+version=KLM601_32-3.60
+rom=786432
+ram=86784
+codebits=24
+databits=32
+sector=65536
+
+[transport1]
+name=serial
+description=Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
+
+
+[defineimports]
+import1=../GEN.tp
+
+
+[define1]
+define=OBJECT_LCD
+description=Display (lcd.) object
+value=LCD_ENABLED
+
+[define1.option1]
+description=Enabled
+value=LCD_ENABLED
+
+
+[define2]
+define=LCD_TYPE
+description=Display panel type
+value=SOLOMON_SSD1963_FIXED_IO
+
+[define2.option1]
+description=Solomon SSD1963 (Winstar WF35), fixed I/O
+value=SOLOMON_SSD1963_FIXED_IO
+
+[define3]
+define=OBJECT_KP
+description=Keypad (kp.) object
+value=KP_ENABLED
+
+[define3.option1]
+description=Disabled
+value=KP_DISABLED
+
+[define3.option2]
+description=Enabled
+value=KP_ENABLED
+
+
+[define4]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_ENABLED
+
+[define4.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define4.option2]
+description=Enabled
+value=FD_ENABLED
+
+
+[define5]
+define=OBJECT_WLN
+description=Wi-Fi (wln.) object
+value=WLN_ENABLED
+
+[define5.option1]
+description=Disabled
+value=WLN_DISABLED
+
+[define5.option2]
+description=Enabled
+value=WLN_ENABLED

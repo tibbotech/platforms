@@ -25,7 +25,6 @@ type en_sdr_type
 	romaddr_def as word
 	member_size as byte
 	setting_size as byte
-	status as en_stg_status_codes
 end type
 
 '--------------------------------------------------------------------------------
@@ -1466,66 +1465,40 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 
 		if stg_sdr(num).storage=`E` then
 			'store the data into the NV MEM
+			stg_sg_internal=EN_STG_STATUS_FAILURE
+			
+			
 			#if STG_STORAGE_MEMORY=0
-				if stor.setdata(stg_str,stg_sdr(num).memaddr)<>len(stg_str) then
-					stg_sg_internal=EN_STG_STATUS_FAILURE
-					#if STG_DEBUG_PRINT
-						stg_debug_print_error(debug_str,stg_sg_internal)
-					#endif
-					exit function
+				if stor.setdata(stg_str,stg_sdr(num).memaddr)=len(stg_str) then
+					stg_sg_internal=EN_STG_STATUS_OK
 				end if
 				#if STG_REDUNDANCY
-					if stor.setdata(stg_str,stg_sdr(num).memaddr+stor.size/2)<>len(stg_str) then
-						stg_sg_internal=EN_STG_STATUS_FAILURE
-						#if STG_DEBUG_PRINT
-							stg_debug_print_error(debug_str,stg_sg_internal)
-						#endif
-						exit function
+					if stor.setdata(stg_str,stg_sdr(num).memaddr+stor.size/2)=len(stg_str) then
+						stg_sg_internal=EN_STG_STATUS_OK
 					end if
 				#endif
 			#else
-				fd_status=fd.setpointer(stg_sdr(num).memaddr)
-				if fd_status<>PL_FD_STATUS_OK then
-					stg_sg_internal=EN_STG_STATUS_FAILURE
-					#if STG_DEBUG_PRINT
-						stg_debug_print_error(debug_str,stg_sg_internal)
-					#endif
-					exit function
+				if (fd.setpointer(stg_sdr(num).memaddr) = PL_FD_STATUS_OK) and (fd.setdata(stg_str) = PL_FD_STATUS_OK) then
+					stg_sg_internal=EN_STG_STATUS_OK
 				end if
 				
-				fd_status=fd.setdata(stg_str)
-				if fd_status<>PL_FD_STATUS_OK then
-					stg_sg_internal=EN_STG_STATUS_FAILURE
-					#if STG_DEBUG_PRINT
-						stg_debug_print_error(debug_str,stg_sg_internal)
-					#endif
-					exit function
-				end if
-
 				#if STG_REDUNDANCY
-					fd_status=fd.setpointer(stg_sdr(num).memaddr+fd.filesize/2)
-					if fd_status<>PL_FD_STATUS_OK then
-						stg_sg_internal=EN_STG_STATUS_FAILURE
-						#if STG_DEBUG_PRINT
-							stg_debug_print_error(debug_str,stg_sg_internal)
-						#endif
-						exit function
+					if (fd.setpointer(stg_sdr(num).memaddr+fd.filesize/2) = PL_FD_STATUS_OK) and (fd.setdata(stg_str) = PL_FD_STATUS_OK) then
+						stg_sg_internal=EN_STG_STATUS_OK
 					end if
-					
-					fd_status=fd.setdata(stg_str)
-					if fd_status<>PL_FD_STATUS_OK then
-						stg_sg_internal=EN_STG_STATUS_FAILURE
-						#if STG_DEBUG_PRINT
-							stg_debug_print_error(debug_str,stg_sg_internal)
-						#endif
-						exit function
-					end if
-				#endif
-
+				#endif	
+				
 				if suspend_flushing=NO then
 					fd.flush
 				end if	
 			#endif
+		
+			if (stg_sg_internal<>EN_STG_STATUS_OK) then
+				#if STG_DEBUG_PRINT
+					stg_debug_print_error(debug_str,stg_sg_internal)
+				#endif
+				exit function
+			end if
 		else
 			'store the data into the volatile memory
 			stg_ramarr_setdata(stg_str,stg_sdr(num).memaddr)
