@@ -133,10 +133,13 @@ declare function agg_element_get(byref element_level as string, byref element_st
 declare function agg_entity_get(byref s as string) as en_agg_entity
 declare sub agg_invisible_separators(byref s as string)
 declare sub agg_replace_chr(byref s as string, byref a as string, byref b as string)
-declare function agg_call_function(byref op as string ,byref context_name as string, byref func_input as string, byref msg as string) as ok_ng
+declare function agg_call_function(byref op as string ,byref context_name as string, byref func_input as string) as ok_ng
 declare function agg_root_login(byref function_input as string) as string
 declare function agg_hex_to_hexstr(byref is as string) as string
 declare function agg_send_all_record(byref tbl_name as string) as ok_ng
+declare function agg_disk_download() as ok_ng
+declare function agg_set_variable() as ok_ng
+declare sub agg_convert_disk_data(byref data_string as string)
 
 #if AGG_REMOTE_FIRMWARE_UPLOAD
 	declare function agg_firmware_upload() as ok_ng
@@ -680,12 +683,10 @@ public sub agg_proc_data()
 'API procedure, process commands from AggreGate server.
 
 	dim pos1, pos2 as byte
-	dim item_name_temp as string(AGG_ITEM_BUFF_LEN)
-	dim stemp1,stemp2 as string
+	dim stemp1 as string
 	dim head_found as no_yes
-	dim i,stg_num as byte
+	dim i as byte
 	dim endless_loop_count as byte
-	dim t as word
 	dim element_result as en_agg_element_get_status
 	
 	if sock.num<>agg_sock then exit sub
@@ -729,6 +730,7 @@ reset_socket:
 		agg_sock_close()
 		exit sub
 	end if
+	
 	stemp1=agg_rx_getdata(chr(AGG_COMMAND_PARAMETERS_SEPARATOR))
 	if stemp1<>"" then
 		agg_cmd.code=stemp1
@@ -749,8 +751,8 @@ reset_socket:
 		select case agg_cmd.msg_code
 		case "S":
 			agg_start_cmd_recieved=agg_start_cmd_recieved+1
-			stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_END)
-			agg_data_send(stemp2)
+			stemp1=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_END)
+			agg_data_send(stemp1)
 			if agg_start_cmd_recieved>1 then 			 'start command is recieved more than once consecutively. command is out of sync
 				agg_start_cmd_recieved=0
 				agg_rx=""
@@ -777,6 +779,7 @@ reset_socket:
 	stemp1=agg_rx_getdata(chr(AGG_COMMAND_PARAMETERS_SEPARATOR))
 	agg_cmd.context_name=stemp1
 	
+	'get the item name
 	select case agg_cmd.op_code
 	case "S":
 		stemp1=agg_rx_getdata(chr(AGG_COMMAND_PARAMETERS_SEPARATOR))
@@ -795,151 +798,33 @@ reset_socket:
 	select case agg_cmd.op_code
 	case "G":
 		agg_rx_getdata(chr(AGG_COMMAND_END))
-		stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)
-		agg_data_send(stemp2)
+		stemp1=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)
+		agg_data_send(stemp1)
 		agg_get_items()
 		exit sub
 	case "S":
-	
-rx_read:		
-		agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
-		stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
-		pos1=instr(1,agg_rx,stemp1,1)
-		agg_rx_clr(pos1+len(stemp2))
-		
-		if pos1>0 then
-			select case agg_cmd.item_name
-			case "date","datex":		'set date
-				#if AGG_CUSTOM_RTC<2
-					agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
-					stemp2=mid(stemp2,2,len(stemp2)-2)
-					agg_systime_sg(stemp2,EN_AGG_SET)
-				#endif
-			case "modtime":		'set modification time
-				do
-proc_modtime:		
-					#if AGG_CUSTOM_RTC<2
-						agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
-						item_name_temp=mid(stemp1,2,len(stemp1)-2)
-						agg_element_get("1/2/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
-						stemp1=mid(stemp1,2,len(stemp1)-2)
-
-						for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
-							if agg_items(i).entity_type=EN_AGG_ENTITY_VARIABLES and agg_cmd.context_name=agg_items(i).context_name and agg_items(i).item_name=item_name_temp then
-								agg_modtime_sg(agg_items(i),stemp1,EN_AGG_SET)
-							end if
-						next i
-					#endif
-					
-					agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
-					stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
-					endless_loop_count=0
-find_command_close:	
-					pos1=instr(1,agg_rx,stemp1,1)
-					pos2=instr(1,agg_rx,chr(AGG_COMMAND_END),1)
-					agg_rx_clr(pos1+len(stemp2))
-					
-					'check for command end character, if it's not present, meaning more data to come
-					if pos2=0 then
-						'if item start string <R= is not present, wait and try to get more data from rx buffer
-						if pos1=0 then
-							'delay for 1 clock cycle
-							t=sys.timercount
-							while t=sys.timercount
-							wend							
-							endless_loop_count=endless_loop_count+1
-							if endless_loop_count>10 then
-								goto reset_socket
-							end if
-						end if
-						
-						'if the rx string is full then proc the string, if it's not try get fill it up
-						if len(agg_rx)=255 then
-							goto proc_modtime
-						else
-							goto find_command_close
-						end if
-						
-					end if
-				loop while pos1>0
-				
-			case "children","events":
-				agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
-				stemp1=mid(stemp1,2,len(stemp1)-2)
-				
-			case else
-			
-				for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
-					if agg_cmd.item_name=agg_items(i).item_name then
-						exit for
-					end if
-				next i
-
-				if agg_items(i).p1="S" then
-					#if AGG_SETTING_CONTROL
-						'cases setting modifications
-						dim stg_result as en_stg_status_codes
-						
-						if stg_get_num_members(agg_cmd.item_name,stg_num)=EN_STG_STATUS_OK then	'get number of settings
-							for i=0 to stg_num-1
-								agg_element_get("1/"+str(i+1)+"/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
-								stemp1=mid(stemp1,2,len(stemp1)-2)
-								stg_result=agg_settings_sg(agg_cmd.item_name,stemp1,i,EN_AGG_SET)
-								if stg_result<>EN_STG_STATUS_OK then exit for
-							next i
-							if stg_result<>EN_STG_STATUS_OK then
-								stemp2=agg_stg_msg(stg_result)
-								stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp2+chr(AGG_COMMAND_END)
-								callback_agg_error(EN_AGG_STATUS_SETTING_ERROR,agg_cmd.item_name)
-								callback_agg_setting_error(agg_cmd.item_name,stg_result)
-								agg_data_send(stemp2)
-								
-								#if AGG_DEBUG_PRINT
-									stemp1="setting name: "+agg_cmd.item_name+" index: "+str(i)
-									agg_debugprint(stemp1)						
-									agg_debug_print_status(EN_AGG_STATUS_SETTING_ERROR)						
-								#endif					
-								exit sub
-							end if
-						end if
-					#endif
-				else if agg_items(i).p1="X" then
-					if callback_agg_external_data_source(agg_items(i).p1,agg_cmd.item_name,stemp2,stemp1,EN_AGG_SET)<>OK then
-						if stemp1="" then
-							stemp1=chr(AGG_ELEMENT_START)+"data source unavailable."+chr(AGG_ELEMENT_END)
-						end if
-						stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp1+chr(AGG_COMMAND_END)
-						agg_data_send(stemp2)
-						exit sub
-					end if				
-				end if
-			end select
+		if agg_set_variable()=NG then
+			goto reset_socket
 		else
-			if len(stemp2)>254 then goto rx_read
 			exit sub
 		end if
-		stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_END)
-		agg_data_send(stemp2)
-		exit sub						
+		
 	case "C":
+		'get the function input
 		element_result=agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
 		if element_result=EN_ELEMENT_TOO_LONG then
 			stemp1=agg_rx
 		end if
-		if agg_call_function(agg_cmd.item_name,agg_cmd.context_name,stemp1, stemp2)=OK then
-			stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp2+chr(AGG_COMMAND_END)
-		else
-			stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp2+chr(AGG_COMMAND_END)
+		
+		if agg_call_function(agg_cmd.item_name,agg_cmd.context_name,stemp1)<>OK then
 			callback_agg_error(EN_AGG_STATUS_FUNCTION_ERROR,agg_cmd.item_name)
 			#if AGG_DEBUG_PRINT
 				stemp1="function: "+agg_cmd.item_name
 				agg_debug_print_status(EN_AGG_STATUS_FUNCTION_ERROR)
 				agg_debugprint(stemp1)
-			#endif								
+			#endif			
 		end if
-		agg_data_send(stemp2)
-		agg_data_send(chr(AGG_COMMAND_END))
-		exit sub
+
 	end select
 end sub
 
@@ -1172,7 +1057,7 @@ function agg_connect() as en_agg_status_codes
 		sock.txbuffrq(AGG_TX_BUF_SIZE)
 		sys.buffalloc()
 		
-		if sock.rxbuffsize<AGG_RX_BUF_SIZE*256-17 or sock.txbuffsize<AGG_TX_BUF_SIZE*256-17 then
+		if sock.rxbuffsize<AGG_RX_BUF_SIZE*256-33 or sock.txbuffsize<AGG_TX_BUF_SIZE*256-33 then
 			#if AGG_DEBUG_PRINT
 				agg_debug_print_status(EN_AGG_STATUS_INSUFFICIENT_BUFFER_SPACE)
 			#endif
@@ -1763,7 +1648,7 @@ function agg_tbl_add_record(byref contain as string, byref msg as string)as ok_n
 	pos2=instr(pos1,contain,chr(AGG_ELEMENT_END),1)
 	tbl_name=mid(contain,pos1+1,pos2-pos1-1)
 	tbl_result=tbl_select(tbl_name,tbl_name)
-	
+
 	if tbl_result<>EN_TBL_STATUS_OK then goto err
 
 	pos1=instr(pos2,contain,"%<I%=",1)+5
@@ -2038,6 +1923,7 @@ err:
 	
 	msg=""
 	agg_selected_tbl_info=tbl_name
+	tbl_set_to_clean_start(YES)
 	agg_tbl_start_table=OK
 end function
 
@@ -2047,6 +1933,7 @@ function agg_tbl_finish_table(byref contain as string, byref msg as string)as ok
 	dim pos1,pos2 as byte
 	dim tbl_name as string(AGG_MAX_SCRIPT_LINE_NAME_LEN)
 	
+	tbl_set_to_clean_start(NO)
 	pos1=instr(1,contain,chr(AGG_ELEMENT_START),3)
 	pos2=instr(pos1,contain,chr(AGG_ELEMENT_END),1)
 	tbl_name=mid(contain,pos1+1,pos2-pos1-1)
@@ -2170,13 +2057,13 @@ end function
 #endif
 
 '----------------------------------------------------------------------------
-function agg_call_function(byref op as string ,byref context_name as string, byref func_input as string, byref msg as string) as ok_ng
+function agg_call_function(byref op as string ,byref context_name as string, byref func_input as string) as ok_ng
+	dim msg as string
 	
 	if context_name="" then	'root operations
 		select case op
 		case "synchronized":
 			agg_sychronized=YES
-			msg=""
 			agg_call_function=OK
 			#if AGG_DEBUG_PRINT
 				agg_debugprint("AggreGate server synchronized")
@@ -2194,6 +2081,10 @@ function agg_call_function(byref op as string ,byref context_name as string, byr
 				msg=chr(AGG_ELEMENT_START)+"Auto register disabled."+chr(AGG_ELEMENT_END)
 				agg_call_function=NG
 			end if
+			
+		case "disk":
+			agg_call_function=agg_disk_download()
+			goto finish
 			
 		#if AGG_REMOTE_FIRMWARE_UPLOAD
 			case "upload":
@@ -2242,6 +2133,17 @@ function agg_call_function(byref op as string ,byref context_name as string, byr
 	else						'device specific operations
 		agg_call_function=callback_agg_device_function(op,context_name,func_input, msg) 
 	end if
+
+	if agg_call_function=OK then
+		msg=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+msg+chr(AGG_COMMAND_END)
+	else
+		msg=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+msg+chr(AGG_COMMAND_END)								
+	end if
+	
+	agg_data_send(msg)
+	
+finish:	
+	agg_data_send(chr(AGG_COMMAND_END))
 
 end function
 
@@ -2596,3 +2498,206 @@ agg_debugprint_1:
 	sys.debugprint(AGG_STAMP1+s+AGG_STAMP2+print_data+AGG_CR_LF)
 end sub
 #endif
+
+'----------------------------------------------------------------------------
+function agg_disk_download() as ok_ng
+	dim sector_num as word
+	dim s as string
+	dim size as dword
+	dim i as byte
+	
+	s=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)+chr(AGG_ELEMENT_START)+"0/\x1a/fd_content.txt/-1/1/"
+	agg_data_send(s)
+	
+	size=fd.availableflashspace*264
+	s=lstr(size)
+
+	for sector_num=0 to fd.availableflashspace-1
+		for i=0 to 2
+			fd.getsector(sector_num)
+			s=fd.getbuffer(i*88,88)
+			agg_convert_disk_data(s)
+			agg_data_send(s)
+		next i
+	next sector_num
+	
+	agg_data_send(chr(AGG_ELEMENT_END)+chr(AGG_ELEMENT_END))
+	agg_disk_download=OK
+	
+end function
+
+'----------------------------------------------------------------------------
+function agg_set_variable() as ok_ng
+	dim stemp1, stemp2 as string
+	dim pos1, pos2, i, stg_num as byte
+	dim item_name_temp as string(AGG_ITEM_BUFF_LEN)
+	dim endless_loop_count as byte
+	dim t as word
+	
+	agg_set_variable=OK
+rx_read:		
+		agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
+		stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
+		pos1=instr(1,agg_rx,stemp1,1)
+		agg_rx_clr(pos1+len(stemp2))
+		
+		if pos1>0 then
+			select case agg_cmd.item_name
+			case "date","datex":		'set date
+				#if AGG_CUSTOM_RTC<2
+					agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
+					stemp2=mid(stemp2,2,len(stemp2)-2)
+					agg_systime_sg(stemp2,EN_AGG_SET)
+				#endif
+			case "modtime":		'set modification time
+				do
+proc_modtime:		
+					#if AGG_CUSTOM_RTC<2
+						agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
+						item_name_temp=mid(stemp1,2,len(stemp1)-2)
+						agg_element_get("1/2/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
+						stemp1=mid(stemp1,2,len(stemp1)-2)
+
+						for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
+							if agg_items(i).entity_type=EN_AGG_ENTITY_VARIABLES and agg_cmd.context_name=agg_items(i).context_name and agg_items(i).item_name=item_name_temp then
+								agg_modtime_sg(agg_items(i),stemp1,EN_AGG_SET)
+							end if
+						next i
+					#endif
+					
+					agg_element_get("1/",agg_rx,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp2)
+					stemp1=chr(AGG_ELEMENT_START)+"R"+chr(AGG_ELEMENT_NAME_VALUE_SEPARATOR)
+					endless_loop_count=0
+find_command_close:	
+					pos1=instr(1,agg_rx,stemp1,1)
+					pos2=instr(1,agg_rx,chr(AGG_COMMAND_END),1)
+					agg_rx_clr(pos1+len(stemp2))
+					
+					'check for command end character, if it's not present, meaning more data to come
+					if pos2=0 then
+						'if item start string <R= is not present, wait and try to get more data from rx buffer
+						if pos1=0 then
+							'delay for 1 clock cycle
+							t=sys.timercount
+							while t=sys.timercount
+							wend							
+							endless_loop_count=endless_loop_count+1
+							if endless_loop_count>10 then
+								agg_set_variable=NG
+								exit function
+							end if
+						end if
+						
+						'if the rx string is full then proc the string, if it's not try get fill it up
+						if len(agg_rx)=255 then
+							goto proc_modtime
+						else
+							goto find_command_close
+						end if
+						
+					end if
+				loop while pos1>0
+				
+			case "children","events":
+				agg_element_get("1/1/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
+				stemp1=mid(stemp1,2,len(stemp1)-2)
+				
+			case else
+			
+				for i=0 to AGG_MAX_NUM_SCRIPT_LINES-1
+					if agg_cmd.item_name=agg_items(i).item_name then
+						exit for
+					end if
+				next i
+
+				if agg_items(i).p1="S" then
+					#if AGG_SETTING_CONTROL
+						'cases setting modifications
+						dim stg_result as en_stg_status_codes
+						
+						if stg_get_num_members(agg_cmd.item_name,stg_num)=EN_STG_STATUS_OK then	'get number of settings
+							for i=0 to stg_num-1
+								agg_element_get("1/"+str(i+1)+"/",stemp2,chr(AGG_ELEMENT_START),chr(AGG_ELEMENT_END),stemp1)
+								stemp1=mid(stemp1,2,len(stemp1)-2)
+								stg_result=agg_settings_sg(agg_cmd.item_name,stemp1,i,EN_AGG_SET)
+								if stg_result<>EN_STG_STATUS_OK then exit for
+							next i
+							if stg_result<>EN_STG_STATUS_OK then
+								stemp2=agg_stg_msg(stg_result)
+								stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp2+chr(AGG_COMMAND_END)
+								callback_agg_error(EN_AGG_STATUS_SETTING_ERROR,agg_cmd.item_name)
+								callback_agg_setting_error(agg_cmd.item_name,stg_result)
+								agg_data_send(stemp2)
+								
+								#if AGG_DEBUG_PRINT
+									stemp1="setting name: "+agg_cmd.item_name+" index: "+str(i)
+									agg_debugprint(stemp1)						
+									agg_debug_print_status(EN_AGG_STATUS_SETTING_ERROR)						
+								#endif					
+								exit function
+							end if
+						end if
+					#endif
+				else if agg_items(i).p1="X" then
+					if callback_agg_external_data_source(agg_items(i).p1,agg_cmd.item_name,stemp2,stemp1,EN_AGG_SET)<>OK then
+						if stemp1="" then
+							stemp1=chr(AGG_ELEMENT_START)+"data source unavailable."+chr(AGG_ELEMENT_END)
+						end if
+						stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"E"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+stemp1+chr(AGG_COMMAND_END)
+						agg_data_send(stemp2)
+						exit function
+					end if				
+				end if
+			end select
+		else
+			if len(stemp2)>254 then goto rx_read
+			exit function
+		end if
+		stemp2=chr(AGG_COMMAND_START)+"R"+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+agg_cmd.id+chr(AGG_COMMAND_PARAMETERS_SEPARATOR)+"A"+chr(AGG_COMMAND_END)
+		agg_data_send(stemp2)
+
+end function
+
+'----------------------------------------------------------------------------
+sub agg_convert_disk_data(byref data_string as string)
+	dim s as string
+	dim i as byte
+	dim checking_byte as string(1)
+	dim bin_string1, bin_string2 as string(10)
+	dim b1 as byte
+	
+	s=""
+	for i=1 to len(data_string)
+		checking_byte=mid(data_string,i,1)
+		select case checking_byte
+		case "\x02":
+			s=s+"%^"
+		case "\x0d":
+			s=s+"%$"
+		case "\x17":
+			s=s+"%/"
+		case "\x1c":
+			s=s+"%<"
+		case "\x1d":
+			s=s+"%>"
+		case "\x1e"
+			s=s+"%="
+		case "%":
+			s=s+"%%"
+		case else
+			b1=asc(checking_byte)
+			if b1>127 then
+				bin_string2=bin(b1)
+				bin_string1="&b110000"+mid(bin_string2,3,2)
+				bin_string2="&b10"+right(bin_string2,6)
+				b1=val(bin_string1)
+				s=s+chr(b1)
+				b1=val(bin_string2)
+				s=s+chr(b1)
+			else
+				s=s+checking_byte
+			end if
+		end select
+	next i
+	data_string=s
+end sub
