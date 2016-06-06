@@ -233,19 +233,35 @@ end enum
 '--------------------------------------------------------------------
 enum pl_io_port_num
 	PL_IO_PORT_NUM_0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 0, contains I/O lines 0-7.
+				'8-bit port 0, contains I/O lines 0-7. This is a virtual port.<br><br>
+				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 8 lines is handled individually,
+				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in the state writing and reading.
 
 	PL_IO_PORT_NUM_1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 1, contains I/O lines 8-15.
+				'8-bit port 1, contains I/O lines 8-15. This is a virtual port.<br><br>
+				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 8 lines is handled individually,
+				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in the state writing and reading.
 
 	PL_IO_PORT_NUM_2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 2, contains I/O lines 16-23.
+				'8-bit port 2, contains I/O lines 16-23. This is a virtual port.<br><br>
+				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
+				'and then the lines with their new value equal to HIGH are set next.
+				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
+				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.   
 
 	PL_IO_PORT_NUM_3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 3, contains I/O lines 24-31.
+				'8-bit port 3, contains I/O lines 24-31. This is a virtual port.<br><br>
+				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
+				'and then the lines with their new value equal to HIGH are set next.
+				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
+				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.
 
 	PL_IO_PORT_NUM_4	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 4, contains I/O lines 32-39.
+				'8-bit port 4, contains I/O lines 32-39. This is a virtual port.<br><br>
+				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
+				'and then the lines with their new value equal to HIGH are set next.
+				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
+				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.
 end enum
 
 '--------------------------------------------------------------------
