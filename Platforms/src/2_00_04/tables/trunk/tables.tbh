@@ -128,6 +128,7 @@ type tbl_type
 	rec_size as byte
 	field_num_offset as word
 	num_of_fields as byte
+	clean_start as no_yes
 end type
 
 type struct_tbl_timestamp
@@ -170,7 +171,8 @@ declare function tbl_select_for_read(byref table_name_or_num as string, byref fi
 	declare function tbl_field_get(byref field_name as string) as string
 	declare sub tbl_field_set(byref field_name as string, byref field_value as string)
 	declare function tbl_is_current_record_deleted() as no_yes
-
+	declare sub tbl_set_to_clean_start(op as no_yes)
+	
 declare sub callback_tbl_error(status as en_tbl_status_codes)
 declare function callback_tbl_fail_to_open(byref filename as string, status as pl_fd_status_codes, filenum as byte) as no_yes
 declare sub callback_tbl_field_error(byref file_name as string,byref field_name as string,tbl_result as en_tbl_status_codes)

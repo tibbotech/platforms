@@ -709,11 +709,14 @@ no_field_found:
 		if max_record_size<record_size then max_record_size=record_size
 		tbl_item.rec_size=record_size
 		
+		tbl_item.clean_start=NO
+		
 		if tbl_info_index<TBL_MAX_NUM_TABLES then
 			tbl_info(tbl_info_index)=tbl_item	
 		end if
 		tbl_info_index=tbl_info_index+1
 	wend
+	
 	if tbl_info_index>TBL_MAX_NUM_TABLES then
 		#if TBL_DEBUG_PRINT
 			tbl_debugprint("ERROR: total number of tables is "+str(tbl_info_index)+" while you have 'TBL_MAX_NUM_TABLES "+str(TBL_MAX_NUM_TABLES)+"'.")
@@ -1354,9 +1357,10 @@ public function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 		md5_val=tbl_set_md5()
 	end if
 #endif
-
-	if tbl_check_key_violation(0)=YES then goto tbl_key_violate
-
+	if tbl_info(tbl_info_index).clean_start=NO then
+		if tbl_check_key_violation(0)=YES then goto tbl_key_violate
+	end if
+	
 	'find the first deleted record, if not found move the pointer to the end of file and set data
 	if tbl_info(tbl_info_index).struct=EN_TBL_STRUCT_LIST then
 		'check if table is full
@@ -1384,16 +1388,21 @@ public function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 		daddr1=fd.filesize+1
 		add_to_del_pos=NO
 	else
-		daddr1=fd.find(1,TBL_DELETE_FLAG,1,FORWARD,tbl_info(tbl_info_index).rec_size,PL_FD_FIND_EQUAL)
-		if daddr1=0 then 
-			'check if table is full
-			dwtemp=tbl_info(tbl_info_index).rec_size
-			dwtemp=dwtemp*tbl_info(tbl_info_index).maxrecs
-			if not(fd.filesize<dwtemp) then goto tbl_full
-			daddr1=fd.filesize+1
-			add_to_del_pos=NO
+		if tbl_info(tbl_info_index).clean_start=NO then
+			daddr1=fd.find(1,TBL_DELETE_FLAG,1,FORWARD,tbl_info(tbl_info_index).rec_size,PL_FD_FIND_EQUAL)
+			if daddr1=0 then 
+add_at_bottom:			
+				'check if table is full
+				dwtemp=tbl_info(tbl_info_index).rec_size
+				dwtemp=dwtemp*tbl_info(tbl_info_index).maxrecs
+				if not(fd.filesize<dwtemp) then goto tbl_full
+				daddr1=fd.filesize+1
+				add_to_del_pos=NO
+			else
+				add_to_del_pos=YES
+			end if
 		else
-			add_to_del_pos=YES
+			goto add_at_bottom
 		end if
 	end if
 	
@@ -3023,3 +3032,7 @@ sub tbl_debugprint(byref print_data as string)
 	if tbl_do_not_debug_print=NO then sys.debugprint(TBL_STAMP+print_data+TBL_CR_LF)
 end sub
 #endif
+
+public sub tbl_set_to_clean_start(op as no_yes)
+	tbl_info(tbl_info_index).clean_start=op
+end sub
