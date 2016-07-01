@@ -74,8 +74,9 @@ public function stg_start() as en_stg_status_codes
 	dim pos as byte
 	#if STG_STORAGE_MEMORY
 		dim fd_status as pl_fd_status_codes
+		dim newfile as no_yes
 	#endif
-
+	
 	stg_start=EN_STG_STATUS_OK
 
 	#if STG_DEBUG_PRINT
@@ -142,6 +143,7 @@ public function stg_start() as en_stg_status_codes
 			exit function
 		end if
 		
+		newfile=NO
 		fd.filenum=stg_filenum
 		fd_status=fd.open(STG_FILENAME)
 		select case fd_status
@@ -155,7 +157,7 @@ public function stg_start() as en_stg_status_codes
 				stg_start=EN_STG_STATUS_FAILURE
 				exit function
 			end if
-
+			newfile=YES
 			fd_status=fd.open(STG_FILENAME)
 			if fd_status<>PL_FD_STATUS_OK then
 				#if STG_DEBUG_PRINT
@@ -665,31 +667,18 @@ skip_def_value_check:
 			exit function
 		end if
 	#endif
-
 #else
-	'create a file of required size
-	fd_status=fd.setfilesize(0)
-	if fd_status<>PL_FD_STATUS_OK then
-		#if STG_DEBUG_PRINT
-			stg_debugprint("DISK ERROR")
-		#endif
-		stg_start=EN_STG_STATUS_FAILURE
-		exit function
-	end if
 	
 	c=nvmem_offset_ctr
 	#if STG_REDUNDANCY
 		c=c*2 '*2 because we have a backup copy to accommodate too
 	#endif
-	
-	while fd.filesize<c
-		if c-fd.filesize>255 then
-			x=255
-		else
-			x=c-fd.filesize
-		end if
-		s=strgen(x,chr(0))
-		fd_status=fd.setdata(s)
+		
+	if newfile=YES then
+		'create a file of required size
+		
+create_newfile:
+		fd_status=fd.setfilesize(0)
 		if fd_status<>PL_FD_STATUS_OK then
 			#if STG_DEBUG_PRINT
 				stg_debugprint("DISK ERROR")
@@ -697,8 +686,30 @@ skip_def_value_check:
 			stg_start=EN_STG_STATUS_FAILURE
 			exit function
 		end if
-	wend
+		
+		while fd.filesize<c
+			if c-fd.filesize>255 then
+				x=255
+			else
+				x=c-fd.filesize
+			end if
+			s=strgen(x,chr(0))
+			fd_status=fd.setdata(s)
+			if fd_status<>PL_FD_STATUS_OK then
+				#if STG_DEBUG_PRINT
+					stg_debugprint("DISK ERROR")
+				#endif
+				stg_start=EN_STG_STATUS_FAILURE
+				exit function
+			end if
+		wend
+	else
+		if fd.filesize<>c then
+			goto create_newfile
+		end if
+	end if
 #endif
+
 
 	'exceeded RAM array capacity?
 	#if STG_REDUNDANCY>=2
