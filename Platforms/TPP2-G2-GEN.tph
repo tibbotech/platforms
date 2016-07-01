@@ -1,36 +1,36 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			EM2000 FAMILY -- COMMON PLATFORM STUFF
+'			TPP2-G2 -- COMMON PLATFORM STUFF
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 enum pl_io_num 
 	PL_IO_NUM_0,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 0 (P0.0).
+				'Socket 1, control line C.
 
 	PL_IO_NUM_1,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 1 (P0.1).
+				'Socket 3, control line C.
 
 	PL_IO_NUM_2,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 2 (P0.2).
+				'Socket 5, control line C.
 
 	PL_IO_NUM_3,		'<b>PLATFORM CONSTANT. </b><br><br> 
-				'General-purpose I/O line 3 (P0.3).
+				'Socket 7, control line C.
 
 	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT. </b><br><br>
-				'General-purpose I/O line 4 (P0.4).
+				'Socket 9, control line C.
 
 	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 5 (P0.5).
+				'Socket 11, control line C.
 
 	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 6 (P0.6).
+				'Not connected.
 
 	PL_IO_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 7 (P0.7).
+				'Not connected.
 
 	PL_IO_NUM_8_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 8 (P1.0), aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'Socket 1, control line B. This line is also the RX/W1in/din input of the serial port 0.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -39,7 +39,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_9_TX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 9 (P1.1), also the TX/W1out/dout output of the serial port 0.<br><br>
+				'Socket 1, control line A. This line is also the TX/W1out/dout output of the serial port 0.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -48,7 +48,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_10_RX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 10 (P1.2), aslo the RX/W1in/din input of the serial port 1.<br><br>
+				'Socket 3, control line B. This line is also the RX/W0&1in/din input of the serial port 1.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -57,7 +57,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_11_TX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 11 (P1.3), also the TX/W1out/dout output of the serial port 1.<br><br>
+				'Socket 3, control line A. This line is also the TX/W1out/dout output of the serial port 1.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -66,7 +66,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_12_RX2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 12 (P1.4), aslo the RX/W1in/din input of the serial port 2.<br><br>
+				'Socket 5, control line B. This line is also the RX/W0&1in/din input of the serial port 2.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -75,7 +75,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_13_TX2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 13 (P1.5), also the TX/W1out/dout output of the serial port 2.<br><br>
+				'Socket 5, control line A. This line is also the TX/W1out/dout output of the serial port 2.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -84,7 +84,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_14_RX3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 14 (P1.6), aslo the RX/W1in/din input of the serial port 3.<br><br>
+				'Socket 7, control line B. This line is also the RX/W0&1in/din input of the serial port 3.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -93,7 +93,7 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_15_TX3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 15 (P1.7), also the TX/W1out/dout output of the serial port 3.<br><br>
+				'Socket 7, control line A. This line is also the TX/W1out/dout output of the serial port 3.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled
@@ -102,166 +102,137 @@ enum pl_io_num
 				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
 
 	PL_IO_NUM_16_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 16 (P2.0), also the interrupt line 0.
+				'Socket 1, control line D. This is also the interrupt line 0.
 
 	PL_IO_NUM_17_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 17 (P2.1), also the interrupt line 1.
+				'Socket 3, control line D. This is also the interrupt line 1.
 
 	PL_IO_NUM_18_INT2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 18 (P2.2), also the interrupt line 2.
+				'Socket 5, control line D. This is also the interrupt line 2.
 
 	PL_IO_NUM_19_INT3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 19 (P2.3), also the interrupt line 3.
+				'Socket 7, control line D. This is also the interrupt line 3.
 
 	PL_IO_NUM_20_INT4,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 20 (P2.4), also the interrupt line 4.
+				'Socket 9, control line D. This is also the interrupt line 4.
 
 	PL_IO_NUM_21_INT5,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 21 (P2.5), also the interrupt line 5.
+				'Socket 11, control line D. This is also the interrupt line 5.
 
 	PL_IO_NUM_22_INT6,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 22 (P2.6), also the interrupt line 6.
+				'Not connected.
 				
 	PL_IO_NUM_23_INT7,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 23 (P2.7), also the interrupt line 7.
+				'Not connected.
 
 	PL_IO_NUM_24,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 24 (P3.0).
+				'LCD connector, data bus, line 0 (P0.0).
 
 	PL_IO_NUM_25,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 25 (P3.1).
+				'LCD connector, data bus, line 1 (P0.1).
 
 	PL_IO_NUM_26,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 26 (P3.2).
+				'LCD connector, data bus, line 2 (P0.2).
 
 	PL_IO_NUM_27,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 27 (P3.3).
+				'LCD connector, data bus, line 3 (P0.3).
 
 	PL_IO_NUM_28,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 28 (P3.4).
+				'LCD connector, data bus, line 4 (P0.4).
 				
 	PL_IO_NUM_29,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 29 (P3.5).
+				'LCD connector, data bus, line 5 (P0.5).
 
 	PL_IO_NUM_30,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 30 (P3.6).
+				'LCD connector, data bus, line 6 (P0.6).
 
 	PL_IO_NUM_31,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 31 (P3.7).
+				'LCD connector, data bus, line 7 (P0.7).
 
 	PL_IO_NUM_32,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 32 (P4.0).
+				'Socket 9, control line A.
 
 	PL_IO_NUM_33,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 33 (P4.1).
+				'Socket 9, control line B.
 
 	PL_IO_NUM_34,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 34 (P4.2).
+				'Socket 11, control line A.
 
 	PL_IO_NUM_35,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 35 (P4.3).
+				'Socket 11, control line B.
 
 	PL_IO_NUM_36,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 36 (P4.4).
+				'Keypad connector, return line 1 (for the leftmost button, active low).
 
 	PL_IO_NUM_37,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 37 (P4.5).
+				'Keypad connector, return line 2 (active low).
 
 	PL_IO_NUM_38,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 38 (P4.6).
+				'Keypad connector, return line 3 (active low).
 
 	PL_IO_NUM_39,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 39 (P4.7).
+				'Keypad connector, return line 4 (for the rightmost button, active low).
 
 	PL_IO_NUM_40,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 40 (does not belong to any 8-bit port).
+				'LCD connector, CS line (active low).
 
 	PL_IO_NUM_41,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 41 (does not belong to any 8-bit port).
+				'LCD connector, RD line (active low).
 
 	PL_IO_NUM_42,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 42 (does not belong to any 8-bit port).
+				'LCD connector, WR line (active low).
 
 	PL_IO_NUM_43,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 43 (does not belong to any 8-bit port).
+				'LCD connector, DC line.
 
 	PL_IO_NUM_44,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 44 (does not belong to any 8-bit port).
+				'Keypad connector, reset line (for the sensor IC of the keypad, active low).
 
 	PL_IO_NUM_45_CO,	'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 45 (does not belong to any 8-bit port), also a square wave output controlled by the 
-				'beep object. This output is primarily intended for driving a beeper (buzzer).<br><br>
+				'A square wave output controlled by the beep object. This output is driving a buzzer.<br><br>
 				'When the beeper pattern starts playing, the line is configured as output automatically. When the beeper pattern
 				'stops playing, the output returns to the input/output and high/low state that it had before the pattern started playing.
 
 	PL_IO_NUM_46,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 46 (does not belong to any 8-bit port).
+				'Signal strength LED bar control circuit, reset line.
 
 	PL_IO_NUM_47,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 47 (does not belong to any 8-bit port).
+				'Signal strength LED bar control circuit, clock line.
 
 	PL_IO_NUM_48		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 48 (does not belong to any 8-bit port).
+				'Signal strength LED bar control circuit, data line.
 
 	PL_IO_NUM_49,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 49 (does not belong to any 8-bit port).
+				'Wireless add-on socket, CS line.
 
 	PL_IO_NUM_50,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 50 (does not belong to any 8-bit port).
+				'Wireless add-on socket, DO line.
 
 	PL_IO_NUM_51,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 51 (does not belong to any 8-bit port).
+				'Wireless add-on socket, RST line.
 
 	PL_IO_NUM_52,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 52 (does not belong to any 8-bit port).
+				'Wireless add-on socket, DI line.
 
 	PL_IO_NUM_53,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 53 (does not belong to any 8-bit port).
+				'Wireless add-on socket, CLK line.
 
 	PL_IO_NUM_54,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 54 (does not belong to any 8-bit port). Formerly DBGRX.
+				'LCD connector, backlight control line (active low).
 
 	PL_IO_NUM_55,		'PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 55 (does not belong to any 8-bit port). Formerly DBGTX.
+				'LCD connector, RST line (active low).
 
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
-				'The state of this line is always detected as LOW. Setting this line has no effect.  
+				'The state of this line is always detected as LOW. Setting this line has no effect.
 				
 end enum
 
 '--------------------------------------------------------------------
 enum pl_io_port_num
-	PL_IO_PORT_NUM_0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 0, contains I/O lines 0-7. This is a virtual port.<br><br>
-				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 8 lines is handled individually,
-				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in the state writing and reading.
-
-	PL_IO_PORT_NUM_1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 1, contains I/O lines 8-15. This is a virtual port.<br><br>
-				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 8 lines is handled individually,
-				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in the state writing and reading.
-
-	PL_IO_PORT_NUM_2,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 2, contains I/O lines 16-23. This is a virtual port.<br><br>
-				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
-				'and then the lines with their new value equal to HIGH are set next.
-				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
-				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.   
-
-	PL_IO_PORT_NUM_3,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 3, contains I/O lines 24-31. This is a virtual port.<br><br>
-				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
-				'and then the lines with their new value equal to HIGH are set next.
-				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
-				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.
-
-	PL_IO_PORT_NUM_4	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 4, contains I/O lines 32-39. This is a virtual port.<br><br>
-				'During writes (io.portset, io.portstate(s)), all lines with their new value equal to LOW are cleared first,
-				'and then the lines with their new value equal to HIGH are set next.
-				'Hence, writing is a two-step process that introduces a small delay in LOW->HIGH transitions on the port's lines.<br><br>
-				'Port reads (io.portget, io.portstate(g)) are performed cleanly, in a single step.
+	PL_IO_PORT_NUM_0	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'8-bit port 0, contains I/O lines 24-31 (LCD data lines D0-7).
 end enum
 
 '--------------------------------------------------------------------

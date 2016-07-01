@@ -336,13 +336,41 @@ property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
 '<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
+'The output frequency depends on sys.currentpll and is calculated as follows (assuming full-speed operation):
 '<br><br>
-'PLL on: F = 30'000'000 / beep.divider.
-'<br><br>
-'PLL off: F = ?'???'??? / beep.divider.
+'F = 30'000'000 / beep.divider.
 '<br><br>
 'The optimal buzzer frequency depends on the buzzer model.
+	get = syscall(179) as word
+	set = syscall(180) (value as word)
+end property
+#endif
+
+#if PLATFORM_ID=TPP2WG2
+property beep.divider
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the buzzer frequency (frequency of the square wave output on the CO line).
+'<br><br>
+'The output frequency depends on sys.currentpll and is calculated as follows (assuming full-speed operation):
+'<br><br>
+'F = 30'000'000 / beep.divider.
+'<br><br>
+'The recommended divider value for this platform is 11111.
+	get = syscall(179) as word
+	set = syscall(180) (value as word)
+end property
+#endif
+
+#if PLATFORM_ID=TPP3WG2
+property beep.divider
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the buzzer frequency (frequency of the square wave output on the CO line).
+'<br><br>
+'The output frequency depends on sys.currentpll and is calculated as follows (assuming full-speed operation):
+'<br><br>
+'F = 30'000'000 / beep.divider.
+'<br><br>
+'The recommended divider value for this platform is 11111.
 	get = syscall(179) as word
 	set = syscall(180) (value as word)
 end property
