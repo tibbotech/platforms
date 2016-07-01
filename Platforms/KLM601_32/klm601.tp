@@ -5,7 +5,7 @@ rom=786432
 ram=86784
 codebits=24
 databits=32
-sector=65536
+sector=131072
 
 [transport1]
 name=serial

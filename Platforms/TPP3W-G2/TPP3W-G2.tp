@@ -1,6 +1,6 @@
 [platform]
-description=EM2000 Module
-version=EM2000-3.60
+description=TPP3-G2 Board
+version=TPP3W-G2-3.60
 rom=786432
 ram=86784
 codebits=24
@@ -84,4 +84,3 @@ value=WLN_DISABLED
 [define4.option2]
 description=Enabled
 value=WLN_ENABLED
-
