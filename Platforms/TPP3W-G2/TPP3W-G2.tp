@@ -1,8 +1,8 @@
 [platform]
 description=TPP3-G2 Board
-version=TPP3W-G2-3.60
+version=TPP3WG2-3.60
 rom=786432
-ram=86784
+ram=66816
 codebits=24
 databits=32
 sector=131072

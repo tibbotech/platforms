@@ -2,7 +2,7 @@
 description=EM2000 Module
 version=EM2000-3.60
 rom=786432
-ram=86784
+ram=66816
 codebits=24
 databits=32
 sector=131072

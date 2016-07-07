@@ -2,7 +2,7 @@
 description=NB1010W Board
 version=NB1010W-3.60
 rom=983040
-ram=22528
+ram=22271
 codebits=24
 sector=256
 
