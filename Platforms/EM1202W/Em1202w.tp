@@ -2,7 +2,7 @@
 description=EM1202 Module + GA1000 Wi-Fi add-on
 version=EM1202W-3.60
 rom=983040
-ram=22528
+ram=22271
 codebits=24
 sector=256
 

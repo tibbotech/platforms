@@ -679,7 +679,7 @@ function dhcp_sock_open(interface as pl_sock_interfaces, phase as en_dhcp_phases
 		sock.rxbuffrq(DHCP_SOCK_BUFF_PAGES)
 		sock.txbuffrq(DHCP_SOCK_BUFF_PAGES)
 		sys.buffalloc
-		if sock.rxbuffsize<DHCP_SOCK_BUFF_PAGES*256-17 or sock.txbuffsize<DHCP_SOCK_BUFF_PAGES*256-17 then
+		if sock.rxbuffsize<DHCP_MIN_BUFFER_SPACE or sock.txbuffsize<DHCP_MIN_BUFFER_SPACE then
 			#if DHCP_DEBUG_PRINT
 				dhcp_debug_print_status(interface,DHCP_STATUS_INSUFFICIENT_BUFFER_SPACE)
 			#endif

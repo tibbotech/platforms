@@ -571,8 +571,8 @@ public sub gprs_proc_ser_data()
 
 					if gprs_phase=GPRS_PPP_IPCP_1 then
 						gprs_next_phase()
-					end if	
-				
+					end if
+					
 				case GPRS_LCP_PARSE_RESULT_NAK, GPRS_LCP_PARSE_RESULT_REJ, GPRS_LCP_PARSE_RESULT_DISCARD:
 					goto lcp_failed 'simplified handling -- we don't try to negotiate further
 				

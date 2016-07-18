@@ -2,7 +2,7 @@
 description=EM1001 Module + GA1000 Wi-Fi add-on
 version=EM1001W-3.60
 rom=3080192
-ram=22528
+ram=22271
 codebits=24
 sector=256
 

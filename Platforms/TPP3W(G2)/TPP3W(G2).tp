@@ -1,10 +1,11 @@
 [platform]
-description=TPP2 Board
-version=TPP2N-3.60
-rom=983040
-ram=22528
+description=TPP3(G2) Board
+version=TPP3W(G2)-3.60
+rom=786432
+ram=66816
 codebits=24
-sector=256
+databits=32
+sector=131072
 
 [transport1]
 name=udp_winpcap
@@ -18,72 +19,68 @@ description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
+[transport3]
+name=serial
+description=Taiko Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
+
 
 [defineimports]
 import1=../GEN.tp
 
 
 [define1]
-define=OBJECT_KP
-description=Keypad (kp.) object
-value=KP_ENABLED
-
-[define1.option1]
-description=Disabled
-value=KP_DISABLED
-
-[define1.option2]
-description=Enabled
-value=KP_ENABLED
-
-
-[define2]
-define=OBJECT_FD
-description=Flash disk (fd.) object
-value=FD_ENABLED
-
-[define2.option1]
-description=Disabled
-value=FD_DISABLED
-
-[define2.option2]
-description=Enabled
-value=FD_ENABLED
-
-
-[define3]
-define=OBJECT_WLN
-description=Wi-Fi (wln.) object
-value=WLN_ENABLED
-
-[define3.option1]
-description=Disabled
-value=WLN_DISABLED
-
-[define3.option2]
-description=Enabled
-value=WLN_ENABLED
-
-
-[define4]
 define=OBJECT_LCD
 description=Display (lcd.) object
 value=LCD_ENABLED
 
-[define4.option1]
+[define1.option1]
+description=Disabled
+value=LCD_DISABLED
+
+[define1.option2]
 description=Enabled
 value=LCD_ENABLED
 
 
-[define5]
-define=LCD_TYPE
-description=Display panel type
-value=SOLOMON_SSD1963
+[define2]
+define=OBJECT_KP
+description=Keypad (kp.) object
+value=KP_ENABLED
 
-[define5.option1]
-description=Solomon SSD1963 (Winstar WF35)
-value=SOLOMON_SSD1963
+[define2.option1]
+description=Disabled
+value=KP_DISABLED
 
-[define5.option2]
-description=Solomon SSD1963 (Winstar WF35), fixed I/O-2
-value=SOLOMON_SSD1963_FIXED_IO2
+[define2.option2]
+description=Enabled
+value=KP_ENABLED
+
+
+[define3]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_ENABLED
+
+[define3.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define3.option2]
+description=Enabled
+value=FD_ENABLED
+
+
+[define4]
+define=OBJECT_WLN
+description=Wi-Fi (wln.) object
+value=WLN_ENABLED
+
+[define4.option1]
+description=Disabled
+value=WLN_DISABLED
+
+[define4.option2]
+description=Enabled
+value=WLN_ENABLED

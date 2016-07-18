@@ -845,6 +845,8 @@ function reinit_def_stg()
 //validate all validation settings
 function validate_all()
 {
+		var chk_mem=document.getElementsByName("mem_type");					//get radio array
+
 		//pre_process (Because of chk_corrupt, we don't have to check null field again.)
 		NUMBER_OF_SETTINGS=get_setting_count();
 		var err_mark_list = new Array();
@@ -888,7 +890,10 @@ function validate_all()
 										case 'EM500W':
 											if ((non_volatile_size-1)>stor_size.EM500W) {pl_size=stor_size.EM500W;			all_ok=false;}   break;
 										default:
-											if ((non_volatile_size-1)>2020) {pl_size=2020;			all_ok=false;}   break;							
+											if (chk_mem[0].checked == true) {
+												if ((non_volatile_size-1)>2020) {pl_size=2020;			all_ok=false;}   
+												}
+												break;						
 									}
 									if (all_ok==false)
 									{

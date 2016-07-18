@@ -123,7 +123,7 @@
 		#elif GPRS_SER_PORT=3
 			this choice is not available
 		#endif
-	#elif PLATFORM_ID=TPP3W
+	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_RESET PL_IO_NUM_4
 		#elif GPRS_SER_PORT=1
@@ -154,7 +154,7 @@
 		#elif GPRS_SER_PORT=3
 			this choice is not available
 		#endif
-	#elif PLATFORM_ID=TPP3W
+	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_POWER PL_IO_NUM_33
 		#elif GPRS_SER_PORT=1

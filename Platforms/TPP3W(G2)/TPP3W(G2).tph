@@ -1,23 +1,32 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			TPP2W WITH WI-FI INTERFACE
+'			TPP3W-G2 WITH WI-FI INTERFACE
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#define PLATFORM_ID 12
+#define __notdl
 
-#define BUFF_PAGE_TYPE byte
-#define BUFF_SIZE_TYPE word
+#define PLATFORM_ID 26
+
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
+#define EXTENDED_SOCK 1
+#define SER_7BIT_LIMITATION 1
+
+'--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
 
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
 	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
 	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
-	PL_SOCK_INTERFACE_PPP=3,		'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+	PL_SOCK_INTERFACE_PPP=3,	'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
 	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
 end enum
 
 '====================================================================
-include "..\TPP2-GEN.tph"
-include "..\WLN-N.tph"
+include "..\TPP3-G2-GEN.tph"
+include "..\WLN.tph"
