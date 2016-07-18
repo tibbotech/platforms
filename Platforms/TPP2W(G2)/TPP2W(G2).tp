@@ -1,6 +1,6 @@
 [platform]
-description=TPP3-G2 Board
-version=TPP3WG2-3.60
+description=TPP2(G2) Board
+version=TPP2W(G2)-3.60
 rom=786432
 ram=66816
 codebits=24
@@ -84,3 +84,4 @@ value=WLN_DISABLED
 [define4.option2]
 description=Enabled
 value=WLN_ENABLED
+
