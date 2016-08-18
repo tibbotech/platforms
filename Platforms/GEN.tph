@@ -2497,6 +2497,23 @@ property sock.tx2buffsize
 	get = syscall(634) as BUFF_SIZE_TYPE
 end property
 
+'--------------------------------------------------------------------
+enum pl_http_rq_type
+'<b>ENUM. </b><br><br> 
+'Contains the list of HTTP request types supported by the internal web server.
+	PL_SOCK_HTTP_RQ_GET,		'<b>PLATFORM CONSTANT. </b><br><br> HTTP GET request.
+	PL_SOCK_HTTP_RQ_POST		'<b>PLATFORM CONSTANT. </b><br><br> HTTP POST request.
+end enum
+
+property sock.httprqtype
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0 (PL_SOCK_HTTP_RQ_GET). </b><br><br>
+'For the currently selected socket (selection is made through sock.num), and provided that this socket is running in the HTTP mode (sock.httpmode= 1- YES),
+'returns the type of the HTTP request received from the browser.
+'<br><br>
+'Note that it only makes sense to query this property after the HTTP request has actually been received, i.e. in the code embedded inside or called from the HTML page.
+	get = syscall(465) as pl_http_rq_type
+end property
+
 #endif
 
 '--------------------------------------------------------------------
