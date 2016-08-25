@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		SER (Serial port) object
+'       SER (Serial port) object
 '**************************************************************************************************
 
 object ser
@@ -28,7 +28,7 @@ object ser
 property ser.numofports
 '<b>READ-ONLY PROPERTY (BYTE). </b><br><br> 
 'Returns total number of serial ports found on the current platform.
-	get = syscall(137) as byte
+    get = syscall(137) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -38,8 +38,8 @@ property ser.num
 'Most other properties and methods of this object relate to the serial port selected through this property.<br><br>
 'Note that serial-port related events such as <font color="teal"><b>on_ser_data_arrival </b></font> change currently selected port!
 'The value of this property won't exceed <font color="maroon"><b>ser.numofports</b></font>-1 (even if you attempt to set a higher value).
-	get = syscall(100) as byte
-	set = syscall(101) (value as byte)
+    get = syscall(100) as byte
+    set = syscall(101) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -53,30 +53,30 @@ property ser.enabled
 '</font>, <font color="maroon"><b>ser.ctsmap</b></font>, <font color="maroon"><b>ser.mode</b></font>, <font color="maroon"><b>ser.redir</b>
 '</font>, <font color="maroon"><b>ser.txclear</b></font>). You also cannot allocate buffer memory for the port (do <font color="maroon"><b>
 'sys.buffalloc </b></font>) when the port is enabled.
-	get = syscall(102,"80.TDL"+) as no_yes
-	set = syscall(103,"34.TDL"+) (value as no_yes)
+    get = syscall(102,"80.TDL"+) as no_yes
+    set = syscall(103,"34.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
 enum pl_ser_mode
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of the operating mode of the serial port.
-		PL_SER_MODE_UART,	'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
-							'UART mode, suitable for RS232, RS422, RS485, etc. communications in full-duplex or half-duplex mode 
-							'(see <font color="maroon"><b>ser.interface</b></font>).<br><br>
-							'Data is transmitted through the TX pin and received through the RX pin. Optionally, RTS (output) and CTS 
-							'(input) lines are used for flow control (see <font color="maroon"><b>ser.flowcontrol</b></font>) 
-							'in the full-duplex mode. Additionally, RTS can be used for direction control in the half-duplex mode.
-	PL_SER_MODE_WIEGAND,	'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Wiegand mode, suitable for sending to or receiving data from any standard Wiegand device. Data transmission 
-							'is through pins W0out and W1out, reception- through W0&1in and W1in. <br><br>
-							'"W0&1in" means that a logical AND of W0 and W1 signals must be applied to this input. Therefore, external 
-							'logical gate is needed in order to receive Wiegand data.				
-	PL_SER_MODE_CLOCKDATA	'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Clock/data mode, suitable for sending to or receiving data from any standard clock/data (or magstripe) device.
-							'Data transmission is through pins cout and dout, reception- through cin and din. <br><br>
-							'Third line of the magstripe interface- card present- is not required for data reception. For transmission, 
-							'any I/O line can be used as card present output (under software control).
+        PL_SER_MODE_UART,   '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+                            'UART mode, suitable for RS232, RS422, RS485, etc. communications in full-duplex or half-duplex mode 
+                            '(see <font color="maroon"><b>ser.interface</b></font>).<br><br>
+                            'Data is transmitted through the TX pin and received through the RX pin. Optionally, RTS (output) and CTS 
+                            '(input) lines are used for flow control (see <font color="maroon"><b>ser.flowcontrol</b></font>) 
+                            'in the full-duplex mode. Additionally, RTS can be used for direction control in the half-duplex mode.
+    PL_SER_MODE_WIEGAND,    '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Wiegand mode, suitable for sending to or receiving data from any standard Wiegand device. Data transmission 
+                            'is through pins W0out and W1out, reception- through W0&1in and W1in. <br><br>
+                            '"W0&1in" means that a logical AND of W0 and W1 signals must be applied to this input. Therefore, external 
+                            'logical gate is needed in order to receive Wiegand data.               
+    PL_SER_MODE_CLOCKDATA   '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Clock/data mode, suitable for sending to or receiving data from any standard clock/data (or magstripe) device.
+                            'Data transmission is through pins cout and dout, reception- through cin and din. <br><br>
+                            'Third line of the magstripe interface- card present- is not required for data reception. For transmission, 
+                            'any I/O line can be used as card present output (under software control).
 end enum
 
 property ser.mode
@@ -94,8 +94,8 @@ property ser.mode
 'you will need to configure RTS line as output and CTS line as input through the <font color="maroon"><b>io.enabled </b></font>property. 
 'TX and RX configuration will happen automatically. <br><br>
 'For the Wiegand and clock/data mode, you will need to configure both RTS and TX as outputs, and CTS and RX as inputs.  
-	get = syscall(75,"80.TDL"+) as pl_ser_mode
-	set = syscall(76,"80.TDL"+) (value as pl_ser_mode)
+    get = syscall(75,"80.TDL"+) as pl_ser_mode
+    set = syscall(76,"80.TDL"+) (value as pl_ser_mode)
 end property
 
 '--------------------------------------------------------------------
@@ -103,12 +103,12 @@ enum pl_ser_interface
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of full-duplex or half-duplex interface for the UART mode
 'of serial port (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	PL_SER_SI_FULLDUPLEX,	'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
-							'Full-duplex mode, suitable for RS232, RS422, or four-wire RS485 communications. RTS output (together with 
-							'CTS input) can be used for optional hardware flow control (see <font color="maroon"><b>ser.flowcontrol</b></font>).
-	PL_SER_SI_HALFDUPLEX	'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Half-duplex mode, suitable for two-wire RS485 communications. RTS line is used for direction control.
-							'Direction control polarity can be set through <font color="maroon"><b>ser.dircontrol </b></font>property.
+    PL_SER_SI_FULLDUPLEX,   '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+                            'Full-duplex mode, suitable for RS232, RS422, or four-wire RS485 communications. RTS output (together with 
+                            'CTS input) can be used for optional hardware flow control (see <font color="maroon"><b>ser.flowcontrol</b></font>).
+    PL_SER_SI_HALFDUPLEX    '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Half-duplex mode, suitable for two-wire RS485 communications. RTS line is used for direction control.
+                            'Direction control polarity can be set through <font color="maroon"><b>ser.dircontrol </b></font>property.
 end enum
 
 property ser.interface
@@ -126,20 +126,20 @@ property ser.interface
 '<br><br>
 'You have to configure RTS line as output and CTS line as input 
 'through the <font color="maroon"><b>io.enabled </b></font>property.
-	get = syscall(112,"80.TDL"+) as pl_ser_interface
-	set = syscall(113,"80.TDL"+) (value as pl_ser_interface)
+    get = syscall(112,"80.TDL"+) as pl_ser_interface
+    set = syscall(113,"80.TDL"+) (value as pl_ser_interface)
 end property
 
 '--------------------------------------------------------------------
 enum pl_ser_flowcontrol
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the flow control for the UART mode of serial port (ser.mode= 0- PL_SER_MODE_UART).
-	PL_SER_FC_DISABLED,	'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
-				'No flow control.
-	PL_SER_FC_RTSCTS,	'<b>PLATFORM CONSTANT. </b><br><br> 
-				'RTS/CTS flow control.
-	PL_SER_FC_XONOFF	'<b>PLATFORM CONSTANT. </b><br><br> 
-				'XON/XOFF flow control.
+    PL_SER_FC_DISABLED, '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+                'No flow control.
+    PL_SER_FC_RTSCTS,   '<b>PLATFORM CONSTANT. </b><br><br> 
+                'RTS/CTS flow control.
+    PL_SER_FC_XONOFF    '<b>PLATFORM CONSTANT. </b><br><br> 
+                'XON/XOFF flow control.
 end enum
 
 property ser.flowcontrol
@@ -157,8 +157,8 @@ property ser.flowcontrol
 '<br><br>
 'The RTS lines are not automatically configured as outputs and CTS- as inputs. You need to do this manually, through 
 'the <font color="maroon"><b>io.enabled </b></font>property of the io object. 
-	get = syscall(110,"80.TDL"+) as pl_ser_flowcontrol
-	set = syscall(111,"80.TDL"+) (value as pl_ser_flowcontrol)
+    get = syscall(110,"80.TDL"+) as pl_ser_flowcontrol
+    set = syscall(111,"80.TDL"+) (value as pl_ser_flowcontrol)
 end property
 
 '--------------------------------------------------------------------
@@ -184,8 +184,8 @@ property ser.rtsmap
 '<br><br>
 'For the selected line to work, you have to configure it as an output through the <font color="maroon"><b>io.enabled </b></font>property of the 
 'io object.
-	get = syscall(168,"80.TDL"+) as pl_io_num
-	set = syscall(169,"80.TDL"+) (value as pl_io_num)
+    get = syscall(168,"80.TDL"+) as pl_io_num
+    set = syscall(169,"80.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -207,8 +207,8 @@ property ser.ctsmap
 '<br><br>
 'For the selected line to work, you have to configure it as an input through the <font color="maroon"><b>io.enabled </b></font>
 'property of the io object.
-	get = syscall(174,"80.TDL"+) as pl_int_num
-	set = syscall(23,"80.TDL"+) (value as pl_int_num)
+    get = syscall(174,"80.TDL"+) as pl_int_num
+    set = syscall(23,"80.TDL"+) (value as pl_int_num)
 end property
 
 '--------------------------------------------------------------------
@@ -216,8 +216,8 @@ property ser.xonchar
 '<b>PROPERTY (BYTE), DEFAULT VALUE= &h11 (XON character) </b><br><br>
 'Sets/returns the ASCII code of the character that will be used to PAUSE transmission in the XON/XOFF flow control mode (ser.flowcontrol= 2- PL_SER_FC_XONOFF)
 'for the currently selected serial port (selection is made through ser.num).
-	get = syscall(590,"80.TDL"+) as byte
-	set = syscall(591,"80.TDL"+) (value as byte)
+    get = syscall(590,"80.TDL"+) as byte
+    set = syscall(591,"80.TDL"+) (value as byte)
 end property
 
 
@@ -226,8 +226,8 @@ property ser.xoffchar
 '<b>PROPERTY (BYTE), DEFAULT VALUE= &h13 (XOFF character) </b><br><br>
 'Sets/returns the ASCII code of the character that will be used to RESUME transmission in the XON/XOFF flow control mode (ser.flowcontrol= 2- PL_SER_FC_XONOFF)
 'for the currently selected serial port (selection is made through ser.num).
-	get = syscall(592,"80.TDL"+) as byte
-	set = syscall(593,"80.TDL"+) (value as byte)
+    get = syscall(592,"80.TDL"+) as byte
+    set = syscall(593,"80.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -236,14 +236,14 @@ enum pl_ser_dircontrol
 'Contains the list of constants related to the selection of polarity for the RTS line which controls direction in the UART/half-duplex mode of 
 'the serial port (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>and <font color="maroon">
 '<b>ser.interface </b></font>= <font color="olive"><b>0- PL_SER_SI_FULLDUPLEX</b></font>).
-	PL_SER_DCP_LOWFORINPUT,	'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
-							'Specifies (for UART/half-duplex mode of the serial port) that the RTS output will be LOW when the serial 
-							'port is ready to RX data and HIGH when the serial port is TXing data. LOW/HIGH states provided are for 
-							'the TTL serial ports of MODULE-level products, for RS232 these states will be in reverse.
-	PL_SER_DCP_HIGHFORINPUT	'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Specifies (for UART/half-duplex mode of the serial port) that the RTS output will be HIGH when the serial 
-							'port is ready to RX data and LOW when the serial port is TXing data. LOW/HIGH states provided are for 
-							'the TTL serial ports of MODULE-level products, for RS232 these states will be in reverse.
+    PL_SER_DCP_LOWFORINPUT, '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+                            'Specifies (for UART/half-duplex mode of the serial port) that the RTS output will be LOW when the serial 
+                            'port is ready to RX data and HIGH when the serial port is TXing data. LOW/HIGH states provided are for 
+                            'the TTL serial ports of MODULE-level products, for RS232 these states will be in reverse.
+    PL_SER_DCP_HIGHFORINPUT '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Specifies (for UART/half-duplex mode of the serial port) that the RTS output will be HIGH when the serial 
+                            'port is ready to RX data and LOW when the serial port is TXing data. LOW/HIGH states provided are for 
+                            'the TTL serial ports of MODULE-level products, for RS232 these states will be in reverse.
 end enum
 
 property ser.dircontrol
@@ -258,8 +258,8 @@ property ser.dircontrol
 'Note, that HIGH/LOW states specified above are for the TTL-serial interface of the MODULE-level products. If you are dealing with the RS232 
 'port then the states will be in reverse (for example, <font color="olive"><b>1- PL_SER_DCP_HIGHFORINPUT </b></font>will mean "LOW for input, 
 'HIGH for output"). When the serial port is in the UART/half-duplex mode you can use the CTS line as a regular I/O line of your device.
-	get = syscall(114,"80.TDL"+) as pl_ser_dircontrol
-	set = syscall(115,"80.TDL"+) (value as pl_ser_dircontrol)
+    get = syscall(114,"80.TDL"+) as pl_ser_dircontrol
+    set = syscall(115,"80.TDL"+) (value as pl_ser_dircontrol)
 end property
 
 '--------------------------------------------------------------------
@@ -271,8 +271,8 @@ property ser.baudrate
 'The <font color="maroon"><b>ser.div9600 </b></font>read-only property returns the value <font color="maroon"><b>ser.baudrate </b></font>must 
 'be set to in order to obtain 9600 bps on a particular device under present operating confitions. This property is only relevant when the 
 'serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	get = syscall(104,"80.TDL"+) as word
-	set = syscall(105,"34.TDL"+) (value as word)
+    get = syscall(104,"80.TDL"+) as word
+    set = syscall(105,"34.TDL"+) (value as word)
 end property
 
 '--------------------------------------------------------------------
@@ -280,12 +280,12 @@ enum pl_ser_parity
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of the parity mode of the serial port in the UART mode
 '(<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	PL_SER_PR_NONE,		'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> No parity bit to be transmitted.
-	PL_SER_PR_EVEN,		'<b>PLATFORM CONSTANT. </b><br><br> Even parity.
-	PL_SER_PR_ODD,		'<b>PLATFORM CONSTANT. </b><br><br> Odd parity.
-	PL_SER_PR_MARK,		'<b>PLATFORM CONSTANT. </b><br><br> Parity bit always at "1". Also can be used to emulate second stop bit
-						'(there is no separate property to explicitely select the number of stop bits).
-	PL_SER_PR_SPACE		'<b>PLATFORM CONSTANT. </b><br><br> Parity bit always at "0".
+    PL_SER_PR_NONE,     '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> No parity bit to be transmitted.
+    PL_SER_PR_EVEN,     '<b>PLATFORM CONSTANT. </b><br><br> Even parity.
+    PL_SER_PR_ODD,      '<b>PLATFORM CONSTANT. </b><br><br> Odd parity.
+    PL_SER_PR_MARK,     '<b>PLATFORM CONSTANT. </b><br><br> Parity bit always at "1". Also can be used to emulate second stop bit
+                        '(there is no separate property to explicitely select the number of stop bits).
+    PL_SER_PR_SPACE     '<b>PLATFORM CONSTANT. </b><br><br> Parity bit always at "0".
 end enum
 
 #if SER_7BIT_LIMITATION=0
@@ -298,8 +298,8 @@ property ser.parity
 'Mark parity is equivalent to having a second stop-bit (there is no separate property to explicitly select the number of stop bits).
 '<br><br>
 'This property is only relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
-	get = syscall(106,"80.TDL"+) as pl_ser_parity
-	set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
+    get = syscall(106,"80.TDL"+) as pl_ser_parity
+    set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
 end property
 
 #else
@@ -314,8 +314,8 @@ property ser.parity
 'This property is only relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
 '<br><br>
 '<b>On the platform, the combination of 7 bits/word (ser.bits=0- PL_SER_BB_7) and ser.parity= 0- PL_SER_PR_NONE will NOT work correctly.</b>
-	get = syscall(106,"80.TDL"+) as pl_ser_parity
-	set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
+    get = syscall(106,"80.TDL"+) as pl_ser_parity
+    set = syscall(107,"34.TDL"+) (value as pl_ser_parity)
 end property
 
 #endif
@@ -325,8 +325,8 @@ enum pl_ser_bits
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of the number of bits in the word TXed/RXed by the serial
 'port in the UART mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	PL_SER_BB_7,		'<b>PLATFORM CONSTANT. </b><br><br> Data word TXed/RXed by the serial port is to contain 7 data bits.
-	PL_SER_BB_8			'<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
+    PL_SER_BB_7,        '<b>PLATFORM CONSTANT. </b><br><br> Data word TXed/RXed by the serial port is to contain 7 data bits.
+    PL_SER_BB_8         '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> Data word TXed/RXed by the serial port is to contain 8 data bits.
 end enum
 
 #if SER_7BIT_LIMITATION=0
@@ -337,8 +337,8 @@ property ser.bits
 '<br>0- PL_SER_BB_7 (7 bits/word), or 1- PL_SER_BB_8 (8 bits/word).
 '<br><br>
 'This property is only relevant when the serial port is in the UART mode (ser.mode = 0- PL_SER_MODE_UART).
-	get = syscall(108,"80.TDL"+) as pl_ser_bits
-	set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
+    get = syscall(108,"80.TDL"+) as pl_ser_bits
+    set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
 end property
 
 #else
@@ -351,8 +351,8 @@ property ser.bits
 'This property is only relevant when the serial port is in the UART mode (ser.mode = 0- PL_SER_MODE_UART).
 '<br><br>
 '<b>On the platform, the combination of 7 bits/word (ser.bits=0- PL_SER_BB_7) and ser.parity= 0- PL_SER_PR_NONE will NOT work correctly.</b>
-	get = syscall(108,"80.TDL"+) as pl_ser_bits
-	set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
+    get = syscall(108,"80.TDL"+) as pl_ser_bits
+    set = syscall(109,"34.TDL"+) (value as pl_ser_bits)
 end property
 
 #endif
@@ -376,8 +376,8 @@ property ser.interchardelay
 'and the RX buffer must be getting nearly full (less than 64 bytes of free space left). <br><br>
 'For Wiegand and clock/data modes, counting timeout  since the last bit is the only way to determine the end of the data output. Suggested 
 'timeout is app. 10 times the bit period of the data output by attached Wiegand or clock/data device.
-	get = syscall(116,"80.TDL"+) as byte
-	set = syscall(117,"80.TDL"+) (value as byte)
+    get = syscall(116,"80.TDL"+) as byte
+    set = syscall(117,"80.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -391,8 +391,8 @@ property ser.autoclose
 'especially useful in Wiegand or clock/data mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>
 '1- PL_SER_MODE_WIEGAND </b></font>or <font color="olive"><b>2- PL_SER_MODE_CLOCKDATA</b></font>) where intercharacter gap is the only way 
 'to reliably identify the end of one data transmission.
-	get = syscall(77,"80.TDL"+) as no_yes
-	set = syscall(78,"80.TDL"+) (autoclose as no_yes)
+    get = syscall(77,"80.TDL"+) as no_yes
+    set = syscall(78,"80.TDL"+) (autoclose as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -400,24 +400,24 @@ enum pl_ser_esctype
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of the escape sequence type for the the serial port when the
 'port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	PL_SER_ET_DISABLED,		'<b>PLATFORM CONSTANT. </b><br><br> Recognition of serial escape sequences disabled.
-	PL_SER_ET_TYPE1,		'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Escape sequences of type1 are to be recognized. Type1 escape sequence is "prev_char<--min 100ms-->EC<--min 
-							'100ms-->EC<--min 100ms-->EC", where "EC" is escape character defined by the <font color="maroon"><b>
-							'ser.escchar </b></font>property.<br><br>
-							'There must be at least 100ms gap before the arrival of each escape character, otherwise the character will be 
-							'counted as a regular data character. When escape sequence is detected in the incoming UART data stream the 
-							'<font color="teal"><b>on_ser_esc </b></font>event is generated and the serial port is disabled, 
-							'i.e. <font color="maroon"><b>ser.enabled </b></font>= <font color="olive"><b>0- NO</b></font>. 
-	PL_SER_ET_TYPE2			'<b>PLATFORM CONSTANT</b></font>. </b><br><br> 
-							'Escape sequences of type2 are to be recognized. Type2 escape sequence is "EC OC", where "EC" is escape 
-							'character defined by the <font color="maroon"><b>ser.escchar </b></font>property and "OC" is any character other
-							'than "EC".<br><br>
-							'When escape sequence is detected in the incoming UART data stream the <font color="teal"><b>on_ser_esc
-							'</b></font>event is generated and the serial port is disabled, i.e. <font color="maroon"><b>ser.enabled 
-							'</b></font>= <font color="olive"><b>0- NO</b></font>.<br><br>
-							'Data character with ASCII code matching that of selected EC should be transmitted as "EC EC"- this will result 
-							'in a single character added to the RX buffer of the serial port.
+    PL_SER_ET_DISABLED,     '<b>PLATFORM CONSTANT. </b><br><br> Recognition of serial escape sequences disabled.
+    PL_SER_ET_TYPE1,        '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Escape sequences of type1 are to be recognized. Type1 escape sequence is "prev_char<--min 100ms-->EC<--min 
+                            '100ms-->EC<--min 100ms-->EC", where "EC" is escape character defined by the <font color="maroon"><b>
+                            'ser.escchar </b></font>property.<br><br>
+                            'There must be at least 100ms gap before the arrival of each escape character, otherwise the character will be 
+                            'counted as a regular data character. When escape sequence is detected in the incoming UART data stream the 
+                            '<font color="teal"><b>on_ser_esc </b></font>event is generated and the serial port is disabled, 
+                            'i.e. <font color="maroon"><b>ser.enabled </b></font>= <font color="olive"><b>0- NO</b></font>. 
+    PL_SER_ET_TYPE2         '<b>PLATFORM CONSTANT</b></font>. </b><br><br> 
+                            'Escape sequences of type2 are to be recognized. Type2 escape sequence is "EC OC", where "EC" is escape 
+                            'character defined by the <font color="maroon"><b>ser.escchar </b></font>property and "OC" is any character other
+                            'than "EC".<br><br>
+                            'When escape sequence is detected in the incoming UART data stream the <font color="teal"><b>on_ser_esc
+                            '</b></font>event is generated and the serial port is disabled, i.e. <font color="maroon"><b>ser.enabled 
+                            '</b></font>= <font color="olive"><b>0- NO</b></font>.<br><br>
+                            'Data character with ASCII code matching that of selected EC should be transmitted as "EC EC"- this will result 
+                            'in a single character added to the RX buffer of the serial port.
 end enum
 
 property ser.esctype
@@ -436,8 +436,8 @@ property ser.esctype
 'character defined by the <font color="maroon"><b>ser.escchar </b></font>property and "OC" is any character other than "EC".<br><br>
 'This property is only relevant in the UART mode of the serial port (<font color="maroon"><b>ser.mode </b></font>= <font color="olive">
 '<b>0- PL_SER_MODE_UART</b></font>).
-	get = syscall(120,"80.TDL"+) as pl_ser_esctype
-	set = syscall(121,"80.TDL"+) (value as pl_ser_esctype)
+    get = syscall(120,"80.TDL"+) as pl_ser_esctype
+    set = syscall(121,"80.TDL"+) (value as pl_ser_esctype)
 end property
 
 '--------------------------------------------------------------------
@@ -450,8 +450,8 @@ property ser.escchar
 'the serial port is in the Wiegand or clock/data mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>
 '1- PL_SER_MODE_WIEGAND </b></font> or <font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>2- PL_SER_MODE_CLOCKDATA</b></font>)
 '-- serial escape sequences are only recognized in the UART data.
-	get = syscall(118,"80.TDL"+) as byte
-	set = syscall(119,"80.TDL"+) (value as byte)
+    get = syscall(118,"80.TDL"+) as byte
+    set = syscall(119,"80.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -466,7 +466,7 @@ property ser.rxbuffsize
 ' "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms. <br><br>
 'The serial port cannot RX data when the RX buffer has zero capacity.
-	get = syscall(122,"38.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(122,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -481,7 +481,7 @@ property ser.txbuffsize
 ' "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The serial port cannot TX data when the TX buffer has zero capacity.
-	get = syscall(123,"38.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(123,"38.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -499,7 +499,7 @@ property ser.rxlen
 'Notice that the RX buffer of the serial port employes "data committing" based on the amount of data in the buffer and intercharacter delay 
 '(<font color="maroon"><b>ser.interchardelay</b></font>). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
 'to your application and is not included in the count returned by the  <font color="maroon"><b>ser.rxlen</b></font>).
-	get = syscall(124,"37.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(124,"37.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -512,7 +512,7 @@ property ser.txlen
 'on_ser_data_sent </b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the
 '<font color="maroon"><b>ser.notifysent </b></font> method. <br><br>
 'See also <font color="maroon"><b>ser.newtxlen</b></font>.
-	get = syscall(125,"37.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(125,"37.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -524,7 +524,7 @@ property ser.txfree
 'be able to store more data than this amount.<br><br>
 'To achieve asynchronous data processing, use the <font color="maroon"><b>ser.notifysent</b></font> method to get <font color="teal">
 '<b>on_ser_data_sent </b></font>event once the TX buffer gains required amount of free space.
-	get = syscall(127) as BUFF_SIZE_TYPE
+    get = syscall(127) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -534,7 +534,7 @@ property ser.newtxlen
 'in bytes.<br><br>
 'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>ser.setdata </b></font>method but not yet committed
 'using the <font color="maroon"><b>ser.send</b></font>) method.
-	get = syscall(133) as BUFF_SIZE_TYPE
+    get = syscall(133) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -681,7 +681,7 @@ property ser.div9600
 'This property will return a different value depending on the PLL mode of the device (see<font color="maroon"><b>sys.currentpll</b></font>).<br><br>
 '"Smart" applications will use this property to set baudrates independently of present operating conditions.<br><br>
 'The value may also differ between the serial ports on the same device. An example of such device is the EM2000. On this module, the ser.div9600 value for UART3 is different from the value for UARTS0~2.
-	get = syscall(126) as word
+    get = syscall(126) as word
 end property
 
 '--------------------------------------------------------------------
@@ -703,8 +703,8 @@ property ser.sinkdata
 'Escape characters
 '(see <font color="maroon"><b>ser.esctype </b></font>and <font color="maroon"><b>ser.escchar</b></font>)
 'will still be detected in the incoming data stream.
-	get = syscall(11,"80.TDL"+) as no_yes
-	set= syscall(12,"80.TDL"+) (value as no_yes)
+    get = syscall(11,"80.TDL"+) as no_yes
+    set= syscall(12,"80.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------

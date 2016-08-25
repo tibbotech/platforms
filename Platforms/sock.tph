@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		SOCK (Socket) object
+'       SOCK (Socket) object
 '**************************************************************************************************
 
 object sock
@@ -14,102 +14,102 @@ object sock
 '--------------------------------------------------------------------
 enum pl_sock_state
 '<b>ENUM. </b><br><br> Contains the list of constants related to possible socket states. See also enum <font color="olive"><b>pl_sock_state_simple</b></font>.
-	PL_SST_CLOSED=0,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (and haven't been opened yet, it is a
-								'post-powerup state). <br><br>Applies both to UDP and TCP.
-	PL_SST_CL_PCLOSED,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive close). <br><br>Applies only to TCP.
-	PL_SST_CL_ACLOSED,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active close by the
-								'application). <br><br>Applies only to TCP.
-	PL_SST_CL_PRESET_POPENING,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset during a
-								'passive open).<br><br> Applies only to TCP.
-	PL_SST_CL_PRESET_AOPENING,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset during an
-								'active open). <br><br>Applies only to TCP.
-	PL_SST_CL_PRESET_EST,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while in
-								'"connection established" state). <br><br>Applies only to TCP.
-	PL_SST_CL_PRESET_PCLOSING,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while performing
-								'a passive close). Applies only to TCP.
-	PL_SST_CL_PRESET_ACLOSING,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while performing
-								'an active close). <br><br>Applies only to TCP.
-	PL_SST_CL_PRESET_STRANGE,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset, no further
-								'details available). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_CMD,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued by the
-								'application). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_RE_PO,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
-								'of excessive retransmission attempts during a passive open). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_RE_AO,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
-								'of excessive retransmission attempts during an active open). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_RE_EST,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
-								'of excessive retransmission attempts while in "connection established" state).
-								'<br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_RE_PC,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
-								'of excessive retransmission attempts during a passive close). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_RE_AC,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
-								'of excessive retransmission attempts during a passive open). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_TOUT,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset caused by
-								'connection timeout, i.e. no data was exchanged for sock.connectiontout number of
-								'seconds). <br><br>Applies only to TCP.
-	PL_SST_CL_ARESET_DERR,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset caused by
-								'a data exchange error). <br><br>Applies only to TCP.
-	PL_SST_CL_DISCARDED_CMD,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded by the application).
-								'<br><br>Applies both to UDP and TCP.
-	PL_SST_CL_DISCARDED_PO_WCS,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because an error
-								'in connection sequence was detected during a passive open). <br><br>Applies only to TCP.
-	PL_SST_CL_DISCARDED_AO_WCS,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because an error
-								'in connection sequence was detected during an active open). <br><br>Applies only to TCP.
-	PL_SST_CL_DISCARDED_ARPFL,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because the device has
-								'failed to resolve the IP address of the destination during an active open, i.e.
-								'there was no reply to ARP requests). <br><br>Applies both to UDP and TCP.
-	PL_SST_CL_DISCARDED_TOUT,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because connection has 
-								'timed out, i.e. no data was exchanged for sock.connectiontout number of seconds). <br><br>
-								'Applies only to UDP.
-	PL_SST_ARP=&h20,			'<b>PLATFORM CONSTANT. </b><br><br> ARP resolution is an progress (it is an active open).
-								'<br><br>Applies both to UDP and TCP.
-	PL_SST_PO=&h40,				'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is a passive open).
-								'<br><br>Applies only to TCP.
-	PL_SST_AO=&h60,				'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
-								'<br><br>Applies only to TCP.
-	PL_SST_EST=&h80,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is established (generic, includes both passive
-								'and active open). <br><br>Applies both to UDP and TCP.  
-	PL_SST_EST_POPENED=&h80,	'<b>PLATFORM CONSTANT. </b><br><br> Connection is established (it was a passive open).
-								'<br><br>Applies both to UDP and TCP. 
-	PL_SST_EST_AOPENED,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is established (it was an active open).
-								'<br><br>Applies both to UDP and TCP.
-	PL_SST_PC=&hA0,				'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
-								'<br><br>Applies only to TCP. 
-	PL_SST_AC=&hC0				'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
-								'<br><br>Applies only to TCP.
+    PL_SST_CLOSED=0,            '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (and haven't been opened yet, it is a
+                                'post-powerup state). <br><br>Applies both to UDP and TCP.
+    PL_SST_CL_PCLOSED,          '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive close). <br><br>Applies only to TCP.
+    PL_SST_CL_ACLOSED,          '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active close by the
+                                'application). <br><br>Applies only to TCP.
+    PL_SST_CL_PRESET_POPENING,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset during a
+                                'passive open).<br><br> Applies only to TCP.
+    PL_SST_CL_PRESET_AOPENING,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset during an
+                                'active open). <br><br>Applies only to TCP.
+    PL_SST_CL_PRESET_EST,       '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while in
+                                '"connection established" state). <br><br>Applies only to TCP.
+    PL_SST_CL_PRESET_PCLOSING,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while performing
+                                'a passive close). Applies only to TCP.
+    PL_SST_CL_PRESET_ACLOSING,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset while performing
+                                'an active close). <br><br>Applies only to TCP.
+    PL_SST_CL_PRESET_STRANGE,   '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was a passive reset, no further
+                                'details available). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_CMD,       '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued by the
+                                'application). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_RE_PO,     '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
+                                'of excessive retransmission attempts during a passive open). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_RE_AO,     '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
+                                'of excessive retransmission attempts during an active open). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_RE_EST,    '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
+                                'of excessive retransmission attempts while in "connection established" state).
+                                '<br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_RE_PC,     '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
+                                'of excessive retransmission attempts during a passive close). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_RE_AC,     '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset issued because
+                                'of excessive retransmission attempts during a passive open). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_TOUT,      '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset caused by
+                                'connection timeout, i.e. no data was exchanged for sock.connectiontout number of
+                                'seconds). <br><br>Applies only to TCP.
+    PL_SST_CL_ARESET_DERR,      '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was an active reset caused by
+                                'a data exchange error). <br><br>Applies only to TCP.
+    PL_SST_CL_DISCARDED_CMD,    '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded by the application).
+                                '<br><br>Applies both to UDP and TCP.
+    PL_SST_CL_DISCARDED_PO_WCS, '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because an error
+                                'in connection sequence was detected during a passive open). <br><br>Applies only to TCP.
+    PL_SST_CL_DISCARDED_AO_WCS, '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because an error
+                                'in connection sequence was detected during an active open). <br><br>Applies only to TCP.
+    PL_SST_CL_DISCARDED_ARPFL,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because the device has
+                                'failed to resolve the IP address of the destination during an active open, i.e.
+                                'there was no reply to ARP requests). <br><br>Applies both to UDP and TCP.
+    PL_SST_CL_DISCARDED_TOUT,   '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed (it was discarded because connection has 
+                                'timed out, i.e. no data was exchanged for sock.connectiontout number of seconds). <br><br>
+                                'Applies only to UDP.
+    PL_SST_ARP=&h20,            '<b>PLATFORM CONSTANT. </b><br><br> ARP resolution is an progress (it is an active open).
+                                '<br><br>Applies both to UDP and TCP.
+    PL_SST_PO=&h40,             '<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is a passive open).
+                                '<br><br>Applies only to TCP.
+    PL_SST_AO=&h60,             '<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
+                                '<br><br>Applies only to TCP.
+    PL_SST_EST=&h80,            '<b>PLATFORM CONSTANT. </b><br><br> Connection is established (generic, includes both passive
+                                'and active open). <br><br>Applies both to UDP and TCP.  
+    PL_SST_EST_POPENED=&h80,    '<b>PLATFORM CONSTANT. </b><br><br> Connection is established (it was a passive open).
+                                '<br><br>Applies both to UDP and TCP. 
+    PL_SST_EST_AOPENED,         '<b>PLATFORM CONSTANT. </b><br><br> Connection is established (it was an active open).
+                                '<br><br>Applies both to UDP and TCP.
+    PL_SST_PC=&hA0,             '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
+                                '<br><br>Applies only to TCP. 
+    PL_SST_AC=&hC0              '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
+                                '<br><br>Applies only to TCP.
 end enum
 
 '--------------------------------------------------------------------
 enum pl_sock_state_simple
 '<b>ENUM. </b><br><br> Contains a simplified list of constants related to possible socket states. See also enum <font color="olive"><b>pl_sock_state</b></font>.
-	PL_SSTS_CLOSED,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is closed. <br><br>Applies both to UDP and TCP.
-	PL_SSTS_ARP,		'<b>PLATFORM CONSTANT. </b><br><br> ARP resolution is an progress (it is an active open).
-						'<br><br>Applies both to UDP and TCP.
-	PL_SSTS_PO,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is a passive open).
-						'<br><br>Applies only to TCP.
-	PL_SSTS_AO,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
-						'<br><br>Applies only to TCP.
-	PL_SSTS_EST,		'<b>PLATFORM CONSTANT. </b><br><br> Connection is established. <br><br>Applies both to UDP and TCP.  
-	PL_SSTS_PC,			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
-						'<br><br>Applies only to TCP. 
-	PL_SSTS_AC			'<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
-						'<br><br>Applies only to TCP.
+    PL_SSTS_CLOSED,     '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed. <br><br>Applies both to UDP and TCP.
+    PL_SSTS_ARP,        '<b>PLATFORM CONSTANT. </b><br><br> ARP resolution is an progress (it is an active open).
+                        '<br><br>Applies both to UDP and TCP.
+    PL_SSTS_PO,         '<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is a passive open).
+                        '<br><br>Applies only to TCP.
+    PL_SSTS_AO,         '<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
+                        '<br><br>Applies only to TCP.
+    PL_SSTS_EST,        '<b>PLATFORM CONSTANT. </b><br><br> Connection is established. <br><br>Applies both to UDP and TCP.  
+    PL_SSTS_PC,         '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
+                        '<br><br>Applies only to TCP. 
+    PL_SSTS_AC          '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
+                        '<br><br>Applies only to TCP.
 end enum
 
 '--------------------------------------------------------------------
 enum pl_sock_inconmode
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to whether the socket accepts any incoming connections and, if yes, from which sources.
-	PL_SOCK_INCONMODE_NONE,			'<b>PLATFORM CONSTANT. </b><br><br> The socket does not accept any incoming connections.
-	PL_SOCK_INCONMODE_SPECIFIC_IPPORT,	'<b>PLATFORM CONSTANT. </b><br><br> 
-										'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
-										'<b>sock.targetip</b></font>) and specific port (matching <font color="maroon"><b>
-										'sock.targetport</b></font>)
-	PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT,	'<b>PLATFORM CONSTANT. </b><br><br> 
-											'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
-											'<b>sock.targetip</b></font>), but any port.
-	PL_SOCK_INCONMODE_ANY_IP_ANY_PORT	'<b>PLATFORM CONSTANT. </b><br><br> 
-										'The socket will accept an incoming connection from any IP and any port.
+    PL_SOCK_INCONMODE_NONE,         '<b>PLATFORM CONSTANT. </b><br><br> The socket does not accept any incoming connections.
+    PL_SOCK_INCONMODE_SPECIFIC_IPPORT,  '<b>PLATFORM CONSTANT. </b><br><br> 
+                                        'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+                                        '<b>sock.targetip</b></font>) and specific port (matching <font color="maroon"><b>
+                                        'sock.targetport</b></font>)
+    PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT, '<b>PLATFORM CONSTANT. </b><br><br> 
+                                            'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+                                            '<b>sock.targetip</b></font>), but any port.
+    PL_SOCK_INCONMODE_ANY_IP_ANY_PORT   '<b>PLATFORM CONSTANT. </b><br><br> 
+                                        'The socket will accept an incoming connection from any IP and any port.
 end enum
 
 '--------------------------------------------------------------------
@@ -121,22 +121,22 @@ enum pl_sock_reconmode
 'or a reconnect.<br><br>
 'Port switchover is when the socket starts sending its outgoing UDP datagrams to the port from which the most recent UDP datagram was received,
 'rather than the port specified by the <font color="maroon"><b>sock.targetport </b></font> property.
-	PL_SOCK_RECONMODE_0,		'<b>PLATFORM CONSTANT. </b><br><br> 
-								'For UDP: Reconnects accepted only from the same IP as the one already engaged in the current connection 
-								'with this socket, but any port; port switchover will not happen. <br><br>
-								'TCP: reconnects are not accepted at all.
-	PL_SOCK_RECONMODE_1,		'<b>PLATFORM CONSTANT. </b><br><br> 
-								'For UDP: Reconnects accepted from any IP, any port; port switchover will not happen. <br><br>
-								'TCP: reconnects accepted only from the same IP and port as the ones already engaged in the current connection 
-								'with this socket.
-	PL_SOCK_RECONMODE_2,		'<b>PLATFORM CONSTANT. </b><br><br> 
-								'For UDP: Reconnects accepted only from the same IP as the one already engaged in the current connection with 
-								'this socket, but any port; port switchover will happen. <br><br>
-								'TCP: reconnects accepted only from the same IP as the one already engaged in the current connection with this
-								'socket, but any port.
-	PL_SOCK_RECONMODE_3			'<b>PLATFORM CONSTANT. </b><br><br> 
-								'For UDP: Reconnects accepted from any IP, any port; port switchover will happen. ,<br><br>
-								'TCP: reconnects accepted from any IP, any port.
+    PL_SOCK_RECONMODE_0,        '<b>PLATFORM CONSTANT. </b><br><br> 
+                                'For UDP: Reconnects accepted only from the same IP as the one already engaged in the current connection 
+                                'with this socket, but any port; port switchover will not happen. <br><br>
+                                'TCP: reconnects are not accepted at all.
+    PL_SOCK_RECONMODE_1,        '<b>PLATFORM CONSTANT. </b><br><br> 
+                                'For UDP: Reconnects accepted from any IP, any port; port switchover will not happen. <br><br>
+                                'TCP: reconnects accepted only from the same IP and port as the ones already engaged in the current connection 
+                                'with this socket.
+    PL_SOCK_RECONMODE_2,        '<b>PLATFORM CONSTANT. </b><br><br> 
+                                'For UDP: Reconnects accepted only from the same IP as the one already engaged in the current connection with 
+                                'this socket, but any port; port switchover will happen. <br><br>
+                                'TCP: reconnects accepted only from the same IP as the one already engaged in the current connection with this
+                                'socket, but any port.
+    PL_SOCK_RECONMODE_3         '<b>PLATFORM CONSTANT. </b><br><br> 
+                                'For UDP: Reconnects accepted from any IP, any port; port switchover will happen. ,<br><br>
+                                'TCP: reconnects accepted from any IP, any port.
 end enum
 
 '--------------------------------------------------------------------
@@ -144,24 +144,24 @@ enum pl_sock_protocol
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants that specify the transport protocol for the socket. HTTP is not listed here because it is not a transport
 'protocol (transport protocol used for HTTP is TCP).
-	PL_SOCK_PROTOCOL_UDP,		'<b>PLATFORM CONSTANT. </b><br><br> Specifies UDP transport protocol for the socket.
-	PL_SOCK_PROTOCOL_TCP,		'<b>PLATFORM CONSTANT. </b><br><br> Specifies TCP transport protocol for the socket.
-	PL_SOCK_PROTOCOL_RAW		'<b>PLATFORM CONSTANT. </b><br><br> Specifies RAW packet mode for the socket.
+    PL_SOCK_PROTOCOL_UDP,       '<b>PLATFORM CONSTANT. </b><br><br> Specifies UDP transport protocol for the socket.
+    PL_SOCK_PROTOCOL_TCP,       '<b>PLATFORM CONSTANT. </b><br><br> Specifies TCP transport protocol for the socket.
+    PL_SOCK_PROTOCOL_RAW        '<b>PLATFORM CONSTANT. </b><br><br> Specifies RAW packet mode for the socket.
 end enum
 
 '--------------------------------------------------------------------
 enum pl_http_rq_type
 '<b>ENUM. </b><br><br> 
 'Contains the list of HTTP request types supported by the internal web server.
-	PL_SOCK_HTTP_RQ_GET,		'<b>PLATFORM CONSTANT. </b><br><br> HTTP GET request.
-	PL_SOCK_HTTP_RQ_POST		'<b>PLATFORM CONSTANT. </b><br><br> HTTP POST request.
+    PL_SOCK_HTTP_RQ_GET,        '<b>PLATFORM CONSTANT. </b><br><br> HTTP GET request.
+    PL_SOCK_HTTP_RQ_POST        '<b>PLATFORM CONSTANT. </b><br><br> HTTP POST request.
 end enum
 
 '--------------------------------------------------------------------
 property sock.numofsock
 '<b>R/O PROPERTY (BYTE). </b><br><br> Returns total number of sockets available on the current platform. See also <font color="maroon"><b>
 'sock.num </b></font>property.
-	get = syscall(248) as byte
+    get = syscall(248) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -171,8 +171,8 @@ property sock.num
 'Most other properties and methods of this object relate to the socket selected through this property. Note that socket-related events such 
 'as <font color="teal"><b>on_sock_data_arrival </b></font> change currently selected socket!<br><br>
 'The value of this property won't exceed <font color="maroon"><b>sock.numofsock</b></font>-1 (even if you attempt to set higher value).
-	get = syscall(203) as byte
-	set = syscall(204) (sock as byte)
+    get = syscall(203) as byte
+    set = syscall(204) (sock as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -183,7 +183,7 @@ property sock.state
 '<b>on_sock_event </b></font>event generation).See <font color="olive"><b>pl_sock_state </b></font>constants for state descriptions.<br><br>
 'Another read-only property- <font color="maroon"><b>sock.statesimple</b></font>- returns "simplified" socket state.
   
-	get = syscall(224) as pl_sock_state
+    get = syscall(224) as pl_sock_state
 end property
 
 '--------------------------------------------------------------------
@@ -194,7 +194,7 @@ property sock.statesimple
 '<b>on_sock_event </b></font> event generation). See <font color="olive"><b>pl_sock_state_simple </b></font>constants for state
 'descriptions.<br><br>
 'Another read-only property- <font color="maroon"><b>sock.state</b></font>- returns "detailed" socket state.
-	get = syscall(185) as pl_sock_state_simple
+    get = syscall(185) as pl_sock_state_simple
 end property
 
 '--------------------------------------------------------------------
@@ -208,8 +208,8 @@ property sock.inconmode
 '<font color="olive"><b>2- PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT </b></font>(incoming connections accepted only from specific IP (matching 
 '<font color="maroon"><b>sock.targetip</b></font>), but any port),<br><br>
 '<font color="olive"><b>3- PL_SOCK_INCONMODE_ANY_IP_ANY_PORT </b></font>(incoming connections accepted from any IP and any port). 
-	get = syscall(192,"36.TDL"+) as pl_sock_inconmode
-	set = syscall(193,"36.TDL"+) (inconmode as pl_sock_inconmode)
+    get = syscall(192,"36.TDL"+) as pl_sock_inconmode
+    set = syscall(193,"36.TDL"+) (inconmode as pl_sock_inconmode)
 end property
 
 '--------------------------------------------------------------------
@@ -222,8 +222,8 @@ property sock.reconmode
 'reconnect. Port switchover is when the socket starts sending its outgoing UDP datagrams to the port from which the most recent UDP datagram
 'was received, rather than the port specified by the <font color="maroon"><b>sock.targetport</b></font> property. <br><br>
 'See <font color="olive"><b>PL_SOCK_RECONMODE_ </b></font>constants for available choices.
-	get = syscall(246,"36.TDL"+) as pl_sock_reconmode
-	set = syscall(247,"36.TDL"+) (reconmode as pl_sock_reconmode)
+    get = syscall(246,"36.TDL"+) as pl_sock_reconmode
+    set = syscall(247,"36.TDL"+) (reconmode as pl_sock_reconmode)
 end property
 
 '--------------------------------------------------------------------
@@ -240,8 +240,8 @@ property sock.localportlist
 '32 bytes. <br><br>
 'Notice, that there is also a <font color="maroon"><b>sock.httpportlist </b></font> property that defines a list of listening ports for HTTP 
 'TCP connections.
-	get = syscall(210,"36.TDL"+) as string
-	set = syscall(211,"36.TDL"+) (byref lplist as string)
+    get = syscall(210,"36.TDL"+) as string
+    set = syscall(211,"36.TDL"+) (byref lplist as string)
 end property
 
 '--------------------------------------------------------------------
@@ -258,8 +258,8 @@ property sock.httpportlist
 'sock.httpportlist</b></font>, the protocol for this socket is TCP then <font color="maroon"><b>sock.httpportlist</b></font> has precedence
 '(incoming TCP connection on the port in question will be interpreted as HTTP). <br><br>
 'See also <font color="maroon"><b>sock.localport </b></font> and <font color="maroon"><b>sock.httpmode </b></font> properties. 
-	get = syscall(48,"36.TDL"+) as string
-	set = syscall(49,"36.TDL"+) (byref hplist as string)
+    get = syscall(48,"36.TDL"+) as string
+    set = syscall(49,"36.TDL"+) (byref hplist as string)
 end property
 
 '--------------------------------------------------------------------
@@ -271,7 +271,7 @@ property sock.localport
 'sock.httpportlist </b></font> properties.<br><br>
 'An incoming connection is accepted on any port from those two lists. The <font color="maroon"><b>sock.localport </b></font> property reflects 
 'current or the most recent local port on which connection was accepted.
-	get = syscall(209) as word
+    get = syscall(209) as word
 end property
 
 '--------------------------------------------------------------------
@@ -283,8 +283,8 @@ property sock.outport
 'be selected randomly, for all subsequent outgoing connections the port number will increase by one. <br><br>
 'Actual local port of a connection can be queried through the <font color="maroon"><b>sock.localport </b></font> read-only property. If this 
 'property is not at zero then the port it specifies will be used for all outgoing connections from this socket.
-	get = syscall(190,"81.TDL"+) as word
-	set = syscall(191,"81.TDL"+) (outport as word)
+    get = syscall(190,"81.TDL"+) as word
+    set = syscall(191,"81.TDL"+) (outport as word)
 end property
 
 '--------------------------------------------------------------------
@@ -296,8 +296,8 @@ property sock.acceptbcast
 'broadcast UDP datagrams).<br><br>
 'This property is irrelevant for TCP communications (<font color="maroon"><b>sock.protocol</b></font>=<font color="olive"><b>
 'PL_SOCK_PROTOCOL_TCP</b></font>).
-	get = syscall(205,"81.TDL"+) as no_yes
-	set = syscall(206,"81.TDL"+) (acceptbcast as no_yes)
+    get = syscall(205,"81.TDL"+) as no_yes
+    set = syscall(206,"81.TDL"+) (acceptbcast as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -312,15 +312,15 @@ property sock.targetip
 'current IP on the "other side" of the connection can always be checked through the <font color="maroon"><b>sock.remoteip </b></font> read-only
 'property.<br><br> 
 'See also <font color="maroon"><b>sock.targetport</b></font> and <font color="maroon"><b>sock.remoteport</b></font>.
-	get = syscall(212,"39.TDL"+) as string
-	set = syscall(213,"40.TDL"+) (byref targetip as string)
+    get = syscall(212,"39.TDL"+) as string
+    set = syscall(213,"40.TDL"+) (byref targetip as string)
 end property
 
 '--------------------------------------------------------------------
 property sock.targetmac
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b><br><br>
-	get = syscall(482,"39.TDL"+) as string
-	set = syscall(483,"40.TDL"+) (byref targetip as string)
+    get = syscall(482,"39.TDL"+) as string
+    set = syscall(483,"40.TDL"+) (byref targetip as string)
 end property
 
 '--------------------------------------------------------------------
@@ -334,8 +334,8 @@ property sock.targetport
 'Current port on the "other side" of the connection can always be checked through the <font color="maroon"><b>sock.remoteport</b></font>
 'read-only property.<br><br>
 'See also <font color="maroon"><b>sock.targetip</b></font> and <font color="maroon"><b>sock.remoteip</b></font>.
-	get = syscall(214,"81.TDL"+) as word
-	set = syscall(215,"81.TDL"+) (targetport as word)
+    get = syscall(214,"81.TDL"+) as word
+    set = syscall(215,"81.TDL"+) (targetport as word)
 end property
 
 '--------------------------------------------------------------------
@@ -349,8 +349,8 @@ property sock.targetbcast
 'PL_SOCK_PROTOCOL_UDP</b></font>). When this property is set to <font color="olive"><b>1- YES </b></font>the socket will be sending out all UDP 
 'datagrams as broadcasts and incoming datagrams won't cause port switchover, even if the latter is enabled through the 
 '<font color="maroon"><b>sock.reconmode </b></font> property.
-	get = syscall(216,"81.TDL"+) as no_yes
-	set = syscall(217,"81.TDL"+) (targetbcast as no_yes)
+    get = syscall(216,"81.TDL"+) as no_yes
+    set = syscall(217,"81.TDL"+) (targetbcast as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -364,7 +364,7 @@ property sock.remotemac
 'recent datagram received by the socket. <br><br>
 'Also see <font color="maroon"><b>sock.remoteip</b></font>, <font color="maroon"><b>sock.remoteport</b></font>, and <font color="maroon"><b>
 'sock.bcast </b></font> properties.
-	get = syscall(220,"39.TDL"+) as string
+    get = syscall(220,"39.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -379,7 +379,7 @@ property sock.remoteip
 'recent datagram received by the socket.<br><br>
 'Also see <font color="maroon"><b>sock.remotemac</b></font>, <font color="maroon"><b>sock.remoteport</b></font>, and <font color="maroon"><b>
 'sock.bcast </b></font> properties. 
-	get = syscall(221,"39.TDL"+) as string
+    get = syscall(221,"39.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -394,7 +394,7 @@ property sock.remoteport
 'datagram received by the socket.<br><br>
 'Also see <font color="maroon"><b>sock.remotemac</b></font>, <font color="maroon"><b>sock.remoteip</b></font>, and <font color="maroon"><b>
 'sock.bcast </b></font> properties.
-	get = syscall(222) as word
+    get = syscall(222) as word
 end property
 
 '--------------------------------------------------------------------
@@ -406,7 +406,7 @@ property sock.bcast
 'will contain the broadcast status for the current datagram being processed.  <br><br>
 'Outside of the <font color="teal"><b>on_sock_data_arrival </b></font>event handler, the property will return the broadcast status of the most
 'recent datagram received by the socket.
-	get = syscall(223) as no_yes
+    get = syscall(223) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -420,8 +420,8 @@ property sock.protocol
 '</b></font> property or using the <font color="maroon"><b>sock.httpmode </b></font> property. <br><br>
 'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple
 '</b></font><> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>).
-	get = syscall(207,"36.TDL"+) as pl_sock_protocol
-	set = syscall(208,"36.TDL"+) (proto as pl_sock_protocol)
+    get = syscall(207,"36.TDL"+) as pl_sock_protocol
+    set = syscall(208,"36.TDL"+) (proto as pl_sock_protocol)
 end property
 
 '--------------------------------------------------------------------
@@ -441,8 +441,8 @@ property sock.splittcppackets
 '<b>0- NO</b></font>. <br><br>
 'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple</b></font>
 '<> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>). <br>
-	get = syscall(65,"36.TDL"+) as no_yes
-	set = syscall(251,"36.TDL"+) (splitpackets as no_yes)
+    get = syscall(65,"36.TDL"+) as no_yes
+    set = syscall(251,"36.TDL"+) (splitpackets as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -459,8 +459,8 @@ property sock.httpmode
 'sock.httpmode</b></font>=1. However, this operation is "sticky"- once you have converted the TCP connection into the HTTP mode you cannot 
 'convert it back into the regular mode- trying to set <font color="maroon"><b>sock.httpmode</b></font>=0 won't have any effect- the TCP 
 'connection will remain in the HTTP mode until this connection is closed. 
-	get = syscall(46,"69.TDL"+) as no_yes
-	set = syscall(47,"69.TDL"+) (httpmode as no_yes)
+    get = syscall(46,"69.TDL"+) as no_yes
+    set = syscall(47,"69.TDL"+) (httpmode as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -470,8 +470,8 @@ property sock.httpnoclose
 'will be kept opened after the HTTP request has been processed and the HTML page has been sent out: <font color="olive"><b>0- NO</b></font> 
 '(will be closed, standard behavior), <font color="olive"><b>1- YES </b></font>(will be kept open). <br><br>
 'In the second case the end of HTML page output is marked by CR/LF/CR/LF sequence.
-	get = syscall(44,"36.TDL"+) as no_yes
-	set = syscall(45,"36.TDL"+) (value as no_yes)
+    get = syscall(44,"36.TDL"+) as no_yes
+    set = syscall(45,"36.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -484,8 +484,8 @@ property sock.connectiontout
 '<br><br>
 'Actual time elapsed since the last data exchange across the socket can be obtained through the
 '<font color="maroon"><b>sock.toutcounter </b></font>R/O property.
-	get = syscall(218,"36.TDL"+) as word
-	set = syscall (219,"36.TDL"+) (connectiontout as word)
+    get = syscall(218,"36.TDL"+) as word
+    set = syscall (219,"36.TDL"+) (connectiontout as word)
 end property
 
 '--------------------------------------------------------------------
@@ -510,7 +510,7 @@ property sock.toutcounter
 'can reach is 1. That is, the
 '<font color="maroon"><b>sock.toutcounter </b></font>
 'will be at 0 after the data exchange, and at 1 if at least 0.5 seconds have passed since the last data exchange.
-	get = syscall(2) as word
+    get = syscall(2) as word
 end property
 
 '--------------------------------------------------------------------
@@ -526,8 +526,8 @@ property sock.inbandcommands
 'Inband messaging will work even when redirection (buffer shorting) is enabled for the socket (see the <font color="maroon"><b>sock.redir 
 '</b></font>method). The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>
 'sock.statesimple</b></font><> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>).
-	get = syscall(38,"36.TDL"+) as no_yes
-	set = syscall(39,"36.TDL"+) (inbandcommands as no_yes)
+    get = syscall(38,"36.TDL"+) as no_yes
+    set = syscall(39,"36.TDL"+) (inbandcommands as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -540,8 +540,8 @@ property sock.escchar
 'irrelevant when inband commands are disabled (<font color="maroon"><b>sock.inbandcommands</b></font>= <font color="olive"><b>0- NO</b></font>). '<br><br>The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>
 'sock.statesimple</b></font><> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>).<br><br>
 'See also <font color="maroon"><b>sock.endchar</b></font>.
-	get = syscall(40,"36.TDL"+) as byte
-	set = syscall(41,"36.TDL"+) (escchar as byte)
+    get = syscall(40,"36.TDL"+) as byte
+    set = syscall(41,"36.TDL"+) (escchar as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -554,8 +554,8 @@ property sock.endchar
 '0- NO</b></font>). The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>
 'sock.statesimple</b></font><> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>). <br><br>
 'See also <font color="maroon"><b>sock.escchar</b></font>.
-	get = syscall(42,"36.TDL"+) as byte
-	set = syscall(43,"36.TDL"+) (escchar as byte)
+    get = syscall(42,"36.TDL"+) as byte
+    set = syscall(43,"36.TDL"+) (escchar as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -570,8 +570,8 @@ property sock.gendataarrivalevent
 'using the doevents. If this is the case the <font color="teal"><b>on_sock_data_arrival </b></font>event handler executed "inside" the doevents
 'would "steal" datagrams from you (the datagram is deleted from the RX buffer once the <font color="teal"><b>on_sock_data_arrival
 '</b></font>event handler is exited).
-	get = syscall(244,"81.TDL"+) as no_yes
-	set = syscall(245,"81.TDL"+) (escchar as no_yes)
+    get = syscall(244,"81.TDL"+) as no_yes
+    set = syscall(245,"81.TDL"+) (escchar as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -585,7 +585,7 @@ property sock.rxbuffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rxbuffrq</b></font>.  "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The socket cannot RX data when the RX buffer has zero capacity.
-	get = syscall(230,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(230,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -599,7 +599,7 @@ property sock.txbuffsize
 '"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.txbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The socket cannot TX data when the TX buffer has zero capacity.
-	get = syscall(231,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(231,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 #if EXTENDED_SOCK=1
@@ -615,7 +615,7 @@ property sock.cmdbuffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.cmdbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
 'variables.<br><br>
 'The CMD buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
-	get = syscall(631) as BUFF_SIZE_TYPE
+    get = syscall(631) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -629,7 +629,7 @@ property sock.rplbuffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.rplbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
 'variables.<br><br>
 'The RPL buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
-	get = syscall(632) as BUFF_SIZE_TYPE
+    get = syscall(632) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -643,7 +643,7 @@ property sock.varbuffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.varbuffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
 'variables.<br><br>
 'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see sock.httpmode property, also sock.httpportlist.
-	get = syscall(633) as BUFF_SIZE_TYPE
+    get = syscall(633) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -657,7 +657,7 @@ property sock.tx2buffsize
 'where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>sock.tx2buffrq</b></font>.  "-33" is because this number of bytes is needed for internal buffer
 'variables.<br><br>
 'The TX2 buffer is only required when inband commands are enabled (sock.inbandcommands= 1-YES).
-	get = syscall(634) as BUFF_SIZE_TYPE
+    get = syscall(634) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -667,7 +667,7 @@ property sock.httprqtype
 'returns the type of the HTTP request received from the browser.
 '<br><br>
 'Note that it only makes sense to query this property after the HTTP request has actually been received, i.e. in the code embedded inside or called from the HTML page.
-	get = syscall(465) as pl_http_rq_type
+    get = syscall(465) as pl_http_rq_type
 end property
 
 #endif
@@ -683,7 +683,7 @@ property sock.rxlen
 'is handled. If, during the <font color="teal"><b>on_sock_data_arrival </b></font>event handler execution, not all data is extracted from the 
 'RX buffer, another <font color="teal"><b>on_sock_data_arrival </b></font>event is generated immediately after the <font color="teal"><b>
 'on_sock_data_arrival </b></font>event handler is exited.
-	get = syscall(232,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(232,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -695,7 +695,7 @@ property sock.txlen
 '</b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the <font color="maroon"><b>
 'sock.notifysent</b></font> method. <br><br>
 'See also <font color="maroon"><b>sock.newtxlen</b></font>.
-	get = syscall(233,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(233,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -706,7 +706,7 @@ property sock.txfree
 'Your application will not be able to store more data than this amount. To achieve asynchronous data processing, use the <font color="maroon">
 '<b>sock.notifysent</b></font> method to get <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains required 
 'amount of free space.
-	get = syscall(235,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(235,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -715,7 +715,7 @@ property sock.newtxlen
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of uncommitted TX data in 
 'bytes. Uncommitted data is the one that was added to the TX buffer with the <font color="maroon"><b>sock.setdata </b></font> method but not 
 'yet committed using the <font color="maroon"><b>sock.send </b></font>method.
-	get = syscall(242) as BUFF_SIZE_TYPE
+    get = syscall(242) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -741,7 +741,7 @@ property sock.httprqstring
 'event and the
 '<font color="maroon"><b>sock.gethttprqstring </b></font>
 'method to handle large amounts of HTTP variable data correctly.
-	get = syscall(188,"36.TDL"+) as string
+    get = syscall(188,"36.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -772,7 +772,7 @@ property sock.rxpacketlen
 'Correct way of using this property is within the <font color="teal"><b>on_sock_data_arrival </b></font>event or in conjunction with the
 '<font color="maroon"><b>sock.nextpacket</b></font> method.<br><br> 
 'See also <font color="maroon"><b>sock.rxlen </b></font> property.
-	get = syscall(241) as word
+    get = syscall(241) as word
 end property
 
 '--------------------------------------------------------------------
@@ -782,7 +782,7 @@ property sock.cmdlen
 'to be processed in the CMD buffer. This buffer accumulates incoming inband commands (messages) and may contain more than one such command.
 'Use <font color="maroon"><b>sock.getinband </b></font> method to extract the data from the CMD buffer. <br><br>
 'See also <font color="maroon"><b>sock.rpllen </b></font> and <font color="maroon"><b>sock.inbandcommands</b></font>.
-	get = syscall(96,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(96,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -791,7 +791,7 @@ property sock.varlen
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the length of data (in bytes) waiting
 'to be processed in the VAR buffer. This buffer accumulates incoming HTTP request string.
 'Use <font color="maroon"><b>sock.gethttprqstring </b></font> method to extract the data from the CMD buffer. <br><br>
-	get = syscall(95,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(95,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -803,7 +803,7 @@ property sock.rpllen
 'inband replies may be waiting in the RPL buffer.<br><br>
 'See also <font color="maroon"><b>sock.cmdlen</b></font>, <font color="maroon"><b>sock.rplfree </b></font> and <font color="maroon"><b>
 'sock.inbandcommands</b></font>.
-	get = syscall(97,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(97,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -815,7 +815,7 @@ property sock.rplfree
 'replies may be waiting in the RPL buffer.<br><br>
 'See also <font color="maroon"><b>sock.cmdlen</b></font>, <font color="maroon"><b>sock.rpllen </b></font> and <font color="maroon"><b>
 'sock.inbandcommands</b></font>.
-	get = syscall(99,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(99,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -826,7 +826,7 @@ property sock.tx2len
 '(<font color="maroon"><b>sock.inbandcommands</b></font>= <font color="olive"><b>1- YES</b></font>).<br><br>
 'If your application needs to make sure that all data is actually sent out then it must verify that both TX and TX2 buffers are empty.<br><br>
 'See also <font color="maroon"><b>sock.txlen</b></font> and <font color="maroon"><b>sock.txfree</b></font>.
-	get = syscall(98,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(98,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -1139,8 +1139,8 @@ property sock.inconenabledmaster
 'allowed to accept an incoming connection), <font color="olive"><b>1- YES </b></font>(incoming connections are globally enabled; individual 
 'socket's behavior and whether it will accept or reject a particular incoming connection depends on the setup of this socket).<br><br>
 'This property can be used to temporarily disable incoming connection acceptance on all sockets without changing individual setup of each socket.
-	get = syscall(186,"39.TDL"+) as no_yes
-	set= syscall(225,"39.TDL"+) (value as no_yes)
+    get = syscall(186,"39.TDL"+) as no_yes
+    set= syscall(225,"39.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -1158,8 +1158,8 @@ property sock.urlsubstitutes
 '<br><br>
 'This property allows programmatic generation of non-HTML files. In the above example it is possible to generate the BMP file through a
 'BASIC code. There is no other way to do this, since only HTML files are parsed for BASIC code inclusions.
-	get = syscall(541) as string
-	set= syscall(542) (byref value as string)
+    get = syscall(541) as string
+    set= syscall(542) (byref value as string)
 end property
 
 '--------------------------------------------------------------------
@@ -1184,8 +1184,8 @@ property sock.sinkdata
 '<font color="maroon"><b>Sock.connectiontout </b></font>and
 '<font color="maroon"><b>sock.toutcounter </b></font>
 'will work correctly as well. 
-	get = syscall(3,"36.TDL"+) as no_yes
-	set= syscall(4,"36.TDL"+) (value as no_yes)
+    get = syscall(3,"36.TDL"+) as no_yes
+    set= syscall(4,"36.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -1209,8 +1209,8 @@ property sock.allowedinterfaces
 'See also:
 '<font color="maroon"><b>sock.targetinterface</b></font>,
 '<font color="maroon"><b>sock.currentinterface</b></font>.
-	get = syscall(532,"73.TDL"+) as string
-	set = syscall(533,"73.TDL"+) (byref interface as string)
+    get = syscall(532,"73.TDL"+) as string
+    set = syscall(533,"73.TDL"+) (byref interface as string)
 end property
 
 '--------------------------------------------------------------------
@@ -1225,7 +1225,7 @@ property sock.availableinterfaces
 '<font color="maroon"><b>sock.targetinterface</b></font>,
 '<font color="maroon"><b>sock.currentinterface</b></font>,
 '<font color="maroon"><b>sock.allowedinterfaces</b></font>.
-	get = syscall(557,"73.TDL"+) as string
+    get = syscall(557,"73.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -1244,8 +1244,8 @@ property sock.targetinterface
 '<font color="maroon"><b>sock.availableinterfaces</b></font>,
 '<font color="maroon"><b>sock.currentinterface</b></font>,
 '<font color="maroon"><b>sock.allowedinterfaces</b></font>.
-	get = syscall(530,"73.TDL"+) as pl_sock_interfaces
-	set = syscall(531,"73.TDL"+) (interface as pl_sock_interfaces)
+    get = syscall(530,"73.TDL"+) as pl_sock_interfaces
+    set = syscall(531,"73.TDL"+) (interface as pl_sock_interfaces)
 end property
 
 '--------------------------------------------------------------------
@@ -1268,7 +1268,7 @@ property sock.currentinterface
 '<font color="maroon"><b>sock.availableinterfaces</b></font>,
 '<font color="maroon"><b>sock.targetinterface</b></font>,
 '<font color="maroon"><b>sock.allowedinterfaces</b></font>.
-	get = syscall(534,"73.TDL"+) as pl_sock_interfaces
+    get = syscall(534,"73.TDL"+) as pl_sock_interfaces
 end property
 
 '--------------------------------------------------------------------

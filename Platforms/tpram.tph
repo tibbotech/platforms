@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		TPRAM (Tamper-proof non-volatile RAM) object
+'       TPRAM (Tamper-proof non-volatile RAM) object
 '**************************************************************************************************
 
 #define TPRAM_AVAILABLE 0
@@ -8,25 +8,25 @@ object tpram
 
 '--------------------------------------------------------------------
 property tpram.triggerpolarity
-	get = syscall(618) as ris_fal
-	set = syscall(619) (value as ris_fal)
+    get = syscall(618) as ris_fal
+    set = syscall(619) (value as ris_fal)
 end property
 
 '--------------------------------------------------------------------
 property tpram.tamperdetection
-	get = syscall(620) as dis_en
-	set = syscall(621) (value as dis_en)
+    get = syscall(620) as dis_en
+    set = syscall(621) (value as dis_en)
 end property
 
 '--------------------------------------------------------------------
 property tpram.timestamping
-	get = syscall(622) as dis_en
-	set = syscall(623) (value as dis_en)
+    get = syscall(622) as dis_en
+    set = syscall(623) (value as dis_en)
 end property
 
 '--------------------------------------------------------------------
 property tpram.capacity
-	get = syscall(624) as word
+    get = syscall(624) as word
 end property
 
 '--------------------------------------------------------------------

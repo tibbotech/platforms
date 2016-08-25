@@ -1,6 +1,6 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			COMMON PLATFORM STUFF
+'           COMMON PLATFORM STUFF
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -56,68 +56,68 @@
 '79x -- getpixel
 
 #if LCD_TYPE=SAMSUNG_S6B0108
-	#define LCD_DRIVER_TDL "55.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56.TDL"+ 
-	#define LCD_DRIVER_TDL3 "55.TDL"+
-	#define LCD_DRIVER_TDL4 "79.TDL"+ 
+    #define LCD_DRIVER_TDL "55.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56.TDL"+ 
+    #define LCD_DRIVER_TDL3 "55.TDL"+
+    #define LCD_DRIVER_TDL4 "79.TDL"+ 
 #elif LCD_TYPE=HIMAX_HX8309
-	#define LCD_DRIVER_TDL "55b.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56b.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75b.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79b.TDL"+
+    #define LCD_DRIVER_TDL "55b.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56b.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75b.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79b.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1329
-	#define LCD_DRIVER_TDL "55c.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56c.TDL"+ 
-	#define LCD_DRIVER_TDL3 "55c.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79c.TDL"+
+    #define LCD_DRIVER_TDL "55c.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56c.TDL"+ 
+    #define LCD_DRIVER_TDL3 "55c.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79c.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963
-	#define LCD_DRIVER_TDL "55d.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79d.TDL"+
+    #define LCD_DRIVER_TDL "55d.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56d.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75d.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963_FIXED_IO
-	#define LCD_DRIVER_TDL "55i.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75d.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79d.TDL"+
+    #define LCD_DRIVER_TDL "55i.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56d.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75d.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963_FIXED_IO2
-	#define LCD_DRIVER_TDL "55h.TDL"+
-	#define LCD_DRIVER_TDL2 "56d.TDL"+
-	#define LCD_DRIVER_TDL3 "75d.TDL"+
-	#define LCD_DRIVER_TDL4 "79d.TDL"+
+    #define LCD_DRIVER_TDL "55h.TDL"+
+    #define LCD_DRIVER_TDL2 "56d.TDL"+
+    #define LCD_DRIVER_TDL3 "75d.TDL"+
+    #define LCD_DRIVER_TDL4 "79d.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1305
-	#define LCD_DRIVER_TDL "55e.TDL"+
-	#define LCD_DRIVER_TDL2 "56e.TDL"+
-	#define LCD_DRIVER_TDL3 "55e.TDL"+
-	#define LCD_DRIVER_TDL4 "79e.TDL"+
+    #define LCD_DRIVER_TDL "55e.TDL"+
+    #define LCD_DRIVER_TDL2 "56e.TDL"+
+    #define LCD_DRIVER_TDL3 "55e.TDL"+
+    #define LCD_DRIVER_TDL4 "79e.TDL"+
 #elif LCD_TYPE=HIMAX_HX8347
-	#define LCD_DRIVER_TDL "55f.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56f.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75f.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79f.TDL"+
+    #define LCD_DRIVER_TDL "55f.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56f.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75f.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79f.TDL"+
 #elif LCD_TYPE=ILITEK_ILI9341
-	#define LCD_DRIVER_TDL "55g.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56g.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75g.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79g.TDL"+
+    #define LCD_DRIVER_TDL "55g.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56g.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75g.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79g.TDL"+
 #elif LCD_TYPE=SITRONIX_ST7789S
-	#define LCD_DRIVER_TDL "55k.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56k.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75k.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79k.TDL"+
+    #define LCD_DRIVER_TDL "55k.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56k.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75k.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79k.TDL"+
 #elif LCD_TYPE=SOLOMON_SSD1963_ALT_COLOR
-	#define LCD_DRIVER_TDL "55d.TDL"+ 
-	#define LCD_DRIVER_TDL2 "56d.TDL"+ 
-	#define LCD_DRIVER_TDL3 "75l.TDL"+ 
-	#define LCD_DRIVER_TDL4 "79d.TDL"+
+    #define LCD_DRIVER_TDL "55d.TDL"+ 
+    #define LCD_DRIVER_TDL2 "56d.TDL"+ 
+    #define LCD_DRIVER_TDL3 "75l.TDL"+ 
+    #define LCD_DRIVER_TDL4 "79d.TDL"+
 #endif
 
 #if PLATFORM_ID=KLM601
-	#define FD_DRIVER_TDL "64b.TDL"+
-	#define FD_COPYFIRMWARE "76b.TDL"+
+    #define FD_DRIVER_TDL "64b.TDL"+
+    #define FD_COPYFIRMWARE "76b.TDL"+
 #else
-	#define FD_DRIVER_TDL "64.TDL"+
-	#define FD_COPYFIRMWARE "76.TDL"+
+    #define FD_DRIVER_TDL "64.TDL"+
+    #define FD_COPYFIRMWARE "76.TDL"+
 #endif
 
 #define KP_DISABLED 0
@@ -131,119 +131,98 @@
 
 
 '**************************************************************************************************
-'		GENERIC PLATFORM CONSTANTS
+'       GENERIC PLATFORM CONSTANTS
 '**************************************************************************************************
 
 enum off_on 
-	PL_OFF,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	PL_ON			'<b>GENERIC PLATFORM CONSTANT. </b>
+    PL_OFF, '<b>GENERIC PLATFORM CONSTANT. </b>
+    PL_ON   '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum no_yes 
-	NO,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	YES			'<b>GENERIC PLATFORM CONSTANT. </b>
+    NO, '<b>GENERIC PLATFORM CONSTANT. </b>
+    YES '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum dis_en 
-	DISABLED,		'<b>GENERIC PLATFORM CONSTANT. </b>
-	ENABLED			'<b>GENERIC PLATFORM CONSTANT. </b>
+    DISABLED, '<b>GENERIC PLATFORM CONSTANT. </b>
+    ENABLED   '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum low_high 
-	LOW,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	HIGH			'<b>GENERIC PLATFORM CONSTANT. </b>
+    LOW, '<b>GENERIC PLATFORM CONSTANT. </b>
+    HIGH '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum ok_ng 
-	OK,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	NG			'<b>GENERIC PLATFORM CONSTANT. </b>
+    OK, '<b>GENERIC PLATFORM CONSTANT. </b>
+    NG  '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum wln_ok_ng_rej 
-	WLN_OK,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	WLN_NG,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	WLN_REJ			'<b>GENERIC PLATFORM CONSTANT. </b>
+    WLN_OK, '<b>GENERIC PLATFORM CONSTANT. </b>
+    WLN_NG, '<b>GENERIC PLATFORM CONSTANT. </b>
+    WLN_REJ '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 
 enum valid_invalid 
-	VALID,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	INVALID			'<b>GENERIC PLATFORM CONSTANT. </b>
+    VALID,  '<b>GENERIC PLATFORM CONSTANT. </b>
+    INVALID '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum accepted_rejected 
-	ACCEPTED,		'<b>GENERIC PLATFORM CONSTANT. </b>
-	REJECTED		'<b>GENERIC PLATFORM CONSTANT. </b>
+    ACCEPTED, '<b>GENERIC PLATFORM CONSTANT. </b>
+    REJECTED  '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum forward_back 
-	FORWARD,		'<b>GENERIC PLATFORM CONSTANT. </b>
-	BACK		'<b>GENERIC PLATFORM CONSTANT. </b>
+    FORWARD, '<b>GENERIC PLATFORM CONSTANT. </b>
+    BACK     '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 enum ver_hor 
-	PL_VERTICAL,	'PLATFORM CONSTANT. Vertical.
-	PL_HORIZONTAL	'PLATFORM CONSTANT. Horizontal.
+    PL_VERTICAL,  'PLATFORM CONSTANT. Vertical.
+    PL_HORIZONTAL 'PLATFORM CONSTANT. Horizontal.
 end enum
 
 enum ris_fal 
-	RISING,			'<b>GENERIC PLATFORM CONSTANT. </b>
-	FALLING			'<b>GENERIC PLATFORM CONSTANT. </b>
+    RISING, '<b>GENERIC PLATFORM CONSTANT. </b>
+    FALLING '<b>GENERIC PLATFORM CONSTANT. </b>
 end enum
 
 
 '**************************************************************************************************
-'		INTER-OBJECT CONSTANTS
+'       INTER-OBJECT CONSTANTS
 '**************************************************************************************************
 
 enum pl_redir
 'ENUM. Contains the list of constants that define redirection of data (buffer shorting) between two objects of current
 'platform that support buffers: the ser object and the sock object. Buffer shorting is enabled/disabled through the
 'ser.redir and sock.redir methods.
-	PL_REDIR_NONE=0,	'INTER-OBJECT CONSTANT. Cancels redirection for the serial port or socket.
-	PL_REDIR_SER,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of the serial port 0.
-	PL_REDIR_SER0=1,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of the serial port 0.
-	PL_REDIR_SER1,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of the serial port 1.
-	PL_REDIR_SER2,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of the serial port 2.
-	PL_REDIR_SER3,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of the serial port 3.
-	PL_REDIR_SOCK0=6,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 0. This constant can be used as a "base" for all other sockets i.e. in
-				'expressions like sock.redir=PL_REDIR_SOCK0+f.
-	PL_REDIR_SOCK1,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 1.
-	PL_REDIR_SOCK2,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 2.
-	PL_REDIR_SOCK3,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 3.
-	PL_REDIR_SOCK4,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 4.
-	PL_REDIR_SOCK5,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 5.
-	PL_REDIR_SOCK6,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 6.
-	PL_REDIR_SOCK7,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 7.
-	PL_REDIR_SOCK8,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 8.
-	PL_REDIR_SOCK9,		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 9.
-	PL_REDIR_SOCK10,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 10.
-	PL_REDIR_SOCK11,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 11.
-	PL_REDIR_SOCK12,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 12.
-	PL_REDIR_SOCK13,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 13.
-	PL_REDIR_SOCK14,	'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 14.
-	PL_REDIR_SOCK15		'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer
-				'of socket 15.
+    PL_REDIR_NONE=0,    'INTER-OBJECT CONSTANT. Cancels redirection for the serial port or socket.
+    PL_REDIR_SER,       'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 0.
+    PL_REDIR_SER0=1,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 0.
+    PL_REDIR_SER1,      'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 1.
+    PL_REDIR_SER2,      'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 2.
+    PL_REDIR_SER3,      'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 3.
+    PL_REDIR_SOCK0=6,   'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 0.
+                        'This constant can be used as a "base" for all other sockets i.e. in expressions like sock.redir=PL_REDIR_SOCK0+f.
+    PL_REDIR_SOCK1,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 1.
+    PL_REDIR_SOCK2,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 2.
+    PL_REDIR_SOCK3,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 3.
+    PL_REDIR_SOCK4,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 4.
+    PL_REDIR_SOCK5,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 5.
+    PL_REDIR_SOCK6,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 6.
+    PL_REDIR_SOCK7,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 7.
+    PL_REDIR_SOCK8,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 8.
+    PL_REDIR_SOCK9,     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 9.
+    PL_REDIR_SOCK10,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 10.
+    PL_REDIR_SOCK11,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 11.
+    PL_REDIR_SOCK12,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 12.
+    PL_REDIR_SOCK13,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 13.
+    PL_REDIR_SOCK14,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 14.
+    PL_REDIR_SOCK15     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 15.
 end enum
 
 '====================================================================

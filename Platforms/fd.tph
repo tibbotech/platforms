@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		FD (flash disk) object
+'       FD (flash disk) object
 '**************************************************************************************************
 
 #if OBJECT_FD=FD_ENABLED
@@ -15,23 +15,23 @@ object fd
 
 '--------------------------------------------------------------------
 enum pl_fd_status_codes 
-	PL_FD_STATUS_OK,				'<b>PLATFORM CONSTANT. </b><br><br>Completed successfully.
-	PL_FD_STATUS_FAIL,				'<b>PLATFORM CONSTANT. </b><br><br>Physical flash memory failure (fatal: disk dismounted, must be reformatted).
-	PL_FD_STATUS_CHECKSUM_ERR,			'<b>PLATFORM CONSTANT. </b><br><br>Checksum error has been detected in one of the disk sectors (fatal: disk dismounted, must be reformatted).
-	PL_FD_STATUS_FORMAT_ERR,			'<b>PLATFORM CONSTANT. </b><br><br>Disk formatting error has been detected (fatal: disk dismounted, must be reformatted).
-	PL_FD_STATUS_INV_PARAM,				'<b>PLATFORM CONSTANT. </b><br><br>Invalid argument have been provided for the invoked method.
-	PL_FD_STATUS_DUPLICATE_NAME,			'<b>PLATFORM CONSTANT. </b><br><br>File with this name already exists.
-	PL_FD_STATUS_FILE_TABLE_FULL,			'<b>PLATFORM CONSTANT. </b><br><br>Maximum number of files that can be stored on the disk has been reached, new file cannot be created.
-	PL_FD_STATUS_DATA_FULL,				'<b>PLATFORM CONSTANT. </b><br><br>The disk is full, new data cannot be added.
-	PL_FD_STATUS_NOT_READY,				'<b>PLATFORM CONSTANT. </b><br><br>The disk is not mounted.
-	PL_FD_STATUS_NOT_FOUND,				'<b>PLATFORM CONSTANT. </b><br><br>File not found.
-	PL_FD_STATUS_NOT_OPENED,			'<b>PLATFORM CONSTANT. </b><br><br>No file is currently opened "on" the current fd.filenum.
-	PL_FD_STATUS_ALREADY_OPENED,			'<b>PLATFORM CONSTANT. </b><br><br>This file is already opened "on" some other file number.
-	PL_FD_STATUS_TRANSACTION_ALREADY_STARTED,	'<b>PLATFORM CONSTANT. </b><br><br>Disk transaction has already been started (and cannot be restarted).
-	PL_FD_STATUS_TRANSACTION_NOT_YET_STARTED,	'<b>PLATFORM CONSTANT. </b><br><br>Disk transaction hasn't been started yet.
-	PL_FD_STATUS_TRANSACTION_CAPACITY_EXCEEDED,	'<b>PLATFORM CONSTANT. </b><br><br>Too many disk sectors have been modified in the cause of the current transaction (fatal: disk dismounted).
-	PL_FD_STATUS_TRANSACTIONS_NOT_SUPPORTED,	'<b>PLATFORM CONSTANT. </b><br><br>The disk wasn't formatted to support transactions (use fd.formatj with maxjournalsectors>1 to enable transactions).
-	PL_FD_STATUS_FLASH_NOT_DETECTED			'<b>PLATFORM CONSTANT. </b><br><br>Flash IC wasn't detected during boot, fd. object cannot operate normally.
+    PL_FD_STATUS_OK,                            '<b>PLATFORM CONSTANT. </b><br><br>Completed successfully.
+    PL_FD_STATUS_FAIL,                          '<b>PLATFORM CONSTANT. </b><br><br>Physical flash memory failure (fatal: disk dismounted, must be reformatted).
+    PL_FD_STATUS_CHECKSUM_ERR,                  '<b>PLATFORM CONSTANT. </b><br><br>Checksum error has been detected in one of the disk sectors (fatal: disk dismounted, must be reformatted).
+    PL_FD_STATUS_FORMAT_ERR,                    '<b>PLATFORM CONSTANT. </b><br><br>Disk formatting error has been detected (fatal: disk dismounted, must be reformatted).
+    PL_FD_STATUS_INV_PARAM,                     '<b>PLATFORM CONSTANT. </b><br><br>Invalid argument have been provided for the invoked method.
+    PL_FD_STATUS_DUPLICATE_NAME,                '<b>PLATFORM CONSTANT. </b><br><br>File with this name already exists.
+    PL_FD_STATUS_FILE_TABLE_FULL,               '<b>PLATFORM CONSTANT. </b><br><br>Maximum number of files that can be stored on the disk has been reached, new file cannot be created.
+    PL_FD_STATUS_DATA_FULL,                     '<b>PLATFORM CONSTANT. </b><br><br>The disk is full, new data cannot be added.
+    PL_FD_STATUS_NOT_READY,                     '<b>PLATFORM CONSTANT. </b><br><br>The disk is not mounted.
+    PL_FD_STATUS_NOT_FOUND,                     '<b>PLATFORM CONSTANT. </b><br><br>File not found.
+    PL_FD_STATUS_NOT_OPENED,                    '<b>PLATFORM CONSTANT. </b><br><br>No file is currently opened "on" the current fd.filenum.
+    PL_FD_STATUS_ALREADY_OPENED,                '<b>PLATFORM CONSTANT. </b><br><br>This file is already opened "on" some other file number.
+    PL_FD_STATUS_TRANSACTION_ALREADY_STARTED,   '<b>PLATFORM CONSTANT. </b><br><br>Disk transaction has already been started (and cannot be restarted).
+    PL_FD_STATUS_TRANSACTION_NOT_YET_STARTED,   '<b>PLATFORM CONSTANT. </b><br><br>Disk transaction hasn't been started yet.
+    PL_FD_STATUS_TRANSACTION_CAPACITY_EXCEEDED, '<b>PLATFORM CONSTANT. </b><br><br>Too many disk sectors have been modified in the cause of the current transaction (fatal: disk dismounted).
+    PL_FD_STATUS_TRANSACTIONS_NOT_SUPPORTED,    '<b>PLATFORM CONSTANT. </b><br><br>The disk wasn't formatted to support transactions (use fd.formatj with maxjournalsectors>1 to enable transactions).
+    PL_FD_STATUS_FLASH_NOT_DETECTED             '<b>PLATFORM CONSTANT. </b><br><br>Flash IC wasn't detected during boot, fd. object cannot operate normally.
 end enum
 
 '--------------------------------------------------------------------
@@ -43,7 +43,7 @@ property fd.availableflashspace
 '<br><br>
 'On devices with shared flash memory, this is the amount of memory that is not occupied by the currently loaded firmware/application.
 'On devices with dedicated flash memory, this is the size of the second flash IC that stores fd. object's data.
-	get = syscall(372,"63.TDL"+) as word
+    get = syscall(372,"63.TDL"+) as word
 end property
 
 '--------------------------------------------------------------------
@@ -64,8 +64,8 @@ property fd.buffernum
 'fd.checksum,
 'fd.copyfirmware,
 'fd.copyfirmwarelzo
-	get = syscall(402,"63.TDL"+) as byte
-	set = syscall(403,"63.TDL"+) (buffernum as byte)
+    get = syscall(402,"63.TDL"+) as byte
+    set = syscall(403,"63.TDL"+) (buffernum as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -77,13 +77,13 @@ property fd.capacity
 '<br><br>
 '<b>See also: </b>
 'fd.numservicesectors, fd.totalsize, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
-	get = syscall(374,"63.TDL"+) as word
+    get = syscall(374,"63.TDL"+) as word
 end property
 
 '--------------------------------------------------------------------
 enum pl_fd_csum_mode 
-	PL_FD_CSUM_MODE_VERIFY,		'PLATFORM CONSTANT. Verify the checksum.
-	PL_FD_CSUM_MODE_CALCULATE	'PLATFORM CONSTANT. Calculate the checksum.
+    PL_FD_CSUM_MODE_VERIFY,   'PLATFORM CONSTANT. Verify the checksum.
+    PL_FD_CSUM_MODE_CALCULATE 'PLATFORM CONSTANT. Calculate the checksum.
 end enum
 
 syscall(408,FD_DRIVER_TDL) fd.checksum(mode as pl_fd_csum_mode, byref csum as word) as ok_ng
@@ -227,8 +227,8 @@ property fd.filenum
 'Several files can be opened (see fd.open) at the same time. Each file is said to be opened "on" a certain file number (the value of this property at the time of the file opening).
 '<br><br>
 'Although the file is opened by referring to its name, many other operations, such as fd.setdata or fd.close refer to the file number.
-	get = syscall(377,"63.TDL"+) as byte
-	set = syscall(378,"63.TDL"+) (num as byte)
+    get = syscall(377,"63.TDL"+) as byte
+    set = syscall(378,"63.TDL"+) (num as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -240,7 +240,7 @@ property fd.fileopened
 '<br><br>
 '<b>See also: </b>
 'fd.maxopenedfiles 
-	get = syscall(415,"63.TDL"+) as no_yes
+    get = syscall(415,"63.TDL"+) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -250,17 +250,17 @@ property fd.filesize
 '<br><br>
 '<b>See also: </b>
 'fd.getdata, fd.setdata, fd.pointer, fd.setpointer
-	get = syscall(380,"63.TDL"+) as dword
+    get = syscall(380,"63.TDL"+) as dword
 end property
 
 '--------------------------------------------------------------------
 enum pl_fd_find_modes 
-	PL_FD_FIND_EQUAL,		'PLATFORM CONSTANT. Find data that is equal to the substr.
-	PL_FD_FIND_NOT_EQUAL,		'PLATFORM CONSTANT. Find data that is not equal to the substr.
-	PL_FD_FIND_GREATER,		'PLATFORM CONSTANT. Find data with value greater than the value of the substr.
-	PL_FD_FIND_GREATER_EQUAL,	'PLATFORM CONSTANT. Find data with value greater than or equal to the value of the substr.
-	PL_FD_FIND_LESSER,		'PLATFORM CONSTANT. Find data with value less than the value of the substr.
-	PL_FD_FIND_LESSER_EQUAL		'PLATFORM CONSTANT. Find data with value less than or equal to the value of the substr.
+    PL_FD_FIND_EQUAL,         'PLATFORM CONSTANT. Find data that is equal to the substr.
+    PL_FD_FIND_NOT_EQUAL,     'PLATFORM CONSTANT. Find data that is not equal to the substr.
+    PL_FD_FIND_GREATER,       'PLATFORM CONSTANT. Find data with value greater than the value of the substr.
+    PL_FD_FIND_GREATER_EQUAL, 'PLATFORM CONSTANT. Find data with value greater than or equal to the value of the substr.
+    PL_FD_FIND_LESSER,        'PLATFORM CONSTANT. Find data with value less than the value of the substr.
+    PL_FD_FIND_LESSER_EQUAL   'PLATFORM CONSTANT. Find data with value less than or equal to the value of the substr.
 end enum
 
 syscall(385,"77.TDL") fd.find(frompos as dword,byref substr as string,instance as word,dir as forward_back,incr as word,mode as pl_fd_find_modes) as dword
@@ -433,7 +433,7 @@ property fd.laststatus
 '<br><br>
 'Note that some errors are fatal and the disk is dismounted (fd.ready is set to 0- NO) immediately upon the detection of any such fatal error.
 '<br><br>
-	get = syscall(414) as pl_fd_status_codes
+    get = syscall(414) as pl_fd_status_codes
 end property
 
 '--------------------------------------------------------------------
@@ -442,7 +442,7 @@ property fd.maxopenedfiles
 'Returns the total number of files that can be simultaneously opened by your application.
 '<br><br>
 'The value of this property depends on the hardware (selected platform) and has nothing to do with the formatting of your flash disk.
-	get = syscall(376,"63.TDL"+) as byte
+    get = syscall(376,"63.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -456,7 +456,7 @@ property fd.maxstoredfiles
 '<br><br>
 '<b>See also: </b>
 'fd.capacity, fd.numservicesectors, fd.totalsize, fd.getfreespace, fd.getnumfiles
-	get = syscall(389,"63.TDL"+) as byte
+    get = syscall(389,"63.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -483,7 +483,7 @@ property fd.numservicesectors
 '<br><br>
 '<b>See also: </b>
 'fd.capacity, fd.totalsize, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
-	get = syscall(410,"63.TDL"+) as byte
+    get = syscall(410,"63.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -513,7 +513,7 @@ property fd.pointer
 '<br><br>
 'Move the pointer with fd.setpointer. Fd.getdata and fd.setdata also move the pointer by the amount of bytes read or written.
 'Reducing the file size with fd.setfilesize or fd.cutfromtop may affect the pointer position.
-	get = syscall(381,"63.TDL"+) as dword
+    get = syscall(381,"63.TDL"+) as dword
 end property
 
 '--------------------------------------------------------------------
@@ -525,7 +525,7 @@ property fd.ready
 '<br><br>
 '<b>See also: </b> 
 'fd.formatj
-	get = syscall(411,"63.TDL"+) as no_yes
+    get = syscall(411,"63.TDL"+) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -562,7 +562,7 @@ property fd.sector
 'corresponding to the current file pointer position (see fd.pointer).
 '<br><br>
 'This property exists purely for informational purposes. There is no real need for you to know where the fd. object stores your data.
-	get = syscall(383,"63.TDL"+) as dword
+    get = syscall(383,"63.TDL"+) as dword
 end property
 
 '--------------------------------------------------------------------
@@ -682,132 +682,132 @@ property fd.totalsize
 '<br><br>
 '<b>See also: </b>
 'fd.capacity, fd.numservicesectors, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
-	get = syscall(421,"63.TDL"+) as word
+    get = syscall(421,"63.TDL"+) as word
 end property
 
 '--------------------------------------------------------------------
 property !fd.leveling
-	get = syscall(391,"63.TDL"+) as no_yes
-	set = syscall(424,"63.TDL"+) (value as no_yes)
+    get = syscall(391,"63.TDL"+) as no_yes
+    set = syscall(424,"63.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
 enum fd_error_data_codes 
-	FD_ERROR_NO_ADDITIONAL_ERROR_DATA,
-	FD_ERROR_MOUNT_BOOT_READ_ERROR,
-	FD_ERROR_MOUNT_BOOT_CS_ERROR,
-	FD_ERROR_MOUNT_BOOT_MARKER_INVALID,
-	FD_ERROR_MOUNT_BOOT_DATA_INVALID,
-	FD_ERROR_MOUNT_ENDBOOT_READ_ERROR,
-	FD_ERROR_MOUNT_ENDBOOT_CS_ERROR,
-	FD_ERROR_MOUNT_ENDBOOT_DATA_INVALID,
-	FD_ERROR_MOUNT_FRT_READ_ERROR,
-	FD_ERROR_MOUNT_FRT_CS_ERROR,
-	FD_ERROR_MOUNT_FRT_LOGICAL_NUMBER_OOR,
-	FD_ERROR_MOUNT_FRT_LOGICAL_NUMBER_DUPLICATION,
-	FD_ERROR_MOUNT_FRT_WRITE_ERROR_1,
-	FD_ERROR_MOUNT_FRT_WRITE_ERROR_2,
-	FD_ERROR_MOUNT_FRT_INVALID_ACTIVE_SECTOR_COUNT,
-	FD_ERROR_MOUNT_FRT_EMPTY_MAPPING_DETECTED,
-	FD_ERROR_MOUNT_FAT_READ_ERROR,
-	FD_ERROR_MOUNT_FAT_CS_ERROR,
-	FD_ERROR_MOUNT_FAT_LOGICAL_NUMBER_OOR,
-	FD_ERROR_FAT_LOGICAL_NUMBER_DUPLICATION,
-	FD_ERROR_MOUNT_FAT_WRITE_ERROR_1,
-	FD_ERROR_MOUNT_FAT_WRITE_ERROR_2,
-	FD_ERROR_MOUNT_FAT_INVALID_ACTIVE_SECTOR_COUNT,
-	FD_ERROR_MOUNT_FAT_EMPTY_MAPPING_DETECTED,
-	FD_ERROR_FORMAT_BOOT_WRITE_ERROR,
-	FD_ERROR_FORMAT_ENDBOOT_WRITE_ERROR,
-	FD_ERROR_FORMAT_FRT_WRITE_ERROR,
-	FD_ERROR_FORMAT_FAT_WRITE_ERROR,
-	FD_ERROR_RENAME_COMMON_PORTION_ERROR,
-	FD_ERROR_RENAME_FRT_READ_ERROR,
-	FD_ERROR_RENAME_FRT_CS_ERROR,
-	FD_ERROR_RENAME_FRT_WRITE_ERROR,
-	FD_ERROR_OPEN_COMMON_PORTION_ERROR,
-	FD_ERROR_OPEN_FRT_READ_ERROR,
-	FD_ERROR_OPEN_FRT_CS_ERROR,
-	FD_ERROR_OPEN_FRT_WRITE_ERROR,
-	FD_ERROR_FLUSH_DATASECTOR_WRITE_ERROR,
-	FD_ERROR_SETATTRIBUTES_COMMON_PORTION_ERROR,
-	FD_ERROR_SETATTRIBUTES_FRT_READ_ERROR,
-	FD_ERROR_SETATTRIBUTES_FRT_CS_ERROR,
-	FD_ERROR_SETATTRIBUTES_FRT_WRITE_ERROR,
-	FD_ERROR_DELETE_COMMON_PORTION_ERROR,
-	FD_ERROR_DELETE_FRT_READ_ERROR,
-	FD_ERROR_DELETE_FRT_CS_ERROR,
-	FD_ERROR_DELETE_FRT_WRITE_ERROR,
-	FD_ERROR_DELETE_ENTRY_SECTOR_INVALID,
-	FD_ERROR_DELETE_FAT_WRITE_ERROR_1,
-	FD_ERROR_DELETE_FAT_READ_ERROR,
-	FD_ERROR_DELETE_FAT_CS_ERROR,
-	FD_ERROR_DELETE_INVALID_FAT_CHAIN_1,
-	FD_ERROR_DELETE_INVALID_FAT_CHAIN_2,
-	FD_ERROR_DELETE_FAT_WRITE_ERROR_2,
-	FD_ERROR_CREATE_COMMON_PORTION_ERROR,
-	FD_ERROR_CREATE_FAT_READ_ERROR,
-	FD_ERROR_CREATE_FAT_CS_ERROR,
-	FD_ERROR_CREATE_FAT_WRITE_ERROR,
-	FD_ERROR_CREATE_DATASECTOR_WRITE_ERROR,
-	FD_ERROR_CREATE_FRT_READ_ERROR,
-	FD_ERROR_CREATE_FRT_CS_ERROR,
-	FD_ERROR_CREATE_FRT_WRITE_ERROR,
-	FD_ERROR_GETNUMFILES_FRT_READ_ERROR,
-	FD_ERROR_GETNUMFILES_FRT_CS_ERROR,
-	FD_ERROR_GETNEXTDIRMEMBER_FRT_READ_ERROR,
-	FD_ERROR_GETNEXTDIRMEMBER_FRT_CS_ERROR,
-	FD_ERROR_FREESPACE_FAT_READ_ERROR,
-	FD_ERROR_FREESPACE_FAT_CS_ERROR,
-	FD_ERROR_FREESPACE_FAT_INVALID_DATA,
-	FD_ERROR_FINDFREESECTOR_FAT_INVALID_DATA,
-	FD_ERROR_FINDFREESECTOR_FAT_READ_ERROR,
-	FD_ERROR_FINDFREESECTOR_FAT_CS_ERROR,
-	FD_ERROR_GETDATA_DATASECT_READ_ERROR_1,
-	FD_ERROR_GETDATA_DATASECT_CS_ERROR_1,
-	FD_ERROR_GETDATA_DATASECT_READ_ERROR_2,
-	FD_ERROR_GETDATA_DATASECT_CS_ERROR_2,
-	FD_ERROR_GETDATA_DATASECT_READ_ERROR_3,
-	FD_ERROR_GETDATA_DATASECT_CS_ERROR_3,
-	FD_ERROR_SETDATA_DATASECT_READ_ERROR_1,
-	FD_ERROR_SETDATA_DATASECT_CS_ERROR_1,
-	FD_ERROR_SETDATA_DATASECT_READ_ERROR_2,
-	FD_ERROR_SETDATA_DATASECT_CS_ERROR_2,
-	FD_ERROR_SETDATA_DATASECT_READ_ERROR_3,
-	FD_ERROR_SETDATA_DATASECT_CS_ERROR_3,
-	FD_ERROR_SETDATA_DATASECT_READ_ERROR_4,
-	FD_ERROR_SETDATA_DATASECT_CS_ERROR_4,
-	FD_ERROR_GNSOFC_READ_ERROR_1,
-	FD_ERROR_GNSOFC_CS_ERROR_1,
-	FD_ERROR_GNSOFC_CHAIN_ERROR_1,
-	FD_ERROR_GNSOFC_CHAIN_ERROR_2,
-	FD_ERROR_GNSOFC_READ_ERROR_2,
-	FD_ERROR_GNSOFC_CS_ERROR_2,
-	FD_ERROR_GNSOFC_READ_ERROR_3,
-	FD_ERROR_GNSOFC_CS_ERROR_3,
-	FD_ERROR_GNSOFC_READ_ERROR_4,
-	FD_ERROR_GNSOFC_CS_ERROR_4,
-	FD_ERROR_GNSOFC_WRITE_ERROR,
-	FD_ERROR_SAVE_FAT_SECTOR_WRITE_ERROR_1,
-	FD_ERROR_SAVE_FAT_SECTOR_WRITE_ERROR_2,
-	FD_ERROR_SAVE_FRT_SECTOR_WRITE_ERROR_1,
-	FD_ERROR_SAVE_FRT_SECTOR_WRITE_ERROR_2,
-	FD_ERROR_FIND_DATASECTOR_READ_ERROR_1,
-	FD_ERROR_FIND_DATASECTOR_CS_ERROR_1,
-	FD_ERROR_FIND_DATASECTOR_READ_ERROR_2,
-	FD_ERROR_FIND_DATASECTOR_CS_ERROR_2,
-	FD_ERROR_FIND_DATASECTOR_READ_ERROR_3,
-	FD_ERROR_FIND_DATASECTOR_CS_ERROR_3,
-	FD_ERROR_FIND_GNSOFC_READ_ERROR_1,
-	FD_ERROR_FIND_GNSOFC_CS_ERROR_1,
-	FD_ERROR_FIND_GNSOFC_CHAIN_ERROR,
-	FD_ERROR_MOUNT_JOURNAL_DATA_INVALID,
-	FD_ERROR_MOUNT_JOURNAL_COMMITTING_FAILED,
-	FD_ERROR_MOUNT_JOURNAL_COMMITTING_FAILED2
+    FD_ERROR_NO_ADDITIONAL_ERROR_DATA,
+    FD_ERROR_MOUNT_BOOT_READ_ERROR,
+    FD_ERROR_MOUNT_BOOT_CS_ERROR,
+    FD_ERROR_MOUNT_BOOT_MARKER_INVALID,
+    FD_ERROR_MOUNT_BOOT_DATA_INVALID,
+    FD_ERROR_MOUNT_ENDBOOT_READ_ERROR,
+    FD_ERROR_MOUNT_ENDBOOT_CS_ERROR,
+    FD_ERROR_MOUNT_ENDBOOT_DATA_INVALID,
+    FD_ERROR_MOUNT_FRT_READ_ERROR,
+    FD_ERROR_MOUNT_FRT_CS_ERROR,
+    FD_ERROR_MOUNT_FRT_LOGICAL_NUMBER_OOR,
+    FD_ERROR_MOUNT_FRT_LOGICAL_NUMBER_DUPLICATION,
+    FD_ERROR_MOUNT_FRT_WRITE_ERROR_1,
+    FD_ERROR_MOUNT_FRT_WRITE_ERROR_2,
+    FD_ERROR_MOUNT_FRT_INVALID_ACTIVE_SECTOR_COUNT,
+    FD_ERROR_MOUNT_FRT_EMPTY_MAPPING_DETECTED,
+    FD_ERROR_MOUNT_FAT_READ_ERROR,
+    FD_ERROR_MOUNT_FAT_CS_ERROR,
+    FD_ERROR_MOUNT_FAT_LOGICAL_NUMBER_OOR,
+    FD_ERROR_FAT_LOGICAL_NUMBER_DUPLICATION,
+    FD_ERROR_MOUNT_FAT_WRITE_ERROR_1,
+    FD_ERROR_MOUNT_FAT_WRITE_ERROR_2,
+    FD_ERROR_MOUNT_FAT_INVALID_ACTIVE_SECTOR_COUNT,
+    FD_ERROR_MOUNT_FAT_EMPTY_MAPPING_DETECTED,
+    FD_ERROR_FORMAT_BOOT_WRITE_ERROR,
+    FD_ERROR_FORMAT_ENDBOOT_WRITE_ERROR,
+    FD_ERROR_FORMAT_FRT_WRITE_ERROR,
+    FD_ERROR_FORMAT_FAT_WRITE_ERROR,
+    FD_ERROR_RENAME_COMMON_PORTION_ERROR,
+    FD_ERROR_RENAME_FRT_READ_ERROR,
+    FD_ERROR_RENAME_FRT_CS_ERROR,
+    FD_ERROR_RENAME_FRT_WRITE_ERROR,
+    FD_ERROR_OPEN_COMMON_PORTION_ERROR,
+    FD_ERROR_OPEN_FRT_READ_ERROR,
+    FD_ERROR_OPEN_FRT_CS_ERROR,
+    FD_ERROR_OPEN_FRT_WRITE_ERROR,
+    FD_ERROR_FLUSH_DATASECTOR_WRITE_ERROR,
+    FD_ERROR_SETATTRIBUTES_COMMON_PORTION_ERROR,
+    FD_ERROR_SETATTRIBUTES_FRT_READ_ERROR,
+    FD_ERROR_SETATTRIBUTES_FRT_CS_ERROR,
+    FD_ERROR_SETATTRIBUTES_FRT_WRITE_ERROR,
+    FD_ERROR_DELETE_COMMON_PORTION_ERROR,
+    FD_ERROR_DELETE_FRT_READ_ERROR,
+    FD_ERROR_DELETE_FRT_CS_ERROR,
+    FD_ERROR_DELETE_FRT_WRITE_ERROR,
+    FD_ERROR_DELETE_ENTRY_SECTOR_INVALID,
+    FD_ERROR_DELETE_FAT_WRITE_ERROR_1,
+    FD_ERROR_DELETE_FAT_READ_ERROR,
+    FD_ERROR_DELETE_FAT_CS_ERROR,
+    FD_ERROR_DELETE_INVALID_FAT_CHAIN_1,
+    FD_ERROR_DELETE_INVALID_FAT_CHAIN_2,
+    FD_ERROR_DELETE_FAT_WRITE_ERROR_2,
+    FD_ERROR_CREATE_COMMON_PORTION_ERROR,
+    FD_ERROR_CREATE_FAT_READ_ERROR,
+    FD_ERROR_CREATE_FAT_CS_ERROR,
+    FD_ERROR_CREATE_FAT_WRITE_ERROR,
+    FD_ERROR_CREATE_DATASECTOR_WRITE_ERROR,
+    FD_ERROR_CREATE_FRT_READ_ERROR,
+    FD_ERROR_CREATE_FRT_CS_ERROR,
+    FD_ERROR_CREATE_FRT_WRITE_ERROR,
+    FD_ERROR_GETNUMFILES_FRT_READ_ERROR,
+    FD_ERROR_GETNUMFILES_FRT_CS_ERROR,
+    FD_ERROR_GETNEXTDIRMEMBER_FRT_READ_ERROR,
+    FD_ERROR_GETNEXTDIRMEMBER_FRT_CS_ERROR,
+    FD_ERROR_FREESPACE_FAT_READ_ERROR,
+    FD_ERROR_FREESPACE_FAT_CS_ERROR,
+    FD_ERROR_FREESPACE_FAT_INVALID_DATA,
+    FD_ERROR_FINDFREESECTOR_FAT_INVALID_DATA,
+    FD_ERROR_FINDFREESECTOR_FAT_READ_ERROR,
+    FD_ERROR_FINDFREESECTOR_FAT_CS_ERROR,
+    FD_ERROR_GETDATA_DATASECT_READ_ERROR_1,
+    FD_ERROR_GETDATA_DATASECT_CS_ERROR_1,
+    FD_ERROR_GETDATA_DATASECT_READ_ERROR_2,
+    FD_ERROR_GETDATA_DATASECT_CS_ERROR_2,
+    FD_ERROR_GETDATA_DATASECT_READ_ERROR_3,
+    FD_ERROR_GETDATA_DATASECT_CS_ERROR_3,
+    FD_ERROR_SETDATA_DATASECT_READ_ERROR_1,
+    FD_ERROR_SETDATA_DATASECT_CS_ERROR_1,
+    FD_ERROR_SETDATA_DATASECT_READ_ERROR_2,
+    FD_ERROR_SETDATA_DATASECT_CS_ERROR_2,
+    FD_ERROR_SETDATA_DATASECT_READ_ERROR_3,
+    FD_ERROR_SETDATA_DATASECT_CS_ERROR_3,
+    FD_ERROR_SETDATA_DATASECT_READ_ERROR_4,
+    FD_ERROR_SETDATA_DATASECT_CS_ERROR_4,
+    FD_ERROR_GNSOFC_READ_ERROR_1,
+    FD_ERROR_GNSOFC_CS_ERROR_1,
+    FD_ERROR_GNSOFC_CHAIN_ERROR_1,
+    FD_ERROR_GNSOFC_CHAIN_ERROR_2,
+    FD_ERROR_GNSOFC_READ_ERROR_2,
+    FD_ERROR_GNSOFC_CS_ERROR_2,
+    FD_ERROR_GNSOFC_READ_ERROR_3,
+    FD_ERROR_GNSOFC_CS_ERROR_3,
+    FD_ERROR_GNSOFC_READ_ERROR_4,
+    FD_ERROR_GNSOFC_CS_ERROR_4,
+    FD_ERROR_GNSOFC_WRITE_ERROR,
+    FD_ERROR_SAVE_FAT_SECTOR_WRITE_ERROR_1,
+    FD_ERROR_SAVE_FAT_SECTOR_WRITE_ERROR_2,
+    FD_ERROR_SAVE_FRT_SECTOR_WRITE_ERROR_1,
+    FD_ERROR_SAVE_FRT_SECTOR_WRITE_ERROR_2,
+    FD_ERROR_FIND_DATASECTOR_READ_ERROR_1,
+    FD_ERROR_FIND_DATASECTOR_CS_ERROR_1,
+    FD_ERROR_FIND_DATASECTOR_READ_ERROR_2,
+    FD_ERROR_FIND_DATASECTOR_CS_ERROR_2,
+    FD_ERROR_FIND_DATASECTOR_READ_ERROR_3,
+    FD_ERROR_FIND_DATASECTOR_CS_ERROR_3,
+    FD_ERROR_FIND_GNSOFC_READ_ERROR_1,
+    FD_ERROR_FIND_GNSOFC_CS_ERROR_1,
+    FD_ERROR_FIND_GNSOFC_CHAIN_ERROR,
+    FD_ERROR_MOUNT_JOURNAL_DATA_INVALID,
+    FD_ERROR_MOUNT_JOURNAL_COMMITTING_FAILED,
+    FD_ERROR_MOUNT_JOURNAL_COMMITTING_FAILED2
 end enum
 
 property !fd.errordata
-	get = syscall(458,"63.TDL"+) as fd_error_data_codes
+    get = syscall(458,"63.TDL"+) as fd_error_data_codes
 end property
 
 '--------------------------------------------------------------------
@@ -823,7 +823,7 @@ property fd.transactioncapacityremaining
 '<br><br>
 '<b>See also: </b>
 'fd.transactioncommit,fd.transactionstarted 
-	get = syscall(485,"63.TDL"+) as byte
+    get = syscall(485,"63.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -858,7 +858,7 @@ property fd.transactionstarted
 '<br><br>
 '<b>See also: </b>
 'fd.transactioncapacityremaining
-	get = syscall(479,"63.TDL"+) as no_yes
+    get = syscall(479,"63.TDL"+) as no_yes
 end property
 
 #endif

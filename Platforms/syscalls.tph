@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		BUILT-IN FUNCTIONS
+'       BUILT-IN FUNCTIONS
 '**************************************************************************************************
 
 syscall(506,"87.TDL")  !jmptbl(value as integer, byref table)
@@ -152,7 +152,7 @@ syscall(526,"06.TDL") asc(byref sourcestr as string) as byte
 syscall(527,"07.TDL") chr(asciicode as byte) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Returns the string that consists of a single character with ASCII code asciicode. Example of use: <br><br>
-'s=<font color="teal"><b>chr(49)</b></font>, result will be "1". 	
+'s=<font color="teal"><b>chr(49)</b></font>, result will be "1".    
 
 '--------------------------------------------------------------------
 syscall(528,"39.TDL") ddstr(byref str as string) as string
@@ -202,13 +202,13 @@ syscall(135) !doevents
 
 '--------------------------------------------------------------------
 enum pl_days_of_week
-	PL_DOW_MONDAY=1,	'<b>PLATFORM CONSTANT. </b><br><br> Monday.
-	PL_DOW_TUESDAY,		'<b>PLATFORM CONSTANT. </b><br><br> Tuesday.
-	PL_DOW_WEDNESDAY,	'<b>PLATFORM CONSTANT. </b><br><br> Wednesday.
-	PL_DOW_THURSDAY,	'<b>PLATFORM CONSTANT. </b><br><br> Thursday.
-	PL_DOW_FRIDAY,		'<b>PLATFORM CONSTANT. </b><br><br> Friday.
-	PL_DOW_SATURDAY,	'<b>PLATFORM CONSTANT. </b><br><br> Saturday.
-	PL_DOW_SUNDAY		'<b>PLATFORM CONSTANT. </b><br><br> Sunday.
+    PL_DOW_MONDAY=1,    '<b>PLATFORM CONSTANT. </b><br><br> Monday.
+    PL_DOW_TUESDAY,     '<b>PLATFORM CONSTANT. </b><br><br> Tuesday.
+    PL_DOW_WEDNESDAY,   '<b>PLATFORM CONSTANT. </b><br><br> Wednesday.
+    PL_DOW_THURSDAY,    '<b>PLATFORM CONSTANT. </b><br><br> Thursday.
+    PL_DOW_FRIDAY,      '<b>PLATFORM CONSTANT. </b><br><br> Friday.
+    PL_DOW_SATURDAY,    '<b>PLATFORM CONSTANT. </b><br><br> Saturday.
+    PL_DOW_SUNDAY       '<b>PLATFORM CONSTANT. </b><br><br> Sunday.
 end enum
 
 syscall(25,"10.TDL") weekday(daycount as word) as pl_days_of_week
@@ -231,18 +231,18 @@ syscall(26,"11.TDL") year(daycount as word) as byte
 
 '--------------------------------------------------------------------
 enum pl_months
-	PL_MONTH_JANUARY=1,	'<b>PLATFORM CONSTANT. </b><br><br> January.
-	PL_MONTH_FEBRUARY,	'<b>PLATFORM CONSTANT. </b><br><br> February.
-	PL_MONTH_MARCH,		'<b>PLATFORM CONSTANT. </b><br><br> March.
-	PL_MONTH_APRIL,		'<b>PLATFORM CONSTANT. </b><br><br> April.
-	PL_MONTH_MAY,		'<b>PLATFORM CONSTANT. </b><br><br> May.
-	PL_MONTH_JUNE,		'<b>PLATFORM CONSTANT. </b><br><br> June.
-	PL_MONTH_JULY,		'<b>PLATFORM CONSTANT. </b><br><br> July.
-	PL_MONTH_AUGUST,	'<b>PLATFORM CONSTANT. </b><br><br> August.
-	PL_MONTH_SEPTEMBER,	'<b>PLATFORM CONSTANT. </b><br><br> September.
-	PL_MONTH_OCTOBER,	'<b>PLATFORM CONSTANT. </b><br><br> October.
-	PL_MONTH_NOVEMBER,	'<b>PLATFORM CONSTANT. </b><br><br> November.
-	PL_MONTH_DECEMBER	'<b>PLATFORM CONSTANT. </b><br><br> December.
+    PL_MONTH_JANUARY=1, '<b>PLATFORM CONSTANT. </b><br><br> January.
+    PL_MONTH_FEBRUARY,  '<b>PLATFORM CONSTANT. </b><br><br> February.
+    PL_MONTH_MARCH,     '<b>PLATFORM CONSTANT. </b><br><br> March.
+    PL_MONTH_APRIL,     '<b>PLATFORM CONSTANT. </b><br><br> April.
+    PL_MONTH_MAY,       '<b>PLATFORM CONSTANT. </b><br><br> May.
+    PL_MONTH_JUNE,      '<b>PLATFORM CONSTANT. </b><br><br> June.
+    PL_MONTH_JULY,      '<b>PLATFORM CONSTANT. </b><br><br> July.
+    PL_MONTH_AUGUST,    '<b>PLATFORM CONSTANT. </b><br><br> August.
+    PL_MONTH_SEPTEMBER, '<b>PLATFORM CONSTANT. </b><br><br> September.
+    PL_MONTH_OCTOBER,   '<b>PLATFORM CONSTANT. </b><br><br> October.
+    PL_MONTH_NOVEMBER,  '<b>PLATFORM CONSTANT. </b><br><br> November.
+    PL_MONTH_DECEMBER   '<b>PLATFORM CONSTANT. </b><br><br> December.
 end enum
 
 syscall(27,"11.TDL") month(daycount as word) as pl_months
@@ -326,10 +326,10 @@ syscall(296,"44.TDL") !fstr(byref num as real) as string
 
 '--------------------------------------------------------------------
 enum ftostr_mode
-	FTOSTR_MODE_AUTO,	'Choose between plain and mantissa/exponent format automatically. Format that results in the
-						'shortest string will be selected.
-	FTOSTR_MODE_ME,		'Use mantissa/exponent format.
-	FTOSTR_MODE_PLAIN	'Use regular plain format, not mantissa/exponent representation. 
+    FTOSTR_MODE_AUTO,   'Choose between plain and mantissa/exponent format automatically. Format that results in the
+                        'shortest string will be selected.
+    FTOSTR_MODE_ME,     'Use mantissa/exponent format.
+    FTOSTR_MODE_PLAIN   'Use regular plain format, not mantissa/exponent representation. 
 end enum
 
 syscall(287,"44.TDL") ftostr(byref num as real, mode as ftostr_mode, rnd as byte) as string
@@ -487,8 +487,8 @@ syscall(64,"51.TDL") !objcpy(byref dst, byref src)
 
 '--------------------------------------------------------------------
 enum md5_modes
-	MD5_UPDATE, 'Set this mode for all data portions except the last one.
-	MD5_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
+    MD5_UPDATE, 'Set this mode for all data portions except the last one.
+    MD5_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
 end enum
 
 syscall(290,"52.TDL") md5(byref str as string,byref input_hash as string,md5_mode as md5_modes,total_len as word) as string
@@ -517,8 +517,8 @@ syscall(290,"52.TDL") md5(byref str as string,byref input_hash as string,md5_mod
 
 '--------------------------------------------------------------------
 enum sha1_modes
-	SHA1_UPDATE, 'Set this mode for all data portions except the last one.
-	SHA1_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
+    SHA1_UPDATE, 'Set this mode for all data portions except the last one.
+    SHA1_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
 end enum
 
 syscall(291,"53.TDL") sha1(byref str as string,byref input_hash as string,sha1_mode as sha1_modes,totallen as word) as string
@@ -570,7 +570,7 @@ syscall(549,"09.TDL") insert(byref dest_str as string,pos as byte,byref insert_s
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID<>EM500W
-	#if PLATFORM_ID<>DS1100
+    #if PLATFORM_ID<>DS1100
 syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Encrypts data in 16-byte blocks according to the AES128 algorithm. Returns encrypted data (which will consist of complete 16-character blocks).
@@ -581,12 +581,12 @@ syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as st
 '<br><br>
 'Not supported on the EM500W platform.
 '<b>See also: </b>aes128dec, rc4.
-	#endif
+    #endif
 #endif
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID<>EM500W
-	#if PLATFORM_ID<>DS1100
+    #if PLATFORM_ID<>DS1100
 syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Decrypts data in 16-byte blocks according to the AES128 algorithm. Returns decrypted data (which will consist of complete 16-character blocks).
@@ -598,7 +598,7 @@ syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as s
 'Not supported on the EM500W platform.
 '<br><br>
 '<b>See also: </b>aes128dec, rc4.
-	#endif
+    #endif
 #endif
 
 '--------------------------------------------------------------------

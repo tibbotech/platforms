@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		WLN (Wi-Fi) object
+'       WLN (Wi-Fi) object
 '**************************************************************************************************
 
 #if OBJECT_WLN=WLN_ENABLED
@@ -15,8 +15,8 @@ object wln
 
 '--------------------------------------------------------------------
 enum pl_wln_bss_modes 
-	PL_WLN_BSS_MODE_INFRASTRUCTURE,	'<b>PLATFORM CONSTANT.</b><br><br> Infrastructure mode.
-	PL_WLN_BSS_MODE_ADHOC		'<b>PLATFORM CONSTANT.</b><br><br> Ad-hoc (device-to-device) mode.
+    PL_WLN_BSS_MODE_INFRASTRUCTURE, '<b>PLATFORM CONSTANT.</b><br><br> Infrastructure mode.
+    PL_WLN_BSS_MODE_ADHOC       '<b>PLATFORM CONSTANT.</b><br><br> Ad-hoc (device-to-device) mode.
 end enum
 
 '--------------------------------------------------------------------
@@ -48,9 +48,9 @@ syscall(488,"71.TDL") wln.associate(byref bssid as string, byref ssid as string,
 
 '--------------------------------------------------------------------
 enum pl_wln_association_states 
-	PL_WLN_NOT_ASSOCIATED,		'<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is idle.
-	PL_WLN_ASSOCIATED,		'<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is associated with a wireless network.
-	PL_WLN_OWN_NETWORK		'<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is running its own ad-hoc network.	
+    PL_WLN_NOT_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is idle.
+    PL_WLN_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is associated with a wireless network.
+    PL_WLN_OWN_NETWORK      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is running its own ad-hoc network.   
 end enum
 
 property wln.associationstate
@@ -66,7 +66,7 @@ property wln.associationstate
 '<br><br>
 'After the Wi-Fi interface succeeds in creating its own ad-hoc network (see wln.networkstart), the value of this property becomes 2- PL_WLN_OWN_NETWORK.
 'The value is reset back to 0- PL_WLN_NOT_ASSOCIATED when the ad-hoc network is terminated with wln.networkstop.
-	get = syscall(457,"72.TDL"+) as pl_wln_association_states
+    get = syscall(457,"72.TDL"+) as pl_wln_association_states
 end property
 
 '--------------------------------------------------------------------
@@ -106,7 +106,7 @@ property wln.buffsize
 'Returns current capacity (in bytes) of the wln object's TX buffer.
 '<br><br>
 'Buffer capacity is set using wln.buffrq method.
-	get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -121,8 +121,8 @@ property wln.clkmap
 'This property has no effect on the EM500W platform.
 '<br><br>
 '<b>See also: </b>wln.csmap, wln.dimap, wln.domap.
-	get = syscall(554,"72.TDL"+) as pl_io_num
-	set = syscall(555,"72.TDL"+) (value as pl_io_num)
+    get = syscall(554,"72.TDL"+) as pl_io_num
+    set = syscall(555,"72.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -137,8 +137,8 @@ property wln.csmap
 'This property has no effect on the EM500W platform.
 '<br><br>
 '<b>See also: </b>wln.clkmap, wln.dimap, wln.domap.
-	get = syscall(535,"72.TDL"+) as pl_io_num
-	set = syscall(536,"72.TDL"+) (value as pl_io_num)
+    get = syscall(535,"72.TDL"+) as pl_io_num
+    set = syscall(536,"72.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -155,8 +155,8 @@ property wln.dimap
 'This property has no effect on the EM500W platform.
 '<br><br>
 '<b>See also: </b>wln.clkmap, wln.csmap, wln.domap.
-	get = syscall(550,"72.TDL"+) as pl_io_num
-	set = syscall(551,"72.TDL"+) (value as pl_io_num)
+    get = syscall(550,"72.TDL"+) as pl_io_num
+    set = syscall(551,"72.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -171,10 +171,10 @@ syscall(492,"71.TDL") wln.disassociate() as accepted_rejected
 
 '--------------------------------------------------------------------
 enum pl_wln_domains 
-	PL_WLN_DOMAIN_FCC,	'<b>PLATFORM CONSTANT.</b><br><br> FCC (US, Canada, Taiwan...). Allowed channels: 1-11.
-	PL_WLN_DOMAIN_EU,	'<b>PLATFORM CONSTANT.</b><br><br> European Union. Allowed channels: 1-13.
-	PL_WLN_DOMAIN_JAPAN,	'<b>PLATFORM CONSTANT.</b><br><br> Japan. Allowed channels: 1-14.
-	PL_WLN_DOMAIN_OTHER	'<b>PLATFORM CONSTANT.</b><br><br>  All other countries. Allowed channels: 1-14. 
+    PL_WLN_DOMAIN_FCC,  '<b>PLATFORM CONSTANT.</b><br><br> FCC (US, Canada, Taiwan...). Allowed channels: 1-11.
+    PL_WLN_DOMAIN_EU,   '<b>PLATFORM CONSTANT.</b><br><br> European Union. Allowed channels: 1-13.
+    PL_WLN_DOMAIN_JAPAN,    '<b>PLATFORM CONSTANT.</b><br><br> Japan. Allowed channels: 1-14.
+    PL_WLN_DOMAIN_OTHER '<b>PLATFORM CONSTANT.</b><br><br>  All other countries. Allowed channels: 1-14. 
 end enum
 
 '--------------------------------------------------------------------
@@ -188,8 +188,8 @@ property wln.domain
 '<br><br>
 'Domain selection only affects association (wln.associate), not the scanning process (wln.scan) or the ability of the Wi-Fi interface to start
 'its own ad-hoc network (wln.networkstart) on whatever channel you specify.
-	get = syscall(480,"72.TDL"+) as pl_wln_domains
-	set = syscall(481,"72.TDL"+) (value as pl_wln_domains)
+    get = syscall(480,"72.TDL"+) as pl_wln_domains
+    set = syscall(481,"72.TDL"+) (value as pl_wln_domains)
 end property
 
 '--------------------------------------------------------------------
@@ -206,8 +206,8 @@ property wln.domap
 'This property has no effect on the EM500W platform.
 '<br><br>
 '<b>See also: </b>wln.clkmap, wln.csmap, wln.dimap.
-	get = syscall(552,"72.TDL"+) as pl_io_num
-	set = syscall(553,"72.TDL"+) (value as pl_io_num)
+    get = syscall(552,"72.TDL"+) as pl_io_num
+    set = syscall(553,"72.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -220,7 +220,7 @@ property wln.enabled
 '<br><br>
 'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if the Wi-Fi hardware is disconnected, powered down, malfunctioned,
 'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
-	get = syscall(452,"72.TDL"+) as no_yes
+    get = syscall(452,"72.TDL"+) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -232,8 +232,8 @@ property wln.gatewayip
 'sock.statesimple is not 0- PL_SSTS_CLOSED and sock.currentinterface= 2- PL_INTERFACE_WLN.
 '<br><br>
 '<b>See also: </b>wln.ip, wln.netmask.
-	get = syscall(537,"72.TDL"+) as string
-	set = syscall(538,"72.TDL"+) (byref gateway_ip_str as string)
+    get = syscall(537,"72.TDL"+) as string
+    set = syscall(538,"72.TDL"+) (byref gateway_ip_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -245,8 +245,8 @@ property wln.ip
 'sock.statesimple is not 0- PL_SSTS_CLOSED and sock.currentinterface= 2- PL_INTERFACE_WLN.
 '<br><br>
 '<b>See also: </b>wln.gatewayip, wln.netmask.
-	get = syscall(472,"72.TDL"+) as string
-	set = syscall(473,"72.TDL"+) (byref ip_str as string)
+    get = syscall(472,"72.TDL"+) as string
+    set = syscall(473,"72.TDL"+) (byref ip_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -262,8 +262,8 @@ property wln.mac
 '<br><br>
 'Alternatively, set your own MAC address before calling wln.boot. This MAC address, and not the internal MAC stored in the GA1000, will
 'be used (but only until the GA1000 is rebooted). MAC address stored in the GA1000 is never overwitten or erased.
-	get = syscall(470,"72.TDL"+) as string
-	set = syscall(471,"72.TDL"+) (byref mac_str as string)
+    get = syscall(470,"72.TDL"+) as string
+    set = syscall(471,"72.TDL"+) (byref mac_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -275,8 +275,8 @@ property wln.netmask
 'sock.statesimple is not 0- PL_SSTS_CLOSED and sock.currentinterface= 2- PL_INTERFACE_WLN.
 '<br><br>
 '<b>See also: </b>wln.ip, wln.gatewayip.
-	get = syscall(539,"72.TDL"+) as string
-	set = syscall(540,"72.TDL"+) (byref netmask_str as string)
+    get = syscall(539,"72.TDL"+) as string
+    set = syscall(540,"72.TDL"+) (byref netmask_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -313,8 +313,8 @@ syscall(476,"71.TDL") wln.networkstop() as accepted_rejected
 
 '--------------------------------------------------------------------
 enum pl_wln_events 
-	PL_WLN_EVENT_DISABLED,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
-	PL_WLN_EVENT_DISASSOCIATED	'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
+    PL_WLN_EVENT_DISABLED,      '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
+    PL_WLN_EVENT_DISASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
 end enum
 
 event(23)  on_wln_event(wln_event as pl_wln_events)
@@ -332,18 +332,18 @@ event(23)  on_wln_event(wln_event as pl_wln_events)
 
 '--------------------------------------------------------------------
 enum pl_wln_tasks 
-	PL_WLN_TASK_IDLE,		'<b>PLATFORM CONSTANT.</b><br><br>No task (idle). 
-	PL_WLN_TASK_SCAN,		'<b>PLATFORM CONSTANT.</b><br><br>Passive scan task.
-	PL_WLN_TASK_ASSOCIATE,		'<b>PLATFORM CONSTANT.</b><br><br>Association task.
-	PL_WLN_TASK_SETTXPOWER,		'<b>PLATFORM CONSTANT.</b><br><br>TX power adjustment task (completes immediately).
-	PL_WLN_TASK_SETWEP,		'<b>PLATFORM CONSTANT.</b><br><br>WEP mode and keys setup task (completes immediately).
-	PL_WLN_TASK_DISASSOCIATE,	'<b>PLATFORM CONSTANT.</b><br><br>Disassociation task.
-	PL_WLN_TASK_NETWORK_START,	'<b>PLATFORM CONSTANT.</b><br><br>Network start task.
-	PL_WLN_TASK_NETWORK_STOP,	'<b>PLATFORM CONSTANT.</b><br><br>Network stop task.
-	PL_WLN_TASK_SETWPA,		'<b>PLATFORM CONSTANT.</b><br><br>WPA mode and keys setup task (completes immediately).	
-	PL_WLN_TASK_ACTIVESCAN,		'<b>PLATFORM CONSTANT.</b><br><br>Active scan task.
-	PL_WLN_TASK_UPDATERSSI		'<b>PLATFORM CONSTANT.</b><br><br>Update current RSSI task.
-	
+    PL_WLN_TASK_IDLE,       '<b>PLATFORM CONSTANT.</b><br><br>No task (idle). 
+    PL_WLN_TASK_SCAN,       '<b>PLATFORM CONSTANT.</b><br><br>Passive scan task.
+    PL_WLN_TASK_ASSOCIATE,      '<b>PLATFORM CONSTANT.</b><br><br>Association task.
+    PL_WLN_TASK_SETTXPOWER,     '<b>PLATFORM CONSTANT.</b><br><br>TX power adjustment task (completes immediately).
+    PL_WLN_TASK_SETWEP,     '<b>PLATFORM CONSTANT.</b><br><br>WEP mode and keys setup task (completes immediately).
+    PL_WLN_TASK_DISASSOCIATE,   '<b>PLATFORM CONSTANT.</b><br><br>Disassociation task.
+    PL_WLN_TASK_NETWORK_START,  '<b>PLATFORM CONSTANT.</b><br><br>Network start task.
+    PL_WLN_TASK_NETWORK_STOP,   '<b>PLATFORM CONSTANT.</b><br><br>Network stop task.
+    PL_WLN_TASK_SETWPA,     '<b>PLATFORM CONSTANT.</b><br><br>WPA mode and keys setup task (completes immediately). 
+    PL_WLN_TASK_ACTIVESCAN,     '<b>PLATFORM CONSTANT.</b><br><br>Active scan task.
+    PL_WLN_TASK_UPDATERSSI      '<b>PLATFORM CONSTANT.</b><br><br>Update current RSSI task.
+    
 end enum
 
 event(22)  on_wln_task_complete(completed_task as pl_wln_tasks)
@@ -374,7 +374,7 @@ property wln.rssi
 'This property is only updated while the Wi-Fi interface is in the non-idle state (wln.associationstate is not 0- PL_WLN_NOT_ASSOCIATED).
 '<br><br>
 '<b>See also: </b>wln.scanresultrssi.
-	get = syscall(474,"72.TDL"+) as byte
+    get = syscall(474,"72.TDL"+) as byte
 end property
 
 syscall(581,"71.TDL") wln.updaterssi() as accepted_rejected
@@ -406,9 +406,9 @@ syscall(580,"71.TDL") wln.activescan(byref ssid as string) as accepted_rejected
 
 '--------------------------------------------------------------------
 enum pl_wln_scan_filter 
-	PL_WLN_SCAN_ALL,			'<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure and ad-hoc networks.
-	PL_WLN_ASCAN_INFRASTRUCTURE,	'<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure networks only.
-	PL_WLN_OWN_ADHOC			'<b>PLATFORM CONSTANT.</b><br><br> Scan for ad-hoc networks only.
+    PL_WLN_SCAN_ALL,            '<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure and ad-hoc networks.
+    PL_WLN_ASCAN_INFRASTRUCTURE,    '<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure networks only.
+    PL_WLN_OWN_ADHOC            '<b>PLATFORM CONSTANT.</b><br><br> Scan for ad-hoc networks only.
 end enum
 
 property wln.scanfilter
@@ -418,8 +418,8 @@ property wln.scanfilter
 'or ad-hoc networks only (wln.scanresultbssmode= PL_WLN_BSS_MODE_ADHOC).
 '<br><br>
 '<b>See also: </b>wln.scan, wln.activescan
-	get = syscall(582,"72.TDL"+) as pl_wln_scan_filter
-	set = syscall(583,"72.TDL"+) (value as pl_wln_scan_filter)
+    get = syscall(582,"72.TDL"+) as pl_wln_scan_filter
+    set = syscall(583,"72.TDL"+) (value as pl_wln_scan_filter)
 end property
 
 '--------------------------------------------------------------------
@@ -431,7 +431,7 @@ property wln.scanresultbssid
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 '<b>See also: </b>wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
-	get = syscall(497,"72.TDL"+) as string
+    get = syscall(497,"72.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -444,7 +444,7 @@ property wln.scanresultbssmode
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
-	get = syscall(500,"72.TDL"+) as pl_wln_bss_modes
+    get = syscall(500,"72.TDL"+) as pl_wln_bss_modes
 end property
 
 '--------------------------------------------------------------------
@@ -456,7 +456,7 @@ property wln.scanresultchannel
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
-	get = syscall(496,"72.TDL"+) as byte
+    get = syscall(496,"72.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -468,7 +468,7 @@ property wln.scanresultrssi
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultssid, wln.scanresultwpainfo, wln.rssi.
-	get = syscall(499,"72.TDL"+) as byte
+    get = syscall(499,"72.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -481,7 +481,7 @@ property wln.scanresultssid
 'If the name argument specified a particular network and scanning found this network to be present, then this property will contain the name of this network.
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultwpainfo.
-	get = syscall(495,"72.TDL"+) as string
+    get = syscall(495,"72.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -495,7 +495,7 @@ property wln.scanresultwpainfo
 'This data is not intended for humans. The property exists to facilitate the operation of the WLN library.
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid.
-	get = syscall(498,"72.TDL"+) as string
+    get = syscall(498,"72.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -515,9 +515,9 @@ syscall(494,"90.TDL") wln.settxpower(level as byte) as accepted_rejected
 
 '--------------------------------------------------------------------
 enum pl_wln_wep_modes 
-	PL_WLN_WEP_MODE_DISABLED,	'<b>PLATFORM CONSTANT.</b><br><br>WEP is disabled.
-	PL_WLN_WEP_MODE_64,		'<b>PLATFORM CONSTANT.</b><br><br>WEP-64 is enabled.
-	PL_WLN_WEP_MODE_128		'<b>PLATFORM CONSTANT.</b><br><br>WEP-128 is enabled.
+    PL_WLN_WEP_MODE_DISABLED,   '<b>PLATFORM CONSTANT.</b><br><br>WEP is disabled.
+    PL_WLN_WEP_MODE_64,     '<b>PLATFORM CONSTANT.</b><br><br>WEP-64 is enabled.
+    PL_WLN_WEP_MODE_128     '<b>PLATFORM CONSTANT.</b><br><br>WEP-128 is enabled.
 end enum
 
 syscall(502,"71.TDL") wln.setwep(byref wepkey as string, wepmode as pl_wln_wep_modes) as accepted_rejected
@@ -548,19 +548,19 @@ syscall(502,"71.TDL") wln.setwep(byref wepkey as string, wepmode as pl_wln_wep_m
 
 '--------------------------------------------------------------------
 enum pl_wln_wpa_modes
-	PL_WLN_WPA_DISABLED,	'<b>PLATFORM CONSTANT.</b><br><br>WPA disabled.
-	PL_WLN_WPA_WPA1_PSK,	'<b>PLATFORM CONSTANT.</b><br><br>WPA1-PSK mode.
-	PL_WLN_WPA_WPA2_PSK	'<b>PLATFORM CONSTANT.</b><br><br>WPA2-PSK mode.
+    PL_WLN_WPA_DISABLED,    '<b>PLATFORM CONSTANT.</b><br><br>WPA disabled.
+    PL_WLN_WPA_WPA1_PSK,    '<b>PLATFORM CONSTANT.</b><br><br>WPA1-PSK mode.
+    PL_WLN_WPA_WPA2_PSK '<b>PLATFORM CONSTANT.</b><br><br>WPA2-PSK mode.
 end enum
 
 enum pl_wln_wpa_algorithms
-	PL_WLN_WPA_ALGORITHM_TKIP,	'<b>PLATFORM CONSTANT.</b><br><br>Install TKIP key.
-	PL_WLN_WPA_ALGORITHM_AES	'<b>PLATFORM CONSTANT.</b><br><br>Install AES key.
+    PL_WLN_WPA_ALGORITHM_TKIP,  '<b>PLATFORM CONSTANT.</b><br><br>Install TKIP key.
+    PL_WLN_WPA_ALGORITHM_AES    '<b>PLATFORM CONSTANT.</b><br><br>Install AES key.
 end enum
 
 enum pl_wln_wpa_unicast_multicast 
-	PL_WLN_WPA_CAST_UNICAST,	'<b>PLATFORM CONSTANT.</b><br><br>Install unicast key.
-	PL_WLN_WPA_CAST_MULTICAST	'<b>PLATFORM CONSTANT.</b><br><br>Install multicast key.
+    PL_WLN_WPA_CAST_UNICAST,    '<b>PLATFORM CONSTANT.</b><br><br>Install unicast key.
+    PL_WLN_WPA_CAST_MULTICAST   '<b>PLATFORM CONSTANT.</b><br><br>Install multicast key.
 end enum
 
 syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wln_wpa_algorithms, byref wpakey as string, cast as pl_wln_wpa_unicast_multicast) as accepted_rejected
@@ -596,7 +596,7 @@ property wln.task
 '<br><br>
 'The wln. object will only accept another task for execution after the previous task has been completed
 '(wln.task= 0- PL_WLN_TASK_IDLE). Every time the task completes, the on_wln_task_complete event is generated.
-	get = syscall(501,"72.TDL"+) as pl_wln_tasks
+    get = syscall(501,"72.TDL"+) as pl_wln_tasks
 end property
 
 '--------------------------------------------------------------------
@@ -604,26 +604,26 @@ syscall(456,"70.TDL") !wln.mfgboot(offset as dword) as ok_ng
 
 '--------------------------------------------------------------------
 enum pl_wln_mfgtx_modes
-	PL_WLN_MFGTX_MODE_CONTINUOUS,	'<b>PLATFORM CONSTANT.</b><br><br>Continuous output.
-	PL_WLN_MFGTX_MODE_BURST,	'<b>PLATFORM CONSTANT.</b><br><br>Burst output.
-	PL_WLN_MFGTX_MODE_DATATX	'<b>PLATFORM CONSTANT.</b><br><br>Continuous output of data.
+    PL_WLN_MFGTX_MODE_CONTINUOUS,   '<b>PLATFORM CONSTANT.</b><br><br>Continuous output.
+    PL_WLN_MFGTX_MODE_BURST,    '<b>PLATFORM CONSTANT.</b><br><br>Burst output.
+    PL_WLN_MFGTX_MODE_DATATX    '<b>PLATFORM CONSTANT.</b><br><br>Continuous output of data.
 end enum
 
 enum pl_wln_mfgtx_rates
-	PL_WLN_MFGTX_RATE_1M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 1 Mbps.
-	PL_WLN_MFGTX_RATE_2M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 2 Mbps.
-	PL_WLN_MFGTX_RATE_5_5M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 5.5 Mbps.
-	PL_WLN_MFGTX_RATE_11M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 11 Mbps.
-	PL_WLN_MFGTX_RATE_22M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 22 Mbps.
-	PL_WLN_MFGTX_RATE_6M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 6 Mbps.
-	PL_WLN_MFGTX_RATE_9M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 9 Mbps.
-	PL_WLN_MFGTX_RATE_12M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 12 Mbps.
-	PL_WLN_MFGTX_RATE_18M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 18 Mbps.
-	PL_WLN_MFGTX_RATE_24M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 24 Mbps.
-	PL_WLN_MFGTX_RATE_36M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 36 Mbps.
-	PL_WLN_MFGTX_RATE_48M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 48 Mbps.
-	PL_WLN_MFGTX_RATE_54M,	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 54 Mbps.
-	PL_WLN_MFGTX_RATE_72M	'<b>PLATFORM CONSTANT.</b><br><br>Rate = 72 Mbps.
+    PL_WLN_MFGTX_RATE_1M,   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 1 Mbps.
+    PL_WLN_MFGTX_RATE_2M,   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 2 Mbps.
+    PL_WLN_MFGTX_RATE_5_5M, '<b>PLATFORM CONSTANT.</b><br><br>Rate = 5.5 Mbps.
+    PL_WLN_MFGTX_RATE_11M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 11 Mbps.
+    PL_WLN_MFGTX_RATE_22M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 22 Mbps.
+    PL_WLN_MFGTX_RATE_6M,   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 6 Mbps.
+    PL_WLN_MFGTX_RATE_9M,   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 9 Mbps.
+    PL_WLN_MFGTX_RATE_12M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 12 Mbps.
+    PL_WLN_MFGTX_RATE_18M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 18 Mbps.
+    PL_WLN_MFGTX_RATE_24M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 24 Mbps.
+    PL_WLN_MFGTX_RATE_36M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 36 Mbps.
+    PL_WLN_MFGTX_RATE_48M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 48 Mbps.
+    PL_WLN_MFGTX_RATE_54M,  '<b>PLATFORM CONSTANT.</b><br><br>Rate = 54 Mbps.
+    PL_WLN_MFGTX_RATE_72M   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 72 Mbps.
 end enum
 
 syscall(469,"90.TDL") !wln.mfgtx(mode as pl_wln_mfgtx_modes, channel as byte, txpower as byte, datarate as pl_wln_mfgtx_rates) as ok_ng
@@ -631,7 +631,7 @@ syscall(469,"90.TDL") !wln.mfgtx(mode as pl_wln_mfgtx_modes, channel as byte, tx
 '--------------------------------------------------------------------
 property !wln.mfgenabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
-	get = syscall(468,"72.TDL"+) as no_yes
+    get = syscall(468,"72.TDL"+) as no_yes
 end property
 
 #endif

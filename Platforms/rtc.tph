@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		RTC (Real-time Counter) object
+'       RTC (Real-time Counter) object
 '**************************************************************************************************
 
 #define RTC_AVAILABLE 1
@@ -40,36 +40,17 @@ property rtc.running
 'When the RTC is powered up after being off (that is, device had not power AND no backup power for a period of time), it may not work 
 'correctly until you set it using <font color="maroon"><b>rtc.setdata </b></font>method. <font color="maroon"><b> Rtc.running </b></font>
 'cannot be used to reliably check RTC state in this situation.
-	get = syscall(177,"29.TDL"+) as no_yes
+    get = syscall(177,"29.TDL"+) as no_yes
 end property
 
 '--------------------------------------------------------------------
 property rtc.clock512
-	get = syscall(614) as dis_en
-	set = syscall(615) (value as dis_en)
+    get = syscall(614) as dis_en
+    set = syscall(615) (value as dis_en)
 end property
 
 '--------------------------------------------------------------------
 property rtc.calibration
-	get = syscall(616) as char
-	set = syscall(617) (value as char)
+    get = syscall(616) as char
+    set = syscall(617) (value as char)
 end property
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

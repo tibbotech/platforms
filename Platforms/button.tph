@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		BUTTON object
+'       BUTTON object
 '**************************************************************************************************
 
 object button
@@ -15,7 +15,7 @@ property button.pressed
 'Returns the current button state.
 '<br><br>
 'This property reflects the immediate state of the hardware at the very moment the property is read -- no "debouncing" performed.
-	get = syscall(1) as no_yes
+    get = syscall(1) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -28,7 +28,7 @@ property button.time
 'The value of this property maxes out at 255 (127.5 seconds).
 '<br><br>
 'The elapsed time is not counted while the execution of your application is paused (during debugging).
-	get = syscall(21) as byte
+    get = syscall(21) as byte
 end property
 
 '--------------------------------------------------------------------

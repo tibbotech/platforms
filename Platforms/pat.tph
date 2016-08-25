@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		PAT (LED pattern) object
+'       PAT (LED pattern) object
 '**************************************************************************************************
 
 #if PLATFORM_ID=DS1100
@@ -47,8 +47,8 @@ object pat
 
 '--------------------------------------------------------------------
 enum pl_pat_int 
-	PL_PAT_NOINT,		'<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can only be loaded if no pattern is playing at the moment.
-	PL_PAT_CANINT		'<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can be loaded even if another pattern is currently playing.
+    PL_PAT_NOINT, '<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can only be loaded if no pattern is playing at the moment.
+    PL_PAT_CANINT '<b>PLATFORM CONSTANT. </b><br><br> Tells the pat.play method that the new pattern can be loaded even if another pattern is currently playing.
 end enum
 
 syscall(184,"31.TDL") pat.play(byref pattern as string, patint as pl_pat_int)
@@ -79,8 +79,8 @@ property pat.channel
 'Selects/returns the pattern channel to work with. This selection is related to the pat.play method, as well as io.redmap and io.greenmap properties.
 '<br><br>
 'Note that this property's value will be set automatically when the event handler for the on_pat event is entered.
-	get = syscall(5,"31.TDL"+) as byte
-	set = syscall(6,"31.TDL"+) (value as byte)
+    get = syscall(5,"31.TDL"+) as byte
+    set = syscall(6,"31.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -91,8 +91,8 @@ property pat.greenmap
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
 '<br><br>
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
-	get = syscall(7,"31.TDL"+) as pl_io_num
-	set = syscall(8,"31.TDL"+) (value as pl_io_num)
+    get = syscall(7,"31.TDL"+) as pl_io_num
+    set = syscall(8,"31.TDL"+) (value as pl_io_num)
 end property
 
 #elif PLATFORM_ID=EM500W
@@ -102,8 +102,8 @@ property pat.greenmap
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
 '<br><br>
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
-	get = syscall(7,"31.TDL"+) as pl_io_num
-	set = syscall(8,"31.TDL"+) (value as pl_io_num)
+    get = syscall(7,"31.TDL"+) as pl_io_num
+    set = syscall(8,"31.TDL"+) (value as pl_io_num)
 end property
 
 #else
@@ -115,8 +115,8 @@ property pat.greenmap
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4.
 '<br><br>
 '<b>On this platform you must also configure I/O lines of channels 1-4 as outputs. This is done through the io.enabled property of the io. object.</b>
-	get = syscall(7,"31.TDL"+) as pl_io_num
-	set = syscall(8,"31.TDL"+) (value as pl_io_num)
+    get = syscall(7,"31.TDL"+) as pl_io_num
+    set = syscall(8,"31.TDL"+) (value as pl_io_num)
 end property
 
 #endif
@@ -129,8 +129,8 @@ property pat.redmap
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
 '<br><br>
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
-	get = syscall(9,"31.TDL"+) as pl_io_num
-	set = syscall(10,"31.TDL"+) (value as pl_io_num)
+    get = syscall(9,"31.TDL"+) as pl_io_num
+    set = syscall(10,"31.TDL"+) (value as pl_io_num)
 end property
 
 #elif PLATFORM_ID=EM500W
@@ -140,8 +140,8 @@ property pat.redmap
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
 '<br><br>
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4. 
-	get = syscall(9,"31.TDL"+) as pl_io_num
-	set = syscall(10,"31.TDL"+) (value as pl_io_num)
+    get = syscall(9,"31.TDL"+) as pl_io_num
+    set = syscall(10,"31.TDL"+) (value as pl_io_num)
 end property
 
 #else
@@ -153,8 +153,8 @@ property pat.redmap
 'Channel 0 does not require configuration. Writing to this property will only work on channels 1-4.
 '<br><br>
 '<b>On this platform you must also configure I/O lines of channels 1-4 as outputs. This is done through the io.enabled property of the io. object.</b>
-	get = syscall(9,"31.TDL"+) as pl_io_num
-	set = syscall(10,"31.TDL"+) (value as pl_io_num)
+    get = syscall(9,"31.TDL"+) as pl_io_num
+    set = syscall(10,"31.TDL"+) (value as pl_io_num)
 end property
 
 #endif

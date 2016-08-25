@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		SSI (Synchronous Serial Interface) object
+'       SSI (Synchronous Serial Interface) object
 '**************************************************************************************************
 
 #define SSI_AVAILABLE 1
@@ -22,8 +22,8 @@ property ssi.baudrate
 'It is actually permissible to set the property to 0 -- this will be like setting it to 256 (slowest possible clock rate).
 '<br><br>
 'See also: ssi.direction, ssi.mode, ssi.zmode.
-	get = syscall(564,"82.TDL"+) as byte
-	set = syscall(565,"82.TDL"+) (value as byte)
+    get = syscall(564,"82.TDL"+) as byte
+    set = syscall(565,"82.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -33,8 +33,8 @@ property ssi.channel
 'There are four channels available (0-3).
 '<br><br>
 'All other properties and methods of this object relate to the channel selected through this property.
-	get = syscall(558,"82.TDL"+) as byte
-	set = syscall(559,"82.TDL"+) (value as byte)
+    get = syscall(558,"82.TDL"+) as byte
+    set = syscall(559,"82.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -47,8 +47,8 @@ property ssi.clkmap
 'On devices with unidirectional I/O lines, the CLK line must be "manually" configured as output (see io.enabled= 1- YES).
 '<br><br>
 'See also: ssi.dimap, ssi.domap.
-	get = syscall(566,"82.TDL"+) as pl_io_num
-	set = syscall(567,"82.TDL"+) (value as pl_io_num)
+    get = syscall(566,"82.TDL"+) as pl_io_num
+    set = syscall(567,"82.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -61,14 +61,14 @@ property ssi.dimap
 'On devices with unidirectional I/O lines, the DI line must be "manually" configured as input (see io.enabled= 0- NO).
 '<br><br>
 'See also: ssi.clkmap, ssi.domap.
-	get = syscall(570,"82.TDL"+) as pl_io_num
-	set = syscall(571,"82.TDL"+) (value as pl_io_num)
+    get = syscall(570,"82.TDL"+) as pl_io_num
+    set = syscall(571,"82.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
 enum pl_ssi_direction_options 
-	PL_SSI_DIRECTION_RIGHT,		'<b>PLATFORM CONSTANT. Data input/output least significant bit first.</b><br><br>.
-	PL_SSI_DIRECTION_LEFT		'<b>PLATFORM CONSTANT. Data input/output most significant bit first.</b><br><br>.
+    PL_SSI_DIRECTION_RIGHT,     '<b>PLATFORM CONSTANT. Data input/output least significant bit first.</b><br><br>.
+    PL_SSI_DIRECTION_LEFT       '<b>PLATFORM CONSTANT. Data input/output most significant bit first.</b><br><br>.
 end enum
 
 property ssi.direction
@@ -77,8 +77,8 @@ property ssi.direction
 'PL_SSI_DIRECTION_RIGHT means "least significant bit first", PL_SSI_DIRECTION_LEFT -- "most significant bit first".
 '<br><br>
 'This property can only be changed when ssi.enabled= 0- NO.
-	get = syscall(574,"82.TDL"+) as pl_ssi_direction_options
-	set = syscall(575,"82.TDL"+) (value as pl_ssi_direction_options)
+    get = syscall(574,"82.TDL"+) as pl_ssi_direction_options
+    set = syscall(575,"82.TDL"+) (value as pl_ssi_direction_options)
 end property
 
 '--------------------------------------------------------------------
@@ -91,8 +91,8 @@ property ssi.domap
 'On devices with unidirectional I/O lines, the DO line must be "manually" configured as output (see io.enabled= 1- YES).
 '<br><br>
 'See also: ssi.clkmap, ssi.dimap.
-	get = syscall(568,"82.TDL"+) as pl_io_num
-	set = syscall(569,"82.TDL"+) (value as pl_io_num)
+    get = syscall(568,"82.TDL"+) as pl_io_num
+    set = syscall(569,"82.TDL"+) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -103,16 +103,16 @@ property ssi.enabled
 'SSI channel's operating parameters (ssi.baudrate, ssi.mode, etc.) can only be changed when the channel is disabled.
 '<br><br>
 'You can only send and receive the data (ssi.value, ssi.str) when the channel is enabled.
-	get = syscall(572,"82.TDL"+) as no_yes
-	set = syscall(573,"82.TDL"+) (value as no_yes)
+    get = syscall(572,"82.TDL"+) as no_yes
+    set = syscall(573,"82.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
 enum pl_ssi_modes 
-	PL_SSI_MODE_0,			'<b>PLATFORM CONSTANT.</b><br><br>.
-	PL_SSI_MODE_1,			'<b>PLATFORM CONSTANT.</b><br><br>.
-	PL_SSI_MODE_2,			'<b>PLATFORM CONSTANT.</b><br><br>.
-	PL_SSI_MODE_3			'<b>PLATFORM CONSTANT.</b><br><br>.
+    PL_SSI_MODE_0,          '<b>PLATFORM CONSTANT.</b><br><br>.
+    PL_SSI_MODE_1,          '<b>PLATFORM CONSTANT.</b><br><br>.
+    PL_SSI_MODE_2,          '<b>PLATFORM CONSTANT.</b><br><br>.
+    PL_SSI_MODE_3           '<b>PLATFORM CONSTANT.</b><br><br>.
 end enum
 
 property ssi.mode
@@ -140,21 +140,21 @@ property ssi.mode
 '  - CPHA=1: data bits are captured on the CLK's rising edge and data bits are propagated on the CLK's falling edge.
 '<br><br>
 'See also: ssi.baudrate, ssi.direction, ssi.zmode.
-	get = syscall(560,"82.TDL"+) as pl_ssi_modes
-	set = syscall(561,"82.TDL"+) (value as pl_ssi_modes)
+    get = syscall(560,"82.TDL"+) as pl_ssi_modes
+    set = syscall(561,"82.TDL"+) (value as pl_ssi_modes)
 end property
 
 '--------------------------------------------------------------------
 enum pl_ssi_ack_modes 
-	PL_SSI_ACK_OFF,			'<b>PLATFORM CONSTANT. 8 bits per data byte. Acknowledgement bits are not transmitted (or expected to be received).</b><br><br>.
-	PL_SSI_ACK_RX,			'<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are expected to be generated by the slave and their presence will be verified.
-					'The slave device should pull the DI line LOW on the 9th bit of the byte transmission.
-					'Data exchange will be aborted if the slave device fails to acknowledge any of the bytes. This doesn't apply to the last byte because the method execution will
-					'end after the transmission of this byte anyway.</b><br><br>.
-	PL_SSI_ACK_TX_ALL,		'<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are generated by this device and each byte will be acknowledged by pulling the DI line low on the 9th bit
-					'of the byte transmission.</b><br><br>.
-	PL_SSI_ACK_ALL_BUT_LAST		'<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are generated by this device and each byte <b>except the last </b>will be acknowledged by pulling the DI line low
-					'on the 9th bit of the byte transmission.
+    PL_SSI_ACK_OFF,         '<b>PLATFORM CONSTANT. 8 bits per data byte. Acknowledgement bits are not transmitted (or expected to be received).</b><br><br>.
+    PL_SSI_ACK_RX,          '<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are expected to be generated by the slave and their presence will be verified.
+                    'The slave device should pull the DI line LOW on the 9th bit of the byte transmission.
+                    'Data exchange will be aborted if the slave device fails to acknowledge any of the bytes. This doesn't apply to the last byte because the method execution will
+                    'end after the transmission of this byte anyway.</b><br><br>.
+    PL_SSI_ACK_TX_ALL,      '<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are generated by this device and each byte will be acknowledged by pulling the DI line low on the 9th bit
+                    'of the byte transmission.</b><br><br>.
+    PL_SSI_ACK_ALL_BUT_LAST     '<b>PLATFORM CONSTANT. 9 bits per data byte. Acknowledgement bits are generated by this device and each byte <b>except the last </b>will be acknowledged by pulling the DI line low
+                    'on the 9th bit of the byte transmission.
 'on the 9th bit of the transmission.</b><br><br>.
 end enum
 
@@ -193,8 +193,8 @@ syscall(73) ssi.value(txdata as word, len as byte) as word
 
 '--------------------------------------------------------------------
 enum pl_ssi_zmodes 
-	PL_SSI_ZMODE_ALWAYS_ENABLED,	'<b>PLATFORM CONSTANT. The DO line toggles normally (by setting the output buffer to LOW or HIGH).</b><br><br>.
-	PL_SSI_ZMODE_ENABLED_ON_ZERO	'<b>PLATFORM CONSTANT. For HIGH state, the output buffer of the DO line is turned off, for LOW state, the output buffer is turned on and the line is set to LOW.</b><br><br>.
+    PL_SSI_ZMODE_ALWAYS_ENABLED,    '<b>PLATFORM CONSTANT. The DO line toggles normally (by setting the output buffer to LOW or HIGH).</b><br><br>.
+    PL_SSI_ZMODE_ENABLED_ON_ZERO    '<b>PLATFORM CONSTANT. For HIGH state, the output buffer of the DO line is turned off, for LOW state, the output buffer is turned on and the line is set to LOW.</b><br><br>.
 end enum
 
 property ssi.zmode
@@ -210,6 +210,6 @@ property ssi.zmode
 'This property can only be changed when ssi.enabled= 0- NO.
 '<br><br>
 'See also: ssi.baudrate, ssi.direction, ssi.mode.
-	get = syscall(562,"82.TDL"+) as pl_ssi_zmodes
-	set = syscall(563,"82.TDL"+) (value as pl_ssi_zmodes)
+    get = syscall(562,"82.TDL"+) as pl_ssi_zmodes
+    set = syscall(563,"82.TDL"+) (value as pl_ssi_zmodes)
 end property

@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		PPP object
+'       PPP object
 '**************************************************************************************************
 
 object ppp
@@ -14,8 +14,8 @@ property ppp.enabled
 '<br><br>
 'Once this property is set to 1- YES, the selected serial port seizes to be under the control of your application and works exclusively for the ppp. object.
 'PPP channel setup (ppp.buffrq, ppp.ip, ppp.portnum) can only be altered when the ppp. object is disabled.
-	get = syscall(459,"39.TDL"+) as no_yes
-	set = syscall(460,"39.TDL"+) (value as no_yes)
+    get = syscall(459,"39.TDL"+) as no_yes
+    set = syscall(460,"39.TDL"+) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -26,8 +26,8 @@ property ppp.portnum
 'Once the PPP interface is enabled (ppp.enabled= 1- YES), the selected serial port seizes to be under the control of your application and works exclusively for the ppp. object.
 'The value of this property won't exceed ser.numofports-1 (even if you attempt to set a higher value).
 'You can only change this property when the PPP channel is disabled (ppp.enabled= 0- NO).
-	get = syscall(461,"39.TDL"+) as byte
-	set = syscall(462,"39.TDL"+) (value as byte)
+    get = syscall(461,"39.TDL"+) as byte
+    set = syscall(462,"39.TDL"+) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -55,7 +55,7 @@ property ppp.buffsize
 'Buffer capacity can be changed through the ppp.buffrq method followed by the sys.buffalloc method invocation.
 '<br><br>
 'The PPP object will be unable to operate properly if its buffer has inadequate capacity. Recommended buffer size is 5 pages.
-	get = syscall(355,"57.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(355,"57.TDL"+) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -66,6 +66,6 @@ property ppp.ip
 'Typically, the IP address of the PPP interface is negotiated with the ISP. Available GPRS library implements all necessary steps of PPP link negotiation for GPRS modems.
 '<br><br>
 'This property can only be written to when the PPP interface is disabled (ppp.enabled= 0- NO).
-	get = syscall(490,"39.TDL"+) as string
-	set = syscall(491,"40.TDL"+) (byref ipstr as string)
+    get = syscall(490,"39.TDL"+) as string
+    set = syscall(491,"40.TDL"+) (byref ipstr as string)
 end property

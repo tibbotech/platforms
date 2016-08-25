@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		IO (Input/output) object
+'       IO (Input/output) object
 '**************************************************************************************************
 
 object io
@@ -11,7 +11,7 @@ object io
 'This is done through io.enabled and io.portenabled properties.
 
 '--------------------------------------------------------------------
-event(19)  on_io_int(linestate as byte)
+event(19) on_io_int(linestate as byte)
 '<b>EVENT of the io. object.</b><br><br>
 'Generated when a change of state (from LOW to HIGH or from HIGH to LOW) on one of the enabled interrupt lines is detected.
 '<br><br>
@@ -28,16 +28,16 @@ event(19)  on_io_int(linestate as byte)
 property io.num
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0.</b><br><br>
 'Sets/returns the number of the currently selected I/O line. This selection is related to io.enabled and io.state properties.
-	get = syscall(170) as pl_io_num
-	set = syscall(171) (num as pl_io_num)
+    get = syscall(170) as pl_io_num
+    set = syscall(171) (num as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
 property io.portnum
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0.</b><br><br>
 'Sets/returns the number of the currently selected 8-bit I/O port. This selection is related to io.portenabled and io.portstate properties.
-	get = syscall(297) as pl_io_port_num
-	set = syscall(298) (num as pl_io_port_num)
+    get = syscall(297) as pl_io_port_num
+    set = syscall(298) (num as pl_io_port_num)
 end property
 
 '--------------------------------------------------------------------
@@ -46,8 +46,8 @@ property io.state
 'For the currently selected I/O line (selection is made through the io.num property), sets/returns this line's state.
 '<br><br>
 'The line must be configured as output (io.enabled= 1- YES) for writes to this property to have any effect.
-	get = syscall(172) as low_high
-	set = syscall(173) (state as low_high)
+    get = syscall(172) as low_high
+    set = syscall(173) (state as low_high)
 end property
 
 '--------------------------------------------------------------------
@@ -58,8 +58,8 @@ property io.portstate
 'Each individual bit in this byte value sets/returns the state of the corresponding I/O line within the port.
 '<br><br>
 'Port lines must be configured as outputs (io.portenabled= 255) for writes to this property to have (full) effect.
-	get = syscall(299) as byte
-	set = syscall(300) (state as byte)
+    get = syscall(299) as byte
+    set = syscall(300) (state as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -67,8 +67,8 @@ property io.enabled
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
 'For the currently selected I/O line (selection is made through the io.num property), sets/returns the state of the line's output buffer,
 'i.e. configures the line as input (io.enabled=0) or output (io.enabled=1).
-	get = syscall(167) as no_yes
-	set = syscall(187) (state as no_yes)
+    get = syscall(167) as no_yes
+    set = syscall(187) (state as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -78,8 +78,8 @@ property io.portenabled
 'i.e. configures individual port lines as inputs or outputs.
 '<br><br>
 'For each bit (line) 0 means "input" and 1 means "output".
-	get = syscall(301) as byte
-	set = syscall(302) (state as byte)
+    get = syscall(301) as byte
+    set = syscall(302) (state as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -120,14 +120,14 @@ syscall(307) io.portset(num as pl_io_port_num, state as byte)
 property io.intnum
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0.</b><br><br>
 'Sets/returns the number of the currently selected interrupt line. This selection is related to the io.intenebled property.
-	get = syscall(15) as pl_int_num
-	set = syscall(16) (num as pl_int_num)
+    get = syscall(15) as pl_int_num
+    set = syscall(16) (num as pl_int_num)
 end property
 
 '--------------------------------------------------------------------
 property io.intenabled
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
 'For the currently selected interrupt line (selection is made through the io.intnum property), enables/disables on_io_int event generation for this line.
-	get = syscall(419,"80.TDL"+) as no_yes
-	set = syscall(420,"80.TDL"+) (state as no_yes)
+    get = syscall(419,"80.TDL"+) as no_yes
+    set = syscall(420,"80.TDL"+) (state as no_yes)
 end property

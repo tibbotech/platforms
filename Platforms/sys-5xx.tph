@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		SYS (System) object
+'       SYS (System) object
 '**************************************************************************************************
 
 object sys
@@ -22,13 +22,13 @@ event(2)  on_sys_timer
 
 '--------------------------------------------------------------------
 enum pl_sys_mode
-	PL_SYS_MODE_RELEASE,	'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Debugging is not possible, application execution starts immediately after device powers up. Severe errors
-							'such as "divizion by zero" are ignored and do not stop execution.
-	PL_SYS_MODE_DEBUG		'<b>PLATFORM CONSTANT. </b><br><br> 
-							'Debug mode in which it is possible to cross-debug the application (under the control of TIDE software). 
-							'Application execution is not started automatically after the power up. Severe errors such as "divizion by 
-							'zero" halt execution.
+    PL_SYS_MODE_RELEASE,    '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Debugging is not possible, application execution starts immediately after device powers up. Severe errors
+                            'such as "divizion by zero" are ignored and do not stop execution.
+    PL_SYS_MODE_DEBUG       '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Debug mode in which it is possible to cross-debug the application (under the control of TIDE software). 
+                            'Application execution is not started automatically after the power up. Severe errors such as "divizion by 
+                            'zero" halt execution.
 end enum
 
 property sys.runmode
@@ -36,14 +36,14 @@ property sys.runmode
 'Returns current run (execution) mode: <br><br>
 '<font color="olive"><b>0- PL_SYS_MODE_RELEASE </b></font>(release mode),<br> <font color="olive"><b>1- PL_SYS_MODE_DEBUG </b></font> 
 '(debug mode).
-	get = syscall(71) as pl_sys_mode
+    get = syscall(71) as pl_sys_mode
 end property
 
 '--------------------------------------------------------------------
 enum pl_sys_reset_type
-	PL_SYS_RESET_TYPE_INTERNAL,	'<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was generated internally.
-	PL_SYS_RESET_TYPE_EXTERNAL	'<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was generated externally (through RST pin
-								'or power cycle).
+    PL_SYS_RESET_TYPE_INTERNAL, '<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was generated internally.
+    PL_SYS_RESET_TYPE_EXTERNAL  '<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was generated externally (through RST pin
+                                'or power cycle).
 end enum
 
 property sys.resettype
@@ -51,7 +51,7 @@ property sys.resettype
 'Returns the type of the most recent hardware reset:<br><br><font color="olive"><b>0- PL_SYS_RESET_TYPE_INTERNAL </b></font>(internal 
 'reset caused  by "self-reboot" of the CPU -- through TIDE command or <font color="maroon"><b>sys.reboot </b></font> execution),<br><font 
 'color="olive"><b>1- PL_SYS_RESET_TYPE_EXTERNAL </b></font> (caused by power-cycling of the device or applying reset pulse to the RST line).
-	get = syscall(72) as pl_sys_reset_type
+    get = syscall(72) as pl_sys_reset_type
 end property
 
 '--------------------------------------------------------------------
@@ -60,7 +60,7 @@ property sys.totalbuffpages
 'Returns the total amount of memory pages available for buffers (one page= 256 bytes). This is calculated as total available variable memory
 '(RAM) minus whatever is required to store variables of the current project. <br><br>
 'See also <font color="maroon"><b>sys.buffalloc </b></font> and <font color="maroon"><b>sys.freebuffpages</b></font>.
-	get = syscall(83,"33.TDL"+) as byte
+    get = syscall(83,"33.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -70,7 +70,7 @@ property sys.freebuffpages
 'sys.buffalloc </b></font> method is used. Preparatory methods like <font color="maroon"><b>ser.rxbuffrq </b></font>do not influence what 
 'this property returns. <br><br>
 'See also <font color="maroon"><b>sys.totalbuffpages</b></font>.
-	get = syscall(84,"33.TDL"+) as byte
+    get = syscall(84,"33.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -109,7 +109,7 @@ syscall(82,"32.TDL") sys.buffalloc()
 property sys.version
 '<b>R/O PROPERTY (STRING). </b><br><br>
 'Returns firmware (TiOS) version string. Example: "EM500-2.22.30".
-	get = syscall(428,"74.TDL"+) as string
+    get = syscall(428,"74.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -117,15 +117,15 @@ property sys.timercount
 '<b>R/O PROPERTY (WORD). </b><br><br>
 'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches 65535 it rolls over to 0.<br><br>
 'See also <font color="teal"><b>on_sys_timer </b></font> event.
-	get = syscall(136) as word
+    get = syscall(136) as word
 end property
 
 '--------------------------------------------------------------------
 property sys.onsystimerperiod
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 50 (0.5 seconds). </b><br><br>
 'Defines, in 10ms increments, the period at which the <font color="teal"><b>on_sys_timer </b></font> event will be generated.
-	get = syscall(292) as byte
-	set = syscall(293) (value as byte)
+    get = syscall(292) as byte
+    set = syscall(293) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -134,7 +134,7 @@ property sys.serialnum
 'Returns the 4-byte string containing the serial number of the device.
 '<br><br>
 'On this platform the serial number is generated automatically and can't be changed.
-	get = syscall(255,"74.TDL"+) as string
+    get = syscall(255,"74.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------

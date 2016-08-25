@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		NET (Ethernet network) object
+'       NET (Ethernet network) object
 '**************************************************************************************************
 
 #define NET_AVAILABLE 1
@@ -41,7 +41,7 @@ property net.mac
 'Returns current MAC (hardware Ethernet) address of the device. You cannot use the <font color="maroon"><b>net.mac </b></font>property to set the new MAC
 'address, but this address can be changed indirectly, by writing to a special area of the EEPROM (see <font color="maroon"><b>stor.setdata </b></font>and
 '<font color="maroon"><b>stor.base</b></font>s).
-	get = syscall(194,"39.TDL"+) as string
+    get = syscall(194,"39.TDL"+) as string
 end property
 
 '--------------------------------------------------------------------
@@ -53,8 +53,8 @@ property net.ip
 '<font color="maroon"><b>sock.currentinterface</b></font>= <font color="olive"><b>1- PL_INTERFACE_NET</b></font>.
 '<br><br>
 'See also <font color="maroon"><b>net.gatewayip </b></font> and <font color="maroon"><b>net.netmask</b></font>.
-	get = syscall(195,"39.TDL"+) as string
-	set = syscall(196,"40.TDL"+) (byref ipstr as string)
+    get = syscall(195,"39.TDL"+) as string
+    set = syscall(196,"40.TDL"+) (byref ipstr as string)
 end property
 
 '--------------------------------------------------------------------
@@ -67,8 +67,8 @@ property net.netmask
 '<font color="maroon"><b>sock.currentinterface</b></font>= <font color="olive"><b>1- PL_INTERFACE_NET</b></font>.
 '<br><br>
 'See also <font color="maroon"><b>net.ip </b></font>and <font color="maroon"><b>net.gatewayip</b></font>.
-	get = syscall(197,"39.TDL"+) as string
-	set = syscall(198,"40.TDL"+) (byref netmaskstr as string)
+    get = syscall(197,"39.TDL"+) as string
+    set = syscall(198,"40.TDL"+) (byref netmaskstr as string)
 end property
 
 '--------------------------------------------------------------------
@@ -81,8 +81,8 @@ property net.gatewayip
 '<font color="maroon"><b>sock.currentinterface</b></font>= <font color="olive"><b>1- PL_INTERFACE_NET</b></font>.
 '<br><br>
 'See also <font color="maroon"><b>net.ip </b></font>and <font color="maroon"><b>net.netmask</b></font>.
-	get = syscall(199,"39.TDL"+) as string
-	set = syscall(200,"40.TDL"+) (byref gatewayip as string)
+    get = syscall(199,"39.TDL"+) as string
+    set = syscall(200,"40.TDL"+) (byref gatewayip as string)
 end property
 
 '--------------------------------------------------------------------
@@ -90,17 +90,14 @@ property net.failure
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (no failure). </b><br><br>
 'Reports whether the Network Interface Controller (NIC) IC has failed: <font color="olive"><b>0- NO </b></font>(no failure), 
 '<font color="olive"><b>1- YES </b></font>(NIC failure).
-	get = syscall(201) as no_yes
+    get = syscall(201) as no_yes
 end property
 
 '--------------------------------------------------------------------
 enum pl_net_linkstate
-	PL_NET_LINKSTAT_NOLINK,		'<b>PLATFORM CONSTANT. </b><br><br> No physical Ethernet link exists at the moment
-					'(the Ethernet port of the device is not connected to a hub).
-	PL_NET_LINKSTAT_10BASET,	'<b>PLATFORM CONSTANT. </b><br><br> The Ethernet port of the device is linked to a hub
-					'(or directly to another device) at 10Mbit/sec. 
-	PL_NET_LINKSTAT_100BASET	'<b>PLATFORM CONSTANT. </b><br><br> The Ethernet port of the device is linked to a hub
-					'(or directly to another device) at 100Mbit/sec.
+    PL_NET_LINKSTAT_NOLINK,    '<b>PLATFORM CONSTANT. </b><br><br> No physical Ethernet link exists at the moment (the Ethernet port of the device is not connected to a hub).
+    PL_NET_LINKSTAT_10BASET,   '<b>PLATFORM CONSTANT. </b><br><br> The Ethernet port of the device is linked to a hub (or directly to another device) at 10Mbit/sec. 
+    PL_NET_LINKSTAT_100BASET   '<b>PLATFORM CONSTANT. </b><br><br> The Ethernet port of the device is linked to a hub (or directly to another device) at 100Mbit/sec.
 end enum
 
 property net.linkstate
@@ -109,5 +106,5 @@ property net.linkstate
 '<font color="olive"><b>1- PL_NET_LINKSTAT_10BASET </b></font>(linked at 10Mbit/s), <font color="olive"><b>2- PL_NET_LINKSTAT_100BASET 
 '</b></font>(linked at 100Mbit/s).<br><br>
 'See also <font color="teal"><b>on_net_link_change </b></font>event.
-	get = syscall(202,"41.TDL"+) as pl_net_linkstate
+    get = syscall(202,"41.TDL"+) as pl_net_linkstate
 end property

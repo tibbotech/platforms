@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		STOR (Storage system for "settings") object
+'       STOR (Storage system for "settings") object
 '**************************************************************************************************
 
 object stor
@@ -53,8 +53,8 @@ property stor.base
 'If your application needs to change the MAC address you can set the <font color="maroon"><b>stor.base </b></font>to 1- this way you will have
 'access to the entire memory.<br><br>
 'Also see <font color="maroon"><b>stor.size</b></font>.
-	get = syscall(181) as word
-	set = syscall(182) (value as word)
+    get = syscall(181) as word
+    set = syscall(182) (value as word)
 end property
 
 '--------------------------------------------------------------------
@@ -69,5 +69,5 @@ property stor.size
 'If you set the <font color="maroon"><b>stor.base </b></font>to 1 (for instance, to edit the MAC address), the <font color="maroon"><b>stor.size 
 '</b></font>will show the capacity of 2048. In other words, the number this property returns is actual_EEPROM_capacity-
 '<font color="maroon"><b>stor.base</b></font>+1.
-	get = syscall(74) as word
+    get = syscall(74) as word
 end property

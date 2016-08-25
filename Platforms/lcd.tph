@@ -1,5 +1,5 @@
 '**************************************************************************************************
-'		LCD object
+'       LCD object
 '**************************************************************************************************
 
 #if OBJECT_LCD=LCD_ENABLED
@@ -31,8 +31,8 @@ property lcd.backcolor
 '<br><br>See also: 
 '<font color="maroon"><b>lcd.forecolor</b></font>, 
 '<font color="maroon"><b>lcd.linewidth</b></font>.
-	get = syscall(330,"57.TDL"+) as word
-	set = syscall(331,"57.TDL"+) (color as word)
+    get = syscall(330,"57.TDL"+) as word
+    set = syscall(331,"57.TDL"+) (color as word)
 end property
 
 '--------------------------------------------------------------------
@@ -56,7 +56,7 @@ property lcd.bitsperpixel
 '<font color="maroon"><b>lcd.backcolor</b></font>, and 
 '<font color="maroon"><b>lcd.setpixel </b></font>are interpreted. Also, the output produced by 
 '<font color="maroon"><b>lcd.bmp </b></font>depends on this property.
-	get = syscall(325,LCD_DRIVER_TDL2) as byte
+    get = syscall(325,LCD_DRIVER_TDL2) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -73,7 +73,7 @@ property lcd.bluebits
 '<font color="maroon"><b>lcd.setpixel</b></font>, 
 '<font color="maroon"><b>lcd.forecolor</b></font>, and 
 '<font color="maroon"><b>lcd.backcolor</b></font>.
-	get = syscall(369,LCD_DRIVER_TDL2) as word
+    get = syscall(369,LCD_DRIVER_TDL2) as word
 end property
 
 '--------------------------------------------------------------------
@@ -129,8 +129,8 @@ property lcd.enabled
 'Setting the property to 
 '<font color="olive"><b>0- NO </b></font>disables the controller/panel.
 
-	get = syscall(308,"57.TDL"+) as no_yes
-	set = syscall(309,LCD_DRIVER_TDL3) (state as no_yes)
+    get = syscall(308,"57.TDL"+) as no_yes
+    set = syscall(309,LCD_DRIVER_TDL3) (state as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -144,7 +144,7 @@ property lcd.error
 '<font color="olive"><b>1- YES </b></font>on attempt to enable the display (set 
 '<font color="maroon"><b>lcd.enabled</b></font>= 
 '<font color="olive"><b>1- YES</b></font>).
-	get = syscall(310,"57.TDL"+) as no_yes
+    get = syscall(310,"57.TDL"+) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -219,7 +219,7 @@ property lcd.fontheight
 '<br><br>
 'See also: 
 '<font color="maroon"><b>lcd.fontpixelpacking</b></font>.
-	get = syscall(324,"57.TDL"+) as byte
+    get = syscall(324,"57.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -242,7 +242,7 @@ property lcd.fontpixelpacking
 '<br><br>
 'See also: 
 '<font color="maroon"><b>lcd.fontheight</b></font>.
-	get = syscall(326,"57.TDL"+) as ver_hor
+    get = syscall(326,"57.TDL"+) as ver_hor
 end property
 
 '--------------------------------------------------------------------
@@ -277,8 +277,8 @@ property lcd.forecolor
 'See also: 
 '<font color="maroon"><b>lcd.backcolor</b></font>, 
 '<font color="maroon"><b>lcd.linewidth</b></font>.
-	get = syscall(328,"57.TDL"+) as word
-	set = syscall(329,"57.TDL"+) (color as word)
+    get = syscall(328,"57.TDL"+) as word
+    set = syscall(329,"57.TDL"+) (color as word)
 end property
 
 '--------------------------------------------------------------------
@@ -309,7 +309,7 @@ property lcd.greenbits
 '<font color="maroon"><b>lcd.setpixel</b></font>, 
 '<font color="maroon"><b>lcd.forecolor</b></font>, and 
 '<font color="maroon"><b>lcd.backcolor</b></font>.
-	get = syscall(368,LCD_DRIVER_TDL2) as word
+    get = syscall(368,LCD_DRIVER_TDL2) as word
 end property
 
 '--------------------------------------------------------------------
@@ -327,8 +327,8 @@ property lcd.height
 '<br><br>
 'See also: 
 '<font color="maroon"><b>lcd.width</b></font>.
-	get = syscall(313,"57.TDL"+) as word
-	set = syscall(314,LCD_DRIVER_TDL2) (width as word)
+    get = syscall(313,"57.TDL"+) as word
+    set = syscall(314,LCD_DRIVER_TDL2) (width as word)
 end property
 
 '--------------------------------------------------------------------
@@ -375,8 +375,8 @@ property lcd.inverted
 'This property can only be changed when the display is disabled (
 '<font color="maroon"><b>lcd.enabled</b></font>= 
 '<font color="olive"><b>0- NO</b></font>). 
-	get = syscall(319,"57.TDL"+) as no_yes
-	set = syscall(320,"57.TDL"+) (inversion as no_yes)
+    get = syscall(319,"57.TDL"+) as no_yes
+    set = syscall(320,"57.TDL"+) (inversion as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -391,8 +391,8 @@ property lcd.iomapping
 'This property can only be changed when the display is disabled (
 '<font color="maroon"><b>lcd.enabled</b></font>= 
 '<font color="olive"><b>0- NO</b></font>).
-	get = syscall(321,"25.TDL"+) as string
-	set = syscall(322,"26.TDL"+) (byref mapping as string)
+    get = syscall(321,"25.TDL"+) as string
+    set = syscall(322,"26.TDL"+) (byref mapping as string)
 end property
 
 '--------------------------------------------------------------------
@@ -442,8 +442,8 @@ property lcd.linewidth
 'See also: 
 '<font color="maroon"><b>lcd.forecolor</b></font>, 
 '<font color="maroon"><b>lcd.backcolor</b></font>.
-	get = syscall(362,"57.TDL"+) as byte
-	set = syscall(363,"57.TDL"+) (width as byte)
+    get = syscall(362,"57.TDL"+) as byte
+    set = syscall(363,"57.TDL"+) (width as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -477,13 +477,13 @@ property lcd.lockcount
 'Not all controllers/panels support this feature. If your display does not support locking, executing 
 '<font color="maroon"><b>lcd.lock </b></font>will have no effect and 
 '<font color="maroon"><b>lcd.lockcount </b></font>will always stay at 0.
-	get = syscall(343,"57.TDL"+) as byte
+    get = syscall(343,"57.TDL"+) as byte
 end property
 
 '--------------------------------------------------------------------
 enum pl_lcd_paneltype 
-	PL_LCD_PANELTYPE_GRAYSCALE,	'<b>PLATFORM CONSTANT.</b><br> Monochrome or grayscale panel/controller.
-	PL_LCD_PANELTYPE_COLOR		'<b>PLATFORM CONSTANT.</b><br> Color panel/controller.
+    PL_LCD_PANELTYPE_GRAYSCALE, '<b>PLATFORM CONSTANT.</b><br> Monochrome or grayscale panel/controller.
+    PL_LCD_PANELTYPE_COLOR      '<b>PLATFORM CONSTANT.</b><br> Color panel/controller.
 end enum
 
 property lcd.paneltype
@@ -505,7 +505,7 @@ property lcd.paneltype
 '<font color="maroon"><b>lcd.backcolor</b></font>, and 
 '<font color="maroon"><b>lcd.setpixel </b></font>are interpreted. Also, the output produced by 
 '<font color="maroon"><b>lcd.bmp </b></font>is affected by this.
-	get = syscall(366,LCD_DRIVER_TDL2) as pl_lcd_paneltype
+    get = syscall(366,LCD_DRIVER_TDL2) as pl_lcd_paneltype
 end property
 
 '--------------------------------------------------------------------
@@ -522,7 +522,7 @@ property lcd.pixelpacking
 'Fonts can also have vertical or horizontal packing and the speed at which you can output the text onto the screen is improved when the 
 '<font color="maroon"><b>lcd.pixelpacking </b></font>and
 '<font color="maroon"><b>lcd.fontpixelpacking </b></font>have the same value, i.e. controller memory pixels and font encoding are "aligned".
-	get = syscall(327,LCD_DRIVER_TDL2) as ver_hor
+    get = syscall(327,LCD_DRIVER_TDL2) as ver_hor
 end property
 
 '--------------------------------------------------------------------
@@ -619,7 +619,7 @@ property lcd.redbits
 '<font color="maroon"><b>lcd.setpixel</b></font>, 
 '<font color="maroon"><b>lcd.forecolor</b></font>, and 
 '<font color="maroon"><b>lcd.backcolor</b></font>.
-	get = syscall(367,LCD_DRIVER_TDL2) as word
+    get = syscall(367,LCD_DRIVER_TDL2) as word
 end property
 
 '--------------------------------------------------------------------
@@ -635,8 +635,8 @@ property lcd.rotated
 '<font color="maroon"><b>lcd.enabled</b></font>= 
 '<font color="olive"><b>0- NO</b></font>). 
 
-	get = syscall(317,"57.TDL"+) as no_yes
-	set = syscall(318,"57.TDL"+) (rotation as no_yes)
+    get = syscall(317,"57.TDL"+) as no_yes
+    set = syscall(318,"57.TDL"+) (rotation as no_yes)
 end property
 
 '--------------------------------------------------------------------
@@ -689,15 +689,15 @@ syscall(544,LCD_DRIVER_TDL4) lcd.getpixel(x as word,y as word) as word
 
 '--------------------------------------------------------------------
 enum pl_lcd_text_alignment 
-	PL_LCD_TEXT_ALIGNMENT_TOP_LEFT,		'<b>PLATFORM CONSTANT.</b><br> Top, left.
-	PL_LCD_TEXT_ALIGNMENT_TOP_CENTER,	'<b>PLATFORM CONSTANT.</b><br> Top, center.
-	PL_LCD_TEXT_ALIGNMENT_TOP_RIGHT,	'<b>PLATFORM CONSTANT.</b><br> Top, right.
-	PL_LCD_TEXT_ALIGNMENT_MIDDLE_LEFT,	'<b>PLATFORM CONSTANT.</b><br> Middle, left.
-	PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER,	'<b>PLATFORM CONSTANT.</b><br> Middle, center.
-	PL_LCD_TEXT_ALIGNMENT_MIDDLE_RIGHT,	'<b>PLATFORM CONSTANT.</b><br> Middle, right.
-	PL_LCD_TEXT_ALIGNMENT_BOTTOM_LEFT,	'<b>PLATFORM CONSTANT.</b><br> Bottom, left.
-	PL_LCD_TEXT_ALIGNMENT_BOTTOM_CENTER,	'<b>PLATFORM CONSTANT.</b><br> Bottom, center.
-	PL_LCD_TEXT_ALIGNMENT_BOTTOM_RIGHT	'<b>PLATFORM CONSTANT.</b><br> Bottom, right.
+    PL_LCD_TEXT_ALIGNMENT_TOP_LEFT,      '<b>PLATFORM CONSTANT.</b><br> Top, left.
+    PL_LCD_TEXT_ALIGNMENT_TOP_CENTER,    '<b>PLATFORM CONSTANT.</b><br> Top, center.
+    PL_LCD_TEXT_ALIGNMENT_TOP_RIGHT,     '<b>PLATFORM CONSTANT.</b><br> Top, right.
+    PL_LCD_TEXT_ALIGNMENT_MIDDLE_LEFT,   '<b>PLATFORM CONSTANT.</b><br> Middle, left.
+    PL_LCD_TEXT_ALIGNMENT_MIDDLE_CENTER, '<b>PLATFORM CONSTANT.</b><br> Middle, center.
+    PL_LCD_TEXT_ALIGNMENT_MIDDLE_RIGHT,  '<b>PLATFORM CONSTANT.</b><br> Middle, right.
+    PL_LCD_TEXT_ALIGNMENT_BOTTOM_LEFT,   '<b>PLATFORM CONSTANT.</b><br> Bottom, left.
+    PL_LCD_TEXT_ALIGNMENT_BOTTOM_CENTER, '<b>PLATFORM CONSTANT.</b><br> Bottom, center.
+    PL_LCD_TEXT_ALIGNMENT_BOTTOM_RIGHT   '<b>PLATFORM CONSTANT.</b><br> Bottom, right.
 end enum
 
 '--------------------------------------------------------------------
@@ -715,8 +715,8 @@ property lcd.textalignment
 '<font color="maroon"><b>lcd.textorientation</b></font>, 
 '<font color="maroon"><b>lcd.texthorizontalspacing</b></font>, 
 '<font color="maroon"><b>lcd.textverticalspacing</b></font>.
-	get = syscall(334,"57.TDL"+) as pl_lcd_text_alignment
-	set = syscall(335,"57.TDL"+) (alignment as pl_lcd_text_alignment)
+    get = syscall(334,"57.TDL"+) as pl_lcd_text_alignment
+    set = syscall(335,"57.TDL"+) (alignment as pl_lcd_text_alignment)
 end property
 
 '--------------------------------------------------------------------
@@ -730,16 +730,16 @@ property lcd.texthorizontalspacing
 '<font color="maroon"><b>lcd.textalignment</b></font>, 
 '<font color="maroon"><b>lcd.textorientation</b></font>, 
 '<font color="maroon"><b>lcd.textverticalspacing</b></font>.
-	get = syscall(336,"57.TDL"+) as byte
-	set = syscall(337,"57.TDL"+) (spacing as byte)
+    get = syscall(336,"57.TDL"+) as byte
+    set = syscall(337,"57.TDL"+) (spacing as byte)
 end property
 
 '--------------------------------------------------------------------
 enum pl_lcd_text_orientation 
-	PL_LCD_TEXT_ORIENTATION_0,	'<b>PLATFORM CONSTANT.</b><br> At 0 degrees.
-	PL_LCD_TEXT_ORIENTATION_90,	'<b>PLATFORM CONSTANT.</b><br> At 90 degrees.
-	PL_LCD_TEXT_ORIENTATION_180,	'<b>PLATFORM CONSTANT.</b><br> At 180 degrees.
-	PL_LCD_TEXT_ORIENTATION_270	'<b>PLATFORM CONSTANT.</b><br> At 270 degrees.
+    PL_LCD_TEXT_ORIENTATION_0,   '<b>PLATFORM CONSTANT.</b><br> At 0 degrees.
+    PL_LCD_TEXT_ORIENTATION_90,  '<b>PLATFORM CONSTANT.</b><br> At 90 degrees.
+    PL_LCD_TEXT_ORIENTATION_180, '<b>PLATFORM CONSTANT.</b><br> At 180 degrees.
+    PL_LCD_TEXT_ORIENTATION_270  '<b>PLATFORM CONSTANT.</b><br> At 270 degrees.
 end enum
 
 property lcd.textorientation
@@ -752,8 +752,8 @@ property lcd.textorientation
 '<font color="maroon"><b>lcd.textalignment</b></font>, 
 '<font color="maroon"><b>lcd.texthorizontalspacing</b></font>, 
 '<font color="maroon"><b>lcd.textverticalspacing</b></font>.
-	get = syscall(332,"57.TDL"+) as pl_lcd_text_orientation
-	set = syscall(333,"57.TDL"+) (orientation as pl_lcd_text_orientation)
+    get = syscall(332,"57.TDL"+) as pl_lcd_text_orientation
+    set = syscall(333,"57.TDL"+) (orientation as pl_lcd_text_orientation)
 end property
 
 '--------------------------------------------------------------------
@@ -769,8 +769,8 @@ property lcd.textverticalspacing
 '<font color="maroon"><b>lcd.textalignment</b></font>, 
 '<font color="maroon"><b>lcd.textorientation</b></font>, 
 '<font color="maroon"><b>lcd.texthorizontalspacing</b></font>.
-	get = syscall(338,"57.TDL"+) as byte
-	set = syscall(339,"57.TDL"+) (spacing as byte)
+    get = syscall(338,"57.TDL"+) as byte
+    set = syscall(339,"57.TDL"+) (spacing as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -832,8 +832,8 @@ property lcd.width
 '<br><br>
 'See also: 
 '<font color="maroon"><b>lcd.height</b></font>.
-	get = syscall(311,"57.TDL"+) as word
-	set = syscall(312,LCD_DRIVER_TDL2) (width as word)
+    get = syscall(311,"57.TDL"+) as word
+    set = syscall(312,LCD_DRIVER_TDL2) (width as word)
 end property
 
 '--------------------------------------------------------------------
@@ -850,7 +850,7 @@ syscall(371,"35.TDL") !lcd.buffrq(numpages as byte) as byte
 
 '--------------------------------------------------------------------
 property !lcd.buffsize
-	get = syscall(355,"57.TDL"+) as word
+    get = syscall(355,"57.TDL"+) as word
 end property
 
 #endif
