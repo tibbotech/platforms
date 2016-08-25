@@ -112,7 +112,7 @@
 	#define LCD_DRIVER_TDL4 "79d.TDL"+
 #endif
 
-#if PLATFORM_ID=7
+#if PLATFORM_ID=KLM601
 	#define FD_DRIVER_TDL "64b.TDL"+
 	#define FD_COPYFIRMWARE "76b.TDL"+
 #else
