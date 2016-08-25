@@ -17,5 +17,5 @@ enum pl_sock_interfaces
 end enum
 
 '====================================================================
-include "..\T1000-GEN.tph"
+include "..\GEN-T1000.tph"
 include "..\WLN.tph"

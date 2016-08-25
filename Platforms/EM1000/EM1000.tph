@@ -18,4 +18,4 @@ enum pl_sock_interfaces
 end enum
 
 '====================================================================
-include "..\EM1000-GEN.tph"
+include "..\GEN-EM1000.tph"
