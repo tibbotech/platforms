@@ -246,14 +246,6 @@ enum pl_redir
 				'of socket 15.
 end enum
 
-'**************************************************************************************************
-'		EVENTS (FOR ALL OBJECTS)
-'**************************************************************************************************
-
-property !io.intcheck
-	get = syscall(646) as no_yes
-end property
-
 '====================================================================
 include "syscalls.tph"
 include "button.tph"
@@ -264,3 +256,4 @@ include "ser.tph"
 include "sock.tph"
 include "stor.tph"
 include "sys.tph"
+include "io.tph"
