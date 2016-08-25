@@ -32,6 +32,8 @@
 #define TPP2WG2 25
 #define TPP3WG2 26
 #define KLM601_32 27
+#define SIMULATOR 28
+#define LTPP3 29
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
