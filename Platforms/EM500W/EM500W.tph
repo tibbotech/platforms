@@ -25,6 +25,58 @@ enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
 end enum
 
+'--------------------------------------------------------------------
+enum pl_io_num 
+	PL_IO_NUM_0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 0 (P0.0), aslo the interrupt line 0.<br><br>
+
+	PL_IO_NUM_1_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 1 (P0.1), also the interrupt line 1.<br><br>
+
+	PL_IO_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 2 (P0.2). 				
+
+	PL_IO_NUM_3,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 3 (P0.3). 				
+
+	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 4 (P0.4). 				
+
+	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 5 (P0.5). 				
+
+	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 6 (P0.6). 				
+
+	PL_IO_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 7 (P0.7). 				
+
+	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL line that does not physically exist.
+				'The state of this line is always detected as LOW. Setting this line has no effect.  
+end enum
+
+'--------------------------------------------------------------------
+enum pl_io_port_num
+	PL_IO_PORT_NUM_0	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'8-bit port 0, contains I/O lines 0-7.
+end enum
+
+'--------------------------------------------------------------------
+enum pl_int_num 
+	PL_INT_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 0 (mapped to I/O line 0).<br><br>
+
+	PL_INT_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 1 (mapped to I/O line 1).<br><br>
+				
+	PL_INT_NULL		'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL interrupt line that does not physically exist.
+end enum
+
 '====================================================================
-include "..\EM500-GEN.tph"
+include "..\GEN.tph"
+include "..\SYS-5xx.tph"
+include "..\NET.tph"
+include "..\PPPOE.tph"
+include "..\IO-5xx.tph"
+include "..\FD.tph"
 include "..\WLN.tph"
