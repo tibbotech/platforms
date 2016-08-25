@@ -6,7 +6,7 @@
 
 #define __notdl
 
-#define PLATFORM_ID 24
+#define PLATFORM_ID 28
 
 #define BUFF_PAGE_TYPE word
 #define BUFF_SIZE_TYPE dword
