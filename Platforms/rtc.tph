@@ -23,6 +23,7 @@ syscall(175,"27.TDL") rtc.getdata(byref daycount as word, byref mincount as word
 'undetermined state and not work properly until the <font color="maroon"><b>rtc.setdata </b></font>method is executed at least once.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(176,"28.TDL") rtc.setdata(daycount as word, mincount as word, seconds as byte)
 '<b>METHOD. 
 '</b><br><br> Presets the RTC with a number of elapsed days (daycount), minutes (mincount), and seconds. This platform includes
@@ -30,6 +31,7 @@ syscall(176,"28.TDL") rtc.setdata(daycount as word, mincount as word, seconds as
 '"elapsed time" values (see daycount and mincount). <br><br>
 'Notice, that after the device powers up and provided that the backup power was not present at all times the RTC may be in the 
 'undetermined state and not work properly until the <font color="maroon"><b>rtc.setdata </b></font>method is executed at least once.
+#endif
 
 '--------------------------------------------------------------------
 property rtc.running

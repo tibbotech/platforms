@@ -263,6 +263,7 @@ property ser.dircontrol
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property ser.baudrate
 '<b>PROPERTY (WORD), DEFAULT VALUE= "platform-dependent, results in 9600 bps". </b><br><br>
 'Sets/returns the baudrate "divisor value" for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
@@ -274,6 +275,7 @@ property ser.baudrate
     get = syscall(104,"80.TDL"+) as word
     set = syscall(105,"34.TDL"+) (value as word)
 end property
+#endif
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID=LTPP3
@@ -717,6 +719,7 @@ syscall(79,"24.TDL") ser.redir(redir as pl_redir) as pl_redir
 'as the one that was passed in the redir argument if redirection was successful.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property ser.div9600
 '<b>R/O PROPERTY (WORD), DEFAULT VALUE= "platform dependent". </b><br><br>
 'Returns the value to which the <font color="maroon"><b>ser.baudrate </b></font>property must be set in order to achieve the baudrate of 
@@ -726,6 +729,7 @@ property ser.div9600
 'The value may also differ between the serial ports on the same device. An example of such device is the EM2000. On this module, the ser.div9600 value for UART3 is different from the value for UARTS0~2.
     get = syscall(126) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
 property ser.sinkdata

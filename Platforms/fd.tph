@@ -35,6 +35,7 @@ enum pl_fd_status_codes
 end enum
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.availableflashspace
 '<b>R/O PROPERTY (WORD).</b><br><br>
 'Returns the total number of sectors available to store application's data.
@@ -45,8 +46,10 @@ property fd.availableflashspace
 'On devices with dedicated flash memory, this is the size of the second flash IC that stores fd. object's data.
     get = syscall(372,"63.TDL"+) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.buffernum
 '<b>PROPERTY (BYTE), DEFAULT VALUE= 0 (RAM buffer #0 selected).</b><br><br>
 'Sets/returns the number of the RAM buffer that will be used for direct sector access.
@@ -67,8 +70,10 @@ property fd.buffernum
     get = syscall(402,"63.TDL"+) as byte
     set = syscall(403,"63.TDL"+) (buffernum as byte)
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.capacity
 '<b>R/O PROPERTY (WORD).</b><br><br>
 'Returns the capacity, in sectors, of the currently existing flash disk.
@@ -79,8 +84,10 @@ property fd.capacity
 'fd.numservicesectors, fd.totalsize, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
     get = syscall(374,"63.TDL"+) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 enum pl_fd_csum_mode 
     PL_FD_CSUM_MODE_VERIFY,   'PLATFORM CONSTANT. Verify the checksum.
     PL_FD_CSUM_MODE_CALCULATE 'PLATFORM CONSTANT. Calculate the checksum.
@@ -117,6 +124,7 @@ syscall(408,FD_DRIVER_TDL) fd.checksum(mode as pl_fd_csum_mode, byref csum as wo
 'fd.setsector,
 'fd.copyfirmware,
 'fd.copyfirmwarelzo
+#endif
 
 '--------------------------------------------------------------------
 syscall(416,"66.TDL") fd.close() as pl_fd_status_codes
@@ -128,6 +136,7 @@ syscall(416,"66.TDL") fd.close() as pl_fd_status_codes
 'Attempting to invoke this method "on" the file number that did not have any opened file associated with it generates no error. 
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(0,FD_COPYFIRMWARE) fd.copyfirmware(numsectors as word)
 '<b>METHOD.</b><br><br>
 'Copies the specified <b>number of sectors </b>(starting from logical sector 0) from the data area,
@@ -146,8 +155,10 @@ syscall(0,FD_COPYFIRMWARE) fd.copyfirmware(numsectors as word)
 'fd.checksum,
 'fd.copyfirmwarelzo,
 'fd.copyfirmwarefromfile
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
 '<b>METHOD.</b><br><br>
 'Copies the currently selected file from the flash disk into the firmware/application area (starting from physical sector 0) of the flash memory, then reboots the device to make it run the new firmware/application.
@@ -158,12 +169,13 @@ syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
 '<br><br>
 '<b>See also: </b>
 'fd.copyfirmware
+#endif
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID=KLM601
 syscall(20,"89b.TDL") !fd.copyfirmwarelzo(source_sector as word, byref length as dword, dest_sector as word, byref output_len as dword, displ_x as word, displ_y as word, display_w as word, display_h as byte, reported_cs as word) as byte
 '<b>METHOD.</b>
-#else
+#elif PLATFORM_ID<>LTPP3
 syscall(20,"89.TDL") fd.copyfirmwarelzo(byref length as dword)
 '<b>METHOD.</b><br><br>
 'Assumes that there is LZO-compressed firmware/application file of <b>length </b>bytes stored at logical sector 0 of the flash memory. Decompresses the file into the firmware/application area
@@ -310,6 +322,7 @@ syscall(373,"65.TDL") fd.format(totalsize as word, maxstoredfiles as byte) as pl
 'fd.ready
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(315,"65.TDL") fd.formatj(totalsize as word, maxstoredfiles as byte, maxjournalsectors as byte) as pl_fd_status_codes
 '<b>METHOD. </b><br><br>
 'Formats the flash memory to create a flash disk.
@@ -325,6 +338,7 @@ syscall(315,"65.TDL") fd.formatj(totalsize as word, maxstoredfiles as byte, maxj
 '<b>See also: </b>
 'fd.mount,
 'fd.ready
+#endif
 
 '--------------------------------------------------------------------
 syscall(394,"66.TDL") fd.getattributes(byref name as string) as string
@@ -336,6 +350,7 @@ syscall(394,"66.TDL") fd.getattributes(byref name as string) as string
 'File attributes can be set with fd.create or fd.setattributes methods.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(406,"65.TDL") fd.getbuffer(offset as word, len as word) as string
 '<b>METHOD. </b><br><br>
 'Reads the specified number of bytes from the currently selected RAM buffer of the flash memory
@@ -355,6 +370,7 @@ syscall(406,"65.TDL") fd.getbuffer(offset as word, len as word) as string
 'fd.setsector,
 'fd.checksum,
 'fd.copyfirmware
+#endif
 
 '--------------------------------------------------------------------
 syscall(386,"67.TDL") fd.getdata(maxinplen as byte) as string
@@ -400,6 +416,7 @@ syscall(390,"66.TDL") fd.getnumfiles() as byte
 'fd.capacity, fd.numservicesectors, fd.totalsize, fd.getfreespace, fd.maxstoredfiles
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(404,"65.TDL") fd.getsector(num as word) as pl_fd_status_codes
 '<b>METHOD. </b><br><br>
 'Reads the entire 264 bytes from the specified sector into the currently selected RAM buffer of the flash memory (selection is made through the fd.buffernum property).
@@ -420,6 +437,7 @@ syscall(404,"65.TDL") fd.getsector(num as word) as pl_fd_status_codes
 'fd.setsector,
 'fd.checksum,
 'fd.copyfirmware
+#endif
 
 '--------------------------------------------------------------------
 property fd.laststatus
@@ -446,6 +464,7 @@ property fd.maxopenedfiles
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.maxstoredfiles
 '<b>R/O PROPERTY (BYTE).</b><br><br>
 'Returns the total number of files that can be simultaneously stored on the currently existing flash disk.
@@ -458,6 +477,7 @@ property fd.maxstoredfiles
 'fd.capacity, fd.numservicesectors, fd.totalsize, fd.getfreespace, fd.getnumfiles
     get = syscall(389,"63.TDL"+) as byte
 end property
+#endif
 
 '--------------------------------------------------------------------
 syscall(412,"65.TDL") fd.mount() as pl_fd_status_codes
@@ -554,6 +574,7 @@ syscall(392,"63.TDL") fd.resetdirpointer()
 'fd.getnumfiles
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.sector
 '<b>R/O PROPERTY (WORD).</b><br><br>
 'Returns the physical sector number corresponding to the current position of the file pointer position (see fd.pointer).
@@ -564,6 +585,7 @@ property fd.sector
 'This property exists purely for informational purposes. There is no real need for you to know where the fd. object stores your data.
     get = syscall(383,"63.TDL"+) as dword
 end property
+#endif
 
 '--------------------------------------------------------------------
 syscall(395,"66.TDL") fd.setattributes(byref name as string, byref attr as string) as pl_fd_status_codes
@@ -579,6 +601,7 @@ syscall(395,"66.TDL") fd.setattributes(byref name as string, byref attr as strin
 'fd.getattributes, fd.create
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(407,"65.TDL") fd.setbuffer(byref data as string, offset as word) as word
 '<b>METHOD. </b><br><br>
 'Writes a specified number of bytes into the currently selected RAM buffer of the flash memory (selection is made through the fd.buffernum property). 
@@ -602,6 +625,7 @@ syscall(407,"65.TDL") fd.setbuffer(byref data as string, offset as word) as word
 'fd.setsector,
 'fd.checksum,
 'fd.copyfirmware
+#endif
 
 '--------------------------------------------------------------------
 syscall(387,"67.TDL") fd.setdata(byref data as string) as pl_fd_status_codes
@@ -647,6 +671,7 @@ syscall(382,"67.TDL") fd.setpointer(pos as dword) as pl_fd_status_codes
 'fd.pointer
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(405,"65.TDL") fd.setsector(num as word) as pl_fd_status_codes
 '<b>METHOD. </b><br><br>
 'Writes the entire 264 bytes of the specified sector with the data from the currently selected RAM buffer of the flash memory
@@ -670,8 +695,10 @@ syscall(405,"65.TDL") fd.setsector(num as word) as pl_fd_status_codes
 'fd.getsector,
 'fd.checksum,
 'fd.copyfirmware
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.totalsize
 '<b>R/O PROPERTY (WORD).</b><br><br>
 'Returns the total number of sectors occupied by the currently existing flash disk.
@@ -684,6 +711,7 @@ property fd.totalsize
 'fd.capacity, fd.numservicesectors, fd.getfreespace, fd.maxstoredfiles, fd.getnumfiles
     get = syscall(421,"63.TDL"+) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
 property !fd.leveling
@@ -811,6 +839,7 @@ property !fd.errordata
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.transactioncapacityremaining
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0 (0 sectors).</b><br><br>
 'Returns the number of sectors that can still be changed in the cause of the current disk transaction.
@@ -825,8 +854,10 @@ property fd.transactioncapacityremaining
 'fd.transactioncommit,fd.transactionstarted 
     get = syscall(485,"63.TDL"+) as byte
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(316,"86.TDL") fd.transactioncommit() as pl_fd_status_codes
 '<b>METHOD. </b><br><br>
 'Commits a disk transaction that was previously started with the fd.transactionstart method.
@@ -835,8 +866,10 @@ syscall(316,"86.TDL") fd.transactioncommit() as pl_fd_status_codes
 '<br><br>
 '<b>See also: </b>
 'fd.transactionstarted, fd.transactioncapacityremaining
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(484,"86.TDL") fd.transactionstart() as pl_fd_status_codes
 '<b>METHOD. </b><br><br>
 'Starts a disk transaction.
@@ -848,8 +881,10 @@ syscall(484,"86.TDL") fd.transactionstart() as pl_fd_status_codes
 '<br><br>
 '<b>See also: </b>
 'fd.transactionstarted, fd.transactioncapacityremaining
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property fd.transactionstarted
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (transaction hasn't been started yet).</b><br><br>
 'Reports whether a disk transaction is currently in progress.
@@ -860,5 +895,6 @@ property fd.transactionstarted
 'fd.transactioncapacityremaining
     get = syscall(479,"63.TDL"+) as no_yes
 end property
+#endif
 
 #endif

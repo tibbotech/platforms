@@ -40,6 +40,7 @@ property sys.runmode
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 enum pl_sys_reset_type
     PL_SYS_RESET_TYPE_INTERNAL, '<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was a self-reset.
     PL_SYS_RESET_TYPE_EXTERNAL  '<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was not a self-reset.
@@ -53,6 +54,7 @@ property sys.resettype
 'color="olive"><b>1- PL_SYS_RESET_TYPE_EXTERNAL </b></font> (caused by power-cycling of the device or applying reset pulse to the RST line).
     get = syscall(72) as pl_sys_reset_type
 end property
+#endif
 
 '--------------------------------------------------------------------
 enum pl_sys_ext_reset_type
@@ -82,6 +84,7 @@ property sys.extresettype
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property sys.totalbuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
 'Returns the total amount of memory pages available for buffers (one page= 256 bytes). This is calculated as total available variable memory
@@ -89,8 +92,10 @@ property sys.totalbuffpages
 'See also <font color="maroon"><b>sys.buffalloc </b></font> and <font color="maroon"><b>sys.freebuffpages</b></font>.
     get = syscall(83,"33.TDL"+) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 property sys.freebuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
 'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes). Only changes after the <font color="maroon"><b>
@@ -99,6 +104,7 @@ property sys.freebuffpages
 'See also <font color="maroon"><b>sys.totalbuffpages</b></font>.
     get = syscall(84,"33.TDL"+) as word
 end property
+#endif
 
 '--------------------------------------------------------------------
 syscall(69) sys.halt()
@@ -188,6 +194,7 @@ property sys.serialnum
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 syscall(295,"74.TDL") sys.setserialnum(byref str as string) as ok_ng
 '<b>METHOD. </b><br><br>
 'Sets the programmable portion (64 bytes) of the device's 128-byte serial number. Returns 
@@ -207,6 +214,7 @@ syscall(295,"74.TDL") sys.setserialnum(byref str as string) as ok_ng
 '<font color="olive"><b>0- NO </b></font>automatically.
 '<br><br>
 'The Entire 128-byte serial number can be obtained through the <font color="maroon"><b>sys.serialnum </b></font>R/O property.
+#endif
 
 '--------------------------------------------------------------------
 syscall(543,"74.TDL") sys.debugprint(byref str as string)

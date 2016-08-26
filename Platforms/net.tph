@@ -24,6 +24,7 @@ event(7)  on_net_link_change
 'event is taken off the queue in the cause of the doevents execution related to the same event taken off the queue earlier.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3
 event(14) on_net_overrun
 '<b>EVENT of the net object. </b><br><br> 
 'Generated when overflow occurs on the internal RX buffer of the Network Interface Controller (NIC) IC.
@@ -34,6 +35,7 @@ event(14) on_net_overrun
 'Notice, that this event signifies the overrun of the hardware RX buffer of the NIC itself. This has nothing to do with the overrun of RX
 'buffers of individual sockets (see
 '<font color="teal"><b>on_sock_overrun </b></font>event).
+#endif
 
 '--------------------------------------------------------------------
 property net.mac
