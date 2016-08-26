@@ -6,8 +6,8 @@
 
 #define PLATFORM_ID 29
 
-#define BUFF_PAGE_TYPE byte
-#define BUFF_SIZE_TYPE word
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
 
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
@@ -295,4 +295,4 @@ include "..\ser.tph"
 include "..\sock.tph"
 include "..\stor.tph"
 include "..\sys.tph"
-include "..\sys-1xxx.tph"
+include "..\sys-2xxx.tph"
