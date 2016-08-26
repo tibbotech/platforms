@@ -1,0 +1,212 @@
+'**************************************************************************************************
+'       LSOCK (Linux socket) object
+'**************************************************************************************************
+
+object lsock
+
+'--------------------------------------------------------------------
+enum pl_lsock_state
+    PL_LSST_CLOSED,  '<b>PLATFORM CONSTANT. </b><br><br> Connection is closed. <br><br>Applies both to UDP and TCP.
+    PL_LSST_AO,      '<b>PLATFORM CONSTANT. </b><br><br> Connection is being established (it is an active open).
+                     '<br><br>Applies only to TCP.
+    PL_LSST_EST      '<b>PLATFORM CONSTANT. </b><br><br> Connection is established. <br><br>Applies both to UDP and TCP.  
+end enum
+
+'--------------------------------------------------------------------
+enum pl_lsock_protocol
+'<b>ENUM. </b><br><br> 
+    PL_LSOCK_PROTOCOL_UDP, '<b>PLATFORM CONSTANT. </b><br><br> Specifies UDP transport protocol for the socket.
+    PL_LSOCK_PROTOCOL_TCP  '<b>PLATFORM CONSTANT. </b><br><br> Specifies TCP transport protocol for the socket.
+end enum
+
+'--------------------------------------------------------------------
+property lsock.acceptbcast
+    get = syscall(647) as no_yes
+    set = syscall(648) (acceptbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+enum pl_lsock_inconmode
+'<b>ENUM. </b><br><br> 
+'Contains the list of constants related to whether the socket accepts any incoming connections and, if yes, from which sources.
+
+    PL_LSOCK_INCONMODE_NONE,                    '<b>PLATFORM CONSTANT. </b><br><br> The socket does not accept any incoming connections.
+	
+    PL_LSOCK_INCONMODE_SPECIFIC_IPPORT,         '<b>PLATFORM CONSTANT. </b><br><br> 
+                                                'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+                                                '<b>sock.targetip</b></font>) and specific port (matching <font color="maroon"><b>
+                                                'sock.targetport</b></font>)
+										
+    PL_LSOCK_INCONMODE_SPECIFIC_IP_ANY_PORT,    '<b>PLATFORM CONSTANT. </b><br><br> 
+                                                'The socket will only accept an incoming connection from specific IP (matching <font color="maroon">
+                                                '<b>sock.targetip</b></font>), but any port.
+												
+    PL_LSOCK_INCONMODE_ANY_IP_ANY_PORT          '<b>PLATFORM CONSTANT. </b><br><br> 
+                                                'The socket will accept an incoming connection from any IP and any port.
+end enum
+
+'--------------------------------------------------------------------
+property lsock.bcast
+    get = syscall(649) as no_yes
+end property
+
+'--------------------------------------------------------------------
+property lsock.connectiontout
+    get = syscall(650) as word
+    set = syscall (651) (connectiontout as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.inconenabledmaster
+    get = syscall(652) as no_yes
+    set= syscall(653) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property lsock.inconmode
+    get = syscall(654) as pl_lsock_inconmode
+    set = syscall(655) (inconmode as pl_lsock_inconmode)
+end property
+
+'--------------------------------------------------------------------
+property lsock.localport
+    get = syscall(656) as word
+    set = syscall(657) (local_port as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.num
+    get = syscall(658) as byte
+    set = syscall(659) (sock as byte)
+end property
+
+'--------------------------------------------------------------------
+property lsock.numofsock
+    get = syscall(660) as byte
+end property
+
+'--------------------------------------------------------------------
+property lsock.protocol
+    get = syscall(661) as pl_lsock_protocol
+    set = syscall(662) (proto as pl_lsock_protocol)
+end property
+
+'--------------------------------------------------------------------
+property lsock.remoteip
+    get = syscall(663) as string
+end property
+
+'--------------------------------------------------------------------
+property lsock.remoteport
+    get = syscall(664) as word
+end property
+
+'--------------------------------------------------------------------
+property lsock.sinkdata
+    get = syscall(665) as no_yes
+    set= syscall(666) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property lsock.state
+    get = syscall(667) as pl_lsock_state
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetbcast
+    get = syscall(668) as no_yes
+    set = syscall(669) (targetbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetip
+    get = syscall(670) as string
+    set = syscall(671) (byref targetip as string)
+end property
+
+'--------------------------------------------------------------------
+property lsock.targetport
+    get = syscall(672) as word
+    set = syscall(673) (targetport as word)
+end property
+
+'--------------------------------------------------------------------
+property lsock.toutcounter
+    get = syscall(674) as word
+end property
+
+'--------------------------------------------------------------------
+syscall(675) lsock.connect()
+
+'--------------------------------------------------------------------
+syscall(676) lsock.close()
+
+'--------------------------------------------------------------------
+syscall(677) lsock.getdata(maxinplen as word) as string
+
+'--------------------------------------------------------------------
+syscall(678) lsock.setdata(byref txdata as string)
+
+'--------------------------------------------------------------------
+syscall(679) lsock.send()
+
+'--------------------------------------------------------------------
+property lsock.newtxlen
+    get = syscall(680) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+syscall(681) lsock.txclear()
+
+'--------------------------------------------------------------------
+property lsock.txfree
+    get = syscall(682) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+property lsock.txlen
+    get = syscall(683) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+property lsock.txbuffsize
+    get = syscall(684) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+syscall(685) lsock.notifysent(threshold as word)
+
+'--------------------------------------------------------------------
+syscall(686) lsock.nextpacket()
+
+'--------------------------------------------------------------------
+property lsock.rxlen
+    get = syscall(687) as BUFF_SIZE_TYPE
+end property
+
+'--------------------------------------------------------------------
+property lsock.listen
+    get = syscall(688) as no_yes
+    set = syscall(689) (listen as no_yes)
+end property
+
+'--------------------------------------------------------------------
+syscall(690) lsock.rxbuffrq(numpages as word) as word
+
+'--------------------------------------------------------------------
+syscall(691) lsock.txbuffrq(numpages as word) as word
+
+'--------------------------------------------------------------------
+syscall(692) lsock.peekdata(maxinplen as word) as string
+
+'--------------------------------------------------------------------
+syscall(693) lsock.redir(redir as pl_redir) as pl_redir
+
+'--------------------------------------------------------------------
+event(25) on_lsock_data_arrival
+
+'--------------------------------------------------------------------
+event(26) on_lsock_event(newstate as pl_lsock_state)
+
+'--------------------------------------------------------------------
+event(27) on_lsock_data_sent
