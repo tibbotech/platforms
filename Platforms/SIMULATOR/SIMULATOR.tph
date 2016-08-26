@@ -24,5 +24,26 @@ enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NET		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
 end enum
 
+'--------------------------------------------------------------------
+enum pl_io_num
+    PL_IO_NULL  '<b>PLATFORM CONSTANT.</b><br><br>
+                'This is a NULL line that does not physically exist.
+end enum
+
 '====================================================================
-include "..\EM2000-GEN.tph"
+include "..\defines.tph"
+include "..\constants.tph"
+include "..\syscalls.tph"
+include "..\beep.tph"
+include "..\button.tph"
+include "..\fd.tph"
+include "..\kp.tph"
+include "..\lcd.tph"
+include "..\net.tph"
+include "..\pat.tph"
+include "..\romfile.tph"
+include "..\rtc.tph"
+include "..\sock.tph"
+include "..\stor.tph"
+include "..\sys.tph"
+include "..\sys-2xxx.tph"
