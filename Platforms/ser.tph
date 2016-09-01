@@ -281,39 +281,47 @@ end property
 #if PLATFORM_ID=LTPP3
 
 enum pl_ser_baud
-	PL_SER_BAUD_50,
-	PL_SER_BAUD_75,
-	PL_SER_BAUD_110,
-	PL_SER_BAUD_134,
-	PL_SER_BAUD_150,
-	PL_SER_BAUD_200,
-	PL_SER_BAUD_300,
-	PL_SER_BAUD_600,
-	PL_SER_BAUD_1200,
-	PL_SER_BAUD_1800,
-	PL_SER_BAUD_2400,
-	PL_SER_BAUD_4800,
-	PL_SER_BAUD_9600,
-	PL_SER_BAUD_19200,
-	PL_SER_BAUD_38400,
-	PL_SER_BAUD_57600,
-	PL_SER_BAUD_115200,
-	PL_SER_BAUD_230400,
-	PL_SER_BAUD_460800,
-	PL_SER_BAUD_500000,
-	PL_SER_BAUD_576000,
-	PL_SER_BAUD_921600,
-	PL_SER_BAUD_1000000,
-	PL_SER_BAUD_1152000,
-	PL_SER_BAUD_1500000,
-	PL_SER_BAUD_2000000,
-	PL_SER_BAUD_2500000,
-	PL_SER_BAUD_3000000,
-	PL_SER_BAUD_3500000,
-	PL_SER_BAUD_4000000
+'<b>ENUM. </b><br><br> 
+'Contains the list of constants related to the selection of baud rates of the serial port in the UART mode
+'(<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
+	PL_SER_BAUD_50,      '<b>PLATFORM CONSTANT. </b><br><br> 50 bps
+	PL_SER_BAUD_75,      '<b>PLATFORM CONSTANT. </b><br><br> 75 bps
+	PL_SER_BAUD_110,     '<b>PLATFORM CONSTANT. </b><br><br> 110 bps
+	PL_SER_BAUD_134,     '<b>PLATFORM CONSTANT. </b><br><br> 134.5 bps
+	PL_SER_BAUD_150,     '<b>PLATFORM CONSTANT. </b><br><br> 150 bps
+	PL_SER_BAUD_200,     '<b>PLATFORM CONSTANT. </b><br><br> 200 bps
+	PL_SER_BAUD_300,     '<b>PLATFORM CONSTANT. </b><br><br> 300 bps
+	PL_SER_BAUD_600,     '<b>PLATFORM CONSTANT. </b><br><br> 600 bps
+	PL_SER_BAUD_1200,    '<b>PLATFORM CONSTANT. </b><br><br> 1,200 bps
+	PL_SER_BAUD_1800,    '<b>PLATFORM CONSTANT. </b><br><br> 1,800 bps
+	PL_SER_BAUD_2400,    '<b>PLATFORM CONSTANT. </b><br><br> 2,400 bps
+	PL_SER_BAUD_4800,    '<b>PLATFORM CONSTANT. </b><br><br> 4,800 bps
+	PL_SER_BAUD_9600,    '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 9,600 bps
+	PL_SER_BAUD_19200,   '<b>PLATFORM CONSTANT. </b><br><br> 19,200 bps    
+	PL_SER_BAUD_38400,   '<b>PLATFORM CONSTANT. </b><br><br> 38,400 bps    
+	PL_SER_BAUD_57600,   '<b>PLATFORM CONSTANT. </b><br><br> 57,600 bps    
+	PL_SER_BAUD_115200,  '<b>PLATFORM CONSTANT. </b><br><br> 115,200 bps   
+	PL_SER_BAUD_230400,  '<b>PLATFORM CONSTANT. </b><br><br> 230,400 bps   
+	PL_SER_BAUD_460800,  '<b>PLATFORM CONSTANT. </b><br><br> 460,800 bps   
+	PL_SER_BAUD_500000,  '<b>PLATFORM CONSTANT. </b><br><br> 500,000 bps   
+	PL_SER_BAUD_576000,  '<b>PLATFORM CONSTANT. </b><br><br> 576,000 bps   
+	PL_SER_BAUD_921600,  '<b>PLATFORM CONSTANT. </b><br><br> 921,600 bps   
+	PL_SER_BAUD_1000000, '<b>PLATFORM CONSTANT. </b><br><br> 1,000,000 bps  
+	PL_SER_BAUD_1152000, '<b>PLATFORM CONSTANT. </b><br><br> 1,152,000 bps  
+	PL_SER_BAUD_1500000, '<b>PLATFORM CONSTANT. </b><br><br> 1,500,000 bps  
+	PL_SER_BAUD_2000000, '<b>PLATFORM CONSTANT. </b><br><br> 2,000,000 bps  
+	PL_SER_BAUD_2500000, '<b>PLATFORM CONSTANT. </b><br><br> 2,500,000 bps  
+	PL_SER_BAUD_3000000, '<b>PLATFORM CONSTANT. </b><br><br> 3,000,000 bps  
+	PL_SER_BAUD_3500000, '<b>PLATFORM CONSTANT. </b><br><br> 3,500,000 bps  
+	PL_SER_BAUD_4000000  '<b>PLATFORM CONSTANT. </b><br><br> 4,000,000 bps     
 end enum
 
 property ser.baud
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 12- PL_SER_BAUD_9600. </b><br><br>
+'Sets/returns the baudrate for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
+'<br><br> 
+'This property is only relevant when the serial port is in the UART mode
+'(<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
 	get = syscall(694) as pl_ser_baud
 	set = syscall(695) (value as pl_ser_baud)
 end property
