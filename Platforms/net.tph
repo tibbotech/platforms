@@ -53,6 +53,10 @@ property net.ip
 'This property can only be written to when no socket is engaged in communications over the Ethernet interface, i.e. there is no socket
 'for which <font color="maroon"><b>sock.statesimple </b></font>is <u>not </u> equal to <font color="olive"><b>0- PL_SSTS_CLOSED </b></font> and
 '<font color="maroon"><b>sock.currentinterface</b></font>= <font color="olive"><b>1- PL_INTERFACE_NET</b></font>.
+#if PLATFORM_ID=LTPP3 or PLATFORM_ID=SIMULATOR
+'<br><br>
+'<b>To avoid conflicts, do not assign an IP address that is used by your computer's network interface.<b>
+#endif
 '<br><br>
 'See also <font color="maroon"><b>net.gatewayip </b></font> and <font color="maroon"><b>net.netmask</b></font>.
     get = syscall(195,"39.TDL"+) as string
