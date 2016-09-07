@@ -2,9 +2,10 @@
 description=LTPP3 Board
 version=LTPP3-3.60
 rom=983040
-ram=22271
+ram=86784
 codebits=24
-sector=256
+databits=32
+sector=65536
 
 [transport1]
 name=udp_winpcap
