@@ -375,3 +375,12 @@ property beep.divider
     set = syscall(180) (value as word)
 end property
 #endif
+
+#if PLATFORM_ID=SIMULATOR
+property beep.divider
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the buzzer frequency.
+    get = syscall(179) as word
+    set = syscall(180) (value as word)
+end property
+#endif
