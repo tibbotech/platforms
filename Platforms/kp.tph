@@ -332,4 +332,13 @@ syscall(450,"68.TDL") kp.clearbuffer()
 '<b>METHOD. </b><br><br>
 '---PRELIMINARY---<br><br>
 
+'--------------------------------------------------------------------
+#if PLATFORM_ID=SIMULATOR
+
+syscall(696) kp.setlabel(key_code as byte, byref label as string)
+'<b>METHOD. </b><br><br>
+'Use this method to set a label on a keypad button in TiOS Simulator.
+
+#endif
+
 #endif
