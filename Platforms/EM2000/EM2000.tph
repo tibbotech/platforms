@@ -12,6 +12,7 @@
 #define BUFF_SIZE_TYPE dword
 #define EXTENDED_SOCK 1
 #define SER_7BIT_LIMITATION 1
+#define PLATFORM_TYPE_32 1
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
@@ -320,7 +321,7 @@ end enum
 
 '--------------------------------------------------------------------
 include "..\GEN.tph"
-include "..\SYS-2xxx.tph"
+include "..\SYS-1xxx.tph"
 include "..\NET.tph"
 include "..\PPPOE.tph"
 include "..\IO-1xxx.tph"

@@ -56,21 +56,21 @@ end property
 
 '--------------------------------------------------------------------
 property sys.totalbuffpages
-'<b>R/O PROPERTY (BYTE). </b><br><br>
+'<b>R/O PROPERTY (BYTE or WORD). </b><br><br>
 'Returns the total amount of memory pages available for buffers (one page= 256 bytes). This is calculated as total available variable memory
 '(RAM) minus whatever is required to store variables of the current project. <br><br>
 'See also <font color="maroon"><b>sys.buffalloc </b></font> and <font color="maroon"><b>sys.freebuffpages</b></font>.
-    get = syscall(83,"33.TDL"+) as byte
+    get = syscall(83,"33.TDL"+) as BUFF_PAGE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property sys.freebuffpages
-'<b>R/O PROPERTY (BYTE). </b><br><br>
+'<b>R/O PROPERTY (BYTE or WORD). </b><br><br>
 'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes). Only changes after the <font color="maroon"><b>
 'sys.buffalloc </b></font> method is used. Preparatory methods like <font color="maroon"><b>ser.rxbuffrq </b></font>do not influence what 
 'this property returns. <br><br>
 'See also <font color="maroon"><b>sys.totalbuffpages</b></font>.
-    get = syscall(84,"33.TDL"+) as byte
+    get = syscall(84,"33.TDL"+) as BUFF_PAGE_TYPE
 end property
 
 '--------------------------------------------------------------------

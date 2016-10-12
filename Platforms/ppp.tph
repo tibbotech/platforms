@@ -2,10 +2,12 @@
 '       PPP object
 '**************************************************************************************************
 
+#if SER_EXCLUDED=0
 object ppp
 'The ppp object represents a ppp interface of your device (i.e. for accessing TCP/IP networks thru landline or GPRS modems).
 'This object only specifies various parameters related to the ppp interface (such as the IP address) and is not responsible for
 'sending/transmitting network data. The latter is the job of the sock object.
+#endif
 
 '--------------------------------------------------------------------
 property ppp.enabled

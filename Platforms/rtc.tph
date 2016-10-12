@@ -46,13 +46,17 @@ property rtc.running
 end property
 
 '--------------------------------------------------------------------
+#if EXTENDED_RTC=1
 property rtc.clock512
     get = syscall(614) as dis_en
     set = syscall(615) (value as dis_en)
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if EXTENDED_RTC=1
 property rtc.calibration
     get = syscall(616) as char
     set = syscall(617) (value as char)
 end property
+#endif

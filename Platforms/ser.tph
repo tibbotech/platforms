@@ -2,6 +2,7 @@
 '       SER (Serial port) object
 '**************************************************************************************************
 
+#if SER_EXCLUDED=0
 object ser
 'This is a serial port object that encompasses ALL serial ports (UARTs) available on a particular system (total number
 'of available serial ports can be obtained through the <font color="maroon"><b>ser.numofports </b></font>read-only property).
@@ -23,6 +24,7 @@ object ser
 'won't happen automatically as well. <br><br>For the UART mode, the TX/W1out/dout and RX/W1in/din are configured automatically when 
 'the port is opened (see <font color="maroon"><b>ser.enabled</b></font>). Your application still needs to set the direction of 
 'RTS/W0out/cout CTS/W0&1in/cin "manually".
+#endif
 
 '--------------------------------------------------------------------
 property ser.numofports
