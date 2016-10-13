@@ -8,15 +8,15 @@ databits=32
 sector=65536
 
 [transport1]
-name=udp_winpcap
-description=WinPCap (non-broadcast) UDP Transport
-device=taiko.winpcapdevice
-browsedlg=em202ui.browsedlg
-
-[transport2]
 name=udp_broadcast
 description=Broadcast UDP Transport
 device=taiko.udpdevice
+browsedlg=em202ui.browsedlg
+
+[transport2]
+name=udp_winpcap
+description=WinPCap (non-broadcast) UDP Transport
+device=taiko.winpcapdevice
 browsedlg=em202ui.browsedlg
 
 
