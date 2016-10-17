@@ -10,6 +10,11 @@
 #define BUFF_SIZE_TYPE dword
 
 '--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
+
+'--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
 	PL_SOCK_INTERFACE_NET		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
