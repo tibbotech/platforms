@@ -84,7 +84,6 @@ property sys.extresettype
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
 property sys.totalbuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
 'Returns the total amount of memory pages available for buffers (one page= 256 bytes). This is calculated as total available variable memory
@@ -92,10 +91,8 @@ property sys.totalbuffpages
 'See also <font color="maroon"><b>sys.buffalloc </b></font> and <font color="maroon"><b>sys.freebuffpages</b></font>.
     get = syscall(83,"33.TDL"+) as word
 end property
-#endif
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
 property sys.freebuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
 'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes). Only changes after the <font color="maroon"><b>
@@ -104,7 +101,6 @@ property sys.freebuffpages
 'See also <font color="maroon"><b>sys.totalbuffpages</b></font>.
     get = syscall(84,"33.TDL"+) as word
 end property
-#endif
 
 '--------------------------------------------------------------------
 syscall(69) sys.halt()
