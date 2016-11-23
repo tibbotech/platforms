@@ -428,6 +428,13 @@ property lsock.rxlen
 end property
 
 '--------------------------------------------------------------------
+syscall(716) lsock.rxclear()
+'<b>METHOD. </b><br><br>
+'For the selected socket (selection is made through <font color="maroon"><b>lsock.num</b></font>) clears (deletes all data from) the RX buffer.
+'Invoking this method will have no effect when the socket is not idle (<font color="maroon"><b>lsock.state</b></font> <> 
+'<font color="olive"><b>0- PL_LSST_CLOSED</b></font>).
+
+'--------------------------------------------------------------------
 property lsock.listen
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO. </b><br><br>
 'When set to <font color="olive"><b>1- YES </b></font>, <font color="maroon"><b>lsock.connect</b></font> will start listening instead of connecting to a target.<br><br>
