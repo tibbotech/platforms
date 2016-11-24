@@ -28,7 +28,7 @@
 #define TPP2N 21
 #define EM1001 22
 #define EM1001W 23
-#define EM2000 24
+#define EM2000W 24
 #define TPP2WG2 25
 #define TPP3WG2 26
 #define KLM601_32 27
