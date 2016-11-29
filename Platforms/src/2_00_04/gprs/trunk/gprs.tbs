@@ -803,6 +803,8 @@ sub gprs_proc_timer_2()
 				sock.num=gprs_socket
 				if sock.statesimple=PL_SSTS_CLOSED then
 					sock.connect
+					while sock.statesimple<>PL_SSTS_EST
+					wend
 				end if
 				sock.setdata(chr(&h09)+chr(&h04)+chr(&h00)+chr(&h04)) 'echo request command
 				sock.send
