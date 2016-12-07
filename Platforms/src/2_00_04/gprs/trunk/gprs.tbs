@@ -795,22 +795,24 @@ sub gprs_proc_timer_2()
 					ppp.enabled=YES
 				end if
 				
-				'send echo request
-				#if GPRS_DEBUG_PRINT
-					gprs_debugprint("Echo request")
-				#endif
-				
-				sock.num=gprs_socket
-				if sock.statesimple=PL_SSTS_CLOSED then
-					sock.connect
-					while sock.statesimple<>PL_SSTS_EST
-					wend
-				end if
-				sock.setdata(chr(&h09)+chr(&h04)+chr(&h00)+chr(&h04)) 'echo request command
-				sock.send
+				#if 1
+					'send echo request
+					#if GPRS_DEBUG_PRINT
+						gprs_debugprint("Echo request")
+					#endif
+					
+					sock.num=gprs_socket
+					if sock.statesimple=PL_SSTS_CLOSED then
+						sock.connect
+						while sock.statesimple<>PL_SSTS_EST
+						wend
+					end if
+					sock.setdata(chr(&h09)+chr(&h04)+chr(&h00)+chr(&h04)) 'echo request command
+					sock.send
 
-				gprs_tout_ctr=GPRS_ECHO_TOUT
-				gprs_cmd_try=gprs_cmd_try+1
+					gprs_tout_ctr=GPRS_ECHO_TOUT
+					gprs_cmd_try=gprs_cmd_try+1
+				#endif
 
 			end select
 		end if
