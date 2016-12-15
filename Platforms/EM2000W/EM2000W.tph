@@ -13,6 +13,10 @@
 #define EXTENDED_SOCK 1
 #define SER_7BIT_LIMITATION 1
 #define PLATFORM_TYPE_32 1
+#define OBJECT_KP KP_ENABLED
+#define OBJECT_FD FD_ENABLED
+#define OBJECT_WLN WLN_ENABLED
+#define OBJECT_LCD LCD_ENABLED
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
