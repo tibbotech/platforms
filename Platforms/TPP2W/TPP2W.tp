@@ -71,6 +71,10 @@ description=Display (lcd.) object
 value=LCD_ENABLED
 
 [define4.option1]
+description=Disabled
+value=LCD_DISABLED
+
+[define4.option2]
 description=Enabled
 value=LCD_ENABLED
 

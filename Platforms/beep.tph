@@ -331,7 +331,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=EM2000
+#if PLATFORM_ID=EM2000W
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
