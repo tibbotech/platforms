@@ -165,7 +165,7 @@ syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
 '--------------------------------------------------------------------
 #if COPY_FIRMWARE=1
 
-#if PLATFORM_ID=KLM601
+#if PLATFORM_ID=KLM601_32
 
 syscall(20,"89b.TDL") fd.copyfirmwarelzo(app_present as no_yes, source_sector as word) as byte
 '<b>METHOD.</b>
