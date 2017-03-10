@@ -17,6 +17,9 @@
 #define OBJECT_FD FD_ENABLED
 #define OBJECT_WLN WLN_ENABLED
 #define OBJECT_LCD LCD_ENABLED
+#define COPY_FIRMWARE 1
+#define EXTENDED_FD 1
+
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED

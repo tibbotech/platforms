@@ -128,59 +128,103 @@ syscall(416,"66.TDL") fd.close() as pl_fd_status_codes
 'Attempting to invoke this method "on" the file number that did not have any opened file associated with it generates no error. 
 
 '--------------------------------------------------------------------
+#if COPY_FIRMWARE=1
 syscall(0,FD_COPYFIRMWARE) fd.copyfirmware(numsectors as word)
 '<b>METHOD.</b><br><br>
-'Copies the specified <b>number of sectors </b>(starting from logical sector 0) from the data area,
-'and into the firmware/application area (starting from physical sector 0) of the flash memory, then reboots the device to make it run the new firmware/application.
+'Copies the specified number of sectors (starting from the logical sector 0) from the data area into the TiOS/application area of the flash memory, then reboots the device to make it run new TiOS/application.
 '<br><br>
-'<b>This method is not supported on the EM500 platform.</b>
+'The data must start with TiOS firmware, optionally followed by the compiled Tibbo BASIC/C application binary.
+'The numsectors argument must be specified to cover at least the size of the TiOS firmware. Specifying fewer sectors than that will abort the execution of this method.
 '<br><br>
-'<b>BE VERY CAREFUL! </b>Using the fd.copyfirmware on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
+'<b>BE VERY CAREFUL! </b>Using the fd.copyfirmware on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.</b>
 '<br><br>
 '<b>See also: </b>
-'fd.buffernum,
-'fd.getbuffer,
-'fd.setbuffer,
-'fd.getsector,
-'fd.setsector,
-'fd.checksum,
 'fd.copyfirmwarelzo,
 'fd.copyfirmwarefromfile
+'fd.copyfirmwarefromfilelzo
+#endif
 
 '--------------------------------------------------------------------
+#if COPY_FIRMWARE=1
 syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
 '<b>METHOD.</b><br><br>
-'Copies the currently selected file from the flash disk into the firmware/application area (starting from physical sector 0) of the flash memory, then reboots the device to make it run the new firmware/application.
+'Copies the data from an opened and currently selected file of the flash disk (selection is made through fd.filenum) into the TiOS/application area of the flash memory,
+'then reboots the device to make it run new TiOS/application.
 '<br><br>
-'<b>This method is not supported on the EM500 platform.</b>
+'The file is expected to start with TiOS firmware, optionally followed by a compiled Tibbo BASIC/C application binary.
+'If the file is smaller than the size of TiOS firmware for this platform, the execution will be aborted.
 '<br><br>
 '<b>BE VERY CAREFUL! </b>Using the fd.copyfirmwarefromfile on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
 '<br><br>
 '<b>See also: </b>
 'fd.copyfirmware
+'fd.copyfirmwarelzo,
+'fd.copyfirmwarefromfilelzo
+#endif
 
 '--------------------------------------------------------------------
+#if COPY_FIRMWARE=1
+
 #if PLATFORM_ID=KLM601
-syscall(20,"89b.TDL") !fd.copyfirmwarelzo(source_sector as word, byref length as dword, dest_sector as word, byref output_len as dword, displ_x as word, displ_y as word, display_w as word, display_h as byte, reported_cs as word) as byte
+
+syscall(20,"89b.TDL") fd.copyfirmwarelzo(app_present as no_yes, source_sector as word) as byte
 '<b>METHOD.</b>
+
 #else
-syscall(20,"89.TDL") fd.copyfirmwarelzo(byref length as dword)
+
+#if EXTENDED_FD=1
+
+syscall(20,"89.TDL") fd.copyfirmwarelzo(app_present as no_yes)
 '<b>METHOD.</b><br><br>
-'Assumes that there is LZO-compressed firmware/application file of <b>length </b>bytes stored at logical sector 0 of the flash memory. Decompresses the file into the firmware/application area
-'(starting from physical sector 0), then reboots the device to make it run the new firmware/application. 
+'Assumes that there is a block of data containing the TiOS firmware, optionally followed by an LZO-compressed application binary stored beginning from the logical sector 0 of the flash memory.
+'Copies TiOS firmware into the TiOS area of the flash. If the app_present argument is not zero, decompresses the application binary and copies it into the application area of the flash.
+'After that, reboots the device to make it run new TiOS firmware (and application).
 '<br><br>
-'<b>This method is not supported on the EM500 platform.</b>
+'The application portion (compiled Tibbo BASIC/C application binary) is optional.
 '<br><br>
-'<b>BE VERY CAREFUL! </b>Using the fd.copyfirmwarelzo on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
+'<b>BE VERY CAREFUL! </b>Using fd.copyfirmwarelzo on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
 '<br><br>
 '<b>See also: </b>
-'fd.buffernum,
-'fd.getbuffer,
-'fd.setbuffer,
-'fd.getsector,
-'fd.setsector,
-'fd.checksum,
 'fd.copyfirmware
+'fd.copyfirmwarefromfile
+
+#else
+
+syscall(20,"89.TDL") fd.copyfirmwarelzo(byref length as dword)
+'<b>METHOD.</b><br><br>
+'Assumes that there is an LZO-compressed block of data containing TiOS and, optionally, an application binary stored beginning from the logical sector 0 of the flash memory.
+'Decompresses the data into the TiOS (and application) area of the flash, then reboots the device to make it run new TiOS firmware (and application). 
+'<br><br>
+'The application portion (compiled Tibbo BASIC/C application binary) is optional.
+'<br><br>
+'<b>BE VERY CAREFUL! </b>Using fd.copyfirmwarelzo on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
+'<br><br>
+'<b>See also: </b>
+'fd.copyfirmware
+'fd.copyfirmwarefromfile
+'fd.copyfirmwarefromfilelzo
+
+#endif
+
+#endif
+
+#endif
+
+'--------------------------------------------------------------------
+#if COPY_FIRMWARE=1 and EXTENDED_FD=1
+syscall(723) fd.copyfirmwarefromfilelzo() as pl_fd_status_codes
+'<b>METHOD.</b><br><br>
+'Copies the data from an opened and currently selected file of the flash disk (selection is made through fd.filenum) into the TiOS/application area of the flash memory.
+'The optional application binary portion of the file is expected to be LZO-compressed. After that, reboots the device to make it run new TiOS/application.
+'<br><br>
+'The file is expected to start with TiOS firmware, optionally followed by an LZO-compressed compiled Tibbo BASIC/C application binary.
+'If the file is smaller than the size of TiOS firmware for this platform, the execution will be aborted.
+'<br><br>
+'<b>BE VERY CAREFUL! </b>Using fd.copyfirmwarefromfilelzo on incorrect data will "incapacitate" your device and further remote upgrades will become impossible.
+'<br><br>
+'fd.copyfirmware
+'fd.copyfirmwarelzo,
+'fd.copyfirmwarefromfile
 #endif
 
 '--------------------------------------------------------------------
@@ -860,5 +904,8 @@ property fd.transactionstarted
 'fd.transactioncapacityremaining
     get = syscall(479,"63.TDL"+) as no_yes
 end property
+
+'--------------------------------------------------------------------
+syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte)
 
 #endif

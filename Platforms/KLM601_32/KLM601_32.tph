@@ -13,6 +13,8 @@
 #define EXTENDED_SOCK 1
 #define SER_7BIT_LIMITATION 1
 #define PLATFORM_TYPE_32 1
+#define COPY_FIRMWARE 1
+#define EXTENDED_FD 1
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED

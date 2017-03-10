@@ -17,6 +17,8 @@
 #define OBJECT_FD FD_ENABLED
 #define OBJECT_WLN WLN_ENABLED
 #define OBJECT_LCD LCD_ENABLED
+#define COPY_FIRMWARE 1
+
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
@@ -308,3 +310,4 @@ include "..\SSI.tph"
 include "..\FD.tph"
 include "..\TPRAM.tph"
 include "..\WLN.tph"
+include "..\SLED.tph"
