@@ -1,0 +1,74 @@
+include "global.tbh"
+
+dim dhcp_lease_time as word 'this is a counter-down for remaining lease time
+dim dhcp_result as ok_ng 'keep this as global- your program might want to use this data
+
+'=============================================================
+sub on_sys_init
+	
+	dim dhcp_ip, dhcp_gateway, dhcp_netmask as string(16)
+	dim f as byte
+	dim dhcp_result as ok_ng
+	
+	'It is a good practice to indicate that we are now in DHCP
+	pat.play("~G---------------",PL_PAT_CANINT) '<<<<<<<<<< CHANGE IF YOU WISH
+	
+	
+	'Start by obtaining data from DHCP server.
+	'<<<<<<<< YOU MIGHT WANT TO PUT DEVICE NAME YOU WANT TO REGISTER WITH DHCP SERVER
+	'<<<<<<<< INSTEAD OF "" (see below)
+	dhcp_lease_time=0 'we clear this first
+	dhcp_result=dhcp_obtain(dhcp_ip,dhcp_gateway,dhcp_netmask,dhcp_lease_time,"") '<<< PUT ACTUAL DEVICE NAME!
+
+	'Now it is time to set these parameters. Remember, that this will only be successful if ALL sockets
+	'are in a CLOSED state. The dhcp_obtain() already closed ITS socket, but maybe you used some other
+	'sockets before this point? Here is a "safe code" that just makes sure everything is closed
+	'We cannot change the IP-address while at least one socket is NOT in the CLOSED state
+	sock.inconenabledmaster=NO 
+	for f=0 to sock.numofsock-1
+		sock.num=f
+		if sock.statesimple<>PL_SSTS_CLOSED then
+			sock.discard
+			while sock.statesimple<>PL_SSTS_CLOSED
+			wend
+		end if
+	next f
+
+	'Now set the NET parameters
+	if dhcp_result=OK then
+		'DHCP session was successful
+		net.ip=dhcp_ip
+		net.gatewayip=dhcp_gateway
+		net.netmask=dhcp_netmask
+	else
+		'could not complete DHCP- you decide what to do here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		'For example, can set fixed IP OR DO SOMETHING ELSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		net.ip="192.168.100.40"
+	end if
+
+	sock.inconenabledmaster=YES 'allow incoming connetions again
+
+	'OK, let's indicate that IP has been obtained
+	pat.play("~G-G-------------",PL_PAT_CANINT) '<<<<<<<<<< CHANGE IF YOU WISH
+	
+
+	'TO DO: put the rest of your initialization code here
+	'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	
+end sub
+
+
+'=============================================================
+sub on_sys_timer
+	'Count down to the time when DHCP lease expires. We only count if DHCP is NOT at 0
+	if dhcp_lease_time>0 then
+		dhcp_lease_time=dhcp_lease_time-1
+		'When DHCP lease expires reboot (and obtain IP again)
+		if dhcp_lease_time=0 then sys.reboot
+	end if
+	
+	
+	'TO DO: put other stuff that you want to do on timer here
+	'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+end sub

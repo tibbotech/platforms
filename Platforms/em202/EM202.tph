@@ -1,0 +1,1953 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			EM200/202, DS202 PLATFORM
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+'**************************************************************************************************
+'		GENERIC PLATFORM CONSTANTS
+'**************************************************************************************************
+
+enum off_on 
+	PL_OFF,			'GENERIC PLATFORM CONSTANT
+	PL_ON			'GENERIC PLATFORM CONSTANT
+end enum
+
+enum no_yes 
+	NO,			'GENERIC PLATFORM CONSTANT
+	YES			'GENERIC PLATFORM CONSTANT
+end enum
+
+enum dis_en 
+	DISABLED,		'GENERIC PLATFORM CONSTANT
+	ENABLED			'GENERIC PLATFORM CONSTANT
+end enum
+
+enum low_high 
+	LOW,			'GENERIC PLATFORM CONSTANT
+	HIGH			'GENERIC PLATFORM CONSTANT
+end enum
+
+enum ok_ng 
+	OK,			'GENERIC PLATFORM CONSTANT
+	NG			'GENERIC PLATFORM CONSTANT
+end enum
+
+
+'**************************************************************************************************
+'		INTER-OBJECT CONSTANTS (APPLYING TO MORE THAN ONE OBJECT)
+'**************************************************************************************************
+
+
+'**************************************************************************************************
+'		BUILT-IN FUNCTIONS
+'**************************************************************************************************
+
+syscall(0)  !gotohtml(offset as word)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(60)  !finalgotohtml(offset as word)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(1)  !strload(byref dststr as string, byref sourcestr as string)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(2)  !strcpy(byref deststr as string, byref sourcestr as string)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(3)  !strcat(byref dst as string, byref src as string)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(4)  val(byref sourcestr as string) as word
+'INTRINSIC PLATFORM SYSCALL.
+'Converts string representation of a value into 16-bit value (word or short).
+'Recognizes &b (binary) and &h (hexadecimal) prefixes. Can be invoked implicitly, through the
+'word_var=string_var expression. Compiler is smart enough to pre-calculate constant-only
+'expressions involving implicit use of val() function.
+
+'--------------------------------------------------------------------
+syscall(6)  str(num as integer) as string
+'Converts unsigned 16-bit numeric value (word) into its decimal string representation.
+'Can be invoked implicitly, through the string_var=word_var expression. Compiler is smart enough to
+'pre-calculate constant-only expressions involving implicit use of str() function.
+
+'--------------------------------------------------------------------
+syscall(7)  stri(num as integer) as string
+'INTRINSIC PLATFORM SYSCALL.
+'Converts signed 16-bit numeric value (short) into its decimal string representation.
+'Can be invoked implicitly, through the string_var=short_var expression. Compiler is smart enough to
+'pre-calculate constant-only expressions involving implicit use of stri() function.
+
+'--------------------------------------------------------------------
+syscall(8)  hex(num as integer) as string
+'PLATFORM SYSCALL.
+'Converts unsigned 16-bit numeric value (word) into its HEX string representation.
+'Standard "&h" prefix is added at the beginning of the string.
+
+'--------------------------------------------------------------------
+syscall(9)  bin(num as integer) as string
+'PLATFORM SYSCALL.
+'Converts unsigned 16-bit numeric value (word) into its binary string representation.
+'Standard "&b" prefix is added at the beginning of the string.
+
+'--------------------------------------------------------------------
+syscall(10) left(byref sourcestr as string, len as byte) as string
+'PLATFORM SYSCALL.
+'Returns len leftmost characters of a string sourcestring. Example of use: s=left("ABCDE",3), result will be "ABC". 
+
+'--------------------------------------------------------------------
+syscall(11) right(byref sourcestr as string, len as byte) as string
+'PLATFORM SYSCALL.
+'Returns len rightmost characters of a string sourcestr. Example of use: s=right("ABCDE",3), result will be "CDE".
+
+'--------------------------------------------------------------------
+syscall(12) mid(byref sourcestr as string, frompos as byte, len as byte) as string
+'PLATFORM SYSCALL.
+'Returns len characters from a string sourcestr starting from position pos. The leftmost string character is counted to
+'be at position 1. Example of use: s=mid("ABCDE",2,3), result will be "BCD".
+
+'--------------------------------------------------------------------
+syscall(13) !strcmp(byref string1 as string, byref string2 as string) as integer
+'INTRINSIC PLATFORM SYSCALL. 
+
+'--------------------------------------------------------------------
+syscall(14) len(byref sourcestr as string) as byte
+'PLATFORM SYSCALL.
+'Returns the length of (number of characters in) the string sourcestr. Example of use: x=len("ABC"), result will be 3.
+
+'--------------------------------------------------------------------
+syscall(15) instr(frompos as byte,byref sourcestr as string,byref substr as string,num as byte) as byte
+'PLATFORM SYSCALL.
+'Finds the Nth occurrence (defined by num, counting from 1) of a substring substr in a string sourcestr.
+'Search is conducted from position frompos (leftmost character has position 1). This function returns position in
+'a string or zero if the Nth occurrence of the substring is not found.
+'Example of use: x=substr(3,"ABCABCDEABC12","BC",2), result will be 10.
+
+'--------------------------------------------------------------------
+syscall(16) asc(byref sourcestr as string) as byte
+'PLATFORM SYSCALL.
+'Returns the ASCII code of the leftmost character of the string. Example: x=asc("123"), result will be 49
+'(ASCII code of '1').
+
+'--------------------------------------------------------------------
+syscall(17) chr(asciicode as byte) as string
+'PLATFORM SYSCALL.
+'Returns the string that consists of a single character with ASCII code asciicode. Example of use: s=chr(49), result
+'will be "1". 	
+
+'--------------------------------------------------------------------
+syscall(18) ddstr(byref str as string) as string
+'PLATFORM SYSCALL.
+'Converts "dot-decimal value" into "dot-decimal string". Example: s=ddstr("1234"), result will be "49.50.51.52". This
+'function is convenient for converting groups of bytes representing binary data (such as IP or MAC addresses) into their
+'string representation.
+
+'--------------------------------------------------------------------
+syscall(19) ddval (byref str as string) as string
+'PLATFORM SYSCALL.
+'Converts "dot-decimal string" into "dot-decimal value". Example: s=ddval("49.50.51.52"), result will be "1234". This
+'function is convenient for converting string representation of groups of bytes (such as IP or MAC addresses) into their
+'binary form.
+
+'--------------------------------------------------------------------
+syscall(24) strgen(len as byte,byref substr as string) as string
+'PLATFORM SYSCALL.
+'Generates a string of len length consisting of repeating substrings substr. Example: s=strgen(10,"ABC"), result will
+'be "ABCABCABCA". Notice that len parameter specifies total resulting string length in bytes so the last substring
+'will be truncated if necessary to achieve exact required length. This function is an expanded version of the STRING$
+'function commonly found in other BASICs.
+
+'--------------------------------------------------------------------
+syscall(22) strsum(byref sourcestr as string) as word
+'PLATFORM SYSCALL.
+'Calculates 16-bit (word) sum of ASCII codes of all characters in a string sourcestr. This function is useful for checksum
+'calculation. Example: strgen("012") will return 147 (48+49+50).
+
+'--------------------------------------------------------------------
+syscall(135) !doevents
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(62) !initobj(byref obj, rtti as word)
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(63) !gotoidx(byref obj,count as byte,i1 as word,i2 as word,i3 as word,i4 as word,i5 as word,i6 as word,i7 as word,i8 as word) as word
+'INTRINSIC PLATFORM SYSCALL.
+
+'--------------------------------------------------------------------
+syscall(64) !objcpy(byref dst, byref src)
+'INTRINSIC PLATFORM SYSCALL.
+
+
+'**************************************************************************************************
+'		EVENTS (FOR ALL OBJECTS)
+'**************************************************************************************************
+
+event(1)  on_sys_init
+'EVENT of the sys object. First event to be generated after your devices boots up. Typically, initialization code for
+'your application is placed here.
+
+'--------------------------------------------------------------------
+event(2)  on_sys_timer
+'EVENT of the sys object. Periodic event that is generated every 0.5 seconds. Multiple on_sys_timer events may be waiting
+'in the event queue. On_sys_timer event is not generated when the program execution is PAUSED (in debug mode).
+
+'--------------------------------------------------------------------
+event(3)  on_sock_inband
+'EVENT of the sock object.
+'At least one data byte is present in the CMD buffer (sock.cmdlen>0). Use the sock.getinband method to extract the
+'data from the CMD buffer. Another on_inband_command event on a particular socket is never generated until the
+'previous one is processed. When the event handler is entered the sock.num is automatically switched to the socket
+'on which this event was generated. 
+
+'--------------------------------------------------------------------
+event(4)  on_sock_data_arrival
+'EVENT of the sock object. Generated when at least one data byte is present in the RX buffer of the socket (i.e.
+'for this socket the sock.rxlen>0). When the event handler for this event is entered the sock.num property is
+'automatically switched to the socket for which this event was generated. Another on_sock_data_arrival event on a
+'particular socket is never generated until the previous one is processed. Use sock.getdata method to extract the
+'data from the RX buffer.
+'For TCP protocol (sock.protocol= 1- PL_SOCK_PROTOCOL_TCP), there is no separation into individual packets and you
+'get all arriving data as a "stream". You don't have to process all data in the RX buffer at once. If you exit
+'the on_sock_data_arrival event handler while there is still some unprocessed data in the RX buffer another
+'on_sock_data_arrival event will be generated immediately.
+'For UDP protocol (sock.protocol= 0- PL_SOCK_PROTOCOL_UDP), the RX buffer preserves datagram boundaries. Each time
+'you enter the on_sock_data_arrival event handler you get to process next UDP datagram. If you do not process entire
+'datagram contents the unread portion of the datagram is discarded once you exit the event handler.
+
+'--------------------------------------------------------------------
+enum pl_sock_state
+'ENUM. Contains the list of constants related to possible socket states. See also enum pl_sock_state_simple.
+	PL_SST_CLOSED=0,		'PLATFORM CONSTANT. Connection is closed (and haven't been opened yet, it is a
+					'post-powerup state). Applies both to UDP and TCP.
+	PL_SST_CL_PCLOSED,		'PLATFORM CONSTANT. Connection is closed (it was a passive close). Applies
+					'only to TCP.
+	PL_SST_CL_ACLOSED,		'PLATFORM CONSTANT. Connection is closed (it was an active close by the
+					'application). Applies only to TCP.
+	PL_SST_CL_PRESET_POPENING,	'PLATFORM CONSTANT. Connection is closed (it was a passive reset during a
+					'passive open). Applies only to TCP.
+	PL_SST_CL_PRESET_AOPENING,	'PLATFORM CONSTANT. Connection is closed (it was a passive reset during an
+					'active open). Applies only to TCP.
+	PL_SST_CL_PRESET_EST,		'PLATFORM CONSTANT. Connection is closed (it was a passive reset while in
+					'"connection established" state). Applies only to TCP.
+	PL_SST_CL_PRESET_PCLOSING,	'PLATFORM CONSTANT. Connection is closed (it was a passive reset while performing
+					'a passive close). Applies only to TCP.
+	PL_SST_CL_PRESET_ACLOSING,	'PLATFORM CONSTANT. Connection is closed (it was a passive reset while performing
+					'an active close). Applies only to TCP.
+	PL_SST_CL_PRESET_STRANGE,	'PLATFORM CONSTANT. Connection is closed (it was a passive reset, no further
+					'details available). Applies only to TCP.
+	PL_SST_CL_ARESET_CMD,		'PLATFORM CONSTANT. Connection is closed (it was an active reset issued by the
+					'application). Applies only to TCP.
+	PL_SST_CL_ARESET_RE_PO,		'PLATFORM CONSTANT. Connection is closed (it was an active reset issued because
+					'of excessive retransmission attempts during a passive open). Applies only to TCP.
+	PL_SST_CL_ARESET_RE_AO,		'PLATFORM CONSTANT. Connection is closed (it was an active reset issued because
+					'of excessive retransmission attempts during an active open). Applies only to TCP.
+	PL_SST_CL_ARESET_RE_EST,	'PLATFORM CONSTANT. Connection is closed (it was an active reset issued because
+					'of excessive retransmission attempts while in "connection established" state).
+					'Applies only to TCP.
+	PL_SST_CL_ARESET_RE_PC,		'PLATFORM CONSTANT. Connection is closed (it was an active reset issued because
+					'of excessive retransmission attempts during a passive close). Applies only to TCP.
+	PL_SST_CL_ARESET_RE_AC,		'PLATFORM CONSTANT. Connection is closed (it was an active reset issued because
+					'of excessive retransmission attempts during a passive open). Applies only to TCP.
+	PL_SST_CL_ARESET_TOUT,		'PLATFORM CONSTANT. Connection is closed (it was an active reset caused by
+					'connection timeout, i.e. no data was exchanged for sock.connectiontout number of
+					'seconds). Applies only to TCP.
+	PL_SST_CL_ARESET_DERR,		'PLATFORM CONSTANT. Connection is closed (it was an active reset caused by
+					'a data exchange error). Applies only to TCP.
+	PL_SST_CL_DISCARDED_CMD,	'PLATFORM CONSTANT. Connection is closed (it was discarded by the application).
+					'Applies both to UDP and TCP.
+	PL_SST_CL_DISCARDED_PO_WCS,	'PLATFORM CONSTANT. Connection is closed (it was discarded because an error
+					'in connection sequence was detected during a passive open). Applies only to TCP.
+	PL_SST_CL_DISCARDED_AO_WCS,	'PLATFORM CONSTANT. Connection is closed (it was discarded because an error
+					'in connection sequence was detected during an active open). Applies only to TCP.
+	PL_SST_CL_DISCARDED_ARPFL,	'PLATFORM CONSTANT. Connection is closed (it was discarded because the device has
+					'failed to resolve the IP address of the destination during an active open, i.e.
+					'there was no reply to ARP requests). Applies both to UDP and TCP.
+	PL_SST_CL_DISCARDED_TOUT,	'PLATFORM CONSTANT. Connection is closed (it was discarded because connection
+					'has timed out, i.e. no data was exchanged for sock.connectiontout number of
+					'seconds). Applies only to UDP.
+	PL_SST_ARP=&h20,		'PLATFORM CONSTANT. ARP resolution is an progress (it is an active open).
+					'Applies both to UDP and TCP.
+	PL_SST_PO=&h40,			'PLATFORM CONSTANT. Connection is being established (it is a passive open).
+					'Applies only to TCP.
+	PL_SST_AO=&h60,			'PLATFORM CONSTANT. Connection is being established (it is an active open).
+					'Applies only to TCP.
+	PL_SST_EST=&h80,		'PLATFORM CONSTANT. Connection is established (generic, includes both passive
+					'and active open). Applies both to UDP and TCP.  
+	PL_SST_EST_POPENED=&h80,	'PLATFORM CONSTANT. Connection is established (it was a passive open).
+					'Applies both to UDP and TCP. 
+	PL_SST_EST_AOPENED,		'PLATFORM CONSTANT. Connection is established (it was an active open).
+					'Applies both to UDP and TCP.
+	PL_SST_PC=&hA0,			'PLATFORM CONSTANT. Connection is being closed (it is a passive close).
+					'Applies only to TCP. 
+	PL_SST_AC=&hC0			'PLATFORM CONSTANT. Connection is being closed (it is an active close).
+					'Applies only to TCP.
+end enum
+
+enum pl_sock_state_simple
+'ENUM. Contains a simplified list of constants related to possible socket states. See also enum pl_sock_state.
+	PL_SSTS_CLOSED,			'PLATFORM CONSTANT. Connection is closed. Applies both to UDP and TCP.
+	PL_SSTS_ARP,			'PLATFORM CONSTANT. ARP resolution is an progress (it is an active open).
+					'Applies both to UDP and TCP.
+	PL_SSTS_PO,			'PLATFORM CONSTANT. Connection is being established (it is a passive open).
+					'Applies only to TCP.
+	PL_SSTS_AO,			'PLATFORM CONSTANT. Connection is being established (it is an active open).
+					'Applies only to TCP.
+	PL_SSTS_EST,			'PLATFORM CONSTANT. Connection is established. Applies both to UDP and TCP.  
+	PL_SSTS_PC,			'PLATFORM CONSTANT. Connection is being closed (it is a passive close).
+					'Applies only to TCP. 
+	PL_SSTS_AC			'PLATFORM CONSTANT. Connection is being closed (it is an active close).
+					'Applies only to TCP.
+end enum
+
+event(5)  on_sock_event(newstate as pl_sock_state,newstatesimple as pl_sock_state_simple)
+'EVENT of the sock object. Notifies your program that the socket state has changed. The newstate and newstatesimple arguments
+'carry the state as it was at the moment of event generation. This is different from sock.state and sock.statesimple
+'R/O properties that return current socket state). See pl_sock_state and pl_sock_state_simple constants for description of
+'reported socket states. Newstate and newstatesimple arguments replace sock.event and sock.eventsimple R/O properties
+'which are no longer available. 
+
+'--------------------------------------------------------------------
+event(6)  on_sock_overrun
+'EVENT of the sock object. Data overrun has occurred in the RX buffer of the socket. Normally, this can only happen
+'for UDP communications as UDP has no "data flow control" and, hence, data overruns are normal. Another on_sock_overrun
+'event on a particular socket is never generated until the previous one is processed. When event handler for this
+'event is entered the sock.num is automatically switched to the socket on which this event was generated.
+
+'--------------------------------------------------------------------
+event(7)  on_net_link_change
+'EVENT of the net object. Generated when the state of the physical link of Ethernet port changes. Multiple
+'on_net_link_change events may be waiting in the event queue. This event does not "bring" with it new link state at the
+'time of event generation. Current link state can be queried through the net.linkstate property.
+
+'--------------------------------------------------------------------
+event(8)  on_pat
+'EVENT of the pat object. Generated when LED pattern finishes "playing". This can only happened for "non-looped" patterns.
+'Multiple on_pat events may be waiting in the event queue.
+
+'--------------------------------------------------------------------
+event(9)  on_ser_esc
+'EVENT of the ser object. Generated when currently enabled escape sequence is detected in the received UART data stream. Once
+'the serial escape sequence is detected on a certain serial port this port is automatically disabled (ser.enabled= 0- NO).
+'When event handler for this event is entered the ser.num property is automatically switched to the port on which this
+'event was generated. Whether or not escape sequence detection is enabled and what kind of escape sequence is expected is
+'defined by the ser.esctype property. Escape sequences are only recognized in the UART mode of the serial port (ser.mode=
+'0- PL_SER_MODE_UART).
+
+'--------------------------------------------------------------------
+event(10) on_ser_data_arrival
+'EVENT of the ser object. Generated when at least one data byte is present in the RX buffer of the serial port (i.e.
+'for this port the ser.rxlen>0). When the event handler for this event is entered the ser.num property is automatically
+'switched to the port for which this event was generated. Another on_ser_data_arrival event on a particular port is never
+'generated until the previous one is processed. Use ser.getdata method to extract the data from the RX buffer. You don't
+'have to process all data in the RX buffer at once. If you exit the on_ser_data_arrival event handler while there is still
+'some unprocessed data in the RX buffer another on_ser_data_arrival event will be generated immediately.
+
+'--------------------------------------------------------------------
+event(11) on_ser_data_sent
+'EVENT of the serial object. Generated after the total amount of committed data in the TX buffer of the serial port
+'(ser.txlen) is found to be less than the threshold that was preset through the ser.notifysent method. This event may be
+'generated only after the ser.notifysent method was used. Your application needs to use the ser.notifysent method
+'EACH TIME it wants to cause the on_ser_data_sent event generation for a particular port. When the event handler for this
+'event is entered the ser.num is automatically switched to the port on which this event was generated. Please, remember that
+'uncommitted data in the TX buffer is not taken into account for the on_sock_data_sent event generation.
+
+'--------------------------------------------------------------------
+event(12) on_ser_overrun
+'EVENT of the serial object. Generated when data overrun has occurred in the RX buffer of the serial port.
+'Another on_ser_overrun event for a particular port is never generated until the previous one is processed. When the event
+'handler for this event is entered the ser.num property is automatically switched to the port on which this event
+'was generated. Data overruns are a common occurrence on serial lines. The overrun happens when the serial data is
+'arriving into the RX buffer faster than your application is able to extract it, the buffer runs out of space and
+'"misses" some incoming data. For UART/full-duplex mode of the serial port (ser.mode= 0- PL_SER_MODE_UART and
+'ser.interface= 0- PL_SER_SI_FULLDUPLEX) data overruns can be prevented through the use of RTS/CTS flow control
+'(see ser.flowcontrol).
+ 
+'--------------------------------------------------------------------
+event(13) on_sock_data_sent
+'EVENT of the sock object. Generated after the total amount of committed data in the TX buffer of the socket (sock.txlen) is
+'found to be less than the threshold that was preset through the sock.notifysent method. This event may be generated
+'only after the sock.notifysent method was used. Your application needs to use the sock.notifysent method
+'EACH TIME it wants to cause the on_sock_data_sent event generation for a particular socket. When the event handler
+'for this event is entered the sock.num is automatically switched to the port on which this event was generated. Please,
+'remember that uncommitted data in the TX buffer is not taken into account for the on_sock_data_sent event generation.
+
+'--------------------------------------------------------------------
+event(14) on_net_overrun
+'EVENT of the net object. Generated when overflow occurs on the internal RX buffer of the Network Interface Controller
+'(NIC) IC. Another on_net_overrun event is never generated until the previous one is processed. Notice, that this event
+'signifies the overrun of the hardware RX buffer of the NIC itself. This has nothing to do with the overrun of RX
+'buffers of individual sockets (see on_sock_overrun event).
+
+'--------------------------------------------------------------------
+event(16) on_button_released
+'EVENT of the button object. Generated when the button on your device has been released. Multiple on_button_released
+'events may be waiting in the event queue. You can check the time elapsed since the previous on_button_pressed
+'event by reading the value of the button.time read-only property.
+
+'--------------------------------------------------------------------
+event(18)  on_sock_tcp_packet_arrival(len as word)
+'EVENT of the sock object. Notifies your program that the TCP packet of a certain size has arrived. The len argument
+'carries packet length. This event is only generated when sock.splittcppackets= 1- YES and sock.inbandcommands= 0- DISABLED.
+'Notice that only new data, never transmitted before, is counted. If the packet is a retransmission then this event won't
+'be generated. Also, if some part of packet's data is a retransmission and some part is new then only the length of
+'the new data will be reported. This way your program can maintain correct relationship between data lengths reported
+'by this event and actual data in the RX buffer.
+
+'--------------------------------------------------------------------
+event(31) on_button_pressed
+'EVENT of the button object. Generated when the button on your device has been pressed. Multiple on_button_pressed
+'events may be waiting in the event queue. You can check the time elapsed since the previous on_button_released
+'event by reading the value of the button.time read-only property.
+
+'**************************************************************************************************
+'		SYS (System) object
+'**************************************************************************************************
+
+object sys
+'This is the system object that loosely combines "general system" stuff such as initialization (boot) event, buffer
+'management, system timer, and some other miscellaneous properties and methods.
+
+'--------------------------------------------------------------------
+enum pl_sys_mode
+	PL_SYS_MODE_RELEASE,	'PLATFORM CONSTANT. Debugging is not possible, application execution starts immediately
+				'after device powers up. Severe errors such as "divizion by zero" are ignored and do not
+				'stop execution.
+	PL_SYS_MODE_DEBUG	'PLATFORM CONSTANT. Debug mode in which it is possible to cross-debug the application
+				'(under the control of TIDE software). Application execution is not started automatically
+				'after the power up. Severe errors such as "divizion by zero" halt execution.
+end enum
+
+property sys.runmode
+'R/O PROPERTY (ENUM, BYTE).
+'Returns current run (execution) mode: 0- PL_SYS_MODE_RELEASE (release mode), 1- PL_SYS_MODE_DEBUG (debug mode).
+	get = syscall(71) as pl_sys_mode
+end property
+
+'--------------------------------------------------------------------
+enum pl_sys_reset_type
+	PL_SYS_RESET_TYPE_INTERNAL,	'PLATFORM CONSTANT. The most recent reset was generated internally.
+	PL_SYS_RESET_TYPE_EXTERNAL	'PLATFORM CONSTANT. The most recent reset was generated externally (through RST pin
+					'or power cycle).
+end enum
+
+property sys.resettype
+'R/O PROPERTY (ENUM, BYTE).
+'Returns the type of the most recent hardware reset: 0- PL_SYS_RESET_TYPE_INTERNAL (internal reset caused by "self-reboot" of
+'the CPU -- through TIDE command or sys.reboot execution), 1- PL_SYS_RESET_TYPE_EXTERNAL (caused by power-cycling of the
+'device or applying reset pulse to the RST line).
+	get = syscall(72) as pl_sys_reset_type
+end property
+
+'--------------------------------------------------------------------
+property sys.totalbuffpages
+'R/O PROPERTY (BYTE).
+'Returns the total amount of memory pages available for buffers (one page= 256 bytes). This is calculated as total
+'available variable memory (RAM) minus whatever is required to store variables of the current project. See also
+'sys.buffalloc and sys.freebuffpages.
+	get = syscall(83) as byte
+end property
+
+'--------------------------------------------------------------------
+property sys.freebuffpages
+'R/O PROPERTY (BYTE).
+'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes). Only changes after the sys.buffalloc
+'method is used. Preparatory methods like ser.rxbuffrq do not influence what this property returns. See also
+'sys.totalbuffpages.
+	get = syscall(84) as byte
+end property
+
+'--------------------------------------------------------------------
+syscall(69) sys.halt()
+'METHOD.
+'Stops your program execution (halts VM). In the debug mode (sys.runmode= 1- PL_SYS_MODE_DEBUG)causes the same result as
+'when you press PAUSE in TIDE during the debug session. In the release mode (sys.runmode= 0- PL_SYS_MODE_RELEASE) causes
+'the device to halt (stop) execution. Once this method has been used, there is no way for your device to resume execution
+'on its own. See also sys.reboot.
+
+'--------------------------------------------------------------------
+syscall(70) sys.reboot()
+'METHOD. Causes your device to reboot. After the device reboots it will behave as after any other reboot:
+'enter PAUSE mode if your program was compiled for debugging, or start execution if the program was compiled
+'for release (see Two Modes of Target Execution). See also sys.halt.
+
+'--------------------------------------------------------------------
+syscall(82) sys.buffalloc()
+'METHOD.
+'Allocates buffer memory as previously requested by "buffrq" methods of individual objects (such as ser.rxbuffrq).
+'This method takes significant amount of time (100s of milliseconds) to execute, during which time the device
+'cannot receive network packets, serial data, etc. For certain interfaces like serial ports some incoming data could be lost. 
+'Buffer (re)allocation for a specific object will only work if the corresponding object or part of the object to which
+'this buffer belongs is idle. "Part" refers to a particular serial port of the ser object, or particular socket of the
+'sock object, etc. to which the buffer you are trying to change belongs. "Idle" means different things for different
+'objects: ser.enabled= 0- NO for the serial port, sock.statesimple=  0- PL_SSTS_CLOSED for the socket, etc.
+
+'--------------------------------------------------------------------
+property sys.version
+'R/O PROPERTY (STRING).
+'Returns firmware (TiOS) version string. Example: "<EM202-1.00.00>".
+	get = syscall(20) as string
+end property
+
+'--------------------------------------------------------------------
+property sys.timercount
+'R/O PROPERTY (WORD).
+'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches 65535 it rolls
+'over to 0. See also on_sys_timer event.
+	get = syscall(136) as word
+end property
+
+
+'**************************************************************************************************
+'		SER (Serial port) object
+'**************************************************************************************************
+
+object ser
+'This is a serial port object that encompasses ALL serial ports (UARTs) available on a particular system (total number
+'of available serial ports can be obtained through the ser.numofports read-only property).
+'Selection of a particular port to work with is done through the ser.num property. Most other properties and methods
+'refer to the currently selected port. When the handler for one of the serial port events is entered
+'the ser.num is automatically switched to the port for which this event was generated. Each serial port has 2 outputs-
+'TX/W1out/dout and RTS/W0out/cout, and two inputs- RX/W1in/din and CTS/W0&1in/cin. Two lines- TX/W1out/dout and RX/W1in/din use
+'fixed I/O pins and cannot be remapped. Two other lines- RTS/W0out/cout and CTS/W0&1in/cin- can be remapped through
+'ser.rtsmap and ser.ctsmap properties.
+'The serial port can work in the UART, Wiegand, or clock/data mode (see ser.mode).
+
+'--------------------------------------------------------------------
+property ser.numofports
+'READ-ONLY PROPERTY (BYTE). Returns total number of serial ports found on the current platform.
+	get = syscall(137) as byte
+end property
+
+'--------------------------------------------------------------------
+property ser.num
+'PROPERTY (BYTE), DEFAULT VALUE= 0 (serial port #0 selected).
+'Sets/returns the number of currently selected serial port (ports are enumerated from 0).
+'Most other properties and methods of this object relate to the serial port selected through this property.
+'Note that serial-port related events such as on_ser_data_arrival change currently selected port!
+'The value of this property won't exceed ser.numofports-1 (even if you attempt to set a higher value).
+	get = syscall(100) as byte
+	set = syscall(101) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property ser.enabled
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (not enabled).
+'Enables/disables currently selected serial port (selection is made through ser.num): 0- NO (not enabled), 1- YES (enabled).
+'Enabling/disabling the serial port does not automatically clear its buffers, this is done via ser.rxclear and
+'ser.txclear. Notice that certain properties can only be changed and methods executed when the port is not enabled
+'(ser.rtsmap, ser.ctsmap, ser.mode, ser.txclear). You also cannot allocate buffer memory for the port (do sys.buffalloc)
+'when the port is enabled.
+	get = syscall(102) as no_yes
+	set = syscall(103) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_mode
+'ENUM. Contains the list of constants related to the selection of the operating mode of the serial port.
+	PL_SER_MODE_UART,	'PLATFORM CONSTANT (DEFAULT). UART mode, suitable for RS232, RS422, RS485, etc.
+				'communications in full-duplex or half-duplex mode (see ser.interface).
+				'Data is transmitted through the TX pin and received through the RX pin.
+				'Optionally, RTS (output) and CTS (input) lines are used for flow control (see
+				'ser.flowcontrol) in the full-duplex mode. Additionally, RTS can be used for direction
+				'control in the half-duplex mode.
+	PL_SER_MODE_WIEGAND,	'PLATFORM CONSTANT. Wiegand mode, suitable for sending to or receiving data from any
+				'standard Wiegand device. Data transmission is through pins W0out and W1out, reception- through
+				'W0&1in and W1in. "W0&1in" means that a logical AND of W0 and W1 signals must be applied to
+				'this input. Therefore, external logical gate is needed in order to receive Wiegand data.				
+	PL_SER_MODE_CLOCKDATA	'PLATFORM CONSTANT. Clock/data mode, suitable for sending to or receiving data from any
+				'standard clock/data (or magstripe) device.
+				'Data transmission is through pins cout and dout, reception- through cin and din. Third line
+				'of the magstripe interface- card present- is not required for data reception.
+				'For transmission, any I/O line can be used as card present output (under software control).
+end enum
+
+property ser.mode
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- UART (UART).
+'Sets operating mode for the currently selected serial port (selection is made through ser.num): 0- PL_SER_MODE_UART
+'(UART), 1- PL_SER_MODE_WIEGAND (Wiegand), 2- PL_SER_MODE_CLOCKDATA (clock/data). Changing port mode is only possible
+'when the port is closed (ser.enabled= 0- NO).
+	get = syscall(75) as pl_ser_mode
+	set = syscall(76) (value as pl_ser_mode)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_interface
+'ENUM. Contains the list of constants related to the selection of full-duplex or half-duplex interface for the UART mode
+'of serial port (ser.mode= 0- PL_SER_MODE_UART).
+	PL_SER_SI_FULLDUPLEX,	'PLATFORM CONSTANT (DEFAULT). Full-duplex mode, suitable for RS232, RS422,
+				'or four-wire RS485 communications. RTS output (together with CTS input) can be used
+				'for optional hardware flow control (see ser.flowcontrol).
+	PL_SER_SI_HALFDUPLEX	'PLATFORM CONSTANT. Half-duplex mode, suitable for two-wire RS485 communications.
+				'RTS line is used for direction control.
+				'Direction control polarity can be set through ser.dircontrol property.
+end enum
+
+property ser.interface
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_SI_FULLDUPLEX (full-duplex).
+'Chooses full-duplex or half-duplex operating mode for currently selected serial port (selection is made through ser.num):
+'0- PL_SER_SI_FULLDUPLEX (full-duplex mode), 1- PL_SER_SI_HALFDUPLEX (half-duplex mode). Full-duplex mode is suitable for
+'RS232, RS422, or four-wire RS485 communications. Half-duplex mode is suitable for 2-wire RS485 communications. This
+'property is only relevant when the port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+	get = syscall(112) as pl_ser_interface
+	set = syscall(113) (value as pl_ser_interface)
+end property
+
+'--------------------------------------------------------------------
+property ser.flowcontrol
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- DISABLED. Sets/returns flow control mode for currently selected serial port
+'(selection is made through ser.num): 0- DISABLED, 1- ENABLED. Only relevant when the serial port is in UART mode
+'(ser.mode= 0- PL_SER_MODE_UART) and full-duplex interface is selected (ser.interface= 0- PL_SER_SI_FULLDUPLEX).
+'Flow control uses two serial port lines- RTS and CTS- to regulate the flow of data between the serial port
+'of your device and another ("attached") serial device.
+	get = syscall(110) as dis_en
+	set = syscall(111) (value as dis_en)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_dircontrol
+'ENUM. Contains the list of constants related to the selection of polarity for the RTS line which controls direction
+'in the UART/half-duplex mode of the serial port (ser.mode= 0- PL_SER_MODE_UART and ser.interface= 0- PL_SER_SI_FULLDUPLEX).
+	PL_SER_DCP_LOWFORINPUT,	'PLATFORM CONSTANT (DEFAULT). Specifies (for UART/half-duplex mode of the serial port) that
+				'the RTS output will be LOW when the serial port is ready to RX data and HIGH when the serial
+				'port is TXing data. LOW/HIGH states provided are for the TTL serial ports of MODULE-level
+				'products, for RS232 these states will be in reverse.
+	PL_SER_DCP_HIGHFORINPUT	'PLATFORM CONSTANT. Specifies (for UART/half-duplex mode of the serial port) that the RTS
+				'output will be HIGH when the serial port is ready to RX data and LOW when the serial
+				'port is TXing data. LOW/HIGH states provided are for the TTL serial ports of MODULE-level
+				'products, for RS232 these states will be in reverse.
+end enum
+
+property ser.dircontrol
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_DCP_LOWFORINPUT (LOW for input). Sets/returns the polarity of the
+'direction control line (RTS) for selected serial port (selection is made through ser.num): 0- PL_SER_DCP_LOWFORINPUT (DIR LOW
+'for input, HIGH for output), 1- PL_SER_DCP_HIGHFORINPUT (DIR HIGH for input, LOW for output). Which I/O line of the device
+'will be used as RTS line is defined by the ser.rtsmap property. Direction control is only relevant when the serial port
+'is in the UART/half-duplex mode (ser.mode= 0- PL_SER_MODE_UART and ser.interface= 1- PL_SER_SI_HALFDUPLEX).
+'Note, that HIGH/LOW states specified above are for the TTL-serial interface of the MODULE-level products. If you are
+'dealing with the RS232 port then the states will be in reverse (for example, 1- PL_SER_DCP_HIGHFORINPUT will mean "LOW
+'for input, HIGH for output"). When the serial port is in the UART/half-duplex mode you can use the CTS line as a regular I/O
+'line of your device.
+	get = syscall(114) as pl_ser_dircontrol
+	set = syscall(115) (value as pl_ser_dircontrol)
+end property
+
+'--------------------------------------------------------------------
+property ser.baudrate
+'PROPERTY (WORD). DEFAULT VALUE= <platform-dependent, results in 9600 bps>.
+'Sets/returns the baudrate "divisor value" for the selected serial port (selection is made through ser.num).
+'Actual baudrade is calculated as follows: (9600*ser.div9600)/ser.baudrate. The ser.div9600 read-only property
+'returns the value ser.baudrate must be set to in order to obtain 9600 bps on a particular device under present operating
+'confitions. This property is only relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+	get = syscall(104) as word
+	set = syscall(105) (value as word)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_parity
+'ENUM. Contains the list of constants related to the selection of the parity mode of the serial port in the UART mode
+'(ser.mode= 0- PL_SER_MODE_UART).
+	PL_SER_PR_NONE,		'PLATFORM CONSTANT (DEFAULT). No parity bit to be transmitted.
+	PL_SER_PR_EVEN,		'PLATFORM CONSTANT. Even parity.
+	PL_SER_PR_ODD,		'PLATFORM CONSTANT. Odd parity.
+	PL_SER_PR_MARK,		'PLATFORM CONSTANT. Parity bit always at "1". Also can be used to emulate second stop bit
+				'(there is no separate property to explicitely select the number of stop bits).
+	PL_SER_PR_SPACE		'PLATFORM CONSTANT. Parity bit always at "0".
+end enum
+
+property ser.parity
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_PR_NONE (no parity).
+'Sets/returns parity mode for the selected serial port (selection is made through ser.num):
+'0- PL_SER_PR_NONE (no parity), 1- PL_SER_PR_EVEN (even parity), 2- PL_SER_PR_ODD (odd parity), 3- PL_SER_PR_MARK (mark),
+'4- PL_SER_PR_SPACE (space). Mark parity is equivalent to having a second stop-bit (there is no separate property to
+'explicitly select the number of stop bits). This property is only relevant when the serial port is in the UART mode
+'(ser.mode= 0- PL_SER_MODE_UART).
+	get = syscall(106) as pl_ser_parity
+	set = syscall(107) (value as pl_ser_parity)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_bits
+'ENUM. Contains the list of constants related to the selection of the number of bits in the word TXed/RXed by the serial
+'port in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+	PL_SER_BB_7,		'PLATFORM CONSTANT. Data word TXed/RXed by the serial port is to contain 7 data bits.
+	PL_SER_BB_8		'PLATFORM CONSTANT (DEFAULT). Data word TXed/RXed by the serial port is to contain 8
+				'data bits.
+end enum
+
+property ser.bits
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- PL_SER_BB_8 (8 bits).
+'Specifies the number of data bits in a word TXed/RXed by the serial port for the currently selected port
+'(selection is made through ser.num): 0- PL_SER_BB_7 (7 bits/word), 1- PL_SER_BB_8 (8 bits/word). This property is only
+'relevant when the serial port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+	get = syscall(108) as pl_ser_bits
+	set = syscall(109) (value as pl_ser_bits)
+end property
+
+'--------------------------------------------------------------------
+property ser.interchardelay
+'PROPERTY (BYTE), DEFAULT VALUE= 0 (no delay).
+'Sets/returns maximum intercharacter delay for the selected serial port (selection is made through ser.num) in 10ms steps.
+'For UART mode (ser.mode= 0- PL_SER_MODE_UART) specifies the time that needs to elapse since the arrival of the most recent
+'serial character into the RX buffer to cause the data to be committed (and on_ser_data_arrival event generated). For Wiegand
+'and clock/data mode (ser.mode= 1- PL_SER_MODE_WIEGAND or 2- PL_SER_MODE_CLOCKDATA) the time since the most recent data
+'bit (high-to-low transition on the W0&1in/cin line) is counted. In the UART mode this property allows you to combine
+'incoming serial data into larger "chunks", which typically improves performance. Notice, that the time is not counted
+'when the new data is not being received because the serial port has set the RTS line to LOW (not ready). For this to happen,
+'the serial port must be in the UART/full-duplex/flow control mode (ser.mode= 0- PL_SER_MODE_UART, ser.interface=
+'0- 0- PL_SER_SI_FULLDUPLEX, and ser.flowcontrol= 1- ENABLED) and the RX buffer must be getting nearly full (less than 64
+'bytes of free space left). For Wiegand and clock/data modes, counting timeout since the last bit is the only way to
+'determine the end of the data output. Suggested timeout is app. 10 times the bit period of the data output by attached
+'Wiegand or clock/data device.
+	get = syscall(116) as byte
+	set = syscall(117) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property ser.autoclose
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.
+'For currently selected serial port (selection is made through ser.num) specifies whether the port will be disabled
+'(ser.enabled= 0- NO) once the intercharacter gap expires (see ser.interchardelay): 0- NO (port won't be closed), 1-
+'YES (port will be closed). This property offers a way to make sure that no further data is received once the gap of
+'certain length is encountered. This property is especially useful in Wiegand or clock/data mode
+'(ser.mode= 1- PL_SER_MODE_WIEGAND or 2- PL_SER_MODE_CLOCKDATA) where intercharacter gap is the only way to reliably
+'identify the end of one data transmission.
+	get = syscall(77) as no_yes
+	set = syscall(78) (acceptbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+enum pl_ser_esctype
+'ENUM. Contains the list of constants related to the selection of the escape sequence type for the the serial port when the
+'port is in the UART mode (ser.mode= 0- PL_SER_MODE_UART).
+	PL_SER_ET_DISABLED,		'PLATFORM CONSTANT. Recognition of serial escape sequences disabled.
+	PL_SER_ET_TYPE1,		'PLATFORM CONSTANT. Escape sequences of type1 are to be recognized.
+					'Type1 escape sequence is
+					'"prev_char<--min 100ms-->EC<--min 100ms-->EC<--min 100ms-->EC", where
+					'"EC" is escape character defined by the ser.escchar property.
+					'There must be at least 100ms gap before the arrival of each escape character,
+					'otherwise the character will be counted as a regular data character.
+					'When escape sequence is detected in the incoming UART data stream the on_ser_esc
+					'event is generated and the serial port is disabled, i.e. ser.enabled= 0- NO. 
+	PL_SER_ET_TYPE2			'PLATFORM CONSTANT. Escape sequences of type2 are to be recognized.
+					'Type2 escape sequence is "EC OC", where "EC" is escape character defined
+					'by the ser.escchar property and "OC" is any character other than "EC".
+					'When escape sequence is detected in the incoming UART data stream the on_ser_esc
+					'event is generated and the serial port is disabled, i.e. ser.enabled= 0- NO.
+					'Data character with ASCII code matching that of selected EC should be transmitted
+					'as "EC EC"- this will result in a single character added to the RX buffer of
+					'the serial port.
+end enum
+
+property ser.esctype
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SER_ET_DISABLED (escape sequences disabled). Defines, for selected serial port
+'(selection is made through ser.num) whether serial escape sequence recognition is enabled and, if yes, what type of
+'escape sequence is to be recognised. Escape sequence is a special occurrence of
+'characters in the incoming data received by the serial port. When escape sequence is detected the on_ser_esc event is
+'generated and the serial port is disabled (ser.enabled= 0- NO). The ser.esctype property can have the
+'following values: 0- PL_SER_ET_DISABLED (recognition of serial escape sequences disabled), 1- PL_SER_ET_TYPE1
+'(Escape sequences of type1 are to be recognized), 2- PL_SER_ET_TYPE2 (escape sequences of type2 are to be recognized).
+'Type1 escape sequence is "prev_char<--min 100ms-->EC<--min 100ms-->EC<--min 100ms-->EC" and Type2 sequence is
+'"EC OC", where "EC" is escape character defined by the ser.escchar property and "OC" is any character other than "EC".
+'This property is only relevant in the UART mode of the serial port (ser.mode= 0- PL_SER_MODE_UART).
+	get = syscall(120) as pl_ser_esctype
+	set = syscall(121) (value as pl_ser_esctype)
+end property
+
+'--------------------------------------------------------------------
+property ser.escchar
+'PROPERTY (BYTE), DEFAULT VALUE= 1 (SOH character). For selected serial port (selection is made through ser.num) 
+'sets/retrieves ASCII code of the escape character used for type1 or type2 serial escape sequences. Which escape sequence
+'is enabled is defined by the ser.esctype property. This property is irrelevant when ser.esctype= 0- PL_SER_ET_DISABLED
+'(escape sequences disabled) or when the serial port is in the Wiegand or clock/data mode (ser.mode= 1- PL_SER_MODE_WIEGAND
+'or ser.mode= 2- PL_SER_MODE_CLOCKDATA) -- serial escape sequences are only recognized in the UART data.
+	get = syscall(118) as byte
+	set = syscall(119) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property ser.rxbuffsize
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). For the selected serial port (selection is made through ser.num)
+'returns current RX buffer capacity in bytes. Buffer capacity can be changed through the ser.rxbuffrq method
+'followed by the sys.buffalloc method.
+'The ser.rxbuffrq requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.
+'Relationship between the two is as follows: ser.rxbuffsize=num_pages*256-16 (or =0 when num_pages=0), where "num_pages"
+'is the number of buffer pages that was GRANTED through the ser.rxbuffrq. "-16" is because 16 bytes are needed for
+'internal buffer variables. The serial port cannot RX data when the RX buffer has zero capacity.
+	get = syscall(122) as word
+end property
+
+'--------------------------------------------------------------------
+property ser.txbuffsize
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes). For the selected serial port (selection is made through ser.num)
+'returns current TX buffer capacity in bytes. Buffer capacity can be changed through the ser.txbuffrq method
+'followed by the sys.buffalloc method.
+'The ser.txbuffrq requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.
+'Relationship between the two is as follows: ser.txbuffsize=num_pages*256-16 (or =0 when num_pages=0), where "num_pages"
+'is the number of buffer pages that was GRANTED through the ser.txbuffrq. "-16" is because 16 bytes are needed for
+'internal buffer variables. The serial port cannot TX data when the TX buffer has zero capacity.
+	get = syscall(123) as word
+end property
+
+'--------------------------------------------------------------------
+property ser.rxlen
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected serial port (selection is made through ser.num) returns total number of committed bytes currently waiting in the
+'RX buffer to be extracted and processed by your application. The on_ser_data_arrival event is generated once the RX
+'buffer is not empty, i.e. there is data to process. There may be only one on_ser_data_arrival event for each port
+'waiting to be processed in the event queue. Another on_serial_data_arrival event for the same port
+'may be generated only after the previous one is handled.
+'If, during the on_ser_data_arrival event handler execution, not all data is extracted from the RX buffer,
+'another on_ser_data_arrival event is generated immediately after the on_ser_data_arrival event handler is exited.
+'Notice that the RX buffer of the serial port employes "data committing" based on the amount of data in the buffer and
+'intercharacter delay (ser.interchardelay). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
+'to your application and is not included in the count returned by the ser.rxlen.
+	get = syscall(124) as word
+end property
+
+'--------------------------------------------------------------------
+property ser.txlen
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected serial port (selection is made through ser.num) returns total number of committed bytes currently found in
+'the TX buffer. The data in the TX buffer does not become committed until you use the ser.send method. Your application may
+'use the ser.notifysent method to get on_ser_data_sent event once the total number of committed bytes in the TX buffer
+'drops below the level defined by the ser.notifysent method. See also ser.newtxlen.
+	get = syscall(125) as word
+end property
+
+'--------------------------------------------------------------------
+property ser.txfree
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected serial port (selection is made through ser.num) returns the amount of free space in the TX buffer in
+'bytes, not taking into account uncommitted data. Actual free space is ser.txfree-ser.newtxlen. Your application will not be
+'able to store more data than this amount. To achieve asynchronous data processing, use the ser.notifysent method to get
+'on_ser_data_sent event once the TX buffer gains required amount of free space.
+	get = syscall(127) as word
+end property
+
+'--------------------------------------------------------------------
+property ser.newtxlen
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected serial port (selection is made through ser.num) returns the amount of uncommitted TX data in bytes.
+'Uncommited data is the one that was added to the TX buffer with the ser.setdata method but not yet committed using the
+'ser.send method.
+	get = syscall(133) as word
+end property
+
+'--------------------------------------------------------------------
+syscall(128) ser.rxclear
+'METHOD.
+'For the selected serial port (selection is made through ser.num) clears (deletes all data from) the RX buffer.
+
+'--------------------------------------------------------------------
+syscall(129) ser.txclear
+'METHOD.
+'For the selected serial port (selection is made through ser.num) clears (deletes all data from) the TX buffer. This
+'method will only work when the serial port is closed (ser.enabled= 0- NO).
+
+'--------------------------------------------------------------------
+syscall(130) ser.getdata(maxinplen as word) as string
+'METHOD.
+'For the selected serial port (selection is made through ser.num) returns the string that contains the data
+'extracted from the RX buffer. Extracted data is permanently deleted from the buffer. Length of extracted data is
+'limited by one of the three factors (whichever is smaller): amount of committed data in the RX buffer itself, capacity of the
+'"receiving" string variable, and the limit set by the maxinplen argument. In the UART mode (ser.mode= 0- PL_SER_MODE_UART)
+'the data is extracted "as is". For Wiegand and clock/data mode (ser.mode= 1- PL_SER_MODE_WIEGAND and
+'ser.mode= 2- PL_SER_MODE_CLOCKDATA) each character of extracted data represents one data bit and only two characters
+'are possible: "0" or "1".
+
+'--------------------------------------------------------------------
+syscall(131) ser.setdata(byref txdata as string)
+'METHOD.
+'For the selected serial port (selection is made through ser.num) adds the data passed in the txdata argument to the
+'contents of the TX buffer. In the UART mode (ser.mode= 0- PL_SER_MODE_UART) the data is added "as is". For Wiegand and
+'clock/data mode (ser.mode= 1- PL_SER_MODE_WIEGAND and ser.mode= 2- PL_SER_MODE_CLOCKDATA) each data character represents
+'one data bit and only bit0 (least significant bit) of each character is relevant (therefore, adding "0101" will result in
+'the 0101 sequence of data bits). If the buffer doesn't have enough space to accommodate the data being added then
+'this data will be truncated. Newly saved data is not sent out immediately. This only happens after the ser.send method
+'is used to commit the data. This allows your application to prepare large amounts of data before sending it out.
+'Total amount of newly added (uncommitted) data in the buffer can be checked through the ser.newtxlen setting. Also see
+'ser.txlen, ser.txfree, ser.notifysent, and on_ser_data_sent. 
+
+'--------------------------------------------------------------------
+syscall(132) ser.send()
+'METHOD.
+'For the selected serial port (selection is made through ser.num) commits (allows sending) the data that was previously
+'saved into the TX buffer using the ser.setdata method. You can monitor the sending progress by checking the ser.txlen
+'property or using the ser.notifysent method and the on_ser_data_sent event. 
+
+'--------------------------------------------------------------------
+syscall(134) ser.notifysent(threshold as word)
+'METHOD.
+'Using this method for the selected serial port (selection is made through ser.num) will cause the on_ser_data_sent
+'event to be generated when the amount of committed data in the TX buffer is found to be below "threshold" number of bytes.
+'Only one on_ser_data_sent event will be generated each time after the ser.notifysent is invoked. This method, together
+'with the on_ser_data_sent event provides a way to handle data sending asynchronously. Just like with ser.txfree,
+'the trigger you set won't take into account any uncommitted data in the TX buffer.
+
+'--------------------------------------------------------------------
+syscall(85) ser.rxbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected serial port (selection is made through ser.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the RX buffer of the serial port. Returns actual number of pages that can be allocated.
+'Actual allocation happens when the sys.buffalloc method is used. The serial port is unable to RX data if its RX buffer
+'has 0 capacity. Actual current buffer capacity can be checked through the ser.rxbuffsize which returns buffer capacity
+'in bytes. Relationship between the two is as follows: ser.rxbuffsize=num_pages*256-16 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the ser.rxbuffrq. "-16" is because 16 bytes are
+'needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also txbuffrq method.
+
+'--------------------------------------------------------------------
+syscall(86) ser.txbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected serial port (selection is made through ser.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the TX buffer of the serial port. Returns actual number of pages that can be allocated.
+'Actual allocation happens when the sys.buffalloc method is used. The serial port is unable to TX data if its TX buffer
+'has 0 capacity. Actual current buffer capacity can be checked through the ser.txbuffsize which returns buffer capacity
+'in bytes. Relationship between the two is as follows: ser.txbuffsize=num_pages*256-16 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the ser.txbuffrq. "-16" is because 16 bytes are
+'needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also ser.rxbuffrq method.
+
+'--------------------------------------------------------------------
+property ser.div9600
+'R/O PROPERTY (WORD), DEFAULT VALUE= <platform dependent>.
+'Returns the value to which the ser.baudrate property must be set in order to achieve the baudrate of 9600bps.
+'"Smart" applications will use this property to set baudrates in a platform-independent fashion.
+	get = syscall(126) as word
+end property
+
+
+'**************************************************************************************************
+'		NET (Ethernet network) object
+'**************************************************************************************************
+
+object net
+'The net object represents an Ethernet interface of your device. This object only specifies various parameters related
+'to the Ethernet interface (IP address, default gateway IP, netmask, etc.) and is not responsible for
+'sending/transmitting network data. The latter is the job of the sock object.
+
+'--------------------------------------------------------------------
+property net.mac
+'R/O PROPERTY (STRING), DEFAULT VALUE= <as preset during device production>.
+'Returns current MAC (hardware Ethernet) address of the device. You cannot use the net.mac property to set the new MAC
+'address, but this address can be changed indirectly, by writing to a special area of the EEPROM (see stor.setdata and
+'stor.base).
+	get = syscall(194) as string
+end property
+
+'--------------------------------------------------------------------
+property net.ip
+'PROPERTY (STRING), DEFAULT VALUE= "127.0.0.1".
+'Sets/returns the IP address of the Ethernet interface of your device. If invalid IP addresses is specified it will be
+'automatically corrected to the nearest valid IP-address. For example, "192.168.100.0" will be corrected to
+'"192.168.100.1", "192.168" to "192.168.0.1", etc. This property can only be written two if all sockets of the sock
+'object are in the idle state (sock.statesimple= 0- PL_SSTS_CLOSED). See also net.gatewayip and net.netmask.
+	get = syscall(195) as string
+	set = syscall(196) (byref ipstr as string)
+end property
+
+'--------------------------------------------------------------------
+property net.netmask
+'PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0".
+'Sets/returns the netmask of the Ethernet interface of your device. This property can only be written two if all sockets
+'of the sock object are in the idle state (sock.statesimple= 0- PL_SSTS_CLOSED). See also net.ip and net.gatewayip.
+	get = syscall(197) as string
+	set = syscall(198) (byref netmaskstr as string)
+end property
+
+'--------------------------------------------------------------------
+property net.gatewayip
+'PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0".
+'Sets/returns the IP address of the default gateway for the Ethernet interface of your device. This property can only
+'be written two if all sockets of the sock object are in the idle state (sock.statesimple= 0- PL_SSTS_CLOSED).
+'See also net.ip and net.netmask.
+	get = syscall(199) as string
+	set = syscall(200) (byref gatewayip as string)
+end property
+
+'--------------------------------------------------------------------
+property net.failure
+'R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (no failure).
+'Reports whether the Network Interface Controller (NIC) IC has failed: 0- NO (no failure), 1- YES (NIC failure).
+	get = syscall(201) as no_yes
+end property
+
+'--------------------------------------------------------------------
+enum pl_net_linkstate
+	PL_NET_LINKSTAT_NOLINK,		'PLATFORM CONSTANT. No physical Ethernet link exists at the moment
+					'(the Ethernet port of the device is not connected to a hub).
+	PL_NET_LINKSTAT_10BASET,	'PLATFORM CONSTANT. The Ethernet port of the device is linked to a hub
+					'(or directly to another device) at 10Mbit/sec. 
+	PL_NET_LINKSTAT_100BASET	'PLATFORM CONSTANT. The Ethernet port of the device is linked to a hub
+					'(or directly to another device) at 100Mbit/sec.
+end enum
+
+property net.linkstate
+'R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_NET_LINKSTAT_NOLINK (no link).
+'Returns current link status of the Ethernet port of the device: 0- PL_NET_LINKSTAT_NOLINK (no link),
+'1- PL_NET_LINKSTAT_10BASET (linked at 10Mbit/s), 2- PL_NET_LINKSTAT_100BASET (linked at 100Mbit/s).
+'See also on_net_link_change event.
+	get = syscall(202) as pl_net_linkstate
+end property
+
+
+'**************************************************************************************************
+'		SOCK (Socket) object
+'**************************************************************************************************
+
+object sock
+'This is the sockets object that encompasses ALL available sockets. Total number of sockets is typically 16 but can be
+'less due to memory limitations of a particular platform. The number of available sockets can be obtained through
+'the sock.numofsock read-only property. Selection of a particular socket to work with is done through the sock.num
+'property. Most other properties and methods refer to the currently selected socket. When the handler for one of the
+'socket events is entered the sock.num is automatically switched to the socket for which this event was generated.   
+
+'--------------------------------------------------------------------
+property sock.numofsock
+'R/O PROPERTY (BYTE). Returns total number of sockets available on the current platform. See also sock.num property.
+	get = syscall(248) as byte
+end property
+
+'--------------------------------------------------------------------
+property sock.num
+'PROPERTY (BYTE), DEFAULT VALUE= 0 (socket #0 selected).
+'Sets/returns the number of currently selected socket (sockets are enumerated from 0).
+'Most other properties and methods of this object relate to the socket selected through this property.
+'Note that socket-related events such as on_sock_data_arrival change currently selected socket!
+'The value of this property won't exceed sock.numofsock-1 (even if you attempt to set higher value).
+	get = syscall(203) as byte
+	set = syscall(204) (sock as byte)
+end property
+
+'--------------------------------------------------------------------
+property sock.state
+'R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0-PL_SST_CLOSED (connection is closed).
+'For currently selected socket (selection is made through sock.num) returns "detailed" current socket state
+'(as opposed to on_sock_event(newstate) that retuns detailed state at the moment of a particular on_sock_event event generation).
+'See pl_sock_state_ constants for state descriptions.
+'Another read-only property- sock.statesimple- returns "simplified" socket state.
+  
+	get = syscall(224) as pl_sock_state
+end property
+
+'--------------------------------------------------------------------
+property sock.statesimple
+'R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0-PL_SST_SIMPLE_CLOSED (connection is closed).
+'For currently selected socket (selection is made through sock.num) returns "simplified" current socket state
+'(as opposed to on_sock_event that retuns simplified state at the moment of a particular on_sock_event event generation).
+'See pl_sock_state_simple constants for state descriptions.
+'Another read-only property- sock.state- returns "detailed" socket state.
+	get = syscall(185) as pl_sock_state_simple
+end property
+
+'--------------------------------------------------------------------
+enum pl_sock_inconmode
+'ENUM. Contains the list of constants related to whether the socket accepts any incoming connections and, if yes,
+'from which sources.
+	PL_SOCK_INCONMODE_NONE,			'PLATFORM CONSTANT. The socket does not accept any incoming connections.
+	PL_SOCK_INCONMODE_SPECIFIC_IPPORT,	'PLATFORM CONSTANT. The socket will only accept an incoming connection
+						'from specific IP (matching sock.targetip) and specific port
+						'(matching sock.targetport)
+	PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT,	'PLATFORM CONSTANT. The socket will only accept an incoming connection
+						'from specific IP (matching sock.targetip), but any port.
+	PL_SOCK_INCONMODE_ANY_IP_ANY_PORT	'PLATFORM CONSTANT. The socket will accept an incoming connection from
+						'any IP and any port.
+end enum
+
+property sock.inconmode
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SOCK_INCONMODE_NONE (does not accept any incoming connections).
+'For currently selected socket (selection is made through sock.num) specifies whether incoming connections (passive opens)
+'will be accepted and, if yes, from which sources: 0- PL_SOCK_INCONMODE_NONE (incoming
+'connections are not accepted at all), 1- PL_SOCK_INCONMODE_SPECIFIC_IPPORT (incoming connections accepted only from
+'specific IP (matching sock.targetip) and specific port (matching sock.targetport)), 2-
+'PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT (incoming connections accepted only from specific IP (matching sock.targetip),
+'but any port), 3- PL_SOCK_INCONMODE_ANY_IP_ANY_PORT (incoming connections accepted from any IP and any port). 
+	get = syscall(192) as pl_sock_inconmode
+	set = syscall(193) (inconmode as pl_sock_inconmode)
+end property
+
+'--------------------------------------------------------------------
+enum pl_sock_reconmode
+'ENUM. Contains the list of constants that specify whether the socket accepts reconnects, and, if yes, from which sources.
+'Reconnect situation is when a passive open and resulting connection replace, for the same socket, the connection that
+'was already in progress. For UDP, these constants additionally define whether a "port switchover" will occur as a
+'result of an incoming connection (passive open) or a reconnect. Port switchover is when the socket starts sending its
+'outgoing UDP datagrams to the port from which the most recent UDP datagram was received, rather than the port specified by
+'the sock.targetport property.
+	PL_SOCK_RECONMODE_0,		'PLATFORM CONSTANT. For UDP: Reconnects accepted only from the same IP as the one
+					'already engaged in the current connection with this socket, but any port;
+					'port switchover will not happen. TCP: reconnects are not accepted at all.
+	PL_SOCK_RECONMODE_1,		'PLATFORM CONSTANT. For UDP: Reconnects accepted from any IP, any port; port
+					'switchover will not happen. TCP: reconnects accepted only from the same IP and port
+					'as the ones already engaged in the current connection with this socket.
+	PL_SOCK_RECONMODE_2,		'PLATFORM CONSTANT. For UDP: Reconnects accepted only from the same IP as the one
+					'already engaged in the current connection with this socket, but any port;
+					'port switchover will happen. TCP: reconnects accepted only from the same IP
+					'as the one already engaged in the current connection with this socket, but any port.
+	PL_SOCK_RECONMODE_3		'PLATFORM CONSTANT. For UDP: Reconnects accepted from any IP, any port; port
+					'switchover will happen. TCP: reconnects accepted from any IP, any port.
+end enum
+
+property sock.reconmode
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SOCK_RECONMODE_0.
+'For currently selected socket (selection is made through sock.num) whether the socket accepts reconnects, and, if yes,
+'from which sources. Reconnect situation is when a passive open and resulting connection replace, for the same socket,
+'the connection that was already in progress. For UDP, this property additionally defines whether a "port switchover"
+'will occur as a result of an incoming connection (passive open) or a reconnect. Port switchover is when the socket starts
+'sending its outgoing UDP datagrams to the port from which the most recent UDP datagram was received, rather than
+'the port specified by the sock.targetport property. See PL_SOCK_RECONMODE_ constants for available choices.
+	get = syscall(246) as pl_sock_reconmode
+	set = syscall(247) (reconmode as pl_sock_reconmode)
+end property
+
+'--------------------------------------------------------------------
+property sock.localportlist
+'PROPERTY (STRING), DEFAULT VALUE= "" (empty string).
+'For currently selected socket (selection is made through sock.num) sets/returns the list of listening ports on any of
+'which this socket will accept an incoming UDP or TCP connection (as defined by the sock.protocol property and provided
+'that incoming connections are allowed by the sock.inconmode property). This property is of string type and the list
+'of ports is a comma-separated string, i.e. "1001,3000".
+'Max string length for this property is 32 bytes. Notice, that there is also a sock.httpportlist property that defines
+'a list of listening ports for HTTP TCP connections.
+	get = syscall(210) as string
+	set = syscall(211) (byref lplist as string)
+end property
+
+'--------------------------------------------------------------------
+property sock.httpportlist
+'PROPERTY (STRING), DEFAULT VALUE= "" (empty string).
+'For currently selected socket (selection is made through sock.num) sets/returns the list of listening ports on any of
+'which this socket will accept an incoming HTTP connection. (provided that the sock.protocol= 1- PL_SOCK_PROTOCOL_TCP and
+'that incoming connections are allowed by sock.inconmode property). This property is of string type and the list of ports
+'is a comma-separated string, i.e. "80, 81".
+'Max string length for this property is 32 bytes. Notice, that there is also a sock.localportlist property that defines
+'a list of listening ports for UDP and non-HTTP TCP connections. When a particular port is listed both under the
+'sock.localportlist and the sock.httpportlist, the protocol for this socket is TCP then sock.httpportlist has
+'precedence (incoming TCP connection on the port in question will be interpreted as HTTP). See also sock.localport and
+'sock.httpmode properties. 
+	get = syscall(48) as string
+	set = syscall(49) (byref hplist as string)
+end property
+
+'--------------------------------------------------------------------
+property sock.localport
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0.
+'For currently selected socket (selection is made through sock.num) returns current local port of the socket.
+'Your application cannot set the local port directly. Instead, a list of ports on which the socket is allowed to accept
+'an incoming connection (passive open) is supplied via the sock.localportlist and sock.httpportlist properties.
+'An incoming connection is accepted on any port from those two lists. The sock.localport property reflects current or the
+'most recent local port on which connection was accepted.
+	get = syscall(209) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.outport
+'PROPERTY (WORD), DEFAULT VALUE= 0 (automatic).
+'For currently selected socket (selection is made through sock.num) sets/returns the number of the port that will be
+'used by the socket to establish outgoing connections. If this property is set to 0 then the socket will use "automatic"
+'port numbers: for the first connection since the powerup the port number will be selected randomly, for all subsequent
+'outgoing connections the port number will increase by one. Actual local port of a connection can be queried through the
+'sock.localport read-only property. If this property is not at zero then the port it specifies will be used for all
+'outgoing connections from this socket.
+	get = syscall(190) as word
+	set = syscall(191) (outport as word)
+end property
+
+'--------------------------------------------------------------------
+property sock.acceptbcast
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0-NO.
+'For currently selected socket (selection is made through sock.num) specifies whether the socket will accept
+'incoming broadcast UDP datagrams: 0- NO (won't accept broadcast UDP datagrams), 1- YES (will accept broadcast UDP
+'datagrams). This property is irrelevant for TCP communications (sock.protocol=PL_SOCK_PROTOCOL_TCP).
+	get = syscall(205) as no_yes
+	set = syscall(206) (acceptbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.targetip
+'PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0".
+'For active opens on currently selected socket (selection is made through sock.num) specifies the target IP to which
+'the socket will attempt to connect to. For passive opens, whether this property will matter or not is defined by
+'the sock.inconmode property. When the sock.inconmode= 1- PL_SOCK_INCONMODE_SPECIFIC_IPPORT or
+'2- PL_SOCK_INCONMODE_SPECIFIC_IP_ANY_PORT only the host with IP matching the one set in the sock.targetip property
+'will be able to connect to the socket. Current IP on the "other side" of the connection can always be checked
+'through the sock.remoteip read-only property. See also sock.targetport and sock.remoteport.
+	get = syscall(212) as string
+	set = syscall(213) (byref targetip as string)
+end property
+
+'--------------------------------------------------------------------
+property sock.targetport
+'PROPERTY (WORD), DEFAULT VALUE= 0.
+'For active opens on currently selected socket (selection is made through sock.num) specifies the target port to which
+'the socket will attempt to connect to. For passive opens, whether this property will matter or not is defined by
+'the sock.inconmode property. When the sock.inconmode= 1- PL_SOCK_INCONMODE_SPECIFIC_IPPORT an incoming connection
+'will only be accepted from the port matching the one set in the sock.targetport property. Current port on the
+'"other side" of the connection can always be checked through the sock.remoteport read-only property.
+'See also sock.targetip and sock.remoteip.
+	get = syscall(214) as word
+	set = syscall(215) (targetport as word)
+end property
+
+'--------------------------------------------------------------------
+property sock.targetbcast
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.
+'For currently selected socket (selection is made through sock.num) specifies whether this port will be sending
+'its outgoing UDP datagrams as link-level broadcasts: 0- NO (will send as "normal" packets), 1- YES (will send as broadcast
+'packets). This property is only relevant for UDP communications (sock.protocol=PL_SOCK_PROTOCOL_UDP).
+'When this property is set to 1- YES the socket will be sending out all UDP datagrams as broadcasts and incoming datagrams
+'won't cause port switchover, even if the latter is enabled through the sock.reconmode property.
+	get = syscall(216) as no_yes
+	set = syscall(217) (targetbcast as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.remotemac
+'R/O PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0".
+'For currently selected socket (selection is made through sock.num) returns the MAC address of the host with which this
+'socket had the most recent or currently has a connection. For UDP connections, when the on_sock_data_arrival event handler
+'is entered, the sock.remotemac will contain the MAC address of the sender of the current UDP datagram being processed.
+'Outside of the on_sock_data_arrival event handler, the property will return the source MAC address of the most recent
+'datagram received by the socket. Also see sock.remoteip, sock.remoteport, and sock.bcast properties.
+	get = syscall(220) as string
+end property
+
+'--------------------------------------------------------------------
+property sock.remoteip
+'R/O PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0".
+'For currently selected socket (selection is made through sock.num) returns the IP address of the host with which this
+'socket had the most recent or currently has a connection. The application cannot directly change this property, it can
+'only specify the target IP address for active opens through the sock.targetip property. For UDP connections, when the
+'on_sock_data_arrival event handler is entered, the sock.remoteip will contain the IP address of the sender of the current
+'datagram being processed. Outside of the on_sock_data_arrival event handler, the property will return the source
+'IP address of the most recent datagram received by the socket.
+'Also see sock.remotemac, sock.remoteport, and sock.bcast properties. 
+	get = syscall(221) as string
+end property
+
+'--------------------------------------------------------------------
+property sock.remoteport
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0.
+'For currently selected socket (selection is made through sock.num) returns the port number of the host with which this
+'socket had the most recent or currently has a connection. The application cannot directly change this property, it can
+'only specify the target port for active opens through the sock.targetport property. For UDP connections, when the
+'on_sock_data_arrival event handler is entered, the sock.remoteport will contain the port number of the sender of the
+'current datagram being processed. Outside of the on_sock_data_arrival event handler, the property will return
+'the source port of the most recent datagram received by the socket.
+'Also see sock.remotemac, sock.remoteip, and sock.bcast properties.
+	get = syscall(222) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.bcast
+'R/O PROPERTY (ENUM BYTE), DEFAULT VALUE= 0- NO.
+'For currently selected socket (selection is made through sock.num) reports whether the current or most recently
+'received UDP datagram was a broadcast one. When the on_sock_data_arrival event handler is entered, the
+'sock.bcast will contain the broadcast status for the current datagram being processed.  Outside of the
+'on_sock_data_arrival event handler, the property will return the broadcast status of the most recent datagram
+'received by the socket.
+	get = syscall(223) as no_yes
+end property
+
+'--------------------------------------------------------------------
+enum pl_sock_protocol
+'ENUM. Contains the list of constants that specify the transport protocol for the socket. HTTP is not listed here because
+'it is not a transport protocol (transport protocol used for HTTP is TCP).
+	PL_SOCK_PROTOCOL_UDP,		'PLATFORM CONSTANT. Specifies UDP transport protocol for the socket.
+	PL_SOCK_PROTOCOL_TCP		'PLATFORM CONSTANT. Specifies TCP transport protocol for the socket.
+end enum
+
+property sock.protocol
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_SOCK_PROTOCOL_UDP (UDP transport protocol for the socket).
+'For currently selected socket (selection is made through sock.num) selects the transport protocol:
+'0- PL_SOCK_PROTOCOL_UDP (UDP transport protocol), 1- PL_SOCK_PROTOCOL_TCP (TCP transport protocol).
+'Notice, that there is no "HTTP" selection, as HTTP is not a transport protocol (TCP is the transport protocol required
+'by the HTTP). You make the socket accept HTTP connections by specifying the list of HTTP listening ports using the
+'sock.httpportlist property or using the sock.httpmode property. The program won't be able to change the value of this
+'property when the socket is not idle (sock.statesimple<> 0- PL_SSTS_CLOSED).
+	get = syscall(207) as pl_sock_protocol
+	set = syscall(208) (proto as pl_sock_protocol)
+end property
+
+'--------------------------------------------------------------------
+property sock.splittcppackets
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.
+'For currently selected socket (selection is made through sock.num) selects how TCP data should be processed:
+'0- NO (normal processing), 1- YES (additional degree of control over individual TCP packets).
+'When this property is set to 1- YES your program gets an additional degree of control over TCP. For incoming TCP data, the
+'program can know the size of individual incoming packets (this will be reported by the on_sock_tcp_packet_arrival event).
+'For outgoing TCP data, no packet will be sent out at all unless entire contents of the TX buffer can be sent. Therefore,
+'by executing sock.send and waiting for sock.txlen=0 your program can make sure that the packet sent will have exactly the
+'size you needed. The property is only relevant when sock.inbandcommands= 0- NO. With inband commands enabled, the socket
+'will always behave as if the sock.splittcppackets= 0- NO. The program won't be able to change the value of this
+'property when the socket is not idle (sock.statesimple<> 0- PL_SSTS_CLOSED). 
+	get = syscall(65) as no_yes
+	set = syscall(251) (splitpackets as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.httpmode
+'PROPERTY (ENUM BYTE), DEFAULT VALUE= 0- NO (not in HTTP mode).
+'For currently selected socket (selection is made through sock.num) specifies whether this socket is in the HTTP mode:
+'0- NO ("regular" TCP connection), 1- YES (TCP HTTP connection). This property is irrelavant when the sock.protocol=
+'PL_SOCK_PROTOCOL_UDP (UDP). If you do not set this property directly, it's value will be: 0- NO for all outgoing
+'connections (active opens) of the socket, 0- NO for incoming connections received on one of the ports from the
+'sock.localportlist list, 1- YES for incoming connections received on one of the ports from the sock.httpportlist.
+'You can manually switch any TCP connection at any time after it has been established from "regular" to HTTP by setting
+'sock.httpmode=1. However, this operation is "sticky"- once you have converted the TCP connection into the HTTP mode you
+'cannot convert it back into the regular mode- trying to set sock.httpmode=0 won't have any effect- the TCP connection will
+'remain in the HTTP mode until this connection is closed. 
+	get = syscall(46) as no_yes
+	set = syscall(47) (httpmode as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.httpnoclose
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (will be closed).
+'For currently selected socket (selection is made through sock.num) sets/returns whether TCP HTTP connection will be kept
+'opened after the HTTP request has been processed and the HTML page has been sent out: 0- NO (will be closed, standard
+'behavior), 1- YES (will be kept open). In the second case the end of HTML page output is marked by CR/LF/CR/LF sequence.
+	get = syscall(44) as no_yes
+	set = syscall(45) (value as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.connectiontout
+'PROPERTY (WORD), DEFAULT VALUE= 0 (no timeout).
+'For currently selected socket (selection is made through sock.num) sets/returns connection timeout threshold for the
+'socket in half-second increments. When no data is exchanged across the connection for sock.connectiontout/2 number of
+'seconds this connection is aborted (reset for TCP and discarded for UDP). Connection timeout of 0 means "no timeout".
+	get = syscall(218) as word
+	set = syscall (219) (connectiontout as word)
+end property
+
+'--------------------------------------------------------------------
+property sock.inbandcommands
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (inband commands disabled).
+'For currently selected socket (selection is made through sock.num) specifies whether inband command passing is allowed:
+'0- NO (inband commands are not allowed), 1- YES (inband commands are allowed). Inband commands are messages passed
+'within the TCP data stream. Each message has to be formatted in a specific way- see the sock.escchar and sock.endchar
+'properties. Inband commands are not possible for UDP communications so this setting is irrelevant when
+'sock.protocol= 1- PL_SOCK_PROTOCOL_UDP. The program won't be able to change the value of this property when the
+'socket is not idle (sock.statesimple<> 0- PL_SSTS_CLOSED).
+	get = syscall(38) as no_yes
+	set = syscall(39) (inbandcommands as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.escchar
+'PROPERTY (BYTE), DEFAULT VALUE= 255.
+'For currently selected socket (selection is made through sock.num) specifies the ASCII code of the character that will
+'be used as an escape character for inband commands (messages). Each inband message starts with "EC OC", where "EC" is
+'the escape character defined by the sock.escchar property and "OC" is any character other than "EC". With inband commands
+'enabled, data characters with code matching that of the escape character is transmitted as "EC EC". This property is
+'irrelevant when inband commands are disabled (sock.inbandcommands= 0- NO). The program won't be
+'able to change the value of this property when the socket is not idle (sock.statesimple<> 0- PL_SSTS_CLOSED).
+'See also sock.endchar.
+	get = syscall(40) as byte
+	set = syscall(41) (escchar as byte)
+end property
+
+'--------------------------------------------------------------------
+property sock.endchar
+'PROPERTY (BYTE), DEFAULT VALUE= 13 (CR).
+'For currently selected socket (selection is made through sock.num) specifies the ASCII code of the character that will
+'end inband command (message). Each inband message has to end with this character, which will mark a return to the "regular"
+'data stream of the TCP connection. This property is irrelevant when inband commands are disabled
+'(sock.inbandcommands= 0- NO). The program won't be able to change the value of this property when the socket is not idle
+'(sock.statesimple<> 0- PL_SSTS_CLOSED). See also sock.escchar.
+	get = syscall(42) as byte
+	set = syscall(43) (escchar as byte)
+end property
+
+'--------------------------------------------------------------------
+property sock.gendataarrivalevent
+'PROPERTY (BYTE), DEFAULT VALUE= 1- YES (on_sock_data_arrival event will be generated).
+'For currently selected socket (selection is made through sock.num) specifies whether the on_sock_data_arrival event will be generated once there is some
+'data in the RX buffer: 0- NO (on_sock_data_arrival event won't be generated), 1- YES (on_sock_data_arrival event will be generated). Turning
+'on_sock_data_arrival event generation off may be handy when you are processing UDP datagrams (sock.protocol= 0- PL_SOCK_PROTOCOL_UDP) in a loop while
+'using the doevents. If this is the case the on_sock_data_arrival event handler executed "inside" the doevents would "steal" datagrams from you
+'(the datagram is deleted from the RX buffer once the on_sock_data_arrival event handler is exited).
+	get = syscall(244) as no_yes
+	set = syscall(245) (escchar as no_yes)
+end property
+
+'--------------------------------------------------------------------
+property sock.rxbuffsize
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For currently selected socket (selection is made through sock.num) returns current RX buffer capacity in bytes.
+'Buffer capacity can be changed through the sock.rxbuffrq. The sock.rxbuffrq requests buffer size in 256-byte pages
+'whereas this property returns buffer size in bytes.
+'Relationship between the two is as follows: sock.rxbuffsize=num_pages*256-16 (or =0 when num_pages=0), where "num_pages"
+'is the number of buffer pages that was GRANTED through the sock.rxbuffrq. "-16" is because 16 bytes are needed for
+'internal buffer variables. The socket cannot RX data when the RX buffer has zero capacity.
+	get = syscall(230) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.txbuffsize
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For currently selected socket (selection is made through sock.num)
+'returns current TX buffer capacity in bytes. Buffer capacity can be changed through the sock.txbuffrq method
+'followed by the sys.buffalloc method.
+'The sock.txbuffrq requests buffer size in 256-byte pages whereas this property returns buffer size in bytes.
+'Relationship between the two is as follows: sock.txbuffsize=num_pages*256-16 (or =0 when num_pages=0), where "num_pages"
+'is the number of buffer pages that was GRANTED through the sock.txbuffrq. "-16" is because 16 bytes are needed for
+'internal buffer variables. The socket cannot TX data when the TX buffer has zero capacity.
+	get = syscall(231) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.rxlen
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns total number of bytes currently waiting in the
+'RX buffer to be extracted and processed by your application. The on_sock_data_arrival event is generated once the RX
+'buffer is not empty, i.e. there is data to process. There may be only one on_ser_data_arrival event for each socket
+'waiting to be processed in the event queue. Another on_sock_data_arrival event for the same socket
+'may be generated only after the previous one is handled.
+'If, during the on_sock_data_arrival event handler execution, not all data is extracted from the RX buffer,
+'another on_sock_data_arrival event is generated immediately after the on_sock_data_arrival event handler is exited.
+	get = syscall(232) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.txlen
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns total number of committed bytes currently found in the
+'TX buffer. The data in the TX buffer does not become committed until you use the sock.send method. Your application may
+'use the sock.notifysent method to get on_sock_data_sent event once the total number of committed bytes in the TX buffer
+'drops below the level defined by the sock.notifysent method. See also sock.newtxlen.
+	get = syscall(233) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.txfree
+'R/O PROPERTY (WORD), DEFAULT VALUE=0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the amount of free space in the TX buffer in
+'bytes, not taking into account uncommitted data. Actual free space is sock.txfree-sock.newtxlen. Your application will not
+'be able to store more data than this amount. To achieve asynchronous data processing, use the sock.notifysent method to
+'get on_sock_data_sent event once the TX buffer gains required amount of free space.
+	get = syscall(235) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.newtxlen
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the amount of uncommitted TX data in bytes.
+'Uncommitted data is the one that was added to the TX buffer with the sock.setdata method but not yet committed using the
+'sock.send method.
+	get = syscall(242) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.httprqstring
+'R/O PROPERTY (STRING), DEFAULT VALUE= "".
+'For the selected socket (selection is made through sock.num) returns entire contents of the HTTP request string that is
+'stored in the VAR buffer. Unlike sock.getdata method, the sock.httprqstring is a property; it can be invoked several
+'times and will return the same data (when the sock.httprqstring is used the data is not deleted from the VAR buffer).
+'This property is only relevant when the socket is in the HTTP mode (sock.httpmode= 1- YES).
+'Maximum length of the HTTP request string that can be processed is 255 bytes, since this is the maximum possible
+'capacity of a string variable that will accept the value of the sock.httprqstring. 
+	get = syscall(188) as string
+end property
+
+'--------------------------------------------------------------------
+property sock.rxpacketlen
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the length (in bytes) of the UDP datagram
+'being extracted from the RX buffer. This property is only relevant when the sock.protocol= 1-PL_SOCK_PROTOCOL_TCP. Correct
+'way of using this property is within the on_sock_data_arrival event or in conjunction with the sock.nextpacket
+'method. See also sock.rxlen property.
+	get = syscall(241) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.cmdlen
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the length of data (in bytes) waiting to be processed
+'in the CMD buffer. This buffer accumulates incoming inband commands (messages) and may contain more than one such command.
+'Use sock.getinband method to extract the data from the CMD buffer. See also sock.rpllen and sock.inbandcommands.
+	get = syscall(96) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.rpllen
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the length of data (in bytes) waiting to be send out
+'from the RPL buffer; this is the buffer that keeps outgoing inband replies (messages). Your application adds inband
+'replies to the RPL buffer with the sock.setsendinband method. Several inband replies may be waiting in the RPL buffer.
+'See also sock.cmdlen, sock.rplfree and sock.inbandcommands.
+	get = syscall(97) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.rplfree
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the free space (in bytes) available in the RPL
+'buffer; this is the buffer that stores outgoing inband replies (messages). Your application adds inband
+'replies to the RPL buffer with the sock.setsendinband method. Several inband replies may be waiting in the RPL buffer.
+'See also sock.cmdlen, sock.rpllen and sock.inbandcommands.
+	get = syscall(99) as word
+end property
+
+'--------------------------------------------------------------------
+property sock.tx2len
+'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
+'For the selected socket (selection is made through sock.num) returns the amount of data waiting to be sent out in the
+'TX2 buffer; this is the buffer that is needed to transmit outgoing TCP data when inband commands (messages) are enabled
+'(sock.inbandcommands= 1- YES). If your application needs to make sure that all data is actually sent out then
+'it must verify that both TX and TX2 buffers are empty. See also sock.txlen and sock.txfree.
+	get = syscall(98) as word
+end property
+
+'--------------------------------------------------------------------
+syscall(236) sock.rxclear()
+'METHOD.
+'For the selected socket (selection is made through sock.num) clears (deletes all data from) the RX buffer.
+'Invoking this method will have no effect when the socket is in the HTTP mode (sock.httpmode= 1- YES).
+
+'--------------------------------------------------------------------
+syscall(237) sock.txclear()
+'METHOD.
+'For the selected socket (selection is made through sock.num) clears (deletes all data from) the TX buffer.
+'Invoking this method will have no effect when the socket is not idle (sock.statesimple<> 0- PL_SSTS_CLOSED).
+
+'--------------------------------------------------------------------
+syscall(238) sock.getdata(maxinplen as word) as string
+'METHOD.
+'For the selected socket (selection is made through sock.num) returns the string that contains the data
+'extracted from the RX buffer. Extracted data is permanently deleted from the buffer. Length of extracted data is
+'limited by one of the three factors (whichever is smaller): amount of data in the RX buffer itself, capacity of the
+'"receiving" string variable, and the limit set by the maxinplen argument.
+'Additionally, if this socket uses UDP transport protocol (sock.protocol= 1-PL_SOCK_PROTOCOL_TCP) the length of data that
+'will be extracted is limited to the UDP datagram being processed. Additional conditions apply to UDP datagram processing;
+'see on_sock_data_arrival event and sock.nextpacket() method.
+
+'--------------------------------------------------------------------
+syscall(239) sock.setdata(byref txdata as string)
+'METHOD.
+'For the selected socket (selection is made through sock.num) adds the data passed in the txdata argument to the
+'contents of the TX buffer. If the buffer doesn't have enough space to accommodate the data being added then
+'this data will be truncated. Newly saved data is not sent out immediately. This only happens after the sock.send method
+'is used to commit the data. This allows your application to prepare large amounts of data before sending it out.
+'Total amount of newly added (uncommitted) data in the buffer can be checked through the sock.newtxlen setting. Also see
+'sock.txlen, sock.txfree, sock.notifysent, and on_sock_data_sent.
+
+'--------------------------------------------------------------------
+syscall(240) Sock.send()
+'METHOD.
+'For the selected socket (selection is made through sock.num) commits (allows sending) the data that was previously
+'saved into the TX buffer using the sock.setdata method. You can monitor the sending progress by checking the sock.txlen
+'property or using the sock.notifysent method and the on_sock_data_sent event. 
+
+'--------------------------------------------------------------------
+syscall(50) sock.getinband as string
+'METHOD.
+'For the selected socket (selection is made through sock.num) returns the string that contains the data extracted from
+'the CMD buffer; this is the buffer that accumulates inband commands. Extracted data is permanently deleted from the
+'CMD buffer. Length of extracted data is limited by one of the two factors (whichever is smaller):
+'amount of data in the CMD buffer itself, and the capacity of the "receiving" buffer variable. Several inband commands
+'may be waiting in the CMD buffer. Each command will always be complete, i.e. there will be no situation when you
+'will extract a portion of the command because the end of this command hasn't arrived yet. Inband commands stored in
+'the CMD buffer will have escape character (see sock.escchar property) and the next character after the escape character
+'already cut off, but the end character (see sock.endchar property) will still be present. Therefore, your application
+'can separate inband command from each other by finding end characters.
+
+'--------------------------------------------------------------------
+syscall(51) sock.setsendinband(byref data as string)
+'METHOD.
+'For the selected socket (selection is made through sock.num) puts the data into the RPL buffer; this is the buffer
+'that stores outgoing inband replies (messages). This method also commits the newly stored data. This is different from the
+'TX buffer for which two separate methods- sock.setdata and sock.send- are used to store and commit the data. 
+'It is the responsibility of your application to properly encapsulate outgoing messages with escape sequence
+'("EC OC", see the sock.escchar property) and the end character (see the sock.endchar property). When adding the data
+'to the RPL buffer make sure you are adding entire inband message at once- you are not allowed to do this "in portions"!
+
+'--------------------------------------------------------------------
+syscall(243) sock.notifysent(threshold as word)
+'METHOD.
+'Using this method for the selected socket (selection is made through sock.num) will cause the on_sock_data_sent
+'event to be generated when the amount of committed data in the TX buffer is found to be below "threshold" number of bytes.
+'Only one on_sock_data_sent event will be generated each time after the sock.notifysent is invoked. This method, together
+'with the on_sock_data_sent event provides a way to handle data sending asynchronously. Just like with sock.txfree, the
+'trigger you set won't take into account any uncommitted data in the TX buffer.
+
+'--------------------------------------------------------------------
+syscall(189) sock.nextpacket()
+'METHOD.
+'For the selected socket (selection is made through sock.num) in the UDP mode (sock.protocol= 0- PL_SOCK_PROTOCOL_UDP)
+'closes processing of current UDP datagram and moves to the next datagram. For UDP, the sock.getdata method only
+'extracts the data from a single UDP datagram even if several datagrams are stored in the RX buffer.
+'When incoming UDP datagram processing is based on the on_sock_data_arrival event the use of the sock.nextpacket
+'is not required since each invocation of the on_sock_data_arrival event handler "moves" processing to the next UDP
+'datagram. The method is useful when it is necessary to move to the next datagram without re-entering
+'on_sock_data_arrival. Therefore, sock.nextpacket is only necessary when the application needs to process
+'several incoming UDP packets at once and within a single event handler.
+
+'--------------------------------------------------------------------
+syscall(226) sock.connect()
+'METHOD.
+'For the selected socket (selection is made through sock.num) causes the socket to attempt to connect to the target
+'host specified by the sock.targetport and sock.targetip (unless, for UDP, the socket is to broadcast the data- see the
+'sock.targetbcast property). Method invocation will have effect only if connection was closed at the time when the
+'method was called (sock.state in one of PL_SST_CLOSED states). 
+
+'--------------------------------------------------------------------
+syscall(227) sock.close()
+'METHOD.
+'For the selected socket (selection is made through sock.num) causes the socket to close the connection with the other
+'host. For established TCP connections this will be a "graceful disconnect", if the TCP
+'connection was in the "connection opening" or "connection closing" state this will be a reset (just like when
+'the sock.reset method is used). If connection was in the ARP phase or the transport protocol was UDP
+'(sock.protocol= 0- 0- PL_SOCK_PROTOCOL_UDP) the connection will be discarded (just like when the sock.discard method
+'is used). Method invocation will have NO effect if connection was closed at the time when the
+'method was called (sock.state in one of PL_SST_CLOSED states).
+
+'--------------------------------------------------------------------
+syscall(228) sock.reset()
+'METHOD.
+'For the selected socket (selection is made through sock.num) causes the socket to abort the connection with the other
+'host. For TCP connections that were established, being opened, or being closed this will be a reset (RST will be sent
+'to the other end of the connection). If connection was in the ARP phase or the transport protocol was UDP
+'(sock.protocol= 0- PL_SOCK_PROTOCOL_UDP) the connection will be discarded (just like when the sock.discard method
+'is used). Method invocation will have NO effect if connection was closed at the time when the
+'method was called (sock.state in one of PL_SST_CLOSED states). See also sock.close method.
+
+'--------------------------------------------------------------------
+syscall(229) sock.discard()
+'METHOD.
+'For the selected socket (selection is made through sock.num) causes the socket to discard the connection with the other
+'host. Discarding the connection means simply forgetting about it without notifying the other side of the connection
+'in any way. See also sock.close and sock.reset methods.
+
+'--------------------------------------------------------------------
+syscall(89) sock.rxbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the RX buffer of the socket. Returns actual number of pages that can be allocated.
+'Actual allocation happens when the sys.buffalloc method is used. The socket is unable to RX data if its RX buffer
+'has 0 capacity. Actual current buffer capacity can be checked through the sock.rxbuffsize which returns buffer capacity
+'in bytes. Relationship between the two is as follows: sock.rxbuffsize=num_pages*256-16 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the sock.rxbuffrq. "-16" is because 16 bytes are
+'needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also sock.txbuffrq method.
+
+'--------------------------------------------------------------------
+syscall(90) sock.txbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the TX buffer of the socket. Returns actual number of pages that can be allocated.
+'Actual allocation happens when the sys.buffalloc method is used. The socket is unable to TX data if its TX buffer
+'has 0 capacity. Actual current buffer capacity can be checked through the sock.txbuffsize which returns buffer capacity
+'in bytes. Relationship between the two is as follows: sock.txbuffsize=num_pages*256-16 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the sock.txbuffrq. "-16" is because 16 bytes are
+'needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also sock.tx2buffrq method.
+
+'--------------------------------------------------------------------
+syscall(91) sock.cmdbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the CMD buffer of the socket; this is the buffer that accumulates incoming inband
+'commands (messages). Returns actual number of pages that can be allocated. Actual allocation happens when the
+'sys.buffalloc method is used. The socket is unable to receive inband commands if its CMD buffer has 0 capacity.
+'Unlike for TX or RX buffers there is no property to read out actual CMD buffer capacity in bytes. This capacity can
+'be calculated as num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that
+'was GRANTED through the sock.cmdbuffrq. "-16" is because 16 bytes are needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also sock.rplbuffrq method.
+
+'--------------------------------------------------------------------
+syscall(92) sock.rplbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the RPL buffer of the socket; this is the buffer that stores outgoing inband
+'replies (messages). Returns actual number of pages that can be allocated. Actual allocation happens when the
+'sys.buffalloc method is used. The socket is unable to send inband replies if its RPL buffer has 0 capacity.
+'Unlike for TX or RX buffers there is no property to read out actual RPL buffer capacity in bytes. This capacity can
+'be calculated as num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that
+'was GRANTED through the sock.rplbuffrq. "-16" is because 16 bytes are needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'See also sock.cmdbuffrq method.
+
+'--------------------------------------------------------------------
+syscall(93) sock.varbuffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the VAR buffer of the socket; this is the buffer that stores the HTTP request string.
+'Returns actual number of pages that can be allocated. Actual allocation happens when the
+'sys.buffalloc method is used. The socket is unable to receive HTTP request string if its VAR buffer has 0 capacity.
+'Unlike for TX or RX buffers there is no property to read out actual VAR buffer capacity in bytes. This capacity can
+'be calculated as num_pages*256-16 (or =0 when num_pages=0), where "num_pages" is the number of buffer pages that
+'was GRANTED through the sock.varbuffrq. "-16" is because 16 bytes are needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+'The VAR buffer is only required when you plan to use this socket in the HTTP mode- see sock.httpmode property, also
+'sock.httpportlist.
+
+'--------------------------------------------------------------------
+syscall(94) sock.tx2buffrq(numpages as byte) as byte
+'METHOD.
+'For the selected socket (selection is made through sock.num) pre-requests "numpages" number of buffer pages
+'(1 page= 256 bytes) for the TX2 buffer of the socket; this buffer is required when inband commands are enabled
+'(sock.inbandcommands= 1- YES), without it the socket won't be able to TX data.
+'Returns actual number of pages that can be allocated. Actual allocation happens when the
+'sys.buffalloc method is used. Unlike for TX or RX buffers there is no property to read out actual TX2 buffer
+'capacity in bytes. This capacity can be calculated as num_pages*256-16 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the sock.tx2buffrq. "-16" is because 16
+'bytes are needed for internal buffer variables.
+'Buffer allocation will not work if the serial port to which this buffer belongs is opened (ser.enabled= 1- YES) at
+'the time when sys.buffalloc executes. You can only change buffer sizes of ports that are closed.
+
+'--------------------------------------------------------------------
+property sock.inconenabledmaster
+'PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- YES (incoming connections are globally enabled).
+'A master switch that globally defines whether incoming connections will be accepted:
+'0- NO (no socket will be allowed to accept an incoming connection), 1- YES (incoming connections are globally
+'enabled; individual socket's behavior and whether it will accept or reject a particular incoming connection
+'depends on the setup of this socket). This property can be used to temporarily disable incoming connection
+'acceptance on all sockets without changing individual setup of each socket.
+	get = syscall(186) as no_yes
+	set= syscall(225) (value as no_yes)
+end property
+
+'**************************************************************************************************
+'		ROM (ROM file access) object
+'**************************************************************************************************
+
+object romfile
+'The romfile object allows you to access resource (ROM) files that you have added to your project. Resource files appear in
+'the "Resource Files" folder of your project tree. These are files that are not processed by the compiler in any way,
+'just added to the compiled binary file. You can use resource files to store some permanent data that is too large to
+'fit in a constant or when it is just more convenient for you to handle this data as a separate file.
+
+'--------------------------------------------------------------------
+property romfile.size
+'R/O PROPERTY (WORD).
+'Returns the size of currently opened resource (ROM) file. Zero size is returned when the file does not exist or the
+'file is empty. See also romfile.open method.
+	get = syscall(54) as word
+end property
+
+'--------------------------------------------------------------------
+property romfile.pointer
+'PROPERTY (WORD).
+'Sets/returns current pointer position in the resource (ROM) file. When the file is (re)opened with the romfile.open
+'method, the pointer is reset to the first character of the file (position 1), except when the file is not found or
+'contains no data, in which case the pointer will permanently be equal to 0. Pointer position cannot exceed file size
+'(see the romfile.size property). When you read from the file using the romfile.getdata method the pointer is
+'automatically moved forward by the number of characters that have been read out.
+	get = syscall(55) as word
+	set = syscall(56) (value as word)
+end property
+
+'--------------------------------------------------------------------
+syscall(52) romfile.open(byref filename as string)
+'METHOD. Opens or re-opens a resource (ROM) file with name filename. Only one ROM file can be opened at any given time.
+'If the file exists and is not empty the romfile.pointer is set to 0 each time you use the romfile.open method.
+'If the file does not exist of is empty the romfile.pointer is set to 0. There is no method (or need) to explicitely
+'close the ROM file.
+
+'--------------------------------------------------------------------
+syscall(57) romfile.getdata(maxinplen as byte) as string
+'METHOD. Reads data from a currently opened resource (ROM) file. Readout size is limited by three factors
+'(whichever is smaller): capacity of the receiving string, the amount of remaining data in the file (from current
+'position- see the romfile.pointer), and maxinplen parameter. Current position is moved forward by the actual number of
+'bytes that was read out.
+
+'--------------------------------------------------------------------
+syscall(53) romfile.find(frompos as word, byref substr as string, num as word) as word
+'METHOD. Locates Nth instance (defined by num) of a substring substr within a currently opened resource (ROM) file.
+'The search is conducted from position frompos (first file character is at position 1). This method returns the file
+'position at which the substring resides or 0 if the desired substring occurrence is not found.
+
+'**************************************************************************************************
+'		STOR (Storage system for "settings") object
+'**************************************************************************************************
+
+object stor
+'The stor object provides access to the non-volatile (EEPROM) memory in which your application can store data that
+'must not be lost when the device is switched off. Using this object you can also access and change the MAC address of the
+'device (be careful with that!). 
+
+'--------------------------------------------------------------------
+syscall(58) stor.getdata(startaddr as word, len as byte) as string
+'METHOD. Reads up to len number of bytes from the EEPROM starting from address startaddr (addresses are counted from 1).
+'Actual amount of extracted data is also limited by the capacity of the receiving variable and the starting address.
+'EEPROM memory capacity can be checked through the stor.size read-only property. Notice that when the stor.getdata executes,
+'an offset equal to the value of stor.base is added to the startaddr. For example, by default, the stor.base is 9.
+'Therefore, if you do stor.getdata(1,3) you are actually reading the data starting from physical EEPROM location 9.
+'First 8 bytes of EEPROM are used to store the MAC address. If you set the stor.base to 1 you will be able to access the
+'EEPROM right from the physical address 0 and change the MAC if necessary.
+'Note: MAC address stored in the EEPROM has a certain formatting- see platform documentation for details.
+
+'--------------------------------------------------------------------
+syscall (59) stor.setdata(byref datatoset as string, startaddr as word) as byte
+'METHOD. Writes data from the datatoset string into the EEPROM, starting from the address startaddr (addresses are counted
+'from 1). Returns actual number of bytes written into the EEPROM. Hence, the operation has completed successfully if the
+'value returned by this method equals the length of the datatoset string. If this is not the case then the write has
+'(partially) failed and there may be two reasons for this: physical EEPROM failure or invalid startaddr (too close to the
+'end of memory to save the entire string). EEPROM memory capacity can be checked through the stor.size read-only property.
+'Notice that when the stor.setdata executes, an offset equal to the value of stor.base is added to the startaddr. For example,
+'by default, the stor.base is 8. Therefore, if you do stor.setdata("ABC",1) you are actually saving the data starting from
+'physical EEPROM location 9. First 8 bytes of EEPROM are used to store the MAC address and this mechanism prevents your
+'program from overriting it by mistake. On the other hand, if you want to change MAC, set the stor.base to 1- this way you
+'will be able to write to EEPROM starting from physical address 1.
+'Note: if you change the MAC address this change will only take effect after device reboot. This is the only time when the
+'device loads its MAC address from the EEPROM into the Ethernet controller. MAC address stored in the EEPROM has a certain
+'formatting- see platform documentation for details.
+
+'--------------------------------------------------------------------
+property stor.base
+'PROPERTY (WORD). DEFAULT VALUE= 8.
+'Returns the base address of the EEPROM from which the area available to your application starts. By default, the base
+'address is 9 -- just above the special configuration area that stores MAC address of the device (8 bytes are needed for that).
+'Default value of 9 makes sure that your application won't overwrite MAC by mistake. When you are accessing EEPROM memory
+'using stor.setdata or stor.getdata methods, you specify the start address. Actual physical address you access is
+'start_address+stor.base. If your application needs to change the MAC address you can set the stor.base to 1-
+'this way you will have access to the entire memory.
+'If your application needs to change MAC,
+'set the stor.base to 1- then you will have access to the entire memory. Also see stor.size.
+	get = syscall(181) as word
+	set = syscall(182) (value as word)
+end property
+
+'--------------------------------------------------------------------
+property stor.size
+'R/O PROPERTY (WORD). DEFAULT VALUE= <actual_EEPROM_capacity-8>
+'Returns total EEPROM memory capacity (in bytes) for the current device. First 8 bytes of the EEPROM are used by the special
+'configuration section (on this platform it occupies 8 bytes and stores MAC address of the device). By default, special
+'configuration area is not accessible to the application and is excluded from memory capacity reported by stor.size.
+'EEPROM IC used by this platform has 2048 bytes of data, so the stor.size will return 2040 by default.
+'At the same time, the default value of stor.base property is 9, which means that the EEPROM locations 1-8 are occupied by
+'the special configuration area. If you set the stor.base to 1 (for instance, to edit the MAC address), the stor.size will
+'show the capacity of 2048. In other words, the number this property returns is actual_EEPROM_capacity-stor.base+1.
+	get = syscall(74) as word
+end property
+
+
+'**************************************************************************************************
+'		IO (Input/output lines) object
+'**************************************************************************************************
+
+object io
+'The io object encompasses all I/O lines available on your platform. The set of lines is different for each platform,
+'so check your platform specification for details on that. IO line control is straighforward. First, you select the
+'line with the io.num property. Then, you can read or set this line's status through the io.state property.
+
+'--------------------------------------------------------------------
+enum pl_io_num 
+	PL_IO_NUM_0,		'PLATFORM CONSTANT. Selects general-purpose I/O line 0. Only available on the EM200.
+	PL_IO_NUM_1,		'PLATFORM CONSTANT. Selects general-purpose I/O line 1. Only available on the EM200.
+	PL_IO_NUM_2_DSR,	'PLATFORM CONSTANT. Selects general-purpose I/O line 2.
+				'This is also a DSR input of serial port 0. On EM202 and EM200 works as input/output.
+				'On EM202-EV and DS202 works as input only and the actual state of DSR pin is opposite to
+				'what is read through the io.state property.
+	PL_IO_NUM_3_DTR,	'PLATFORM CONSTANT. Selects general-purpose I/O line 3.
+				'This is also a DTR output of serial port 0. On EM202 and EM200 works as input/output.
+				'On EM202-EV and DS202 works as output only and the actual state of DTR pin is opposite to
+				'what is set through the io.state property.
+	PL_IO_NUM_4_CTS,	'PLATFORM CONSTANT. Selects general-purpose I/O line 4.
+				'This is also a CTS input of serial port 0. On EM202 and EM200 works as input/output.
+				'Cannot be set through io.state when ser.flowcontrol= 1- ENABLED.
+				'On EM202-EV and DS202 works as input only and the actual state of CTS pin is opposite to
+				'what is read through the io.state property.
+	PL_IO_NUM_5_RTS,	'PLATFORM CONSTANT. Selects general-purpose I/O line 5.
+				'This is also a RTS output of serial port 0. On EM202 and EM200 works as input/output.
+				'Cannot be set through io.state when ser.flowcontrol= 1- ENABLED.
+				'On EM202-EV and DS202 works as output only and the actual state of RTS pin is opposite to
+				'what is set through the io.state property.
+	PL_IO_NUM_6,		'PLATFORM CONSTANT. Selects general-purpose I/O line 6. Only available on the EM200.
+	PL_IO_NUM_7,		'PLATFORM CONSTANT. Selects general-purpose I/O line 7. Only available on the EM200.
+	PL_IO_NUM_8		'PLATFORM CONSTANT. Selects general-purpose I/O line 8. Only available on the EM200.
+end enum
+
+property io.num
+'PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- PL_IO_NUM_0 (I/O line 0).
+'Selects a particular I/O line to be manipulated through the io.state property. 
+	get = syscall(170) as pl_io_num
+	set = syscall(171) (num as pl_io_num)
+end property
+
+'--------------------------------------------------------------------
+property io.state
+'PROPERTY (ENUM, BYTE).
+'Sets/returns a state of currently selected I/O line. Selection is made through the io.num property. 
+	get = syscall(172) as low_high
+	set = syscall(173) (state as low_high)
+end property
+
+
+'**************************************************************************************************
+'		PAT (Status LED patterns) object
+'**************************************************************************************************
+
+object pat
+'The pat object allows you to "play" signal patters on two status LEDs- red and green connected to the SR and SG pins of the
+'device. These pins always act as outputs so you do not need to configure them as such. When the device is in the debug mode
+'and the program execution is stopped, these same lines (and LEDs) display various "fast-blinking" patterns over which your
+'application has no control and which are pre-defined in the built-in debugger of the device. It is only when your
+'application is executing that the pat object will be able to use these lines to display patterns set by your application. 
+
+'--------------------------------------------------------------------
+enum pl_pat_int 
+	PL_PAT_NOINT,		'PLATFORM CONSTANT. Tells the pat.play method that the new pattern can only be loaded if
+				'no pattern is playing at the moment (no interrupting of previous pattern).
+	PL_PAT_CANINT		'PLATFORM CONSTANT. Tells the pat.play method that the new pattern can be loaded even if
+				'another pattern is currently playing (previous pattern can be interrupted).
+end enum
+
+syscall(184) pat.play(byref pattern as string, patint as pl_pat_int)
+'METHOD. Loads new LED pattern to play. The pattern string defines the pattern to play, for example: "R-G-B", where '-'
+'means "both red and green off", 'R' means red LED on, 'G' means green LED on, 'B' means both LEDs on.
+'Additionally, '~' can be added to specify that the pattern should loop indefinitely (not just play once), '*' can be
+'used to make the pattern "play" at double speed ('~' and '*' can be added anywhere in the pattern string).
+'Maximum pattern length is 16 "steps". The second parameter defines whether the pat.play method is allowed to interrupt
+'another pattern that is already playing: 0- PL_PAT_NOINT (cannot interrupt), 1-  PL_PAT_CANINT (can interrupt). The
+'on_pat event is generated once the pattern finishes playing.	
+'LED patterns are displayed on two status LEDs- red and green connected to the SR and SG pins of the
+'device. These pins always act as outputs so you do not need to configure them as such. When the device is in the debug mode
+'and the program execution is stopped, these same lines (and LEDs) display various "fast-blinking" patterns over which your
+'application has no control and which are pre-defined in the built-in debugger of the device. It is only when your
+'application is executing that the pat object will be able to use these lines to display patterns set by your application.
+
+
+'**************************************************************************************************
+'		BUTTON object
+'**************************************************************************************************
+
+object button
+'Provides two events: on_button_pressed and on_button_released generated for the only button found on this platform. The
+'button has to be connected to the MD line of the device. The MD line always acts as an input so you dot not need to define
+'it as such. The line also has certain pre-defined functionality that is not controlled by the application (for example, for
+'firmware upgrades via the serial port).
+
+'--------------------------------------------------------------------
+property button.time
+'R/O PROPERTY (BYTE).
+'Returns the time (in 0.5 second intervals) elapsed since the button was last pressed or released (whichever happened) later.
+'It only makes sense to read this property inside the on_button_pressed() or on_button_released() event handlers.
+'Once the value of this property reaches 255 (127 seconds) it stays at 255 (there is no roll-over to 0).
+'Elapsed time is not counted when the execution is PAUSED from TIDE.
+	get = syscall(21) as byte
+end property
+
+

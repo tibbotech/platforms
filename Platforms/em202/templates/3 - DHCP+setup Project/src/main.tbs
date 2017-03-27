@@ -1,0 +1,158 @@
+include "global.tbh"
+
+dim dhcp_lease_time as word 'this is a counter-down for remaining lease time
+dim dhcp_result as ok_ng 'keep this as global- your program might want to use this data
+
+'=============================================================
+sub on_sys_init
+	
+	dim dhcp_ip, dhcp_gateway, dhcp_netmask as string(16)
+	dim f,x as byte
+	dim dhcp_result as ok_ng
+	
+	'It is a good practice to indicate that we are now in DHCP
+	pat.play("~G---------------",PL_PAT_CANINT) '<<<<<<<<<< CHANGE IF YOU WISH
+	
+	
+	'Start by obtaining data from DHCP server.
+	'<<<<<<<< YOU MIGHT WANT TO PUT DEVICE NAME YOU WANT TO REGISTER WITH DHCP SERVER
+	'<<<<<<<< INSTEAD OF "" (see below)
+	dhcp_lease_time=0 'we clear this first
+	dhcp_result=dhcp_obtain(dhcp_ip,dhcp_gateway,dhcp_netmask,dhcp_lease_time,"") '<<< PUT ACTUAL DEVICE NAME!
+
+	'Now it is time to set these parameters. Remember, that this will only be successful if ALL sockets
+	'are in a CLOSED state. The dhcp_obtain() already closed ITS socket, but maybe you used some other
+	'sockets before this point? Here is a "safe code" that just makes sure everything is closed
+	'We cannot change the IP-address while at least one socket is NOT in the CLOSED state
+	sock.inconenabledmaster=NO 
+	for f=0 to sock.numofsock-1
+		sock.num=f
+		if sock.statesimple<>PL_SSTS_CLOSED then
+			sock.discard
+			while sock.statesimple<>PL_SSTS_CLOSED
+			wend
+		end if
+	next f
+
+	'Now set the NET parameters
+	if dhcp_result=OK then
+		'DHCP session was successful
+		net.ip=dhcp_ip
+		net.gatewayip=dhcp_gateway
+		net.netmask=dhcp_netmask
+	else
+		'could not complete DHCP- you decide what to do here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		'For example, can set fixed IP OR DO SOMETHING ELSE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		net.ip="192.168.100.40"
+	end if
+
+	sock.inconenabledmaster=YES 'allow incoming connetions again
+
+	'OK, let's indicate that IP has been obtained
+	pat.play("~G-G-------------",PL_PAT_CANINT) '<<<<<<<<<< CHANGE IF YOU WISH
+	
+
+	'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	'Now, setup for serial port and sockets. We reserve socket0 for "data communications" (maybe
+	'with serial port), all other sockets- for HTTP server. Buffer allocation is dynamic- 1/3
+	'of available buffer space for the serial port, 1/3- for socket0, 1/3- for HTTP.
+	'<<<<<<< YOU CAN CHANGE THIS ANY WAY YOU WANT!
+	
+	x=sys.freebuffpages/6 'this is what RX and TX buffers of ser port and socket0 can get
+	
+	'Request buffer memory for the serial port
+	ser.num=0
+	ser.rxbuffrq(x)
+	ser.txbuffrq(x)
+	
+	
+	'Request buffer memory for the "data" socket
+	sock.num=0
+	sock.rxbuffrq(x)
+	sock.txbuffrq(x)
+	
+	'Now request memory to "HTTP" sockets. Each socket gets minimum buffer space- 1 page for TX, RX, and
+	'VAR buffers respectively. How many sockets can we have?
+	x=(sys.freebuffpages-x*4)/3
+	
+	'we can have no more than 15 such sockets anyway
+	if x>15 then x=15
+	
+	'Request buffers for "HTTP" sockets.
+	for f=1 to x
+		sock.num=f
+		sock.rxbuffrq(1)
+		sock.txbuffrq(1)
+		sock.varbuffrq(1)
+	next f
+	
+	'OK, now, actual buffer allocation
+	sys.buffalloc
+	
+	
+	'Setup the serial port
+	ser.num=0
+	ser.baudrate=ser.div9600/(38400/9600) 	'38400 <<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	ser.bits=PL_SER_BB_8					'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	ser.parity=PL_SER_PR_NONE				'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	ser.flowcontrol=DISABLED				'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	ser.interface=PL_SER_SI_FULLDUPLEX		'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	ser.enabled=YES
+	
+	'Setup for the main "data" socket
+	sock.num=0
+	sock.protocol=PL_SOCK_PROTOCOL_TCP		'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	sock.inconmode=PL_SOCK_INCONMODE_ANY_IP_ANY_PORT	'<<<<<<<<<<<<< CHANGE AS NEEDED
+	sock.reconmode=PL_SOCK_RECONMODE_0		'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	sock.localportlist="1000,2000"			'<<<<<<<<<<<<<<<<<<<<<<<<< CHANGE AS NEEDED
+	
+	'Setup for HTTP sockets
+	for f=1 to x
+		sock.num=f
+		sock.protocol=PL_SOCK_PROTOCOL_TCP
+		sock.inconmode=PL_SOCK_INCONMODE_ANY_IP_ANY_PORT
+		sock.reconmode=PL_SOCK_RECONMODE_0
+		sock.httpportlist="80"
+	next f
+
+
+	'TO DO: put the rest of your initialization code here
+	'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	
+end sub
+
+
+'=============================================================
+sub on_sys_timer
+	'Count down to the time when DHCP lease expires. We only count if DHCP is NOT at 0
+	if dhcp_lease_time>0 then
+		dhcp_lease_time=dhcp_lease_time-1
+		'When DHCP lease expires reboot (and obtain IP again)
+		if dhcp_lease_time=0 then sys.reboot
+	end if
+	
+	
+	'TO DO: put other stuff that you want to do on timer here
+	'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+end sub
+
+
+'****************************************************************************
+'The following is just an example: route the data between the serial port
+'and socket.
+'****************************************************************************
+
+sub on_sock_data_arrival
+	ser.num=0
+	ser.setdata(sock.getdata(ser.txfree))
+	ser.send
+end sub
+
+'=============================================================
+sub on_ser_data_arrival
+	sock.num=0
+	sock.setdata(ser.getdata(sock.txfree))
+	sock.send
+end sub
+

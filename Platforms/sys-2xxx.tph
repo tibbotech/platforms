@@ -66,20 +66,7 @@ enum pl_sys_ext_reset_type
 end enum
 
 property sys.extresettype
-'<b>R/O PROPERTY (BYTE). </b><br><br>
-'Bit 6: The most recent reset was a low-power management reset.
-'<br><br>
-'Bit 5: The most recent reset was caused by the watchdog (user watchdog). 
-'<br><br>
-'Bit 4: The most recent reset was caused by the system crash (internal watchdog).
-'<br><br>
-'Bit 3: The most recent reset was a self-reset.
-'<br><br>
-'Bit 2: The most recent reset was a power-up/power-down reset.
-'<br><br>
-'Bit 1: The most recent reset was initiated from the RST pin.
-'<br><br>
-'Bit 0: The most recent reset was a brown-out reset.
+'<b>R/O PROPERTY (BYTE, enum pl_sys_ext_reset_type). </b><br><br>
     get = syscall(597) as pl_sys_ext_reset_type
 end property
 
@@ -287,4 +274,11 @@ end property
 
 '--------------------------------------------------------------------
 syscall(628) !sys.getbuffbasesize(buff_num as byte, byref base as dword, byref size as dword)
+
+'--------------------------------------------------------------------
+syscall(724) sys.getexceptioninfo(byref hfsr as dword, byref cfsr as dword, byref lr as dword, byref pc as dword, byref current_lr as dword)
+
+'--------------------------------------------------------------------
+syscall(725) sys.causeexception()
+
 
