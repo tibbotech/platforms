@@ -1,10 +1,10 @@
 [platform]
-description=EM202 Module
-version=EM202-2.06
-rom=65408
+description=EM203 Module
+version=EM203-2.06
+rom=63488
 ram=20480
 codebits=16
-sector=0
+sector=1
 
 [transport1]
 name=udp_broadcast
