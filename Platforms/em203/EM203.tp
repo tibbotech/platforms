@@ -1,6 +1,6 @@
 [platform]
 description=EM203 Module
-version=EM203-2.06
+version=EM203-2.07
 rom=63488
 ram=20480
 codebits=16
