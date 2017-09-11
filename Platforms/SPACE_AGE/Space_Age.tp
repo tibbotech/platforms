@@ -1,6 +1,6 @@
 [platform]
 description=Space Age controller
-version=SPACE_AGE-3.60
+version=SPACE_AGE-3.70
 rom=786432
 ram=66816
 codebits=24
@@ -8,10 +8,10 @@ databits=32
 sector=131072
 
 [transport1]
-name=udp_winpcap
-description=WinPCap (non-broadcast) UDP Transport
-device=taiko.winpcapdevice
-browsedlg=em202ui.browsedlg
+name=serial
+description=Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
 
 [transport2]
 name=udp_broadcast
