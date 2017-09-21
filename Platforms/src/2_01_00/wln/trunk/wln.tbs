@@ -220,7 +220,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 		wln_start=WLN_STATUS_MISSING_FIRMWARE_FILE
 		goto wln_start_error
 	end if
-
+	
 	if wln.boot(romfile.offset)<>OK then
 		wln_start=WLN_STATUS_BOOT_FAILURE
 		goto wln_start_error
