@@ -35,6 +35,7 @@
 #define SIMULATOR 28
 #define LTPP3 29
 #define SPACE_AGE 30
+#define DS1101W2 31
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
@@ -113,7 +114,10 @@
     #define LCD_DRIVER_TDL4 "79d.TDL"+
 #endif
 
-#if PLATFORM_ID=KLM601
+#if PLATFORM_ID=KLM601 
+    #define FD_DRIVER_TDL "64b.TDL"+
+    #define FD_COPYFIRMWARE "76b.TDL"+
+#elif PLATFORM_ID=DS1101W2
     #define FD_DRIVER_TDL "64b.TDL"+
     #define FD_COPYFIRMWARE "76b.TDL"+
 #else
