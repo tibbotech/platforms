@@ -34,6 +34,7 @@
 #define KLM601_32 27
 #define SIMULATOR 28
 #define LTPP3 29
+#define SPACE_AGE 30
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
