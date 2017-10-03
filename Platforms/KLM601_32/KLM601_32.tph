@@ -46,4 +46,4 @@ end enum
 '====================================================================
 include "..\GEN-ST.tph"
 include "..\WLN.tph"
-include "..\ADC.tph"
+
