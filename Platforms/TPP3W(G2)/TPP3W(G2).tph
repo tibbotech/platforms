@@ -34,6 +34,21 @@ enum pl_sock_interfaces
 end enum
 
 '--------------------------------------------------------------------
+enum pl_adc_num 
+	PL_ADC_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 0 (mapped to I/O line 40).
+
+	PL_ADC_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 1 (mapped to I/O line 41).
+
+	PL_ADC_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 2 (mapped to I/O line 42).
+
+	PL_ADC_NUM_3		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 3 (mapped to I/O line 43).
+end enum
+
+'--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0,		'<b>PLATFORM CONSTANT. </b><br><br> 
 				'Socket 1, control line C.
@@ -308,3 +323,4 @@ include "..\SSI.tph"
 include "..\FD.tph"
 include "..\TPRAM.tph"
 include "..\WLN.tph"
+include "..\ADC.tph"

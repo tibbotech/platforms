@@ -3,7 +3,7 @@
 '**************************************************************************************************
 
 object adc
-'ADC object.
+'Adc. object provides access to the analog-to-digital converter (ADC).
 
 '--------------------------------------------------------------------
 property adc.num
@@ -12,7 +12,7 @@ property adc.num
 '<br><br>
 'ADC inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_adc_num enum.
 '<br><br>
-After changing the channel, discard the first result returned by adc.getdata.
+'After changing the channel, discard the first result returned by adc.getdata.
     get = syscall(726) as pl_adc_num
     set = syscall(727) (num as pl_adc_num)
 end property
