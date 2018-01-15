@@ -194,3 +194,44 @@ syscall(715) lfd.resetdirpointer() as pl_lfd_status_codes
 'Resets the directory pointer to zero.
 '<br><br>
 'Use this method before repeatedly invoking lfd.getnextdirmember to obtain the list of files currently stored on the disk.
+
+
+'--------------------------------------------------------------------
+
+syscall(734) lfd.find(frompos as dword, byref substr as string,instance as word,dir as forward_back,incr as word,mode as pl_lfd_find_modes) as dword
+'<b>METHOD. </b><br><br>
+'Finds the Nth instance of data satisfying selected criteria in a file opened "on" a currently selected file number (selection is made through fd.filenum).
+'<br><br>
+'Returns a position (counting from one) at which the target data instance was discovered, or 0 if the target instance was not found.
+'<br><br>
+'<b>Frompos </b>-- Starting position in a file from which the search will be conducted. File positions are counted from 1. Will be corrected automatically if out of range.
+'<br><br>
+'<b>Substr </b>-- The string to search for.
+'<br><br>
+'<b>Instance </b>-- Instance (occurrence) number to find.
+'<br><br>
+'<b>Dir </b>-- Search direction (forward or back)
+'<br><br>
+'<b>Incr </b>-- Search position increment (or decrement for BACK searches).
+'<br><br>
+'<b>Mode </b>-- Search mode (equal, not equal, etc.).
+
+'--------------------------------------------------------------------
+
+syscall(735) lfd.getfreespace() as dword
+'<b>METHOD. </b><br><br>
+'Returns the available disk space for the current directory.
+
+'--------------------------------------------------------------------
+
+syscall(736) lfd.getnumfiles() as dword
+'<b>METHOD. </b><br><br>
+'Returns the total number of files currently stored in the current directory.
+
+'--------------------------------------------------------------------
+
+syscall(737) lfd.copyfile(byref src as string, byref dest as string) as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Copy file. <br><br>
+'<b>src</b> - A string (up to 255 characters) with the full path to source file. <br><br>
+'<b>dest</b> - A string (up to 255 characters) with the full path including the name of the destination file.

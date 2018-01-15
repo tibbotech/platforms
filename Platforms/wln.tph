@@ -332,18 +332,20 @@ event(23)  on_wln_event(wln_event as pl_wln_events)
 
 '--------------------------------------------------------------------
 enum pl_wln_tasks 
-    PL_WLN_TASK_IDLE,       '<b>PLATFORM CONSTANT.</b><br><br>No task (idle). 
-    PL_WLN_TASK_SCAN,       '<b>PLATFORM CONSTANT.</b><br><br>Passive scan task.
+    PL_WLN_TASK_IDLE,       	'<b>PLATFORM CONSTANT.</b><br><br>No task (idle). 
+    PL_WLN_TASK_SCAN,       	'<b>PLATFORM CONSTANT.</b><br><br>Passive scan task.
     PL_WLN_TASK_ASSOCIATE,      '<b>PLATFORM CONSTANT.</b><br><br>Association task.
     PL_WLN_TASK_SETTXPOWER,     '<b>PLATFORM CONSTANT.</b><br><br>TX power adjustment task (completes immediately).
-    PL_WLN_TASK_SETWEP,     '<b>PLATFORM CONSTANT.</b><br><br>WEP mode and keys setup task (completes immediately).
+    PL_WLN_TASK_SETWEP,     	'<b>PLATFORM CONSTANT.</b><br><br>WEP mode and keys setup task (completes immediately).
     PL_WLN_TASK_DISASSOCIATE,   '<b>PLATFORM CONSTANT.</b><br><br>Disassociation task.
     PL_WLN_TASK_NETWORK_START,  '<b>PLATFORM CONSTANT.</b><br><br>Network start task.
     PL_WLN_TASK_NETWORK_STOP,   '<b>PLATFORM CONSTANT.</b><br><br>Network stop task.
-    PL_WLN_TASK_SETWPA,     '<b>PLATFORM CONSTANT.</b><br><br>WPA mode and keys setup task (completes immediately). 
+    PL_WLN_TASK_SETWPA,     	'<b>PLATFORM CONSTANT.</b><br><br>WPA mode and keys setup task (completes immediately). 
     PL_WLN_TASK_ACTIVESCAN,     '<b>PLATFORM CONSTANT.</b><br><br>Active scan task.
-    PL_WLN_TASK_UPDATERSSI      '<b>PLATFORM CONSTANT.</b><br><br>Update current RSSI task.
-    
+    PL_WLN_TASK_UPDATERSSI,     '<b>PLATFORM CONSTANT.</b><br><br>Update current RSSI task.
+	PL_WLN_TASK_SET_EAP_TLS,    '<b>PLATFORM CONSTANT.</b><br><br>EAP-TLS mode and keys setup task (completes immediately). 
+	PL_WLN_TASK_SET_EAP_PEAP,   '<b>PLATFORM CONSTANT.</b><br><br>EAP-PEAP mode and keys setup task (completes immediately). 
+	PL_WLN_TASK_SET_EAP_TTLS    '<b>PLATFORM CONSTANT.</b><br><br>EAP-TTLS mode and keys setup task (completes immediately).     
 end enum
 
 event(22)  on_wln_task_complete(completed_task as pl_wln_tasks)
@@ -636,6 +638,50 @@ end property
 
 #endif
 
+'--------------------------------------------------------------------
+
+#if PLATFORM_ID=LTPP3 Or PLATFORM_ID=LKLM601
+
+syscall(739) wln.seteaptls(byref ca_cert as string, byref client_cert as string, byref private_key as string, byref private_key_passwd as string, byref identify as string) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP TLS Enterprise ciphering.
+
+enum pl_wln_peap_phase1
+    PL_WLN_PEAP_PHASE2_0,
+	PL_WLN_PEAP_PHASE2_1
+end enum
+
+enum pl_wln_peap_phase2
+    PL_WLN_PEAP_PHASE2_MSCHAPV2,
+	PL_WLN_PEAP_PHASE2_TLS,
+	PL_WLN_PEAP_PHASE2_GTC,
+	PL_WLN_PEAP_PHASE2_OTP,
+	PL_WLN_PEAP_PHASE2_MD5
+end enum
+
+syscall(740) wln.seteappeap(byref ca_cert as string, byref identify as string, byref password as string, phase1 as pl_wln_peap_phase1, phase2 as pl_wln_peap_phase2) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
 
 
+enum pl_wln_ttls_phase2
+    PL_WLN_TTLS_PHASE2_EAP_MD5,
+	PL_WLN_TTLS_PHASE2_EAP_GTC,
+	PL_WLN_TTLS_PHASE2_EAP_OTP,
+	PL_WLN_TTLS_PHASE2_EAP_MSCHAPV2,
+	PL_WLN_TTLS_PHASE2_EAP_TLS,
+	PL_WLN_TTLS_PHASE2_MSCHAPV2,
+	PL_WLN_TTLS_PHASE2_MSCHAP,
+	PL_WLN_TTLS_PHASE2_PAP,
+	PL_WLN_TTLS_PHASE2_CHAP
+end enum
+
+syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, byref password as string, phase2 as pl_wln_ttls_phase2) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
+
+#endif
 

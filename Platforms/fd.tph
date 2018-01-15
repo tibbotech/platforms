@@ -903,6 +903,10 @@ property fd.transactionstarted
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID=KLM601_32 'Keytroller
+syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte, source_sector as word)
+#else
 syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte)
+#endif
 
 #endif

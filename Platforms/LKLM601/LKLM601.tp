@@ -1,0 +1,69 @@
+[platform]
+description=LKLM601 Board
+version=LKLM601-3.71
+rom=983040
+ram=86784
+codebits=24
+databits=32
+sector=65536
+
+
+[transport1]
+name=serial
+description=Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
+
+
+[defineimports]
+import1=../GEN.tp
+
+
+[define1]
+define=OBJECT_KP
+description=Keypad (kp.) object
+value=KP_ENABLED
+
+[define1.option1]
+description=Disabled
+value=KP_DISABLED
+
+[define1.option2]
+description=Enabled
+value=KP_ENABLED
+
+
+[define2]
+define=OBJECT_FD
+description=Flash disk (fd.) object
+value=FD_ENABLED
+
+[define2.option1]
+description=Disabled
+value=FD_DISABLED
+
+[define2.option2]
+description=Enabled
+value=FD_ENABLED
+
+[define3]
+define=OBJECT_WLN
+description=Wi-Fi (wln.) object
+value=WLN_ENABLED
+
+[define3.option1]
+description=Disabled
+value=WLN_DISABLED
+
+[define3.option2]
+description=Enabled
+value=WLN_ENABLED
+
+[define4]
+define=OBJECT_LCD
+description=Display (lcd.) object
+value=LCD_ENABLED
+
+[define4.option1]
+description=Enabled
+value=LCD_ENABLED
