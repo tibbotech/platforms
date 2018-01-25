@@ -281,7 +281,13 @@ syscall(725) sys.causeexception()
 property sys.monversion
 '<b>R/O PROPERTY (STRING). </b><br><br>
 'Returns the version of the Monitor/Loader.
-    get = syscall(734) as string
+    get = syscall(751) as string
+end property
+
+'--------------------------------------------------------------------
+property !sys.userbuffpages
+'<b>R/O PROPERTY (WORD). </b><br><br>
+    get = syscall(785) as word
 end property
 
 
