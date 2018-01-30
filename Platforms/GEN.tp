@@ -128,3 +128,8 @@ value=SIMULATOR
 [define1.option30]
 description=LTPP3
 value=LTPP3
+
+[define1.option31]
+description=LKLM601
+value=LKLM601
+

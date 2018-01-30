@@ -197,7 +197,6 @@ syscall(715) lfd.resetdirpointer() as pl_lfd_status_codes
 
 
 '--------------------------------------------------------------------
-
 syscall(734) lfd.find(frompos as dword, byref substr as string,instance as word,dir as forward_back,incr as word,mode as pl_lfd_find_modes) as dword
 '<b>METHOD. </b><br><br>
 'Finds the Nth instance of data satisfying selected criteria in a file opened "on" a currently selected file number (selection is made through fd.filenum).
@@ -217,21 +216,123 @@ syscall(734) lfd.find(frompos as dword, byref substr as string,instance as word,
 '<b>Mode </b>-- Search mode (equal, not equal, etc.).
 
 '--------------------------------------------------------------------
-
 syscall(735) lfd.getfreespace() as dword
 '<b>METHOD. </b><br><br>
 'Returns the available disk space for the current directory.
 
 '--------------------------------------------------------------------
-
 syscall(736) lfd.getnumfiles() as dword
 '<b>METHOD. </b><br><br>
 'Returns the total number of files currently stored in the current directory.
 
 '--------------------------------------------------------------------
-
 syscall(737) lfd.copyfile(byref src as string, byref dest as string) as pl_lfd_status_codes
 '<b>METHOD. </b><br><br>
 'Copy file. <br><br>
 '<b>src</b> - A string (up to 255 characters) with the full path to source file. <br><br>
 '<b>dest</b> - A string (up to 255 characters) with the full path including the name of the destination file.
+
+'--------------------------------------------------------------------
+enum pl_lfd_copyfw_modes 
+    PL_LFD_COPYFW_TIOS,      'PLATFORM CONSTANT. Update TiOS binary.
+    PL_LFD_COPYFW_APP        'PLATFORM CONSTANT. Update TiOS application.
+end enum
+
+syscall(742) lfd.copyfirmwarefromfile(mode as pl_lfd_copyfw_modes)
+'<b>METHOD. </b><br><br>
+'Copies the data from an opened and currently selected file of the flash disk (selection is made through lfd.filenum) into the TiOS/application area of the flash memory, then reboots the TiOS to make it run new TiOS/application. <br><br>
+'<b>mode</b> - Copy mode.
+
+'--------------------------------------------------------------------
+syscall(745) lfd.createdir(byref path as string) as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Creates a new dir.
+'<br><br>
+'<b>path</b> -- A string with the full directory name.
+
+'--------------------------------------------------------------------
+syscall(746) lfd.deletedir(byref path as string) as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Deletes an existing dir.
+'<br><br>
+'<b>path</b> -- A string with the full directory name.
+
+'--------------------------------------------------------------------
+syscall(747) lfd.flush() as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Saves back to the flash memory ("flushes") the changes made to the most recently edited file.
+'<br><br>
+'When any data sector of the flash disk is being altered, this is done through a RAM buffer. To improve efficiency and reduce sector wear, the data from the RAM buffer is written back to the flash
+'memory only when it becomes necessary to load the RAM buffer with the contents of another sector.
+'<br><br>
+'When the file is closed (see lfd.close), RAM buffer "flushing" is done automatically.
+'However, if changes are made to any file and then no disk activity is performed, the buffer may keep the data in the RAM buffer indefinitely.
+'These changes will be lost if your device reboots. To prevent this, use lfd.flush. 
+
+'--------------------------------------------------------------------
+syscall(748) lfd.setattribute(byref value as string, byref name as string) as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Sets the <b>value</b> of the extended attribute identified by <b>name</b> "on" the currently opened file number (selection is made through lfd.filenum).
+'You can specify several attributes for the one file.<br>
+'They are extensions to the normal attributes which are associated with all inodes in the system.<br><br>
+'Attribute is saved immediately (no lfd.close or lfd.flush is required).
+'<b>See also: </b>
+'lfd.getattribute
+
+'--------------------------------------------------------------------
+syscall(749) lfd.getattribute(byref value as string) as string
+'<b>METHOD. </b><br><br>
+'Gets the value of the extended attribute identified by <b>name<b/> "on" the currently opened file number (selection is made through lfd.filenum).<br><br>
+'<b>See also: </b>
+'lfd.setattribute
+
+'--------------------------------------------------------------------
+syscall(750) lfd.cutfromtop(numbytes as dword) as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Removed  a specified number of bytes from the beginning of a file opened "on" a currently selected file number (selection is made through lfd.filenum). 
+'<br><br>
+'<b>numbytes</b> -- Number of bytes to remove from the beginning of the file.
+'As a result of this method invocation, the pointer will be set to end of the file.
+
+
+'--------------------------------------------------------------------
+syscall(782) lfd.transactionstart() as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Start data transaction on all currently opened files.<br><br>
+'Method allow works only with the opened files.<br><br>
+'Then started, all changes was made by <font color="maroon"><b>lfd.cutfromtop</b></font>, <font color="maroon"><b>lfd.flush</b></font>, <font color="maroon"><b>lfd.setattribute</b></font>, <font color="maroon"><b>lfd.setfilesize</b></font>, <font color="maroon"><b>lfd.setdata</b></font> will be saved into shadow file.<br><br>
+'<font color="maroon"><b>lfd.filesize</b></font>, <font color="maroon"><b>lfd.find</b></font>, <font color="maroon"><b>lfd.getattribute</b></font>, <font color="maroon"><b>lfd.getdata</b></font> also will get data from the shadow file.<br><br>
+'Methods <font color="maroon"><b>lfd.close</b></font>, <font color="maroon"><b>lfd.copyfile</b></font>, <font color="maroon"><b>lfd.create</b></font>, <font color="maroon"><b>lfd.delete</b></font>, <font color="maroon"><b>lfd.open</b></font>, <font color="maroon"><b>lfd.rename</b></font> will not work when transaction is active.<br><br>
+'The shadow file will created in the same directory as a original one with the *.shd exention.<br><br>
+'<font color="maroon"><b>lfd.numfiles</b></font> takes into account the shadow files.<br><br>
+'During an active transactions, you can still work with directories as usually.<br><br>
+'<b>See also:</b>
+'lfd.transactionstarted,
+'lfd.transactioncommit
+
+'--------------------------------------------------------------------
+property lfd.transactionstarted
+'<b>R/O PROPERTY, DEFAULT VALUE = 0. </b><br><br>
+'Show file transaction status.<br><br>
+'<b>See also:</b>
+'lfd.transactionstart,
+'lfd.transactioncommit
+    get = syscall(783) as no_yes
+end property
+
+'--------------------------------------------------------------------
+syscall(781) lfd.transactioncommit() as pl_lfd_status_codes
+'<b>METHOD. </b><br><br>
+'Stop all file transaction.<br><br>
+'The shadow file will copied into original with replacement.<br><br>
+'The file position will be reset to 0.<br><br>
+'<b>See also:</b>
+'lfd.transactionstarted,
+'lfd.transactionstart
+
+'--------------------------------------------------------------------
+syscall(784) lfd.copyfirmwarebz2(mode as pl_lfd_copyfw_modes)
+'<b>METHOD. </b><br><br>
+'Copies the data from an opened and currently selected TAR BZ2 archived file of the flash disk (selection is made through lfd.filenum) into the TiOS/application area of the flash memory, then reboots the TiOS to make it run new TiOS/application. <br><br>
+'The archive must have only single a file - Linux TiOS binary or TiOS application pcode.<br><br>
+'<b>mode</b> - Copy mode.

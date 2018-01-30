@@ -33,7 +33,7 @@ property io.num
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property io.portnum
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0.</b><br><br>
 'Sets/returns the number of the currently selected 8-bit I/O port. This selection is related to io.portenabled and io.portstate properties.
@@ -53,7 +53,7 @@ property io.state
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property io.portstate
 '<b>PROPERTY (BYTE). DEFAULT_VALUE= 255 (typically)</b><br><br>
 'For the currently selected 8-bit I/O port (selection is made through the io.portnum property), sets/returns the states of 8 port's lines.
@@ -76,7 +76,7 @@ property io.enabled
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property io.portenabled
 '<b>PROPERTY (BYTE). DEFAULT VALUE= 0.</b><br><br>
 'For the currently selected 8-bit I/O port (selection is made through the io.portnum property), sets/returns the state of the port's output buffers,
@@ -107,7 +107,7 @@ syscall(305) io.lineset(num as pl_io_num, state as low_high)
 'The line must be configured as output (io.enabled= 1- YES) for this method to have any effect.
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(306) io.portget(num as pl_io_port_num) as byte
 '<b>METHOD.</b><br><br>
 'For the 8-bit I/O port specified by the num argument, returns this port's state.
@@ -116,7 +116,7 @@ syscall(306) io.portget(num as pl_io_port_num) as byte
 #endif
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(307) io.portset(num as pl_io_port_num, state as byte)
 '<b>METHOD.</b><br><br>
 'For the 8-bit I/O port specified by the num argument, sets the state of this port's output buffers.

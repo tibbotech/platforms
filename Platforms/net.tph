@@ -24,7 +24,7 @@ event(7)  on_net_link_change
 'event is taken off the queue in the cause of the doevents execution related to the same event taken off the queue earlier.
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 event(14) on_net_overrun
 '<b>EVENT of the net object. </b><br><br> 
 'Generated when overflow occurs on the internal RX buffer of the Network Interface Controller (NIC) IC.
@@ -53,7 +53,7 @@ property net.ip
 'This property can only be written to when no socket is engaged in communications over the Ethernet interface, i.e. there is no socket
 'for which <font color="maroon"><b>sock.statesimple </b></font>is <u>not </u> equal to <font color="olive"><b>0- PL_SSTS_CLOSED </b></font> and
 '<font color="maroon"><b>sock.currentinterface</b></font>= <font color="olive"><b>1- PL_INTERFACE_NET</b></font>.
-#if PLATFORM_ID=LTPP3 or PLATFORM_ID=SIMULATOR
+#if PLATFORM_ID=LTPP3 or PLATFORM_ID=SIMULATOR or PLATFORM_ID=LKLM601
 '<br><br>
 '<b>To avoid conflicts, do not assign an IP address that is used by your computer's network interface.<b>
 #endif

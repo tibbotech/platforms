@@ -92,7 +92,7 @@ enum pl_redir
     PL_REDIR_SOCK14,    'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 14.
     PL_REDIR_SOCK15     'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of socket 15.
 
-#if PLATFORM_ID=LTPP3
+#if PLATFORM_ID=LTPP3 or PLATFORM_ID=LKLM601
     PL_REDIR_LSOCK0,
     PL_REDIR_LSOCK1,
     PL_REDIR_LSOCK2,

@@ -1,6 +1,6 @@
 [platform]
 description=LKLM601 Board
-version=LKLM601-3.71
+version=LKLM601-3.72
 rom=983040
 ram=86784
 codebits=24

@@ -640,7 +640,7 @@ end property
 
 '--------------------------------------------------------------------
 
-#if PLATFORM_ID=LTPP3 Or PLATFORM_ID=LKLM601
+#if PLATFORM_ID=LTPP3 or PLATFORM_ID=LKLM601
 
 syscall(739) wln.seteaptls(byref ca_cert as string, byref client_cert as string, byref private_key as string, byref private_key_passwd as string, byref identify as string) as accepted_rejected
 '<b>METHOD.</b>

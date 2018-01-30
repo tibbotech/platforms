@@ -1,6 +1,6 @@
 [platform]
 description=LTPP3 Board
-version=LTPP3-3.71
+version=LTPP3-3.72
 rom=983040
 ram=86784
 codebits=24

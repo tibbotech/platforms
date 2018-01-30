@@ -616,3 +616,24 @@ event(25)  on_lsock_data_arrival
 'you exit the event handler.<br><br>
 'This event is not generated for a particular socket when buffer redirection is set for this socket through the <font color="maroon"><b>
 'lsock.redir </b></font>method.
+
+'--------------------------------------------------------------------
+property lsock.gendataarrivalevent
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = YES
+'Generate on_lsock_data_arrival event for the currently selected socket.
+    get = syscall(743) as no_yes
+    set = syscall(744) (genevent as no_yes)
+end property
+
+'--------------------------------------------------------------------
+event(28) on_lsock_overrun
+'<b>EVENT of the lsock object. </b><br><br> 
+'Generated when data overrun has occurred in the RX buffer of the lsock.
+'<br><br>
+'Another <font color="teal"><b>on_lsock_overrun </b></font>
+'event for a particular one is never generated until the previous one is processed. <br><br>
+'When the event handler for this event is entered the <font color="maroon"><b>lsock.num </b></font>property is automatically switched to the
+'port on which this event was generated. <br><br>
+'Data overruns are a common occurrence on Linux sockets. The overrun happens when the data is arriving into the RX buffer faster than
+'your application is able to extract it, the buffer runs out of space and "misses" some incoming data. <br><br>
+
