@@ -127,6 +127,21 @@ enum pl_io_num
 
     PL_IO_NUM_32_INT3,  '<b>PLATFORM CONSTANT.</b><br><br> 
                         'Magnetometer interrupt 1
+
+    PL_IO_NUM_33,       '<b>PLATFORM CONSTANT.</b><br><br> 
+                        'RTC clkmap
+                        
+    PL_IO_NUM_34,       '<b>PLATFORM CONSTANT.</b><br><br> 
+                        'RTC domap
+                        
+    PL_IO_NUM_35,       '<b>PLATFORM CONSTANT.</b><br><br> 
+                        'RTC dimap
+                        
+    PL_IO_NUM_36,       '<b>PLATFORM CONSTANT.</b><br><br> 
+                        'Accelerometer and compass clkmap
+                        
+    PL_IO_NUM_37,       '<b>PLATFORM CONSTANT.</b><br><br> 
+                        'Accelerometer and compass dimap/domap
                         
     PL_IO_NULL          '<b>PLATFORM CONSTANT.</b><br><br>
                         'This is a NULL line that does not physically exist.
