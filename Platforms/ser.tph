@@ -61,7 +61,7 @@ end property
 enum pl_ser_mode
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of the operating mode of the serial port.
-        PL_SER_MODE_UART,   '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+    PL_SER_MODE_UART,   '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
                             'UART mode, suitable for RS232, RS422, RS485, etc. communications in full-duplex or half-duplex mode 
                             '(see <font color="maroon"><b>ser.interface</b></font>).<br><br>
                             'Data is transmitted through the TX pin and received through the RX pin. Optionally, RTS (output) and CTS 
@@ -263,7 +263,7 @@ property ser.dircontrol
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
+#if PLATFORM_ID<>LTPP3
 property ser.baudrate
 '<b>PROPERTY (WORD), DEFAULT VALUE= "platform-dependent, results in 9600 bps". </b><br><br>
 'Sets/returns the baudrate "divisor value" for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
@@ -278,19 +278,12 @@ end property
 #endif
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID=LTPP3 or PLATFORM_ID=LKLM601
+#if PLATFORM_ID=LTPP3 Or PLATFORM_ID=LKLM601
 
 enum pl_ser_baud
 '<b>ENUM. </b><br><br> 
 'Contains the list of constants related to the selection of baud rates of the serial port in the UART mode
 '(<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
-	PL_SER_BAUD_50,      '<b>PLATFORM CONSTANT. </b><br><br> 50 bps
-	PL_SER_BAUD_75,      '<b>PLATFORM CONSTANT. </b><br><br> 75 bps
-	PL_SER_BAUD_110,     '<b>PLATFORM CONSTANT. </b><br><br> 110 bps
-	PL_SER_BAUD_134,     '<b>PLATFORM CONSTANT. </b><br><br> 134.5 bps
-	PL_SER_BAUD_150,     '<b>PLATFORM CONSTANT. </b><br><br> 150 bps
-	PL_SER_BAUD_200,     '<b>PLATFORM CONSTANT. </b><br><br> 200 bps
-	PL_SER_BAUD_300,     '<b>PLATFORM CONSTANT. </b><br><br> 300 bps
 	PL_SER_BAUD_600,     '<b>PLATFORM CONSTANT. </b><br><br> 600 bps
 	PL_SER_BAUD_1200,    '<b>PLATFORM CONSTANT. </b><br><br> 1,200 bps
 	PL_SER_BAUD_1800,    '<b>PLATFORM CONSTANT. </b><br><br> 1,800 bps
@@ -727,7 +720,7 @@ syscall(79,"24.TDL") ser.redir(redir as pl_redir) as pl_redir
 'as the one that was passed in the redir argument if redirection was successful.
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
+#if PLATFORM_ID<>LTPP3
 property ser.div9600
 '<b>R/O PROPERTY (WORD), DEFAULT VALUE= "platform dependent". </b><br><br>
 'Returns the value to which the <font color="maroon"><b>ser.baudrate </b></font>property must be set in order to achieve the baudrate of 
