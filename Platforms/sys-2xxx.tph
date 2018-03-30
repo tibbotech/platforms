@@ -284,4 +284,10 @@ property sys.monversion
     get = syscall(751) as string
 end property
 
+'--------------------------------------------------------------------
+property !sys.userbuffpages
+'<b>R/O PROPERTY (WORD). </b><br><br>
+    get = syscall(785) as word
+end property
+
 
