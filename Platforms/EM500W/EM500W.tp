@@ -1,3 +1,4 @@
+[platform]
 description=EM500 Module + GA1000 Wi-Fi add-on
 version=EM500W-3.60
 rom=1048576
