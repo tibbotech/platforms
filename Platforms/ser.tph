@@ -11,7 +11,7 @@ object ser
 'the <font color="maroon"><b>ser.num </b></font>is automatically switched to the port for which this event was generated.
 '<br><br>
 'Each serial port has 2 outputs- TX/W1out/dout and RTS/W0out/cout, and two inputs- RX/W1in/din and CTS/W0&1in/cin. Two lines- 
-'TX/W1out/dout and RX/W1in/din use fixed I/O pins and cannot be remapped. Two other lines- RTS/W0out/cout and CTS/W0&1in/cin- can be 
+'TX/W1out/dout and RX/W1in/din use fixed I/O pins and cannot be remapped. On some platforms lines RTS/W0out/cout and CTS/W0&1in/cin can be 
 'remapped through <font color="maroon"><b>ser.rtsmap </b></font>and <font color="maroon"><b>ser.ctsmap </b></font>properties.
 '<br><br>
 'The serial port can work in the UART, Wiegand, or clock/data mode (see <font color="maroon"><b>ser.mode</b></font>).
@@ -85,7 +85,7 @@ property ser.mode
 '<font color="olive"><b>0- PL_SER_MODE_UART </b></font>(UART), <font color="olive"><b>1- PL_SER_MODE_WIEGAND </b></font>(Wiegand), 
 '<font color="olive"><b>2- PL_SER_MODE_CLOCKDATA </b></font>(clock/data). <br><br>
 'Changing port mode is only possible when the port is closed (<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>
-'0- NO</b></font>). RTS/W1out/cout and CTS/W0&1in/cin lines can be remapped to other I/O pins of the device through the <font color="maroon"><b>
+'0- NO</b></font>). On some platforms RTS/W1out/cout and CTS/W0&1in/cin lines can be remapped to other I/O pins of the device through the <font color="maroon"><b>
 'ser.rtsmap </b></font>and <font color="maroon"><b>ser.ctsmap </b></font>properties.
 '<br><br>
 '<b>Platforms with explicit configuration of I/O lines as inputs or outputs:</b>
@@ -119,7 +119,7 @@ property ser.interface
 'Full-duplex mode is suitable for RS232, RS422, or four-wire RS485 communications. Half-duplex mode is suitable for 2-wire RS485 communications.
 'This property is only relevant when the port is in the UART mode (<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>
 '0- PL_SER_MODE_UART</b></font>). <br><br>
-'RTS and CTS lines can be remapped to other I/O pins of the device through the <font color="maroon"><b>ser.rtsmap </b></font>and 
+'On some platforms RTS and CTS lines can be remapped to other I/O pins of the device through the <font color="maroon"><b>ser.rtsmap </b></font>and 
 '<font color="maroon"><b>ser.ctsmap </b></font>properties.
 '<br><br>
 '<b>Platforms with explicit configuration of I/O lines as inputs or outputs:</b>
@@ -162,6 +162,7 @@ property ser.flowcontrol
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property ser.rtsmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE- different for each serial port: UART0: 0- PL_IO_NUM_0, <br>
 'UART1: 1- PL_IO_NUM_1,<br> UART2: 2- PL_IO_NUM_2, <br> UART3: 3- PL_IO_NUM_3. </b><br><br>
@@ -187,8 +188,9 @@ property ser.rtsmap
     get = syscall(168,"80.TDL"+) as pl_io_num
     set = syscall(169,"80.TDL"+) (value as pl_io_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property ser.ctsmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE- different for each serial port: UART0: 0- PL_INT_NUM_0, <br>
 'UART1: 1- PL_INT_NUM_1, <br>UART2: 2- PL_INT_NUM_2, <br>UART3: 3- PL_INT_NUM_3. </b><br><br>
@@ -210,7 +212,7 @@ property ser.ctsmap
     get = syscall(174,"80.TDL"+) as pl_int_num
     set = syscall(23,"80.TDL"+) (value as pl_int_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
 property ser.xonchar
 '<b>PROPERTY (BYTE), DEFAULT VALUE= &h11 (XON character) </b><br><br>
@@ -251,7 +253,7 @@ property ser.dircontrol
 'Sets/returns the polarity of the direction control line (RTS) for selected serial port (selection is made through <font color="maroon">
 '<b>ser.num</b></font>): <br> <font color="olive"><b>0- PL_SER_DCP_LOWFORINPUT </b></font>(DIR LOW for input, HIGH for output),<br> 
 '<font color="olive"><b>1- PL_SER_DCP_HIGHFORINPUT </b></font>(DIR HIGH for input, LOW for output). <br><br>
-'Which I/O line of the device will be used  as RTS line is defined by the <font color="maroon"><b>ser.rtsmap </b></font>property. 
+'Which I/O line of the device will be used  as RTS line is defined by the <font color="maroon"><b>ser.rtsmap </b></font>property on some platforms. 
 'Direction control is only relevant when the serial port is in the UART/half-duplex mode (<font color="maroon"><b>ser.mode </b></font>
 '= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>and <font color="maroon"><b>ser.interface </b></font>= <font color="olive"><b>
 '1- PL_SER_SI_HALFDUPLEX</b></font>).<br><br>

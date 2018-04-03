@@ -21,7 +21,7 @@ property ssi.baudrate
 '<br><br>
 'It is actually permissible to set the property to 0 -- this will be like setting it to 256 (slowest possible clock rate).
 '<br><br>
-'See also: ssi.direction, ssi.mode, ssi.zmode.
+'See also: ssi.direction, ssi.mode.
     get = syscall(564,"82.TDL"+) as byte
     set = syscall(565,"82.TDL"+) (value as byte)
 end property
@@ -139,7 +139,7 @@ property ssi.mode
 '<br>
 '  - CPHA=1: data bits are captured on the CLK's rising edge and data bits are propagated on the CLK's falling edge.
 '<br><br>
-'See also: ssi.baudrate, ssi.direction, ssi.zmode.
+'See also: ssi.baudrate, ssi.direction.
     get = syscall(560,"82.TDL"+) as pl_ssi_modes
     set = syscall(561,"82.TDL"+) (value as pl_ssi_modes)
 end property
@@ -197,6 +197,7 @@ enum pl_ssi_zmodes
     PL_SSI_ZMODE_ENABLED_ON_ZERO    '<b>PLATFORM CONSTANT. For HIGH state, the output buffer of the DO line is turned off, for LOW state, the output buffer is turned on and the line is set to LOW.</b><br><br>.
 end enum
 
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property ssi.zmode
 '<b>R/O PROPERTY (BYTE), DEFAULT VALUE= 0- PL_SSI_ZMODE_ALWAYS_ENABLED. </b><br><br>
 'For the currently selected SSI channel (see ssi.channel) sets/returns the mode of the data out (DO) line:
@@ -213,3 +214,4 @@ property ssi.zmode
     get = syscall(562,"82.TDL"+) as pl_ssi_zmodes
     set = syscall(563,"82.TDL"+) (value as pl_ssi_zmodes)
 end property
+#endif

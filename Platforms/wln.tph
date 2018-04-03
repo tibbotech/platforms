@@ -85,6 +85,7 @@ syscall(451,"70.TDL") wln.boot(offset as dword) as ok_ng
 'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
 '<br><br>
@@ -98,8 +99,9 @@ syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 'Buffer allocation will not work if the Wi-Fi hardware is already operational (wln.enabled= 1- YES).
 '<br><br>
 '<b>See also: </b>wln.buffsize.
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.buffsize
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE= 0 (0 bytes).</b>
 '<br><br>
@@ -108,8 +110,9 @@ property wln.buffsize
 'Buffer capacity is set using wln.buffrq method.
     get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.clkmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
 '<br><br>
@@ -124,8 +127,9 @@ property wln.clkmap
     get = syscall(554,"72.TDL"+) as pl_io_num
     set = syscall(555,"72.TDL"+) (value as pl_io_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.csmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
 '<br><br>
@@ -140,8 +144,9 @@ property wln.csmap
     get = syscall(535,"72.TDL"+) as pl_io_num
     set = syscall(536,"72.TDL"+) (value as pl_io_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.dimap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
 '<br><br>
@@ -158,7 +163,7 @@ property wln.dimap
     get = syscall(550,"72.TDL"+) as pl_io_num
     set = syscall(551,"72.TDL"+) (value as pl_io_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
 syscall(492,"71.TDL") wln.disassociate() as accepted_rejected
 '<b>METHOD.</b>
@@ -193,6 +198,7 @@ property wln.domain
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.domap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
 '<br><br>
@@ -209,7 +215,7 @@ property wln.domap
     get = syscall(552,"72.TDL"+) as pl_io_num
     set = syscall(553,"72.TDL"+) (value as pl_io_num)
 end property
-
+#endif
 '--------------------------------------------------------------------
 property wln.enabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
@@ -224,6 +230,7 @@ property wln.enabled
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.gatewayip
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0". </b><br><br>
 'Sets/returns the IP address of the default gateway for the Wi-Fi interface of your device.
@@ -235,8 +242,9 @@ property wln.gatewayip
     get = syscall(537,"72.TDL"+) as string
     set = syscall(538,"72.TDL"+) (byref gateway_ip_str as string)
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.ip
 '<b>PROPERTY (STRING), DEFAULT VALUE= "1.0.0.1". </b><br><br>
 'Sets/returns the IP address of the Wi-Fi interface of your device.
@@ -248,8 +256,16 @@ property wln.ip
     get = syscall(472,"72.TDL"+) as string
     set = syscall(473,"72.TDL"+) (byref ip_str as string)
 end property
-
+#else
+property wln.ip
+'<b>READ-ONLY PROPERTY (STRING)</b><br><br>
+'Returns the IP address of the Wi-Fi interface of your device.
+'<br><br>
+    get = syscall(472,"72.TDL"+) as string
+end property
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.mac
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
 '<br><br>
@@ -265,8 +281,9 @@ property wln.mac
     get = syscall(470,"72.TDL"+) as string
     set = syscall(471,"72.TDL"+) (byref mac_str as string)
 end property
-
+#endif
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property wln.netmask
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0". </b><br><br>
 'Sets/returns the netmask of the Wi-Fi interface of your device.
@@ -278,7 +295,7 @@ property wln.netmask
     get = syscall(539,"72.TDL"+) as string
     set = syscall(540,"72.TDL"+) (byref netmask_str as string)
 end property
-
+#endif
 '--------------------------------------------------------------------
 syscall(475,"71.TDL") wln.networkstart(byref ssid as string,channel as byte) as accepted_rejected
 '<b>METHOD.</b>

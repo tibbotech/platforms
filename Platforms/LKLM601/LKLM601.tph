@@ -11,7 +11,7 @@
 #define BUFF_PAGE_TYPE word
 #define BUFF_SIZE_TYPE dword
 #define EXTENDED_SOCK 1
-#define COPY_FIRMWARE 1
+#define COPY_FIRMWARE 0
 
 
 '--------------------------------------------------------------------

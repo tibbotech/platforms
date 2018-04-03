@@ -61,9 +61,7 @@ property fd.buffernum
 'fd.setbuffer,
 'fd.getsector,
 'fd.setsector,
-'fd.checksum,
-'fd.copyfirmware,
-'fd.copyfirmwarelzo
+'fd.checksum
     get = syscall(402,"63.TDL"+) as byte
     set = syscall(403,"63.TDL"+) (buffernum as byte)
 end property
@@ -114,9 +112,7 @@ syscall(408,FD_DRIVER_TDL) fd.checksum(mode as pl_fd_csum_mode, byref csum as wo
 'fd.getbuffer,
 'fd.setbuffer,
 'fd.getsector,
-'fd.setsector,
-'fd.copyfirmware,
-'fd.copyfirmwarelzo
+'fd.setsector
 
 '--------------------------------------------------------------------
 syscall(416,"66.TDL") fd.close() as pl_fd_status_codes
@@ -394,8 +390,7 @@ syscall(406,"65.TDL") fd.getbuffer(offset as word, len as word) as string
 'fd.setbuffer,
 'fd.getsector,
 'fd.setsector,
-'fd.checksum,
-'fd.copyfirmware
+'fd.checksum
 
 '--------------------------------------------------------------------
 syscall(386,"67.TDL") fd.getdata(maxinplen as byte) as string
@@ -459,8 +454,7 @@ syscall(404,"65.TDL") fd.getsector(num as word) as pl_fd_status_codes
 'fd.getbuffer,
 'fd.setbuffer,
 'fd.setsector,
-'fd.checksum,
-'fd.copyfirmware
+'fd.checksum
 
 '--------------------------------------------------------------------
 property fd.laststatus
@@ -641,8 +635,7 @@ syscall(407,"65.TDL") fd.setbuffer(byref data as string, offset as word) as word
 'fd.getbuffer,
 'fd.getsector,
 'fd.setsector,
-'fd.checksum,
-'fd.copyfirmware
+'fd.checksum
 
 '--------------------------------------------------------------------
 syscall(387,"67.TDL") fd.setdata(byref data as string) as pl_fd_status_codes
@@ -709,8 +702,7 @@ syscall(405,"65.TDL") fd.setsector(num as word) as pl_fd_status_codes
 'fd.getbuffer,
 'fd.setbuffer,
 'fd.getsector,
-'fd.checksum,
-'fd.copyfirmware
+'fd.checksum
 
 '--------------------------------------------------------------------
 property fd.totalsize
@@ -903,10 +895,12 @@ property fd.transactionstarted
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 #if PLATFORM_ID=KLM601_32 'Keytroller
 syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte, source_sector as word)
 #else
 syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte)
+#endif
 #endif
 
 #endif
