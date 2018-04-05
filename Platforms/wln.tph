@@ -518,6 +518,7 @@ property wln.scanresultwpainfo
 end property
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(494,"90.TDL") wln.settxpower(level as byte) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
@@ -531,7 +532,7 @@ syscall(494,"90.TDL") wln.settxpower(level as byte) as accepted_rejected
 '<br><br>
 '"Immediate" means you don't have to wait for the task to complete -- it is finished as soon as wln.settxpower is done executing.
 'The on_wln_task_complete event is still generated.
-
+#endif
 '--------------------------------------------------------------------
 enum pl_wln_wep_modes 
     PL_WLN_WEP_MODE_DISABLED,   '<b>PLATFORM CONSTANT.</b><br><br>WEP is disabled.

@@ -1122,6 +1122,7 @@ syscall(94,"35.TDL") sock.tx2buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 '<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
 '<b>METHOD. </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) redirects the data being RXed to the TX buffer
@@ -1131,7 +1132,7 @@ syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
 'Specifying redir value of <font color="olive"><b>0- PL_REDIR_NONE </b></font> cancels redirection.<br><br>
 'This method returns actual redirection result: <font color="olive"><b>0- PL_REDIR_NONE </b></font>if redirection failed or the
 'same value as the one that was passed in the redir argument if redirection was successful.
-
+#endif
 '--------------------------------------------------------------------
 property sock.inconenabledmaster
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- YES (incoming connections are globally enabled). </b><br><br>
