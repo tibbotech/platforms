@@ -244,7 +244,19 @@ enum pl_io_num
 
 	PL_IO_NUM_55,		'PLATFORM CONSTANT.</b><br><br>
 				'Socket 23, control line B.
-
+				
+	PL_IO_NUM_56,		'PLATFORM CONSTANT.</b><br><br>
+				'Socket 23, control line C.
+				
+	PL_IO_NUM_57,		'PLATFORM CONSTANT.</b><br><br>
+				'Socket 23, control line D.
+				
+	PL_IO_NUM_58,		'PLATFORM CONSTANT.</b><br><br>
+				'Socket 25, control line B.
+				
+	PL_IO_NUM_59,		'PLATFORM CONSTANT.</b><br><br>
+				'Socket 25, control line C.			
+				
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
 				'The state of this line is always detected as LOW. Setting this line has no effect.
