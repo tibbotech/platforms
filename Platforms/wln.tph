@@ -800,7 +800,7 @@ property wln.bttxbuffsize
 end property
 
 '--------------------------------------------------------------------
-property ser.btrxlen
+property wln.btrxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) returns total number of committed bytes
 'currently waiting in the RX buffer to be extracted and processed by your application. <br><br>
@@ -936,11 +936,37 @@ syscall(776) wln.btnotifysent(threshold as word)
 'provides a way to handle data sending asynchronously. <br><br>
 'Just like with <font color="maroon"><b>ser.txfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
 
-'--------------------------------------------------------------------
-event(29) on_bt_event
 
 '--------------------------------------------------------------------
-event(30) on_bt_data_arrival
+syscall(777) wln.disable()
+'<b>METHOD. </b><br><br>
+'Using this method for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>) will cause the 
+'<font color="teal"><b>on_ser_data_sent </b></font> event to be generated when the amount of committed data in the TX buffer is found 
+'to be equal or below "threshold" number of bytes.<br><br>
+'Only one <font color="teal"><b>on_ser_data_sent </b></font>event will be generated each time after the <font color="maroon"><b>
+'ser.notifysent </b></font> is invoked. This method, together with the <font color="teal"><b>on_ser_data_sent </b></font>event 
+'provides a way to handle data sending asynchronously. <br><br>
+'Just like with <font color="maroon"><b>ser.txfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
+
+'--------------------------------------------------------------------
+property wln.btadvertise
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> (not enabled). </b><br><br>
+    get = syscall(778) as no_yes
+    set = syscall(779) (value as no_yes)
+end property
+
+
+
+
+'--------------------------------------------------------------------
+enum pl_bt_events 
+    PL_BT_EVENT_DEV_CONNECTED,     '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been initiated with this device
+    PL_BT_EVENT_DEV_DISCONNECTED  '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been terminated with this device
+    PL_BT_EVENT_DEV_POWER_ON,
+    PL_BT_EVENT_DEV_POWER_OFF
+end enum
+
+event(29)  on_bt_event(bt_event as pl_bt_events)
 '<b>EVENT of the ser object. </b><br><br> Generated when at least one data byte is present in the RX buffer of the serial port (i.e. for this
 'port the  <font color="maroon"><b>ser.rxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
 'ser.num </b></font>property is automatically switched to the port for which this event was generated. <br><br>
@@ -953,7 +979,28 @@ event(30) on_bt_data_arrival
 'ser.redir</b></font> method.
 
 '--------------------------------------------------------------------
-'event(???) on_bt_data_sent
+'enum pl_bt_tasks
+'    PL_BT_TASK_IDLE,
+'	PL_BT_TASK_SCAN,
+'	PL_BT_TASK_CONNECT,
+'	PL_BT_TASK_DISCONNECT,
+'	PL_BT_TASK_GETRSSI
+'end enum
+
+'event(30) on_bt_task_complete(bt_task as pl_bt_tasks)
+'<b>EVENT of the ser object. </b><br><br> Generated when at least one data byte is present in the RX buffer of the serial port (i.e. for this
+'port the  <font color="maroon"><b>ser.rxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
+'ser.num </b></font>property is automatically switched to the port for which this event was generated. <br><br>
+'Another <font color="teal"><b>on_ser_data_arrival </b></font>event on a particular port is never generated until the previous one is
+'processed. Use <font color="maroon"><b>ser.getdata </b></font>method to extract the data from the RX buffer. <br><br>
+'You don't have to process all  data in the RX buffer at once. If you exit the <font color="teal"><b>on_ser_data_arrival
+'</b></font>event handler while there is still some unprocessed data in the RX buffer another <font color="teal"><b>on_ser_data_arrival
+'</b></font>event will be generated immediately. <br><br>
+'This event is not generated for a particular port when buffer redirection is set for this port through the <font color="maroon"><b>
+'ser.redir</b></font> method.
+
+'--------------------------------------------------------------------
+event(30) on_bt_data_arrival()
 '<b>EVENT of the ser object. </b><br><br> 
 'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>ser.txlen</b></font>) is 
 'found to be less than the threshold that was preset through the <font color="maroon"><b>ser.notifysent </b></font>method. <br><br>
@@ -964,8 +1011,22 @@ event(30) on_bt_data_arrival
 'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
 '<font color="teal"><b>on_sock_data_sent </b></font>event generation.
 
+
 '--------------------------------------------------------------------
-'event(???) on_bt_overrun
+'event(35) on_bt_data_sent()
+'<b>EVENT of the ser object. </b><br><br> 
+'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>ser.txlen</b></font>) is 
+'found to be less than the threshold that was preset through the <font color="maroon"><b>ser.notifysent </b></font>method. <br><br>
+'This event may be generated only after the <font color="maroon"><b>ser.notifysent </b></font>method was used. Your application needs to use
+'the <font color="maroon"><b>ser.notifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
+'</b></font>event generation for a particular port. <br><br>
+'When the event handler for this event is entered the <font color="maroon"><b>ser.num </b></font>is automatically switched to the port on
+'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
+'<font color="teal"><b>on_sock_data_sent </b></font>event generation.
+
+
+'--------------------------------------------------------------------
+'event(36) on_bt_overrun()
 '<b>EVENT of the ser object. </b><br><br> 
 'Generated when data overrun has occurred in the RX buffer of the serial port.
 '<br><br>
@@ -981,10 +1042,34 @@ event(30) on_bt_data_arrival
 
 
 
+enum pl_wln_module_type
+    PL_WLN_UNKNOWN,
+	PL_WLN_GA1000,
+	PL_WLN_WA2000
+end enum
+
+property wln.moduletype
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- GA1000</b></font>. </b><br><br>
+    get = syscall(786) as pl_wln_module_type     
+end property
+
+syscall(787) wln.startupgrade(partition as byte)
+
+syscall(788) wln.writefwpage(byref page as string) 
+
+syscall(789) wln.checkupgrade(partition as byte)
+
+syscall(790) wln.doupgrade(partition as byte)
 
 
-
-
-
-
-
+property wln.btconnected
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
+'<br><br>
+'Indicates whether the bluetooth module has been connected to by a a central.
+'<br><br>
+'The bluetooth hardware is connected after a central has connected.
+'<br><br>
+'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if the Wi-Fi hardware is disconnected, powered down, malfunctioned,
+'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
+    get = syscall(452) as no_yes
+end property
