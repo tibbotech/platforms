@@ -636,10 +636,15 @@ property !wln.mfgenabled
     get = syscall(468,"72.TDL"+) as no_yes
 end property
 
+'--------------------------------------------------------------------
+syscall(777) wln.disable()
+'<b>METHOD. </b><br><br>
+'This method causes the wln object to be disabled only for the test fixtures.
+
+
 #endif
 
 '--------------------------------------------------------------------
-
 #if PLATFORM_ID=LTPP3 Or PLATFORM_ID=LKLM601
 
 syscall(739) wln.seteaptls(byref ca_cert as string, byref client_cert as string, byref private_key as string, byref private_key_passwd as string, byref identify as string) as accepted_rejected
@@ -683,11 +688,8 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 '<br><br>
 'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
 
+
+
 #endif
 
 
-
-'--------------------------------------------------------------------
-syscall(777) !wln.disable()
-'<b>METHOD. </b><br><br>
-'This method will cause the wln object to be disabled only for the test fixtures.

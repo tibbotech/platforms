@@ -4,6 +4,8 @@
 
 #if OBJECT_BT=BT_ENABLED
 
+#define BT_AVAILABLE 1
+
 property wln.btenabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
@@ -206,7 +208,7 @@ syscall(772) wln.btgetdata(maxinplen as word) as string
 'extracted from the RX buffer. Extracted data is permanently deleted from the buffer.<br><br>
 'Length of extracted data is limited by one of the three factors (whichever is smaller): amount of committed data in the RX buffer itself,
 'capacity of the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
-<br><br>
+'<br><br>
 'See also <font color="maroon"><b>wln.btpeekdata </b></font>method.
 
 '--------------------------------------------------------------------
@@ -329,7 +331,7 @@ event(30) on_bt_data_arrival()
 
 
 '--------------------------------------------------------------------
-'event(36) on_bt_overrun()
+event(36) on_bt_overrun()
 '<b>EVENT of the ser object. </b><br><br> 
 'Generated when data overrun has occurred in the RX buffer of the serial port.
 '<br><br>
@@ -348,21 +350,25 @@ event(30) on_bt_data_arrival()
 enum pl_wln_module_type
     PL_WLN_UNKNOWN,
 	PL_WLN_GA1000,
-	PL_WLN_WA2000
+	PL_WLN_WA2000,
+    PL_WLN_WA3000
 end enum
 
-property wln.moduletype
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- GA1000</b></font>. </b><br><br>
-    get = syscall(786) as pl_wln_module_type     
+property wln.moduletype    
+    get = syscall(780) as pl_wln_module_type     
 end property
 
-syscall(787) wln.startupgrade(partition as byte)
 
-syscall(788) wln.writefwpage(byref page as string) 
+syscall(786) wln.startupgrade()
 
-syscall(789) wln.checkupgrade(partition as byte)
+syscall(787) wln.writefwpage(byref page as string) 
 
-syscall(790) wln.doupgrade(partition as byte)
+syscall(788) wln.doupgrade()
+
+syscall(789) !wln.boot_version()
+
+syscall(790) wln.version()
+ 
 
 
 property wln.btconnected
@@ -376,3 +382,6 @@ property wln.btconnected
 'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
     get = syscall(452) as no_yes
 end property
+
+
+#endif
