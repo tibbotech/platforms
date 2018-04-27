@@ -29,123 +29,121 @@ end enum
 
 enum pl_io_num 
     
-    PL_IO_NUM_0,        '<b>PLATFORM CONSTANT. </b><br><br> 
-                        'SW-UART1-DTR I/O line on reader port
+    PL_IO_NUM_0,        	'<b>PLATFORM CONSTANT. </b><br><br> 
+							'SW-UART1-DTR I/O line on reader port
 
-    PL_IO_NUM_1,        '<b>PLATFORM CONSTANT. </b><br><br> 
-                        'SW-UART2-DTR I/O line on Extension PCB Port
+    PL_IO_NUM_1,        	'<b>PLATFORM CONSTANT. </b><br><br> 
+							'SW-UART2-DTR I/O line on Extension PCB Port
 
-    PL_IO_NUM_2,        '<b>PLATFORM CONSTANT. </b><br><br> 
-                        'SW-UART2-DSR I/O line on Extension PCB Port
+    PL_IO_NUM_2,        	'<b>PLATFORM CONSTANT. </b><br><br> 
+							'SW-UART2-DSR I/O line on Extension PCB Port
 
-    PL_IO_NUM_3,        '<b>PLATFORM CONSTANT. </b><br><br> 
-                        'RST_OUT I/O line on IO PCB Port
+    PL_IO_NUM_3,        	'<b>PLATFORM CONSTANT. </b><br><br> 
+							'RST_OUT I/O line on IO PCB Port
 
-    PL_IO_NUM_4,        '<b>PLATFORM CONSTANT. </b><br><br>
-                        'DL_OUT line on IO PCB Port
+    PL_IO_NUM_4,        	'<b>PLATFORM CONSTANT. </b><br><br>
+							'DL_OUT line on IO PCB Port
 
-    PL_IO_NUM_5,        '<b>PLATFORM CONSTANT.</b><br><br>
-                        'DL_IN I/O line on IO PCB Port
+    PL_IO_NUM_5,        	'<b>PLATFORM CONSTANT.</b><br><br>
+							'DL_IN I/O line on IO PCB Port
 
-    PL_IO_NUM_6,        '<b>PLATFORM CONSTANT.</b><br><br>
-                        'nRF_SWDIO I/O line on NRF 51822
+    PL_IO_NUM_6,        	'<b>PLATFORM CONSTANT.</b><br><br>
+							'nRF_SWDIO I/O line on NRF 51822
 
-    PL_IO_NUM_7,        '<b>PLATFORM CONSTANT.</b><br><br>
-                        'nRF_SWCLK I/O line on NRF 51822
+    PL_IO_NUM_7,        	'<b>PLATFORM CONSTANT.</b><br><br>
+							'nRF_SWCLK I/O line on NRF 51822
 
-    PL_IO_NUM_8,        '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 3 on keypad 
+    PL_IO_NUM_8,        	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 3 on keypad 
 
-    PL_IO_NUM_9,        '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 6 on keypad          
+    PL_IO_NUM_9,        	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 6 on keypad          
 
-    PL_IO_NUM_10,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 9 on keypad             
+    PL_IO_NUM_10,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 9 on keypad             
 
-    PL_IO_NUM_11,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button Pass on keypad         
+    PL_IO_NUM_11,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button Pass on keypad         
 
-    PL_IO_NUM_12,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 2 on keypad            
+    PL_IO_NUM_12,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 2 on keypad            
 
-    PL_IO_NUM_13,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 5 on keypad            
+    PL_IO_NUM_13,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 5 on keypad            
 
-    PL_IO_NUM_14,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 8 on keypad         
+    PL_IO_NUM_14,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 8 on keypad         
 
-    PL_IO_NUM_15,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 0 on keypad            
+    PL_IO_NUM_15,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 0 on keypad            
 
-    PL_IO_NUM_16,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button F1 on keypad
+    PL_IO_NUM_16,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button F1 on keypad
 
-    PL_IO_NUM_17,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button F2 on keypad
+    PL_IO_NUM_17,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button F2 on keypad
 
-    PL_IO_NUM_18,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 1 on keypad
+    PL_IO_NUM_18,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 1 on keypad
 
-    PL_IO_NUM_19,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button F3 on keypad
+    PL_IO_NUM_19,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button F3 on keypad
 
-    PL_IO_NUM_20,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button F4 on keypad
+    PL_IO_NUM_20,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button F4 on keypad
 
-    PL_IO_NUM_21,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button Fail on keypad
+    PL_IO_NUM_21,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button Fail on keypad
 
-    PL_IO_NUM_22,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 7 on keypad
+    PL_IO_NUM_22,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 7 on keypad
                         
-    PL_IO_NUM_23,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'LED I/O line for button 4 on keypad
+    PL_IO_NUM_23,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'LED I/O line for button 4 on keypad
 
-    PL_IO_NUM_24,       '<b>PLATFORM CONSTANT.</b><br><br>
-                        'Keypad I/O line 0
+    PL_IO_NUM_24,       	'<b>PLATFORM CONSTANT.</b><br><br>
+							'Keypad I/O line 0
 
-    PL_IO_NUM_25,       '<b>PLATFORM CONSTANT.</b><br><br>
-                        'Keypad I/O line 1
+    PL_IO_NUM_25,       	'<b>PLATFORM CONSTANT.</b><br><br>
+							'Keypad I/O line 1
 
-    PL_IO_NUM_26,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Keypad I/O line 2
+    PL_IO_NUM_26,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Keypad I/O line 2
 
-    PL_IO_NUM_27,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Keypad I/O line 3
+    PL_IO_NUM_27,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Keypad I/O line 3
 
-    PL_IO_NUM_28,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Keypad I/O line 4
+    PL_IO_NUM_28,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Keypad I/O line 4
                         
-    PL_IO_NUM_29,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Keypad I/O line RESET
+    PL_IO_NUM_29,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Keypad I/O line RESET
 
-    PL_IO_NUM_30_INT0,  '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Accelerometer interrupt 1
 
-    PL_IO_NUM_31_INT1,  '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Accelerometer interrupt 2
+    PL_IO_NUM_31_INT1 = 31,	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Accelerometer interrupt 2
 
-    PL_IO_NUM_32_INT3,  '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Magnetometer interrupt 1
+    PL_IO_NUM_32_INT3,  	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Magnetometer interrupt 1
 
-    PL_IO_NUM_33,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'RTC clkmap
+    PL_IO_NUM_33,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'RTC clkmap
                         
-    PL_IO_NUM_34,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'RTC domap
+    PL_IO_NUM_34,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'RTC domap
                         
-    PL_IO_NUM_35,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'RTC dimap
+    PL_IO_NUM_35,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'RTC dimap
                         
-    PL_IO_NUM_36,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Accelerometer and compass clkmap
+    PL_IO_NUM_36,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Accelerometer and compass clkmap
                         
-    PL_IO_NUM_37,       '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'Accelerometer and compass dimap/domap
+    PL_IO_NUM_37,       	'<b>PLATFORM CONSTANT.</b><br><br> 
+							'Accelerometer and compass dimap/domap
                         
-    PL_IO_NULL          '<b>PLATFORM CONSTANT.</b><br><br>
-                        'This is a NULL line that does not physically exist.
-                        'The state of this line is always detected as LOW. Setting this line has no effect.  
+    PL_IO_NULL          	'<b>PLATFORM CONSTANT.</b><br><br>
+							'This is a NULL line that does not physically exist.
+							'The state of this line is always detected as LOW. Setting this line has no effect.  
 
 end enum
 
