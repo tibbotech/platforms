@@ -642,6 +642,29 @@ syscall(777) wln.disable()
 'This method causes the wln object to be disabled only for the test fixtures.
 
 
+
+enum pl_wln_phy_modes
+    WIFI_PHY_11BG_MIXED = 0,     '  0, 2.4GHz band. 
+    WIFI_PHY_11B,                '  1, 2.4GHz band. 
+    WIFI_PHY_11A,                '  2, 5GHz band. 
+    WIFI_PHY_11ABG_MIXED,        '  3, both 2.4G and 5G band. 
+    WIFI_PHY_11G,                '  4, 2.4GHz band. 
+    WIFI_PHY_11ABGN_MIXED,       '  5, both 2.4G and 5G band. 
+    WIFI_PHY_11N_2_4G,           '  6, 11n-only with 2.4GHz band. 
+    WIFI_PHY_11GN_MIXED,         '  7, 2.4GHz band. 
+    WIFI_PHY_11AN_MIXED,         '  8, 5GHz band. 
+    WIFI_PHY_11BGN_MIXED,        '  9, 2.4GHz band. 
+    WIFI_PHY_11AGN_MIXED,        ' 10, both 2.4G and 5G band. 
+    WIFI_PHY_11N_5G              ' 11, 11n-only with 5GHz band. 
+end enum
+
+
+ 
+property wln.band    
+    get = syscall(789) as pl_wln_phy_modes    
+    set = syscall(790) (value as no_yes) 
+end property
+
 #endif
 
 '--------------------------------------------------------------------

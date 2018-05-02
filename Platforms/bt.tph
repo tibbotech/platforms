@@ -359,15 +359,39 @@ property wln.moduletype
 end property
 
 
-syscall(786) wln.startupgrade()
+enum pl_wln_upgrade_type
+    PL_WLN_APP,
+	PL_WLN_MON	 
+end enum
 
-syscall(787) wln.writefwpage(byref page as string) 
+syscall(786) wln.startupgrade( region as pl_wln_upgrade_type)
+'<b>METHOD. </b><br><br>
+'Sets the application or monitor section of the wifi module for upgrading. 
+'To do an upgrade. Call start upgrade. Then call wln.writefwpage until all the firmware pages have been written. 
+'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.doupgrade()
+'Then reboot the module. 
 
-syscall(788) wln.doupgrade()
 
-syscall(789) !wln.boot_version()
+syscall(787) wln.writefwpage(page as string) 
+'<b>METHOD. </b><br><br>
+'Writes a block of firmware to the device. 
+'Before calling this for the first time make sure to call wln.startupgrade.
+'Firmware page is 128 bytes. 
+'Example: 
+'wln.startupgrade(PL_WLN_APP)
+'while firmware_len > 0
+' readpage from upgrade source
+' wln.writefwpage
 
-syscall(790) wln.version()
+syscall(788) wln.doupgrade(region as pl_wln_upgrade_type, fwlength as dword, checksum as dword)
+'<b>METHOD. </b><br><br>
+'Call this method to start the upgrade process for the module. 
+
+syscall(789) wln.boot_version() as byte
+'Gets the monitor version of the wln module. 
+
+syscall(790) wln.version()    as byte
+'Gets the firmware version of the wln module. 
  
 
 
