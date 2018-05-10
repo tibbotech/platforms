@@ -665,6 +665,15 @@ property wln.band
     set = syscall(790) (value as no_yes) 
 end property
 
+
+property wln.appver
+  get = syscall(791) as string
+end property
+
+property wln.monver
+  get = syscall(792) as string
+end property
+
 #endif
 
 '--------------------------------------------------------------------

@@ -387,13 +387,6 @@ syscall(788) wln.doupgrade(region as pl_wln_upgrade_type, fwlength as dword, che
 '<b>METHOD. </b><br><br>
 'Call this method to start the upgrade process for the module. 
 
-syscall(789) wln.boot_version() as byte
-'Gets the monitor version of the wln module. 
-
-syscall(790) wln.version()    as byte
-'Gets the firmware version of the wln module. 
- 
-
 
 property wln.btconnected
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
