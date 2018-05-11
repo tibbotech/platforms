@@ -698,8 +698,7 @@ syscall(786) wln.startupgrade( region as pl_wln_upgrade_type)
 'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.doupgrade()
 'Then reboot the module. 
 
-
-syscall(787) wln.writefwpage(page as string) 
+syscall(787) wln.writefwpage(byref page as string) 
 '<b>METHOD. </b><br><br>
 'Writes a block of firmware to the device. 
 'Before calling this for the first time make sure to call wln.startupgrade.
