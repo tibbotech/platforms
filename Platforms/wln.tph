@@ -714,6 +714,12 @@ syscall(788) wln.doupgrade(region as pl_wln_upgrade_type, fwlength as dword, che
 'Call this method to start the upgrade process for the module. 
 
 
+
+property wln.upgrade_result    
+    get = syscall(793) as pl_wln_module_type     
+end property
+
+
 #endif
 
 '--------------------------------------------------------------------

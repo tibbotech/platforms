@@ -360,9 +360,5 @@ end property
 
 
 
-property wln.upgrade_result    
-    get = syscall(793) as pl_wln_module_type     
-end property
-
 
 #endif
