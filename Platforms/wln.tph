@@ -674,6 +674,47 @@ property wln.monver
   get = syscall(792) as string
 end property
 
+enum pl_wln_module_type
+    PL_WLN_UNKNOWN,
+	PL_WLN_GA1000,
+	PL_WLN_WA2000,
+    PL_WLN_WA3000
+end enum
+
+property wln.moduletype    
+    get = syscall(780) as pl_wln_module_type     
+end property
+
+
+enum pl_wln_upgrade_type
+    PL_WLN_APP,
+	PL_WLN_MON	 
+end enum
+
+syscall(786) wln.startupgrade( region as pl_wln_upgrade_type)
+'<b>METHOD. </b><br><br>
+'Sets the application or monitor section of the wifi module for upgrading. 
+'To do an upgrade. Call start upgrade. Then call wln.writefwpage until all the firmware pages have been written. 
+'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.doupgrade()
+'Then reboot the module. 
+
+
+syscall(787) wln.writefwpage(page as string) 
+'<b>METHOD. </b><br><br>
+'Writes a block of firmware to the device. 
+'Before calling this for the first time make sure to call wln.startupgrade.
+'Firmware page is 128 bytes. 
+'Example: 
+'wln.startupgrade(PL_WLN_APP)
+'while firmware_len > 0
+' readpage from upgrade source
+' wln.writefwpage
+
+syscall(788) wln.doupgrade(region as pl_wln_upgrade_type, fwlength as dword, checksum as dword)
+'<b>METHOD. </b><br><br>
+'Call this method to start the upgrade process for the module. 
+
+
 #endif
 
 '--------------------------------------------------------------------
