@@ -7,6 +7,16 @@
 #define BT_AVAILABLE 1
 
 property wln.btenabled
+'Powers on/off the bluetooth interface. 
+'<br><br>
+'The bluetooth hardware becomes operational after the user calls wln.boot, sets wln.btenabled and the power on event occurs. wln.boot must be called before enabling bluetooth. 
+'<br><br>
+'The bluetooth interface is disabled and the wln.btenabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
+'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.
+    set = syscall(753) (value as no_yes)
+end property
+
+property wln.btpoweredon
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
 'Powers on/off the bluetooth interface. 
@@ -14,11 +24,11 @@ property wln.btenabled
 'The bluetooth hardware becomes operational after the user calls wln.boot, sets wln.btenabled and the power on event occurs. wln.boot must be called before enabling bluetooth. 
 '<br><br>
 'The bluetooth interface is disabled and the wln.btenabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
-'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.
+'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.  
     get = syscall(752) as no_yes
-    set = syscall(753) (value as no_yes)
 end property
 
+ 
 
 '--------------------------------------------------------------------
 enum pl_wln_bt_modes
