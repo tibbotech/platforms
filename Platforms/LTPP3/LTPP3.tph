@@ -22,7 +22,8 @@
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
-	PL_SOCK_INTERFACE_NET		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_WLN		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
 end enum
 
 '--------------------------------------------------------------------
