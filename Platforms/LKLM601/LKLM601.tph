@@ -22,7 +22,8 @@
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
-	PL_SOCK_INTERFACE_WLN		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_WLN=2,	'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP		'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
 end enum
 
 '--------------------------------------------------------------------
