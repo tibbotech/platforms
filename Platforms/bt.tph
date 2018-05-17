@@ -362,6 +362,17 @@ property wln.btconnected
 end property
 
 
+property wln.btmac
+'<b>R/O PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
+'<br><br>
+'Returns the MAC address of the Bluetooth interface.
+'<br><br>
+'This property can only be read to while the bluetooth hardware is operational (wln.btpoweredon = YES).
+'<br><br>
+    get = syscall(794) as string
+end property
+
+ 
 
 
 #endif
