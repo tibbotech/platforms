@@ -388,22 +388,24 @@ wait_close_kal_socket:
 	#endif
 
 	#if WLN_WPA
-		if wln_wpa_socket<sock.numofsock then
-			sock.num=wln_wpa_socket
-			sock.discard
+		if wln.moduletype=PL_WLN_GA1000 then
+			if wln_wpa_socket<sock.numofsock then
+				sock.num=wln_wpa_socket
+				sock.discard
 
-			i=sys.timercount
+				i=sys.timercount
 wait_close_wpa_socket:
-			if sock.statesimple<>PL_SSTS_CLOSED and sys.timercount-i<3 and sys.timercount>=i then
-			goto wait_close_wpa_socket
-			end if
-			
-			sock_release(sock.num)
-			wln_wpa_socket=255
-			
-			sock.rxbuffrq(0)
-			sock.txbuffrq(0)
-		end if	
+				if sock.statesimple<>PL_SSTS_CLOSED and sys.timercount-i<3 and sys.timercount>=i then
+				goto wait_close_wpa_socket
+				end if
+				
+				sock_release(sock.num)
+				wln_wpa_socket=255
+				
+				sock.rxbuffrq(0)
+				sock.txbuffrq(0)
+			end if	
+		end if
 	#endif	
 
 	wln.buffrq(0)
@@ -531,16 +533,18 @@ public sub wln_proc_timer()
 		#endif	
 	else
 		#if WLN_WPA
-			if wln.associationstate=PL_WLN_ASSOCIATED then
-				if wln_wpa_handshake_timer>0 then
-					wln_wpa_handshake_timer=wln_wpa_handshake_timer-1
-					if wln_wpa_handshake_timer=0 then
-						if wln.disassociate()<>ACCEPTED then
-							wln_scan_and_assoc_in_prog=NO
-							wln_result=WLN_STATUS_UNEXPECTED_ERROR
-							#if WLN_DEBUG_PRINT
-								wln_debug_print_status(wln_result)
-							#endif
+			if wln.moduletype=PL_WLN_GA1000 then
+				if wln.associationstate=PL_WLN_ASSOCIATED then
+					if wln_wpa_handshake_timer>0 then
+						wln_wpa_handshake_timer=wln_wpa_handshake_timer-1
+						if wln_wpa_handshake_timer=0 then
+							if wln.disassociate()<>ACCEPTED then
+								wln_scan_and_assoc_in_prog=NO
+								wln_result=WLN_STATUS_UNEXPECTED_ERROR
+								#if WLN_DEBUG_PRINT
+									wln_debug_print_status(wln_result)
+								#endif
+							end if
 						end if
 					end if
 				end if
@@ -578,202 +582,204 @@ end function
 '----------------------------------------------------------------------------
 public sub wln_proc_data()
 #if WLN_WPA
-	dim rx_data as string
-	dim anonce, snonce, gtk as string(32)
-	dim ver, x as byte
-	dim key_len as string(2)
-	dim replay_counter as string(8)
-	dim ptk_kek as string(16)
-	dim key_info,keydatalen as word
-	dim plain as string
-	dim encrypt_key as string(128)	
-	dim kde_gtk as string(34)
-	dim wpakey as string(32)
-	dim stemp1,stemp2 as string(8)
-	
-	if mid(wln.scanresultwpainfo,7,4)=CYPHER_TKIP then
-		wln_g_group_cipher=PL_WLN_WPA_ALGORITHM_TKIP
-	end if
-	
-	if mid(wln.scanresultwpainfo,7,4)=CYPHER_AES then
-		wln_g_group_cipher=PL_WLN_WPA_ALGORITHM_AES
-	end if
-	
-	if wln_init_flag<>WLN_INIT_SIGNATURE or sock.num<>wln_wpa_socket then
-		exit sub
-	end if
-
-	rx_data=sock.getdata(255)
-	
-	'packet type should be "3" (EAPOL-Key)
-	stemp1=mid(rx_data,2,1)
-	if asc(stemp1)<>3 then
-		exit sub
-	end if
-
-	'descriptor type must be 254 - RSN Key Descriptor
-	stemp1=mid(rx_data,5,1)
-	stemp2=mid(rx_data,5,1)
-	if asc(stemp1)<>254 and asc(stemp2)<>2 then 
-		exit sub
-	end if
-
-	'check key information
-	stemp1=mid(rx_data,6,1)
-	stemp2=mid(rx_data,7,1)
-	key_info=asc(stemp1)*256+asc(stemp2)
-	if (key_info and 1)<>0 then
-		wln_wpa_key_type=WLN_WPA_KEY_HMAC_MD5_RC4
-	else if (key_info and 2)<>0 then
-		wln_wpa_key_type=WLN_WPA_KEY_HMAC_SHA1_AES
-	else
-		'unsupported
-	end if
-
-	'bit 7 or 13 must be set
-	if (key_info and &h80)=0 and (key_info and &h2000)=0 then
-		exit sub
-	end if
-	
-	'bit 0-2 of key_info is key descriptor version
-	
-	ver=(key_info and &b111)
-	
-	'byte 8,9 is key length
-	key_len=mid(rx_data,8,2)
-	
-	'byte 10 to 17 is replay_counter
-	replay_counter=mid(rx_data,10,8)
-	
-	
-	'Need to ensure the replay counter is increasing
-	if compare_replay_counters(replay_counter, last_replay_counter) > 0 then
-
-	if wln_security_mode=WLN_SECURITY_MODE_WPA2 and (key_info and &h1000)<>0 then
-		stemp1=mid(rx_data,98,1)
-		stemp2=mid(rx_data,99,1)
-		keydatalen=asc(stemp1)*256+asc(stemp2)
-		if ver=2 then
-			if (keydatalen mod 8)<>0 then
-				exit sub
-			end if
-			keydatalen=keydatalen-8
-			ptk_kek=mid(wln_g_ptk,17,16)
-			x=len(rx_data)
-			encrypt_key=mid(rx_data,100,x-99)
-			if wln_aes_unwrap(ptk_kek,encrypt_key,plain,keydatalen/8)=false then
-				exit sub
-			end if
-			insert(rx_data,98,chr(keydatalen/256))
-			insert(rx_data,99,chr(keydatalen mod 256))
+	if wln.moduletype=PL_WLN_GA1000 then
+		dim rx_data as string
+		dim anonce, snonce, gtk as string(32)
+		dim ver, x as byte
+		dim key_len as string(2)
+		dim replay_counter as string(8)
+		dim ptk_kek as string(16)
+		dim key_info,keydatalen as word
+		dim plain as string
+		dim encrypt_key as string(128)	
+		dim kde_gtk as string(34)
+		dim wpakey as string(32)
+		dim stemp1,stemp2 as string(8)
+		
+		if mid(wln.scanresultwpainfo,7,4)=CYPHER_TKIP then
+			wln_g_group_cipher=PL_WLN_WPA_ALGORITHM_TKIP
 		end if
-	end if
+		
+		if mid(wln.scanresultwpainfo,7,4)=CYPHER_AES then
+			wln_g_group_cipher=PL_WLN_WPA_ALGORITHM_AES
+		end if
+		
+		if wln_init_flag<>WLN_INIT_SIGNATURE or sock.num<>wln_wpa_socket then
+			exit sub
+		end if
 
-	'for bit 3, 1=Pairwise, 0=Group key
-	if (key_info and &h8)<>0 then
-		if (key_info and &h100)<>0 then
-			kde_gtk=wln_wpa_supplicant_parse_ies(plain)
-			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise step 3/4")
-			#endif			
-			dim key_was_set as boolean
-			key_was_set = wln_wpa_supplicant_process_3_of_4(key_info,ver,replay_counter,wln_mic_key,wln_g_ptk)
-			if key_was_set AND kde_gtk<>"" then
-				if (wln_g_group_cipher<>PL_WLN_WPA_ALGORITHM_TKIP) then
-					wpakey=right(kde_gtk,16) 
-					wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_AES,wpakey,PL_WLN_WPA_CAST_MULTICAST)					
-				else
-					wpakey=right(kde_gtk,32)
-					stemp1=mid(wpakey,17,8)
-					stemp2=mid(wpakey,25,8)
-					insert(wpakey,17,stemp2)
-					insert(wpakey,25,stemp1)				
-					wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_TKIP,wpakey,PL_WLN_WPA_CAST_MULTICAST) ''<<<<<<<<<<<@@@@@	
-				end if
-				
-				wln_associated=WLN_ASSOCIATION_RETVAL_YES
-				wln_rescan_tmr=WLN_RESCAN_TMR_CTR_CONNECT
-				callback_wln_ok()
-				#if WLN_KEEP_ALIVE=1
-					wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
-				#endif
-				#if WLN_DEBUG_PRINT
-					wln_debugprint("---ASSOCIATED (WPA2-PSK)---")
-				#endif				
-			end if			
+		rx_data=sock.getdata(255)
+		
+		'packet type should be "3" (EAPOL-Key)
+		stemp1=mid(rx_data,2,1)
+		if asc(stemp1)<>3 then
+			exit sub
+		end if
+
+		'descriptor type must be 254 - RSN Key Descriptor
+		stemp1=mid(rx_data,5,1)
+		stemp2=mid(rx_data,5,1)
+		if asc(stemp1)<>254 and asc(stemp2)<>2 then 
+			exit sub
+		end if
+
+		'check key information
+		stemp1=mid(rx_data,6,1)
+		stemp2=mid(rx_data,7,1)
+		key_info=asc(stemp1)*256+asc(stemp2)
+		if (key_info and 1)<>0 then
+			wln_wpa_key_type=WLN_WPA_KEY_HMAC_MD5_RC4
+		else if (key_info and 2)<>0 then
+			wln_wpa_key_type=WLN_WPA_KEY_HMAC_SHA1_AES
 		else
-			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise step 1/4")
-			#endif		
-			'''''' Security Issue Fix. This value must always be initialized randomly  
-			anonce=mid(rx_data,18,32)
-			'''''' Security Issue Fix. This value must always be initialized randomly  
-			snonce=random(32)			
-			wln_wpa_supplicant_process_1_of_4(snonce,anonce,wln_g_ptk)
-			wln_mic_key=left(wln_g_ptk,16)
-			#if WLN_DEBUG_PRINT
-				wln_debugprint("Pairwise step 2/4")
-			#endif			
-			wln_wpa_supplicant_send_2_of_4(ver,key_len,replay_counter,snonce,wln_mic_key)			
-		end if	
-	else
-		if (key_info and &h100)<>0 then			
-			if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
-				wln_g_key_iv=mid(rx_data,50,16)
-				gtk=mid(rx_data,100,32)
+			'unsupported
+		end if
+
+		'bit 7 or 13 must be set
+		if (key_info and &h80)=0 and (key_info and &h2000)=0 then
+			exit sub
+		end if
+		
+		'bit 0-2 of key_info is key descriptor version
+		
+		ver=(key_info and &b111)
+		
+		'byte 8,9 is key length
+		key_len=mid(rx_data,8,2)
+		
+		'byte 10 to 17 is replay_counter
+		replay_counter=mid(rx_data,10,8)
+		
+		
+		'Need to ensure the replay counter is increasing
+		if compare_replay_counters(replay_counter, last_replay_counter) > 0 then
+
+		if wln_security_mode=WLN_SECURITY_MODE_WPA2 and (key_info and &h1000)<>0 then
+			stemp1=mid(rx_data,98,1)
+			stemp2=mid(rx_data,99,1)
+			keydatalen=asc(stemp1)*256+asc(stemp2)
+			if ver=2 then
+				if (keydatalen mod 8)<>0 then
+					exit sub
+				end if
+				keydatalen=keydatalen-8
 				ptk_kek=mid(wln_g_ptk,17,16)
-			else
+				x=len(rx_data)
+				encrypt_key=mid(rx_data,100,x-99)
+				if wln_aes_unwrap(ptk_kek,encrypt_key,plain,keydatalen/8)=false then
+					exit sub
+				end if
+				insert(rx_data,98,chr(keydatalen/256))
+				insert(rx_data,99,chr(keydatalen mod 256))
+			end if
+		end if
+
+		'for bit 3, 1=Pairwise, 0=Group key
+		if (key_info and &h8)<>0 then
+			if (key_info and &h100)<>0 then
 				kde_gtk=wln_wpa_supplicant_parse_ies(plain)
-			end	if
-			
-			#if WLN_DEBUG_PRINT
-				wln_debugprint("Group key step 1/2")
-			#endif			
-			
-			if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
-				wln_wpa_supplicant_process_1_of_2(key_info,wln_g_key_iv,ptk_kek,gtk)
-			else
-				if kde_gtk<>"" then					
+				#if WLN_DEBUG_PRINT
+					wln_debugprint("Pairwise step 3/4")
+				#endif			
+				dim key_was_set as boolean
+				key_was_set = wln_wpa_supplicant_process_3_of_4(key_info,ver,replay_counter,wln_mic_key,wln_g_ptk)
+				if key_was_set AND kde_gtk<>"" then
 					if (wln_g_group_cipher<>PL_WLN_WPA_ALGORITHM_TKIP) then
-						wpakey=right(kde_gtk,16)
+						wpakey=right(kde_gtk,16) 
 						wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_AES,wpakey,PL_WLN_WPA_CAST_MULTICAST)					
 					else
 						wpakey=right(kde_gtk,32)
 						stemp1=mid(wpakey,17,8)
 						stemp2=mid(wpakey,25,8)
 						insert(wpakey,17,stemp2)
-						insert(wpakey,25,stemp1)					
+						insert(wpakey,25,stemp1)				
 						wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_TKIP,wpakey,PL_WLN_WPA_CAST_MULTICAST) ''<<<<<<<<<<<@@@@@	
-					end if					
-				end if						
-			end if
-			
-			wln_mic_key=left(wln_g_ptk,16)
-			#if WLN_DEBUG_PRINT
-				wln_debugprint("Group key step 2/2")
-			#endif			
-			wln_wpa_supplicant_send_2_of_2(key_info,ver,replay_counter,wln_mic_key)
-
-			if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
-				wln_associated=WLN_ASSOCIATION_RETVAL_YES
-				wln_rescan_tmr=WLN_RESCAN_TMR_CTR_CONNECT
-				callback_wln_ok()
-			end if
-
-			#if WLN_DEBUG_PRINT
+					end if
+					
+					wln_associated=WLN_ASSOCIATION_RETVAL_YES
+					wln_rescan_tmr=WLN_RESCAN_TMR_CTR_CONNECT
+					callback_wln_ok()
+					#if WLN_KEEP_ALIVE=1
+						wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
+					#endif
+					#if WLN_DEBUG_PRINT
+						wln_debugprint("---ASSOCIATED (WPA2-PSK)---")
+					#endif				
+				end if			
+			else
+				#if WLN_DEBUG_PRINT
+					wln_debugprint("Pairwise step 1/4")
+				#endif		
+				'''''' Security Issue Fix. This value must always be initialized randomly  
+				anonce=mid(rx_data,18,32)
+				'''''' Security Issue Fix. This value must always be initialized randomly  
+				snonce=random(32)			
+				wln_wpa_supplicant_process_1_of_4(snonce,anonce,wln_g_ptk)
+				wln_mic_key=left(wln_g_ptk,16)
+				#if WLN_DEBUG_PRINT
+					wln_debugprint("Pairwise step 2/4")
+				#endif			
+				wln_wpa_supplicant_send_2_of_4(ver,key_len,replay_counter,snonce,wln_mic_key)			
+			end if	
+		else
+			if (key_info and &h100)<>0 then			
 				if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
-					wln_debugprint("---ASSOCIATED(WPA1-PSK)---")
+					wln_g_key_iv=mid(rx_data,50,16)
+					gtk=mid(rx_data,100,32)
+					ptk_kek=mid(wln_g_ptk,17,16)
 				else
-					wln_debugprint("---GROUP KEY UPDATED(WPA2-PSK)---")
+					kde_gtk=wln_wpa_supplicant_parse_ies(plain)
+				end	if
+				
+				#if WLN_DEBUG_PRINT
+					wln_debugprint("Group key step 1/2")
+				#endif			
+				
+				if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
+					wln_wpa_supplicant_process_1_of_2(key_info,wln_g_key_iv,ptk_kek,gtk)
+				else
+					if kde_gtk<>"" then					
+						if (wln_g_group_cipher<>PL_WLN_WPA_ALGORITHM_TKIP) then
+							wpakey=right(kde_gtk,16)
+							wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_AES,wpakey,PL_WLN_WPA_CAST_MULTICAST)					
+						else
+							wpakey=right(kde_gtk,32)
+							stemp1=mid(wpakey,17,8)
+							stemp2=mid(wpakey,25,8)
+							insert(wpakey,17,stemp2)
+							insert(wpakey,25,stemp1)					
+							wln.setwpa(wpa_mode,PL_WLN_WPA_ALGORITHM_TKIP,wpakey,PL_WLN_WPA_CAST_MULTICAST) ''<<<<<<<<<<<@@@@@	
+						end if					
+					end if						
 				end if
-			#endif			
-			#if WLN_KEEP_ALIVE=1
-				wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
-			#endif			
+				
+				wln_mic_key=left(wln_g_ptk,16)
+				#if WLN_DEBUG_PRINT
+					wln_debugprint("Group key step 2/2")
+				#endif			
+				wln_wpa_supplicant_send_2_of_2(key_info,ver,replay_counter,wln_mic_key)
+
+				if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
+					wln_associated=WLN_ASSOCIATION_RETVAL_YES
+					wln_rescan_tmr=WLN_RESCAN_TMR_CTR_CONNECT
+					callback_wln_ok()
+				end if
+
+				#if WLN_DEBUG_PRINT
+					if wln_security_mode=WLN_SECURITY_MODE_WPA1 then
+						wln_debugprint("---ASSOCIATED(WPA1-PSK)---")
+					else
+						wln_debugprint("---GROUP KEY UPDATED(WPA2-PSK)---")
+					end if
+				#endif			
+				#if WLN_KEEP_ALIVE=1
+					wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
+				#endif			
+			end if
 		end if
+	last_replay_counter = replay_counter
+	end if	
 	end if
-last_replay_counter = replay_counter
-end if	
 #endif
 end sub
 
@@ -837,19 +843,24 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 				goto finish
 			end if
 		
-		#if WLN_AVAILABLE = 2
+		#if WLN_AVAILABLE
+		
 			
-		'Luis Note We need security not to be reset. 				
-		case WLN_SECURITY_MODE_WPA1:
-			if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
-				wln_result=WLN_STATUS_UNEXPECTED_ERROR
-				goto finish			
-			end if		
-		case WLN_SECURITY_MODE_WPA2
-			if wln.setwpa(PL_WLN_WPA_WPA2_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
-				wln_result=WLN_STATUS_UNEXPECTED_ERROR
-				goto finish			
-			end if
+			'Luis Note We need security not to be reset. 				
+			case WLN_SECURITY_MODE_WPA1:
+				if wln.moduletype=PL_WLN_WA2000 then
+					if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
+						wln_result=WLN_STATUS_UNEXPECTED_ERROR
+						goto finish			
+					end if
+				end if
+			case WLN_SECURITY_MODE_WPA2
+				if wln.moduletype=PL_WLN_WA2000 then
+					if wln.setwpa(PL_WLN_WPA_WPA2_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
+						wln_result=WLN_STATUS_UNEXPECTED_ERROR
+						goto finish			
+					end if
+				end if
 		#endif		
 		
 		case else:
@@ -1037,7 +1048,7 @@ function wln_prepare_security(security_mode as pl_wln_security_modes,byref key a
 
 	wln_prepare_security=WLN_STATUS_OK
 
-#if WLN_WPA or WLN_AVAILABLE = 2
+#if WLN_WPA
 
 	select case security_mode
 	case WLN_SECURITY_MODE_WPA1:
@@ -1085,7 +1096,7 @@ function wln_prepare_security(security_mode as pl_wln_security_modes,byref key a
 	case else:
 		wln_prepare_security=WLN_STATUS_INVALID_SECURITY_MODE
 		exit function
-		
+			
 	end select
 end function
 
