@@ -372,7 +372,7 @@ property wln.btmac
     get = syscall(794) as string
 end property
 
- 
-
+syscall(795) !wln.btgettxdata(maxinplen as word) as string
+syscall(796) !wln.btsetcommitrxdata(byref txdata as string)
 
 #endif
