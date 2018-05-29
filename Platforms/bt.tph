@@ -295,17 +295,6 @@ event(29)  on_bt_event(bt_event as pl_bt_events)
 '	PL_BT_TASK_GETRSSI
 'end enum
 
-'event(30) on_bt_task_complete(bt_task as pl_bt_tasks)
-'<b>EVENT of the ser object. </b><br><br> Generated when at least one data byte is present in the RX buffer of the serial port (i.e. for this
-'port the  <font color="maroon"><b>wln.btrxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
-'wln.btnum </b></font>property is automatically switched to the port for which this event was generated. <br><br>
-'Another <font color="teal"><b>on_ser_data_arrival </b></font>event on a particular port is never generated until the previous one is
-'processed. Use <font color="maroon"><b>wln.btgetdata </b></font>method to extract the data from the RX buffer. <br><br>
-'You don't have to process all  data in the RX buffer at once. If you exit the <font color="teal"><b>on_ser_data_arrival
-'</b></font>event handler while there is still some unprocessed data in the RX buffer another <font color="teal"><b>on_ser_data_arrival
-'</b></font>event will be generated immediately. <br><br>
-'This event is not generated for a particular port when buffer redirection is set for this port through the <font color="maroon"><b>
-'wln.btredir</b></font> method.
 
 '--------------------------------------------------------------------
 event(30) on_bt_data_arrival()
@@ -321,7 +310,7 @@ event(30) on_bt_data_arrival()
 
 
 '--------------------------------------------------------------------
-'event(35) on_bt_data_sent()
+event(32) on_bt_data_sent()
 '<b>EVENT of the ser object. </b><br><br> 
 'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>wln.bttxlen</b></font>) is 
 'found to be less than the threshold that was preset through the <font color="maroon"><b>wln.btnotifysent </b></font>method. <br><br>
@@ -331,22 +320,6 @@ event(30) on_bt_data_arrival()
 'When the event handler for this event is entered the <font color="maroon"><b>wln.btnum </b></font>is automatically switched to the port on
 'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
 '<font color="teal"><b>on_sock_data_sent </b></font>event generation.
-
-
-'--------------------------------------------------------------------
-event(36) on_bt_overrun()
-'<b>EVENT of the ser object. </b><br><br> 
-'Generated when data overrun has occurred in the RX buffer of the serial port.
-'<br><br>
-'Another <font color="teal"><b>on_ser_overrun </b></font>
-'event for a particular port is never generated until the previous one is processed. <br><br>
-'When the event handler for this event is entered the <font color="maroon"><b>wln.btnum </b></font>property is automatically switched to the
-'port on which this event was generated. <br><br>
-'Data overruns are a common occurrence on serial lines. The overrun happens when the serial data is arriving into the RX buffer faster than
-'your application is able to extract it, the buffer runs out of space and "misses" some incoming data. <br><br>
-'For UART/full-duplex mode of the serial port (<font color="maroon"><b>wln.btmode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART
-'</b></font> and <font color="maroon"><b>wln.btinterface</b></font>= <font color="olive"><b>0- PL_SER_SI_FULLDUPLEX</b></font>) data overruns
-'can be prevented through the use of RTS/CTS flow control (see <font color="maroon"><b>wln.btflowcontrol</b></font>).
 
 
 property wln.btconnected
