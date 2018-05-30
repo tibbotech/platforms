@@ -6,21 +6,21 @@
 
 #define BT_AVAILABLE 1
 
-syscall(753) wln.btenable(isEnabled as no_yes)
+'--------------------------------------------------------------------
+syscall(753) bt.enable(isEnabled as no_yes)
 
 
-property wln.btpoweredon
+property bt.poweredon
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
 'Powers on/off the bluetooth interface. 
 '<br><br>
-'The bluetooth hardware becomes operational after the user calls wln.boot, sets wln.btenabled and the power on event occurs. wln.boot must be called before enabling bluetooth. 
+'The bluetooth hardware becomes operational after the user calls wln.boot, sets bt.enabled and the power on event occurs. wln.boot must be called before enabling bluetooth. 
 '<br><br>
-'The bluetooth interface is disabled and the wln.btenabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
+'The bluetooth interface is disabled and the bt.enabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
 'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.  
     get = syscall(752) as no_yes
 end property
-
  
 
 '--------------------------------------------------------------------
@@ -29,14 +29,14 @@ enum pl_wln_bt_modes
 	PL_WLN_BT_MODE_EDR	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Classic Mode.
 end enum
 
-property wln.btmode
+property bt.mode
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_MODE_LE. </b><br><br>
     get = syscall(754) as pl_wln_bt_modes
     'set = syscall(755) (value as pl_wln_bt_modes)
 end property
 
 '--------------------------------------------------------------------
-property wln.btname
+property bt.name
 '<b>PROPERTY (STRING), DEFAULT VALUE= "Tibbo BT". </b><br><br>
 '<br><br>
 'The name that is advertised by the device.  
@@ -47,15 +47,15 @@ property wln.btname
 end property
 
 '--------------------------------------------------------------------
-property wln.btadvstring
+'property bt.advstring
 '<b>PROPERTY (STRING), DEFAULT VALUE= "". </b><br><br>
 '<br><br>
 'The raw advertising data that is being advertised by the device. 
 '<br><br>
 'The name change will only take effect after the btadvertise property is toggled to true.
-    get = syscall(758) as string
-    set = syscall(759) (byref btadvstring as string)
-end property
+'    get = syscall(758) as string
+'    set = syscall(759) (byref btadvstring as string)
+'end property
 
 '--------------------------------------------------------------------
 enum pl_wln_bt_emulation_modes
@@ -64,59 +64,59 @@ enum pl_wln_bt_emulation_modes
 	PL_WLN_BT_EMULATION_MODE_MICROCHIP  '<b>PLATFORM CONSTANT.</b><br><br> Emulate the Microchip UART over BLE Service.
 end enum
 
-property wln.btemulation
+property bt.emulation
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_EMULATION_MODE_MICROCHIP. </b><br><br>
     get = syscall(760) as pl_wln_bt_emulation_modes
     set = syscall(761) (value as pl_wln_bt_emulation_modes)
 end property
 
 '--------------------------------------------------------------------
-syscall(762) wln.btrxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
+syscall(762) bt.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation pre-requests "numpages" number of 
 'buffer pages (1 page= 256 bytes) for the RX buffer of the bluetooth serial port. Returns actual number of pages that can be allocated.
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
 'The bluetooth serial emulation is unable to RX data if its RX buffer has 0 capacity. Actual current buffer capacity can be checked through the
-'<font color="maroon"><b>wln.btrxbuffsize </b></font> which returns buffer capacity in bytes. <br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>wln.btrxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>wln.btrxbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'<font color="maroon"><b>bt.rxbuffsize </b></font> which returns buffer capacity in bytes. <br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>bt.rxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.rxbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
-'Buffer allocation will not work if the bluetooth device is enabled  (<font color="maroon"><b>wln.btenabled</b></font>=
+'Buffer allocation will not work if the bluetooth device is enabled  (<font color="maroon"><b>bt.enabled</b></font>=
 '<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
 'buffer sizes of ports that are closed.
 '<br><br>
 '<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
 '<br><br>
-'See also <font color="maroon"><b>wln.bttxbuffrq </b></font>method.
+'See also <font color="maroon"><b>bt.txbuffrq </b></font>method.
 
 '--------------------------------------------------------------------
-syscall(763) wln.bttxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
+syscall(763) bt.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation pre-requests "numpages" number of 
 'buffer pages (1 page= 256 bytes) for the TX buffer of the bluetooth serial port. Returns actual number of pages that can be allocated.
 'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
 'Thebluetooth serial emulation is unable to TX data if its TX buffer has 0 capacity. Actual current buffer capacity can be checked through the 
-'<font color="maroon"><b>wln.bttxbuffsize </b></font> which returns buffer capacity in bytes.<br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>wln.bttxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>wln.bttxbuffsize</b></font>. "-X" is because a number of bytes is needed for internal buffer
+'<font color="maroon"><b>bt.txbuffsize </b></font> which returns buffer capacity in bytes.<br><br>
+'Relationship between the two is as follows: <font color="maroon"><b>bt.txbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.txbuffsize</b></font>. "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
-'Buffer allocation will not work if the bluetooth device is enabled (<font color="maroon"><b>wln.btenabled</b></font>= 
+'Buffer allocation will not work if the bluetooth device is enabled (<font color="maroon"><b>bt.enabled</b></font>= 
 '<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
 'buffer sizes of ports that are closed.
 '<br><br>
 '<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
 '<br><br>
-'See also <font color="maroon"><b>wln.btrxbuffrq </b></font> method.
+'See also <font color="maroon"><b>bt.rxbuffrq </b></font> method.
 
 '--------------------------------------------------------------------
-property wln.btrxbuffsize
+property bt.rxbuffsize
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns current RX buffer capacity 
-'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>wln.btrxbuffrq </b></font>method followed by the 
+'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>bt.rxbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method.<br><br>
-'The <font color="maroon"><b>wln.btrxbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>wln.btrxbuffsize</b></font>=num_pages*256-X (or =0 
-'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>wln.btrxbuffrq</b></font>.
+'The <font color="maroon"><b>bt.rxbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
+'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>bt.rxbuffsize</b></font>=num_pages*256-X (or =0 
+'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.rxbuffrq</b></font>.
 ' "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms. <br><br>
 'The  bluetooth serial emulation cannot RX data when the RX buffer has zero capacity.
@@ -124,14 +124,14 @@ property wln.btrxbuffsize
 end property
 
 '--------------------------------------------------------------------
-property wln.bttxbuffsize
+property bt.txbuffsize
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns current TX buffer capacity  
-'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>wln.bttxbuffrq </b></font>method followed by the 
+'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>bt.txbuffrq </b></font>method followed by the 
 '<font color="maroon"><b>sys.buffalloc </b></font>method. <br><br>
-'The <font color="maroon"><b>wln.bttxbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>wln.bttxbuffsize</b></font>=num_pages*256-X (or =0 
-'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>wln.bttxbuffrq</b></font>. 
+'The <font color="maroon"><b>bt.txbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
+'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>bt.txbuffsize</b></font>=num_pages*256-X (or =0 
+'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.txbuffrq</b></font>. 
 ' "-X" is because a number of bytes is needed for internal buffer
 'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
 'The serial port cannot TX data when the TX buffer has zero capacity.
@@ -139,7 +139,7 @@ property wln.bttxbuffsize
 end property
 
 '--------------------------------------------------------------------
-property wln.btrxlen
+property bt.rxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns total number of committed bytes
 'currently waiting in the RX buffer to be extracted and processed by your application. <br><br>
@@ -151,71 +151,71 @@ property wln.btrxlen
 'buffer, another <font color="teal"><b>on_ser_data_arrival </b></font>event is generated immediately after the 
 '<font color="teal"><b>on_bt_data_arrival </b></font>event handler is exited.<br><br>
 'Notice that the RX buffer of the bluetooth serial emualation employes "data committing" based on the amount of data in the buffer and intercharacter delay 
-'(<font color="maroon"><b>wln.btinterchardelay</b></font>). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
-'to your application and is not included in the count returned by the  <font color="maroon"><b>wln.btrxlen</b></font>).
+'(<font color="maroon"><b>bt.interchardelay</b></font>). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
+'to your application and is not included in the count returned by the  <font color="maroon"><b>bt.rxlen</b></font>).
     get = syscall(766) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
-property wln.bttxlen
+property bt.txlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns returns total number of committed bytes
-'currently found in the TX buffer. The data in the TX buffer does not become committed until you use the  <font color="maroon"><b>wln.btsend
+'currently found in the TX buffer. The data in the TX buffer does not become committed until you use the  <font color="maroon"><b>bt.send
 '</b></font>) method. <br><br>
-'Your application may use the <font color="maroon"><b>wln.btnotifysent </b></font>method to get <font color="teal"><b>
+'Your application may use the <font color="maroon"><b>bt.notifysent </b></font>method to get <font color="teal"><b>
 'on_ser_data_sent </b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the
-'<font color="maroon"><b>wln.btnotifysent </b></font> method. <br><br>
-'See also <font color="maroon"><b>wln.btnewtxlen</b></font>.
+'<font color="maroon"><b>bt.notifysent </b></font> method. <br><br>
+'See also <font color="maroon"><b>bt.newtxlen</b></font>.
     get = syscall(767) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
-property wln.bttxfree
+property bt.txfree
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns returns the amount of free space in the TX
 'buffer in bytes, not taking into account uncommitted data. <br><br>
-'Actual free space is <font color="maroon"><b>wln.bttxfree</b></font> - <font color="maroon"><b>wln.btnewtxlen</b></font>. Your application will not
+'Actual free space is <font color="maroon"><b>bt.txfree</b></font> - <font color="maroon"><b>bt.newtxlen</b></font>. Your application will not
 'be able to store more data than this amount.<br><br>
-'To achieve asynchronous data processing, use the <font color="maroon"><b>wln.btnotifysent</b></font> method to get <font color="teal">
+'To achieve asynchronous data processing, use the <font color="maroon"><b>bt.notifysent</b></font> method to get <font color="teal">
 '<b>on_ser_data_sent </b></font>event once the TX buffer gains required amount of free space.
     get = syscall(768) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
-property wln.btnewtxlen
+property bt.newtxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'For the bluetooth serial emulation returns returns the amount of uncommitted TX data
 'in bytes.<br><br>
-'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>wln.btsetdata </b></font>method but not yet committed
-'using the <font color="maroon"><b>wln.btsend</b></font>) method.
+'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>bt.setdata </b></font>method but not yet committed
+'using the <font color="maroon"><b>bt.send</b></font>) method.
     get = syscall(769) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
-syscall(770) wln.btrxclear
+syscall(770) bt.rxclear
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation  clears (deletes all data from) the RX
 'buffer.
 
 '--------------------------------------------------------------------
-syscall(771) wln.bttxclear
+syscall(771) bt.txclear
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation  clears (deletes all data from) the TX 
-'buffer. This method will only work when the bluetooth is not enabled (<font color="maroon"><b>wln.btenabled</b></font>= <font color="olive"><b>
+'buffer. This method will only work when the bluetooth is not enabled (<font color="maroon"><b>bt.enabled</b></font>= <font color="olive"><b>
 '0- NO</b></font>).
 
 '--------------------------------------------------------------------
-syscall(772) wln.btgetdata(maxinplen as word) as string
+syscall(772) bt.getdata(maxinplen as word) as string
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation returns the string that contains the data
 'extracted from the RX buffer. Extracted data is permanently deleted from the buffer.<br><br>
 'Length of extracted data is limited by one of the three factors (whichever is smaller): amount of committed data in the RX buffer itself,
 'capacity of the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
 '<br><br>
-'See also <font color="maroon"><b>wln.btpeekdata </b></font>method.
+'See also <font color="maroon"><b>bt.peekdata </b></font>method.
 
 '--------------------------------------------------------------------
-syscall(773) wln.btpeekdata(maxinplen as word) as string
+syscall(773) bt.peekdata(maxinplen as word) as string
 'METHOD.
 'For the bluetooth serial emulation  returns the string that contains the "preview" of the data
 'from the RX buffer. The data is NOT deleted from the buffer. Length of returned data is limited by one of the three factors
@@ -225,42 +225,42 @@ syscall(773) wln.btpeekdata(maxinplen as word) as string
 'String variables can hold up to 255 bytes of data, so this method will only
 'allow you to preview up to 255 "next" bytes from the RX buffer.
 '<br><br>
-'See also <font color="maroon"><b>wln.btgetdata </b></font>method.
+'See also <font color="maroon"><b>bt.getdata </b></font>method.
 
 '--------------------------------------------------------------------
-syscall(774) wln.btsetdata(byref txdata as string)
+syscall(774) bt.setdata(byref txdata as string)
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation adds the data passed in the txdata argument
 'to the contents of the TX buffer. <br><br>
 'If the buffer doesn't have enough space to accommodate the data being added then this data will be truncated. Newly saved data is not sent out
-'immediately. This only happens after the  <font color="maroon"><b>wln.btsend </b></font>) method is used to commit the data. This allows your
+'immediately. This only happens after the  <font color="maroon"><b>bt.send </b></font>) method is used to commit the data. This allows your
 'application to prepare large amounts of data before sending it out.<br><br>
-'Total amount of newly added (uncommitted) data in the buffer can be checked through the <font color="maroon"><b>wln.btnewtxlen</b></font>
+'Total amount of newly added (uncommitted) data in the buffer can be checked through the <font color="maroon"><b>bt.newtxlen</b></font>
 'setting. <br><br>
-'Also see <font color="maroon"><b>wln.bttxlen</b></font>, <font color="maroon"><b>wln.bttxfree</b></font>, <font color="maroon"><b>
-'wln.btnotifysent</b></font>, and <font color="teal"><b>on_bt_data_sent</b></font>. 
+'Also see <font color="maroon"><b>bt.txlen</b></font>, <font color="maroon"><b>bt.txfree</b></font>, <font color="maroon"><b>
+'bt.notifysent</b></font>, and <font color="teal"><b>on_bt_data_sent</b></font>. 
 
 '--------------------------------------------------------------------
-syscall(775) wln.btsend()
+syscall(775) bt.send()
 '<b>METHOD. </b><br><br>
 'For the bluetooth serial emulation commits (allows sending) the data that was
-'previously saved into the TX buffer using the <font color="maroon"><b>wln.btsetdata</b></font> method.<br><br>
-'You can monitor the sending progress by checking the <font color="maroon"><b>wln.bttxlen </b></font>property or using the 
-'<font color="maroon"><b>wln.btnotifysent </b></font>method and the <font color="teal"><b>on_ser_data_sent </b></font>event. 
+'previously saved into the TX buffer using the <font color="maroon"><b>bt.setdata</b></font> method.<br><br>
+'You can monitor the sending progress by checking the <font color="maroon"><b>bt.txlen </b></font>property or using the 
+'<font color="maroon"><b>bt.notifysent </b></font>method and the <font color="teal"><b>on_ser_data_sent </b></font>event. 
 
 '--------------------------------------------------------------------
-syscall(776) wln.btnotifysent(threshold as word)
+syscall(776) bt.notifysent(threshold as word)
 '<b>METHOD. </b><br><br>
 'Using this method for the bluetooth serial emulation  will cause the 
 '<font color="teal"><b>on_bt_data_sent </b></font> event to be generated when the amount of committed data in the TX buffer is found 
 'to be equal or below "threshold" number of bytes.<br><br>
 'Only one <font color="teal"><b>on_bt_data_sent </b></font>event will be generated each time after the <font color="maroon"><b>
-'wln.btnotifysent </b></font> is invoked. This method, together with the <font color="teal"><b>on_bt_data_sent </b></font>event 
+'bt.notifysent </b></font> is invoked. This method, together with the <font color="teal"><b>on_bt_data_sent </b></font>event 
 'provides a way to handle data sending asynchronously. <br><br>
-'Just like with <font color="maroon"><b>wln.bttxfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
+'Just like with <font color="maroon"><b>bt.txfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
 
 '--------------------------------------------------------------------
-property wln.btadvertise
+property bt.advertise
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> (not enabled). </b><br><br>
     get = syscall(778) as no_yes
     set = syscall(779) (value as no_yes)
@@ -276,15 +276,15 @@ end enum
 
 event(29)  on_bt_event(bt_event as pl_bt_events)
 '<b>EVENT of the ser object. </b><br><br> Generated when at least one data byte is present in the RX buffer of the serial port (i.e. for this
-'port the  <font color="maroon"><b>wln.btrxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
-'wln.btnum </b></font>property is automatically switched to the port for which this event was generated. <br><br>
+'port the  <font color="maroon"><b>bt.rxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
+'bt.num </b></font>property is automatically switched to the port for which this event was generated. <br><br>
 'Another <font color="teal"><b>on_ser_data_arrival </b></font>event on a particular port is never generated until the previous one is
-'processed. Use <font color="maroon"><b>wln.btgetdata </b></font>method to extract the data from the RX buffer. <br><br>
+'processed. Use <font color="maroon"><b>bt.getdata </b></font>method to extract the data from the RX buffer. <br><br>
 'You don't have to process all  data in the RX buffer at once. If you exit the <font color="teal"><b>on_ser_data_arrival
 '</b></font>event handler while there is still some unprocessed data in the RX buffer another <font color="teal"><b>on_ser_data_arrival
 '</b></font>event will be generated immediately. <br><br>
 'This event is not generated for a particular port when buffer redirection is set for this port through the <font color="maroon"><b>
-'wln.btredir</b></font> method.
+'bt.redir</b></font> method.
 
 '--------------------------------------------------------------------
 'enum pl_bt_tasks
@@ -295,34 +295,32 @@ event(29)  on_bt_event(bt_event as pl_bt_events)
 '	PL_BT_TASK_GETRSSI
 'end enum
 
-
 '--------------------------------------------------------------------
 event(30) on_bt_data_arrival()
 '<b>EVENT of the ser object. </b><br><br> 
-'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>wln.bttxlen</b></font>) is 
-'found to be less than the threshold that was preset through the <font color="maroon"><b>wln.btnotifysent </b></font>method. <br><br>
-'This event may be generated only after the <font color="maroon"><b>wln.btnotifysent </b></font>method was used. Your application needs to use
-'the <font color="maroon"><b>wln.btnotifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
+'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>bt.txlen</b></font>) is 
+'found to be less than the threshold that was preset through the <font color="maroon"><b>bt.notifysent </b></font>method. <br><br>
+'This event may be generated only after the <font color="maroon"><b>bt.notifysent </b></font>method was used. Your application needs to use
+'the <font color="maroon"><b>bt.notifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
 '</b></font>event generation for a particular port. <br><br>
-'When the event handler for this event is entered the <font color="maroon"><b>wln.btnum </b></font>is automatically switched to the port on
+'When the event handler for this event is entered the <font color="maroon"><b>bt.num </b></font>is automatically switched to the port on
 'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
 '<font color="teal"><b>on_sock_data_sent </b></font>event generation.
-
 
 '--------------------------------------------------------------------
 event(32) on_bt_data_sent()
 '<b>EVENT of the ser object. </b><br><br> 
-'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>wln.bttxlen</b></font>) is 
-'found to be less than the threshold that was preset through the <font color="maroon"><b>wln.btnotifysent </b></font>method. <br><br>
-'This event may be generated only after the <font color="maroon"><b>wln.btnotifysent </b></font>method was used. Your application needs to use
-'the <font color="maroon"><b>wln.btnotifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
+'Generated after the total amount of committed data in the TX buffer of the serial port (<font color="maroon"><b>bt.txlen</b></font>) is 
+'found to be less than the threshold that was preset through the <font color="maroon"><b>bt.notifysent </b></font>method. <br><br>
+'This event may be generated only after the <font color="maroon"><b>bt.notifysent </b></font>method was used. Your application needs to use
+'the <font color="maroon"><b>bt.notifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
 '</b></font>event generation for a particular port. <br><br>
-'When the event handler for this event is entered the <font color="maroon"><b>wln.btnum </b></font>is automatically switched to the port on
+'When the event handler for this event is entered the <font color="maroon"><b>bt.num </b></font>is automatically switched to the port on
 'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
 '<font color="teal"><b>on_sock_data_sent </b></font>event generation.
 
-
-property wln.btconnected
+'--------------------------------------------------------------------
+property bt.connected
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
 'Indicates whether the bluetooth module has been connected to by a a central.
@@ -334,18 +332,21 @@ property wln.btconnected
     get = syscall(452) as no_yes
 end property
 
-
-property wln.btmac
+'--------------------------------------------------------------------
+property bt.mac
 '<b>R/O PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
 '<br><br>
 'Returns the MAC address of the Bluetooth interface.
 '<br><br>
-'This property can only be read to while the bluetooth hardware is operational (wln.btpoweredon = YES).
+'This property can only be read to while the bluetooth hardware is operational (bt.poweredon = YES).
 '<br><br>
     get = syscall(794) as string
 end property
 
-syscall(795) !wln.btgettxdata(maxinplen as word) as string
-syscall(796) !wln.btsetcommitrxdata(byref txdata as string)
+'--------------------------------------------------------------------
+syscall(795) !bt.gettxdata(maxinplen as word) as string
+
+'--------------------------------------------------------------------
+syscall(796) !bt.setcommitrxdata(byref txdata as string)
 
 #endif

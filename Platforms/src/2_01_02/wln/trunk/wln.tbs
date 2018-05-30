@@ -843,7 +843,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 				goto finish
 			end if
 		
-		#if WLN_AVAILABLE
+		#if WLN_WPA
 		
 			
 			'Luis Note We need security not to be reset. 				
@@ -886,7 +886,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 	case PL_WLN_TASK_ASSOCIATE:
 		if wln.associationstate=PL_WLN_ASSOCIATED then
 				
-				
+			#if WLN_WPA	
 				if wln_security_mode=WLN_SECURITY_MODE_WPA1 or wln_security_mode=WLN_SECURITY_MODE_WPA2 then
 					#if WLN_DEBUG_PRINT
 						wln_debugprint("Pre-associated for WPA1/2-PSK, starting handshake")
@@ -895,12 +895,12 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 					wln_debugprint("---ASSOCIATED(WPA1 or WPA2)---")
 					wln_associated=WLN_ASSOCIATION_RETVAL_YES'<<<<<<<<<<<<<<<<<<<<<<<<<<< in GA1000 this is set after WPA2 complete
 					callback_wln_ok() '<<<<<<<<<<<<<<<<<<<<<<<<<<
-					#if WLN_WPA
+					if wln.moduletype=PL_WLN_GA1000 then
 					wln_wpa_handshake_timer=WLN_WPA_HANDSHAKE_TIMEOUT
-					#endif
+					end if
 					goto finish
 				end if
-			
+			#endif
 			
 			#if WLN_KEEP_ALIVE=1
 				wln_keep_alive_tmr=WLN_KEEP_ALIVE_TOUT
@@ -1076,7 +1076,7 @@ function wln_prepare_security(security_mode as pl_wln_security_modes,byref key a
 	case WLN_SECURITY_MODE_DISABLED: 
 		'---
 		
-	#if WLN_WPA	or WLN_AVAILABLE = 2
+	#if WLN_WPA
 		case WLN_SECURITY_MODE_WPA1,WLN_SECURITY_MODE_WPA2:
 			'---
 	#endif		

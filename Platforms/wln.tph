@@ -574,9 +574,9 @@ syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wl
 '<br><br>
 '<b>Algorithm </b>-- choices are "TKIP" and "AES".
 '<br><br>
-'<b>Wpakey </b>-- A string containing new WPA key. Supposed to be 16 characters long.
+'<b>Wpakey </b>-- GA1000: A string containing new WPA key. Must be 16 characters long. WA2000: Passphrase (password).
 '<br><br>
-'<b>Cast </b>-- key type: "unicast" or "multicast".
+'<b>Cast </b>-- GA1000: key type: "unicast" or "multicast". WA2000: irrelevant, you can always set it to 0.
 '<br><br>
 'Changing WPA mode and keys is an immediate task. As such, wln.setwpa will be rejected (return 1- REJECTED) if another task is currently in progress.
 'The task will also be rejected if the Wi-Fi hardware is not online (wln.enabled= 0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
@@ -643,6 +643,11 @@ syscall(777) wln.disable()
 
 
 
+
+
+
+
+'--------------------------------------------------------------------
 enum pl_wln_phy_modes
     WIFI_PHY_11BG_MIXED = 0,     '  0, 2.4GHz band. 
     WIFI_PHY_11B,                '  1, 2.4GHz band. 
@@ -658,22 +663,22 @@ enum pl_wln_phy_modes
     WIFI_PHY_11N_5G              ' 11, 11n-only with 5GHz band. 
 end enum
 
-
- 
 property wln.band    
     get = syscall(789) as pl_wln_phy_modes    
     set = syscall(790) (value as no_yes) 
 end property
 
-
-property wln.appver
+'--------------------------------------------------------------------
+property wln.fwversion
   get = syscall(791) as string
 end property
 
-property wln.monver
+'--------------------------------------------------------------------
+property wln.monversion
   get = syscall(792) as string
 end property
 
+'--------------------------------------------------------------------
 enum pl_wln_module_type
     PL_WLN_UNKNOWN,
 	PL_WLN_GA1000,
@@ -685,20 +690,21 @@ property wln.moduletype
     get = syscall(780) as pl_wln_module_type     
 end property
 
-
-enum pl_wln_upgrade_type
-    PL_WLN_APP,
+'--------------------------------------------------------------------
+enum pl_wln_upgrade_regions
+    PL_WLN_FW,
 	PL_WLN_MON	 
 end enum
 
-syscall(786) wln.startupgrade( region as pl_wln_upgrade_type)
+syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
 '<b>METHOD. </b><br><br>
 'Sets the application or monitor section of the wifi module for upgrading. 
 'To do an upgrade. Call start upgrade. Then call wln.writefwpage until all the firmware pages have been written. 
-'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.doupgrade()
+'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.upgrade()
 'Then reboot the module. 
 
-syscall(787) wln.writefwpage(byref page as string) 
+'--------------------------------------------------------------------
+syscall(787) wln.writeflashpage(byref page as string) 
 '<b>METHOD. </b><br><br>
 'Writes a block of firmware to the device. 
 'Before calling this for the first time make sure to call wln.startupgrade.
@@ -709,16 +715,15 @@ syscall(787) wln.writefwpage(byref page as string)
 ' readpage from upgrade source
 ' wln.writefwpage
 
-syscall(788) wln.doupgrade(region as pl_wln_upgrade_type, fwlength as dword, checksum as dword)
+'--------------------------------------------------------------------
+syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
 '<b>METHOD. </b><br><br>
 'Call this method to start the upgrade process for the module. 
 
-
-
-property wln.upgrade_result    
+'--------------------------------------------------------------------
+property wln.upgraderesult    
     get = syscall(793) as pl_wln_module_type     
 end property
-
 
 #endif
 

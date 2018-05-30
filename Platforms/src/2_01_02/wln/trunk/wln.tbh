@@ -82,7 +82,7 @@ enum pl_wln_check_association_retval
 	WLN_ASSOCIATION_RETVAL_INPROG
 end enum
 
-#if WLN_WPA or WLN_AVAILABLE = 2
+#if WLN_WPA
 	enum pl_wln_security_modes
 		WLN_SECURITY_MODE_DISABLED,
 		WLN_SECURITY_MODE_WEP64,
