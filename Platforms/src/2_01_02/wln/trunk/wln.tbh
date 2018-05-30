@@ -119,6 +119,7 @@ enum wln_info_elements
 end enum
 
 '------------------------------------------------------------------------------
+declare sub wln_init()
 declare function wln_get_info(info_element as wln_info_elements, byref extra_data as string) as string
 declare function wln_start(byref ap_name as string, security_mode as pl_wln_security_modes, byref key as string, domain as pl_wln_domains, active_scan as no_yes, scanfilter as pl_wln_scan_filter) as en_wln_status_codes
 declare function wln_change(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string) as en_wln_status_codes

@@ -55,7 +55,6 @@ declare sub wln_wpa_supplicant_send_2_of_2(key_info as word, ver as word, byref 
 declare function wln_aes_unwrap(byref aes_kek as string, byref aes_cipher as string, byref aes_plain as string, n as byte) as boolean
 declare function wln_wpa_supplicant_parse_ies(byref key_data as string) as string
 declare sub wln_pbkdf2_sha1_f(byref passphrase as string, byref ssid as string, pass as byte, iterations as word, count as byte, byref digest as string)
-declare sub wln_init()
 declare sub wln_debug_print_status(status as en_wln_status_codes)
 declare sub wln_debugprint(byref print_data as string)
 
