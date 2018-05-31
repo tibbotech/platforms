@@ -6,6 +6,11 @@
 
 #define BT_AVAILABLE 1
 
+object bt
+'The bt. object represents the BLE interface of your device.
+'<br><br>
+'The bt. object is designed to work with the WA2000 add-on Wi-Fi/BLE module.
+
 '--------------------------------------------------------------------
 syscall(753) bt.enable(isEnabled as no_yes)
 

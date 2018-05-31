@@ -649,32 +649,53 @@ syscall(777) wln.disable()
 
 '--------------------------------------------------------------------
 enum pl_wln_phy_modes
-    WIFI_PHY_11BG_MIXED = 0,     '  0, 2.4GHz band. 
-    WIFI_PHY_11B,                '  1, 2.4GHz band. 
-    WIFI_PHY_11A,                '  2, 5GHz band. 
-    WIFI_PHY_11ABG_MIXED,        '  3, both 2.4G and 5G band. 
-    WIFI_PHY_11G,                '  4, 2.4GHz band. 
-    WIFI_PHY_11ABGN_MIXED,       '  5, both 2.4G and 5G band. 
-    WIFI_PHY_11N_2_4G,           '  6, 11n-only with 2.4GHz band. 
-    WIFI_PHY_11GN_MIXED,         '  7, 2.4GHz band. 
-    WIFI_PHY_11AN_MIXED,         '  8, 5GHz band. 
-    WIFI_PHY_11BGN_MIXED,        '  9, 2.4GHz band. 
-    WIFI_PHY_11AGN_MIXED,        ' 10, both 2.4G and 5G band. 
-    WIFI_PHY_11N_5G              ' 11, 11n-only with 5GHz band. 
+    WIFI_PHY_11BG_MIXED = 0,     '2.4GHz band. 
+    WIFI_PHY_11B,                '2.4GHz band. 
+    WIFI_PHY_11A,                '5GHz band. 
+    WIFI_PHY_11ABG_MIXED,        '2.4G and 5G band. 
+    WIFI_PHY_11G,                '2.4GHz band. 
+    WIFI_PHY_11ABGN_MIXED,       '2.4G and 5G band. 
+    WIFI_PHY_11N_2_4G,           '11n-only with 2.4GHz band. 
+    WIFI_PHY_11GN_MIXED,         '2.4GHz band. 
+    WIFI_PHY_11AN_MIXED,         '5GHz band. 
+    WIFI_PHY_11BGN_MIXED,        '2.4GHz band. 
+    WIFI_PHY_11AGN_MIXED,        '2.4G and 5G band. 
+    WIFI_PHY_11N_5G              '11n-only with 5GHz band. 
 end enum
 
 property wln.band    
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G band).</b>
+'<br><br>
+'For the WA2000 Wi-Fi add-on, specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("A", "B", "G", "N" or combinations thereof) are enabled on the module.
+'<br><br>
+'Since the GA1000 device only supports 2.4GHz "B" and "G" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot method is executed (and the Wi-Fi module type is detected).
+'<br><br>
+'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
     get = syscall(789) as pl_wln_phy_modes    
     set = syscall(790) (value as no_yes) 
 end property
 
 '--------------------------------------------------------------------
 property wln.fwversion
-  get = syscall(791) as string
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'Returns the version of the firmware installed on the WA2000 Wi-Fi/BLE add-on module.
+'<br><br>
+'This property only returns the firmware version when the WA2000 is booted (the wln.boot method has been executed and the wln.enabled R/O property is at 1- ENABLED).
+'Attempting to read the value of this property before booting the WA2000 will return an empty string.
+'<br><br>
+'This property only works for the WA2000 device. The property will always return an empty string for the GA1000.
+    get = syscall(791) as string
 end property
 
 '--------------------------------------------------------------------
 property wln.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'Returns the version of the Monitor/Loader installed on the WA2000 Wi-Fi/BLE add-on module.
+'<br><br>
+'This property only returns the Monitor/Loader version when the WA2000 is booted (the wln.boot method has been executed and the wln.enabled R/O property is at 1- ENABLED).
+'Attempting to read the value of this property before booting the WA2000 will return an empty string.
+'<br><br>
+'This property only works for the WA2000 device. The property will always return an empty string for the GA1000.
   get = syscall(792) as string
 end property
 
@@ -692,8 +713,8 @@ end property
 
 '--------------------------------------------------------------------
 enum pl_wln_upgrade_regions
-    PL_WLN_FW,
-	PL_WLN_MON	 
+    PL_WLN_FW,      'Firmware region.
+	PL_WLN_MON	    'Monitor/Loader region.
 end enum
 
 syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
