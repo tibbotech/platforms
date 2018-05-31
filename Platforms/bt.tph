@@ -25,8 +25,8 @@ end property
 
 '--------------------------------------------------------------------
 enum pl_wln_bt_modes
-    PL_WLN_BT_MODE_NOT_SUPPORTED '<b>PLATFORM CONSTANT.</b><br><br> Bluetooth is not supported by this module.
-	PL_WLN_BT_MODE_LE,	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Low Energy Mode.
+    PL_WLN_BT_MODE_NOT_SUPPORTED, '<b>PLATFORM CONSTANT.</b><br><br> Bluetooth is not supported by this module.
+	PL_WLN_BT_MODE_LE	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Low Energy Mode.
 	'PL_WLN_BT_MODE_EDR	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Classic Mode.
 end enum
 
@@ -62,7 +62,7 @@ end property
 enum pl_wln_bt_emulation_modes    
 	PL_WLN_BT_EMULATION_MODE_TI,            '<b>PLATFORM CONSTANT.</b><br><br> Emulate the TI UART over BLE Service.
 	PL_WLN_BT_EMULATION_MODE_NORDIC,        '<b>PLATFORM CONSTANT.</b><br><br> Emulate the NORDIC UART over BLE Service.
-	PL_WLN_BT_EMULATION_MODE_MICROCHIP      '<b>PLATFORM CONSTANT.</b><br><br> Emulate the Microchip UART over BLE Service.
+	PL_WLN_BT_EMULATION_MODE_MICROCHIP,      '<b>PLATFORM CONSTANT.</b><br><br> Emulate the Microchip UART over BLE Service.
     PL_WLN_BT_EMULATION_MODE_NOT_SUPPORTED  '<b>PLATFORM CONSTANT.</b><br><br> Emulation is not supported.
 end enum
 
