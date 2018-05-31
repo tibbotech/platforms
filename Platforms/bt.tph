@@ -25,8 +25,9 @@ end property
 
 '--------------------------------------------------------------------
 enum pl_wln_bt_modes
+    PL_WLN_BT_MODE_NOT_SUPPORTED '<b>PLATFORM CONSTANT.</b><br><br> Bluetooth is not supported by this module.
 	PL_WLN_BT_MODE_LE,	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Low Energy Mode.
-	PL_WLN_BT_MODE_EDR	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Classic Mode.
+	'PL_WLN_BT_MODE_EDR	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Classic Mode.
 end enum
 
 property bt.mode
