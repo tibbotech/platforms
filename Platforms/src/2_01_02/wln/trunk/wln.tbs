@@ -104,7 +104,7 @@ dim wln_association_holdoff_timer as byte
 dim wln_rescan_requested as no_yes
 dim wln_updaterssi_requested as no_yes
 dim wln_active_scan as no_yes
-public dim wln_module_type as pl_wln_module_type
+public dim wln_module_type as pl_wln_module_types
 dim wln_rescan_tmr as byte
 '==============================================================================
 public function wln_get_info(info_element as wln_info_elements, byref extra_data as string) as string
@@ -229,7 +229,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 
 	wln.buffrq(WLN_BUFFER_PAGES)
 	sys.buffalloc
-	if wln_module_type = PL_WLN_GA1000 then
+	if wln_module_type = PL_WLN_MODULE_TYPE_GA1000 then
 	romfile.open(WLN_FIRMWARE_FILE)
 	if romfile.size=0 then
 		wln_start=WLN_STATUS_MISSING_FIRMWARE_FILE
@@ -387,7 +387,7 @@ wait_close_kal_socket:
 	#endif
 
 	#if WLN_WPA
-		if wln.moduletype=PL_WLN_GA1000 then
+		if wln.getmoduletype= PL_WLN_MODULE_TYPE_GA1000 then
 			if wln_wpa_socket<sock.numofsock then
 				sock.num=wln_wpa_socket
 				sock.discard
@@ -532,7 +532,7 @@ public sub wln_proc_timer()
 		#endif	
 	else
 		#if WLN_WPA
-			if wln.moduletype=PL_WLN_GA1000 then
+			if wln.getmoduletype= PL_WLN_MODULE_TYPE_GA1000 then
 				if wln.associationstate=PL_WLN_ASSOCIATED then
 					if wln_wpa_handshake_timer>0 then
 						wln_wpa_handshake_timer=wln_wpa_handshake_timer-1
@@ -581,7 +581,7 @@ end function
 '----------------------------------------------------------------------------
 public sub wln_proc_data()
 #if WLN_WPA
-	if wln.moduletype=PL_WLN_GA1000 then
+	if wln.getmoduletype= PL_WLN_MODULE_TYPE_GA1000 then
 		dim rx_data as string
 		dim anonce, snonce, gtk as string(32)
 		dim ver, x as byte
@@ -847,14 +847,14 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 			
 			'Luis Note We need security not to be reset. 				
 			case WLN_SECURITY_MODE_WPA1:
-				if wln.moduletype=PL_WLN_WA2000 then
+				if wln.getmoduletype= PL_WLN_MODULE_TYPE_WA2000 then
 					if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
 						wln_result=WLN_STATUS_UNEXPECTED_ERROR
 						goto finish			
 					end if
 				end if
 			case WLN_SECURITY_MODE_WPA2
-				if wln.moduletype=PL_WLN_WA2000 then
+				if wln.getmoduletype= PL_WLN_MODULE_TYPE_WA2000 then
 					if wln.setwpa(PL_WLN_WPA_WPA2_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
 						wln_result=WLN_STATUS_UNEXPECTED_ERROR
 						goto finish			
@@ -894,7 +894,7 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 					wln_debugprint("---ASSOCIATED(WPA1 or WPA2)---")
 					wln_associated=WLN_ASSOCIATION_RETVAL_YES'<<<<<<<<<<<<<<<<<<<<<<<<<<< in GA1000 this is set after WPA2 complete
 					callback_wln_ok() '<<<<<<<<<<<<<<<<<<<<<<<<<<
-					if wln.moduletype=PL_WLN_GA1000 then
+					if wln.getmoduletype= PL_WLN_MODULE_TYPE_GA1000 then
 					wln_wpa_handshake_timer=WLN_WPA_HANDSHAKE_TIMEOUT
 					end if
 					goto finish
@@ -1707,7 +1707,7 @@ sub wln_init()
 		wln_delay_ms(1)
 		io.state=HIGH
 	#endif
-	wln_module_type = wln.moduletype
+	wln_module_type = wln.getmoduletype
 	while wln.enabled=YES
 	wend
 

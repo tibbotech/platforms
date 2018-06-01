@@ -130,7 +130,7 @@ declare sub wln_proc_data()
 declare sub wln_proc_event(wln_event as pl_wln_events)
 declare sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 
-declare wln_module_type as pl_wln_module_type
+declare wln_module_type as pl_wln_module_types
 
 #if WLN_WPA
 declare function wln_wpa_mkey_get(byref password as string, byref ssid as string) as string
