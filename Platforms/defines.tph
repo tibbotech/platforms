@@ -37,6 +37,7 @@
 #define SPACE_AGE 30
 #define DS1101W2 31
 #define LKLM601 32
+#define KLM106_32 33
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1

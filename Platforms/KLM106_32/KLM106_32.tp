@@ -1,5 +1,5 @@
 [platform]
-description=KLM601 platform
+description=KLM106 platform
 version=KLM106_32-3.76
 rom=786432
 ram=86784

@@ -700,16 +700,12 @@ property wln.monversion
 end property
 
 '--------------------------------------------------------------------
-enum pl_wln_module_type
-    PL_WLN_UNKNOWN,
-	PL_WLN_GA1000,
-	PL_WLN_WA2000,
-    PL_WLN_WA3000
+enum pl_wln_module_types    
+	PL_WLN_MODULE_TYPE_GA1000,
+	PL_WLN_MODULE_TYPE_WA2000
 end enum
 
-property wln.moduletype    
-    get = syscall(780) as pl_wln_module_type     
-end property
+syscall(780) wln.getmoduletype() as pl_wln_module_types
 
 '--------------------------------------------------------------------
 enum pl_wln_upgrade_regions
@@ -743,7 +739,7 @@ syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, ch
 
 '--------------------------------------------------------------------
 property wln.upgraderesult    
-    get = syscall(793) as pl_wln_module_type     
+    get = syscall(793) as ok_ng     
 end property
 
 #endif
