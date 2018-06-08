@@ -119,21 +119,23 @@ enum wln_info_elements
 end enum
 
 '------------------------------------------------------------------------------
-declare sub wln_init()
 declare function wln_get_info(info_element as wln_info_elements, byref extra_data as string) as string
 declare function wln_start(byref ap_name as string, security_mode as pl_wln_security_modes, byref key as string, domain as pl_wln_domains, active_scan as no_yes, scanfilter as pl_wln_scan_filter) as en_wln_status_codes
 declare function wln_change(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string) as en_wln_status_codes
 declare sub wln_stop()
 declare function wln_check_association() as pl_wln_check_association_retval
 declare sub wln_proc_timer()
-declare sub wln_proc_data()
+
 declare sub wln_proc_event(wln_event as pl_wln_events)
 declare sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 
 declare wln_module_type as pl_wln_module_types
 
+#if GA1000
+declare sub wln_proc_data()
 #if WLN_WPA
 declare function wln_wpa_mkey_get(byref password as string, byref ssid as string) as string
+#endif
 #endif
 declare sub wln_update_rssi()
 declare sub wln_start_rescan()
@@ -148,4 +150,5 @@ declare sub callback_wln_rescan_result(current_rssi as byte, scan_rssi as byte, 
 declare sub callback_wln_debugprint(print_data as string)
 declare sub callback_wln_rescan_for_better_ap()
 declare sub wln_delay_ms(ms as dword)
+declare sub wln_init()
 #endif '#############################################################
