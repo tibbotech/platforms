@@ -68,6 +68,26 @@ enum pl_lsock_reconmode
 end enum
 
 '--------------------------------------------------------------------
+enum pl_lsock_interface
+'<b>ENUM. </b><br><br> 
+'Contains the list of available network interfaces.<br><br>
+    PL_LSOCK_WIRED, 	  '<b>PLATFORM CONSTANT.</b><br><br> 
+                          'Ethernet connection
+    PL_LSOCK_WIRELESS     '<b>PLATFORM CONSTANT. </b><br><br> 
+                          'WiFi connection
+end enum
+
+'--------------------------------------------------------------------
+enum pl_lsock_address_type
+'<b>ENUM. </b><br><br> 
+'Contains the list of available network address types.<br><br>
+    PL_LSOCK_STATIC, 	  '<b>PLATFORM CONSTANT.</b><br><br> 
+                          'Static address
+    PL_LSOCK_DHCP         '<b>PLATFORM CONSTANT. </b><br><br> 
+                          'Dynamic DHCP address
+end enum
+
+'--------------------------------------------------------------------
 property lsock.num
 '<b>PROPERTY (BYTE), DEFAULT VALUE= 0 (socket #0 selected). </b><br><br>
 'Sets/returns the number of the currently selected socket (sockets are enumerated from 0).<br><br>
@@ -637,3 +657,34 @@ event(28) on_lsock_overrun
 'Data overruns are a common occurrence on Linux sockets. The overrun happens when the data is arriving into the RX buffer faster than
 'your application is able to extract it, the buffer runs out of space and "misses" some incoming data. <br><br>
 
+'-------------------------------------------------------------------
+syscall(797) lsock.setaddress(interface as pl_lsock_interface, adr_type as pl_lsock_address_type, byref ip as string, byref netmask as string, byref gw as string, byref dns as string) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Set the address for Linux network interface. <br><br>
+'IP, netmask, gateway and DNS in "x.x.x.x" format. <br><br>
+'DNS is optional, allows to set several DNS servers in the format "x.x.x.x, y.y.y.y".
+
+'--------------------------------------------------------------------
+syscall(798) lsock.getip(interface as pl_lsock_interface) as string
+'<b>METHOD.</b>
+'<br><br>
+'Returns the IP address of selected interface 
+
+'--------------------------------------------------------------------
+syscall(799) lsock.getnetmask(interface as pl_lsock_interface) as string
+'<b>METHOD.</b>
+'<br><br>
+'Returns the network netmask address of selected interface 
+
+'--------------------------------------------------------------------
+syscall(800) lsock.getgw(interface as pl_lsock_interface) as string
+'<b>METHOD.</b>
+'<br><br>
+'Returns the gateway IP address of selected interface 
+
+'--------------------------------------------------------------------
+syscall(801) lsock.getdns(interface as pl_lsock_interface) as string
+'<b>METHOD.</b>
+'<br><br>
+'Returns the IP address of used DNS server 
