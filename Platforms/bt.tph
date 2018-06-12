@@ -18,9 +18,9 @@ syscall(753) bt.enable(isEnabled as no_yes)
 property bt.poweredon
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
-'Powers on/off the bluetooth interface. 
+'The power state of the bluetooth interface.  
 '<br><br>
-'The bluetooth hardware becomes operational after the user calls wln.boot, sets bt.enabled and the power on event occurs. wln.boot must be called before enabling bluetooth. 
+'The bluetooth hardware becomes operational after the user calls wln.boot, calls bt.enable(YES) and the power on event occurs. wln.boot must be called before enabling bluetooth. 
 '<br><br>
 'The bluetooth interface is disabled and the bt.enabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
 'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.  
@@ -36,18 +36,17 @@ enum pl_wln_bt_modes
 end enum
 
 property bt.mode
-'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_MODE_LE. </b><br><br>
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_MODE_NOT_SUPPORTED. </b><br>
+'The value of this will not be updated until module type has been detected.<br>
     get = syscall(754) as pl_wln_bt_modes
     'set = syscall(755) (value as pl_wln_bt_modes)
 end property
 
 '--------------------------------------------------------------------
 property bt.name
-'<b>PROPERTY (STRING), DEFAULT VALUE= "Tibbo BT". </b><br><br>
-'<br><br>
-'The name that is advertised by the device.  
-'<br><br>
-'The name change will only take effect after the btadvertise property is toggled to true.
+'<b>PROPERTY (STRING), DEFAULT VALUE= "". </b><br><br>
+'The name that is advertised by the device. The change is propagated immediately to the device.<br>
+'Advertising will not change until the advertising property is toggled.<br>
     get = syscall(756) as string
     set = syscall(757) (byref btname as string)
 end property
@@ -73,6 +72,7 @@ end enum
 
 property bt.emulation
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_EMULATION_MODE_MICROCHIP. </b><br><br>
+'This property can only be set before calling bt.enable().<br>
     get = syscall(760) as pl_wln_bt_emulation_modes
     set = syscall(761) (value as pl_wln_bt_emulation_modes)
 end property
@@ -269,6 +269,10 @@ syscall(776) bt.notifysent(threshold as word)
 '--------------------------------------------------------------------
 property bt.advertise
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> (not enabled). </b><br><br>
+'Setting this property to yes will begin advertising the devices services. Setting the value to no will stop advertising the devices services.<br>
+'Note your <b>phone/central device will cache advertising service data</b>. Please follow your devices recommendation to clear the cache if the advertised services are not updated.<br>
+'On iOS restarting the device will clear the service cache. On android devices you can clear the bluetooth cache via the settings or in your application force a scan without caching.<br>
+
     get = syscall(778) as no_yes
     set = syscall(779) (value as no_yes)
 end property
@@ -326,17 +330,23 @@ event(32) on_bt_data_sent()
 'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
 '<font color="teal"><b>on_sock_data_sent </b></font>event generation.
 
+
+'event(33) on_bt_task_complete()
+
+event(34) on_bt_overrun()
+ 
+
 '--------------------------------------------------------------------
 property bt.connected
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
-'Indicates whether the bluetooth module has been connected to by a a central.
+'Indicates whether the bluetooth has been connected to by a a central.
 '<br><br>
 'The bluetooth hardware is connected after a central has connected.
 '<br><br>
 'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if the Wi-Fi hardware is disconnected, powered down, malfunctioned,
 'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
-    get = syscall(452) as no_yes
+    get = syscall(797) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -355,5 +365,16 @@ syscall(795) !bt.gettxdata(maxinplen as word) as string
 
 '--------------------------------------------------------------------
 syscall(796) !bt.setcommitrxdata(byref txdata as string)
+
+'--------------------------------------------------------------------
+property bt.num
+'<b>PROPERTY (BYTE), DEFAULT VALUE= 0 (bt channel selected). </b><br><br>
+'Sets/returns the number of currently selected bt channel (channels are enumerated from 0).
+'Most other properties and methods of this object relate to the bt channel selected through this property.<br><br>
+'Note that bt channel related events such as <font color="teal"><b>on_bt_data_arrival </b></font> change currently selected port!
+'The value of this property won't exceed <font color="maroon"><b>bt.numofchannels</b></font>-1 (even if you attempt to set a higher value).
+    get = syscall(798) as byte
+    set = syscall(799) (value as byte)
+end property
 
 #endif
