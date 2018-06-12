@@ -369,14 +369,14 @@ syscall(795) !bt.gettxdata(maxinplen as word) as string
 syscall(796) !bt.setcommitrxdata(byref txdata as string)
 
 '--------------------------------------------------------------------
-property bt.num
+'property bt.num
 '<b>PROPERTY (BYTE), DEFAULT VALUE= 0 (bt channel selected). </b><br><br>
 'Sets/returns the number of currently selected bt channel (channels are enumerated from 0).
 'Most other properties and methods of this object relate to the bt channel selected through this property.<br><br>
 'Note that bt channel related events such as <font color="teal"><b>on_bt_data_arrival </b></font> change currently selected port!
 'The value of this property won't exceed <font color="maroon"><b>bt.numofchannels</b></font>-1 (even if you attempt to set a higher value).
-    get = syscall(798) as byte
-    set = syscall(799) (value as byte)
-end property
+'    get = syscall(798) as byte
+'    set = syscall(799) (value as byte)
+'end property
 
 #endif
