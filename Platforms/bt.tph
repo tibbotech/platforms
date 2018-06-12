@@ -15,10 +15,10 @@ object bt
 syscall(753) bt.enable(isEnabled as no_yes)
 
 
-property bt.poweredon
+property bt.enabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
-'The power state of the bluetooth interface.  
+'The state of the bluetooth interface.  
 '<br><br>
 'The bluetooth hardware becomes operational after the user calls wln.boot, calls bt.enable(YES) and the power on event occurs. wln.boot must be called before enabling bluetooth. 
 '<br><br>

@@ -490,11 +490,13 @@ end property
 property wln.scanresultwpainfo
 '<b>R/O PROPERTY (STRING), DEFAULT VALUE= "".</b>
 '<br><br>
-'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain binary data required for WPA/WPA2 security protocol.
+'On the GA1000 Wi-Fi add-on module, after a successful scan for a particular network (wln.scan with the ssid specified) this property will contain binary data required for WPA/WPA2 security protocol.
 '<br><br>
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
-'This data is not intended for humans. The property exists to facilitate the operation of the WLN library.
+'This data is not intended for humans. The property exists to facilitate the operation of the WLN library, which calculates the WPA key for the GA1000.
+'<br><br>
+'The property returns an empty string on the WA2000, as this device calculates the WPA key internally and so there is no need to provide the "wpainfo" to an external library.
 '<br><br>
 '<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid.
     get = syscall(498,"72.TDL"+) as string
@@ -574,7 +576,8 @@ syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wl
 '<br><br>
 '<b>Algorithm </b>-- choices are "TKIP" and "AES".
 '<br><br>
-'<b>Wpakey </b>-- GA1000: A string containing new WPA key. Must be 16 characters long. WA2000: Passphrase (password).
+'<b>Wpakey </b>-- GA1000: A string containing new WPA key (must be 16 characters long). The key is <i>not</i> the password to your access point. The key is calculated <i>from</i> the password.
+'The math involved is complex and is better left to the WLN library that we supply. WA2000: A string containing the password itself. The WA2000 performs the WPA key calculation internally.
 '<br><br>
 '<b>Cast </b>-- GA1000: key type: "unicast" or "multicast". WA2000: irrelevant, you can always set it to 0.
 '<br><br>
@@ -583,8 +586,6 @@ syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wl
 '<br><br>
 '"Immediate" means you don't have to wait for the task to complete -- it is finished as soon as wln.setwpa is done executing.
 'The on_wln_task_complete event is still generated.
-'<br><br>
-'WPA/WPA2 security is very complex. We recommend using the WLN library.
 '<br><br>
 'If you are switching from an access point using WPA security to another access point with no security or WEP security, you still need to execute wln.setwpa(PL_WLN_WPA_DISABLED,0,"",0)!
 '<br><br>
@@ -666,7 +667,7 @@ end enum
 property wln.band    
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G band).</b>
 '<br><br>
-'For the WA2000 Wi-Fi add-on, specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("A", "B", "G", "N" or combinations thereof) are enabled on the module.
+'For the WA2000 Wi-Fi/BLE add-on, specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("A", "B", "G", "N" or combinations thereof) are enabled on the module.
 '<br><br>
 'Since the GA1000 device only supports 2.4GHz "B" and "G" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot method is executed (and the Wi-Fi module type is detected).
 '<br><br>
@@ -678,24 +679,24 @@ end property
 '--------------------------------------------------------------------
 property wln.fwversion
 '<b>R/O PROPERTY (STRING). </b><br><br>
-'Returns the version of the firmware installed on the WA2000 Wi-Fi/BLE add-on module.
+'Returns the version string of the main firmware installed on the WA2000 Wi-Fi/BLE add-on module.
 '<br><br>
 'This property only returns the firmware version when the WA2000 is booted (the wln.boot method has been executed and the wln.enabled R/O property is at 1- ENABLED).
 'Attempting to read the value of this property before booting the WA2000 will return an empty string.
 '<br><br>
-'This property only works for the WA2000 device. The property will always return an empty string for the GA1000.
+'Attempting to invoke this property while using the GA1000 device will return an empty string.
     get = syscall(791) as string
 end property
 
 '--------------------------------------------------------------------
 property wln.monversion
 '<b>R/O PROPERTY (STRING). </b><br><br>
-'Returns the version of the Monitor/Loader installed on the WA2000 Wi-Fi/BLE add-on module.
+'Returns the version string of the Monitor/Loader firmware installed on the WA2000 Wi-Fi/BLE add-on module.
 '<br><br>
 'This property only returns the Monitor/Loader version when the WA2000 is booted (the wln.boot method has been executed and the wln.enabled R/O property is at 1- ENABLED).
 'Attempting to read the value of this property before booting the WA2000 will return an empty string.
 '<br><br>
-'This property only works for the WA2000 device. The property will always return an empty string for the GA1000.
+'Attempting to invoke this property while using the GA1000 device will return an empty string.
   get = syscall(792) as string
 end property
 
@@ -706,40 +707,52 @@ enum pl_wln_module_types
 end enum
 
 syscall(780) wln.getmoduletype() as pl_wln_module_types
+'<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>    
 
 '--------------------------------------------------------------------
 enum pl_wln_upgrade_regions
-    PL_WLN_FW,      'Firmware region.
-	PL_WLN_MON	    'Monitor/Loader region.
+    PL_WLN_UPGRADE_REGION_MAIN,    'Main firmware region.
+	PL_WLN_UPGRADE_REGION_MONITOR  'Monitor/Loader firmware region.
 end enum
 
 syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
 '<b>METHOD. </b><br><br>
-'Sets the application or monitor section of the wifi module for upgrading. 
-'To do an upgrade. Call start upgrade. Then call wln.writefwpage until all the firmware pages have been written. 
-'When the firmware can be updated. Set a flag in eeprom and during next boot call wln.startupgrade() and then call wln.upgrade()
-'Then reboot the module. 
+'Specifies what region (part) of the WA2000's firmware you will be upgrading -- the Monitor/Loader or the main firmware. 
+'<br><br>
+'Call this method in the beginning of the firmware upgrade process, i.e. before sending the firmware data into the module using wln.writeflashpage.
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
 
 '--------------------------------------------------------------------
 syscall(787) wln.writeflashpage(byref page as string) 
 '<b>METHOD. </b><br><br>
-'Writes a block of firmware to the device. 
-'Before calling this for the first time make sure to call wln.startupgrade.
-'Firmware page is 128 bytes. 
-'Example: 
-'wln.startupgrade(PL_WLN_APP)
-'while firmware_len > 0
-' readpage from upgrade source
-' wln.writefwpage
+'Sends a 128-byte page (block) of firmware data into the WA2000 Wi-Fi/BLE add-on module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
+'<br><br>
+'Before sending the firmware "file" into the module, use the wln.setupgraderegion method to specify what region (part) of the WA2000's code you will be upgrading -- the Monitor/Loader or the main firmware.
+'<br><br>
+'Rather than writing the data directly into the target region, this method saves it into a spare area of the flash. The actual copying of data into the selected target region happens when you call wln.uprade. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.  
 
 '--------------------------------------------------------------------
 syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
 '<b>METHOD. </b><br><br>
-'Call this method to start the upgrade process for the module. 
+'Call this method to <i>initiate</i> the copying of the firmware "file" (that you have uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory.
+'The target region is defined in the beginning of the firmware "file" upload process when you invoke the wln.setupgraderegion method.   
+'<br><br>
+'The method only initiates the firmware copying and exits immediately without waiting for the copying to complete. Your application can continue with the execution, but you will need to make sure that the WA2000 is
+'not reset while the firmware copying is in progress. Doing so may brick the module. Use wln.waitforupgradecompletion to determine when the firmware copying completes.
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
 
 '--------------------------------------------------------------------
-syscall(793) wln.getupgraderesult() as ok_ng
-    
+syscall(793) wln.waitforupgradecompletion() as ok_ng    
+'<b>METHOD. </b><br><br>
+'This method waits for the WA2000 firmware copying to complete and returns the result of the copying process. Firmware copying is initiated using wln.upgrade.
+'<br><br>
+'This is a blocking method. It does not return the control back to your application until the firmware copying is finished.
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
 #endif
 
 '--------------------------------------------------------------------
@@ -785,8 +798,6 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
-
-
 
 #endif
 
