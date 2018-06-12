@@ -738,10 +738,8 @@ syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, ch
 'Call this method to start the upgrade process for the module. 
 
 '--------------------------------------------------------------------
-property wln.upgraderesult    
-    get = syscall(793) as ok_ng     
-end property
-
+syscall(793) wln.getupgraderesult() as ok_ng
+    
 #endif
 
 '--------------------------------------------------------------------
