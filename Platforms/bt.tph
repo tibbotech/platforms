@@ -12,11 +12,10 @@ object bt
 'The bt. object is designed to work with the WA2000 add-on Wi-Fi/BLE module.
 
 '--------------------------------------------------------------------
-property bt.enable
-    set = syscall(753) ( enabled as no_yes )
-    get = syscall(800) as no_yes
- 
-end property
+
+syscall(753) bt.enable()
+syscall(800) bt.disable()
+
 
 property bt.enabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
