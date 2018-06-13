@@ -283,8 +283,8 @@ end property
 enum pl_bt_events 
     PL_BT_EVENT_DEV_CONNECTED,     '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been initiated with this device
     PL_BT_EVENT_DEV_DISCONNECTED  '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been terminated with this device
-    PL_BT_EVENT_DEV_POWER_ON,
-    PL_BT_EVENT_DEV_POWER_OFF
+    PL_BT_EVENT_DEV_ENABLED,
+    PL_BT_EVENT_DEV_DISABLED
 end enum
 
 event(29)  on_bt_event(bt_event as pl_bt_events)
@@ -336,7 +336,6 @@ event(32) on_bt_data_sent()
 'event(33) on_bt_task_complete()
 
 event(34) on_bt_overrun()
- 
 
 '--------------------------------------------------------------------
 property bt.connected
