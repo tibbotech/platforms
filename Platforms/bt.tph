@@ -9,46 +9,63 @@
 object bt
 'The bt. object represents the BLE interface of your device.
 '<br><br>
-'The bt. object is designed to work with the WA2000 add-on Wi-Fi/BLE module.
+'The bt. object is designed to work with the WA2000 add-on Wi-Fi/BLE module. For BT (BLE) radio to work, you must first boot the module using the wln.boot method.
+'This will enable not only the Wi-Fi, but also the BT (BLE) portion of the WA2000.
 
 '--------------------------------------------------------------------
-
 syscall(753) bt.enable()
+'<b>METHOD. </b><br><br>
+'Instructs the WA2000 Wi-Fi/BLE add-on module to turns the BLE radio on. This is an asynchronous method -- it returns control back to the app immediately. On_bt_event(PL_BT_EVENT_ENABLED) is generated when the radio turns on. 
+'<br><br>
+'This method will only have effect if the WA2000 is booted (wln.boot was called and wln.enabled= 1- YES) and if the BLE radio is currently off (bt.enabled= 0-NO).
+'<br><br>
+'This method has no effect on the GA1000 device.
+'<br><br>
+
+
+'--------------------------------------------------------------------
 syscall(800) bt.disable()
+'<b>METHOD. </b><br><br>
+'Instructs the WA2000 Wi-Fi/BLE add-on module to turn the BLE radio off. This is an asynchronous method -- it returns control back to the app immediately. On_bt_event(PL_BT_EVENT_DISABLED) is generated when the radio turns off.
+'<br><br>
+'This method will only have effect if the WA2000 is booted (wln.boot was called and wln.enabled= 1- YES) and if the BLE radio is currently on (bt.enabled= 1-YES).
+'<br><br>
+'This method has no effect on the GA1000 device.
 
-
+'--------------------------------------------------------------------
 property bt.enabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
 '<br><br>
-'The state of the bluetooth interface.  
+'Informs whether the BLE interface of the Wi-Fi/BLE add-on module is on. The interface turns on after the bt.enable method is invoked. 
 '<br><br>
-'The bluetooth hardware becomes operational after the user calls wln.boot, calls bt.enable(YES) and the power on event occurs. wln.boot must be called before enabling bluetooth. 
-'<br><br>
-'The bluetooth interface is disabled and the bt.enabled is reset to 0- NO if the Wi-Fi/Bluetooth hardware is disconnected, powered down, malfunctioned,
-'or was intentionally reset. When this happens, the on_wln_bt_event event is generated, too.  
+'The BLE interface is disabled and the bt.enabled is reset to 0- NO if the module is disconnected, powered down, malfunctions, or is put in reset.
+'When this happens, the on_bt_event(PL_BT_EVENT_DISABLED) event is generated as well.
     get = syscall(752) as no_yes
 end property
  
-
 '--------------------------------------------------------------------
-enum pl_wln_bt_modes
-    PL_WLN_BT_MODE_NOT_SUPPORTED, '<b>PLATFORM CONSTANT.</b><br><br> Bluetooth is not supported by this module.
-	PL_WLN_BT_MODE_LE	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Low Energy Mode.
+'enum pl_wln_bt_modes
+'    PL_WLN_BT_MODE_NOT_SUPPORTED, '<b>PLATFORM CONSTANT.</b><br><br> Bluetooth is not supported by this module.'
+'    PL_WLN_BT_MODE_LE	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Low Energy Mode.
 	'PL_WLN_BT_MODE_EDR	'<b>PLATFORM CONSTANT.</b><br><br> Bluetooth Classic Mode.
-end enum
+'end enum
 
-property bt.mode
+'property bt.mode
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_MODE_NOT_SUPPORTED. </b><br>
 'The value of this will not be updated until module type has been detected.<br>
-    get = syscall(754) as pl_wln_bt_modes
-    'set = syscall(755) (value as pl_wln_bt_modes)
-end property
+'    get = syscall(754) as pl_wln_bt_modes
+'    'set = syscall(755) (value as pl_wln_bt_modes)
+'end property
 
 '--------------------------------------------------------------------
 property bt.name
 '<b>PROPERTY (STRING), DEFAULT VALUE= "". </b><br><br>
-'The name that is advertised by the device. The change is propagated immediately to the device.<br>
-'Advertising will not change until the advertising property is toggled.<br>
+'Defines the BLE advertising name. The name can be up to 21 characters long.
+'<br><br>
+'The value of property can only be changed when bt.advertise is 0- NO.
+'<br><br>
+'<b>Note that your phone (central device) will typically cache advertising data. </b>
+'On iOS, restarting the iOS device will clear the advertising cache. On Android, you can clear the Bluetooth cache via the settings (plus, some applications allow scanning without caching).<br>
     get = syscall(756) as string
     set = syscall(757) (byref btname as string)
 end property
@@ -66,15 +83,16 @@ end property
 
 '--------------------------------------------------------------------
 enum pl_wln_bt_emulation_modes    
-	PL_WLN_BT_EMULATION_MODE_TI,            '<b>PLATFORM CONSTANT.</b><br><br> Emulate the TI UART over BLE Service.
-	PL_WLN_BT_EMULATION_MODE_NORDIC,        '<b>PLATFORM CONSTANT.</b><br><br> Emulate the NORDIC UART over BLE Service.
-	PL_WLN_BT_EMULATION_MODE_MICROCHIP,      '<b>PLATFORM CONSTANT.</b><br><br> Emulate the Microchip UART over BLE Service.
-    PL_WLN_BT_EMULATION_MODE_NOT_SUPPORTED  '<b>PLATFORM CONSTANT.</b><br><br> Emulation is not supported.
+	PL_WLN_BT_EMULATION_MODE_TI,            '<b>PLATFORM CONSTANT.</b><br><br> Emulates the TI UART-over-BLE service. Not fully supported at this time.
+	PL_WLN_BT_EMULATION_MODE_NORDIC,        '<b>PLATFORM CONSTANT.</b><br><br> Emulates the NORDIC UART-over-BLE service.
+	PL_WLN_BT_EMULATION_MODE_MICROCHIP      '<b>PLATFORM CONSTANT.</b><br><br> Emulates the Microchip UART-over-BLE service.
 end enum
 
 property bt.emulation
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> PL_WLN_BT_EMULATION_MODE_MICROCHIP. </b><br><br>
-'This property can only be set before calling bt.enable().<br>
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 2- PL_WLN_BT_EMULATION_MODE_MICROCHIP. </b><br><br>
+'Configures the BLE interface to mimic TI, Nordic, or Microchip BLE devices. 
+'<br><br>
+'The value of this property can only be changed when bt.enabled= 0- NO (that is, before calling bt.enable).
     get = syscall(760) as pl_wln_bt_emulation_modes
     set = syscall(761) (value as pl_wln_bt_emulation_modes)
 end property
@@ -82,283 +100,228 @@ end property
 '--------------------------------------------------------------------
 syscall(762) bt.rxbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel pre-requests "numpages" number of 
-'buffer pages (1 page= 256 bytes) for the RX buffer of the bluetooth channel. Returns actual number of pages that can be allocated.
-'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
-'The bluetooth channel is unable to RX data if its RX buffer has 0 capacity. Actual current buffer capacity can be checked through the
-'<font color="maroon"><b>bt.rxbuffsize </b></font> which returns buffer capacity in bytes. <br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>bt.rxbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.rxbuffrq</b></font>. "-X" is because a number of bytes is needed for internal buffer
-'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
-'Buffer allocation will not work if the bluetooth device is enabled  (<font color="maroon"><b>bt.enabled</b></font>=
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.
+'Pre-requests the "numpages" number of buffer pages (1 page is 256 bytes) for the RX buffer of the BLE interface. Returns the actual number of pages that can be allocated.
+'The actual buffer allocation happens when the sys.buffalloc method is called.
 '<br><br>
-'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'The BLE interface is unable to receive data if its RX buffer has zero capacity. Current buffer capacity can be checked through
+'bt.rxbuffsize, which returns the buffer capacity in bytes.
 '<br><br>
-'See also <font color="maroon"><b>bt.txbuffrq </b></font>method.
+'Relationship between the two is as follows: bt.rxbuffsize = num_pages * 256 - 33 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through bt.rxbuffrq. "-33" is because a number of bytes is needed for internal buffer
+'variables.
+'<br><br>
+'Buffer allocation will not work if the BLE interface is enabled (bt.enabled= 1- YES at the time when sys.buffalloc executes).
+'<br><br>
+'The maximum number of pages you can request for this buffer is limited to 255.
 
 '--------------------------------------------------------------------
 syscall(763) bt.txbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel pre-requests "numpages" number of 
-'buffer pages (1 page= 256 bytes) for the TX buffer of the bluetooth channel. Returns actual number of pages that can be allocated.
-'Actual allocation happens when the <font color="maroon"><b>sys.buffalloc </b></font> method is used. <br><br>
-'Thebluetooth channel is unable to TX data if its TX buffer has 0 capacity. Actual current buffer capacity can be checked through the 
-'<font color="maroon"><b>bt.txbuffsize </b></font> which returns buffer capacity in bytes.<br><br>
-'Relationship between the two is as follows: <font color="maroon"><b>bt.txbuffsize</b></font>=num_pages*256-X (or =0 when num_pages=0), where
-'"num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.txbuffsize</b></font>. "-X" is because a number of bytes is needed for internal buffer
-'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
-'Buffer allocation will not work if the bluetooth device is enabled (<font color="maroon"><b>bt.enabled</b></font>= 
-'<font color="olive"><b>1- YES</b></font>) at the time when <font color="maroon"><b>sys.buffalloc </b></font> executes. You can only change
-'buffer sizes of ports that are closed.
+'Pre-requests the "numpages" number of buffer pages (1 page is 256 bytes) for the TX buffer of the BLE interface. Returns the actual number of pages that can be allocated.
+'The actual buffer allocation happens when the sys.buffalloc method is called.
 '<br><br>
-'<b>On the EM2000 and other 32-bit platforms, the maximum number of pages you can request for one buffer is limited to 255.</b>
+'The BLE interface is unable to transmit data if its TX buffer has zero capacity. Current buffer capacity can be checked through
+'bt.txbuffsize, which returns the buffer capacity in bytes.
 '<br><br>
-'See also <font color="maroon"><b>bt.rxbuffrq </b></font> method.
+'Relationship between the two is as follows: bt.txbuffsize = num_pages * 256 - 33 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through bt.txbuffrq. "-33" is because a number of bytes is needed for internal buffer
+'variables.
+'<br><br>
+'Buffer allocation will not work if the BLE interface is enabled (bt.enabled= 1- YES at the time when sys.buffalloc executes).
+'<br><br>
+'The maximum number of pages you can request for this buffer is limited to 255.
 
 '--------------------------------------------------------------------
 property bt.rxbuffsize
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns current RX buffer capacity 
-'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>bt.rxbuffrq </b></font>method followed by the 
-'<font color="maroon"><b>sys.buffalloc </b></font>method.<br><br>
-'The <font color="maroon"><b>bt.rxbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>bt.rxbuffsize</b></font>=num_pages*256-X (or =0 
-'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.rxbuffrq</b></font>.
-' "-X" is because a number of bytes is needed for internal buffer
-'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms. <br><br>
-'The  bluetooth channel cannot RX data when the RX buffer has zero capacity.
+'Returns the current capacity, in bytes, of the BLE's RX buffer.  
+'To change the buffer capacity, use the bt.rxbuffrq method followed by the sys.buffalloc method.
+'<br><br>
+'Bt.rxbuffrq requests buffer allocation in 256-byte pages whereas this property returns the buffer size in bytes.
+'Relationship between the two is as follows: bt.rxbuffsize = num_pages * 256 - 33 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through bt.rxbuffrq.
+'"-33" is because a number of bytes is needed for internal buffer variables.
+'<br><br>
+'The BLE interface is unable to receive data when its RX buffer has zero capacity.
     get = syscall(764) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property bt.txbuffsize
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns current TX buffer capacity  
-'in bytes. Buffer capacity can be changed through the <font color="maroon"><b>bt.txbuffrq </b></font>method followed by the 
-'<font color="maroon"><b>sys.buffalloc </b></font>method. <br><br>
-'The <font color="maroon"><b>bt.txbuffrq </b></font>requests buffer size in 256-byte pages whereas this property returns buffer size 
-'in bytes. Relationship between the two is as follows: <br><br><font color="maroon"><b>bt.txbuffsize</b></font>=num_pages*256-X (or =0 
-'when num_pages=0), where "num_pages" is the number of buffer pages that was GRANTED through the <font color="maroon"><b>bt.txbuffrq</b></font>. 
-' "-X" is because a number of bytes is needed for internal buffer
-'variables. X=17 on 16-bit platforms and 33 on 32-bit platforms.<br><br>
-'The bluetooth channel cannot TX data when the TX buffer has zero capacity.
+'Returns the current capacity, in bytes, of the BLE's TX buffer.  
+'To change the buffer capacity, use the bt.txbuffrq method followed by the sys.buffalloc method.
+'<br><br>
+'Bt.txbuffrq requests buffer allocation in 256-byte pages whereas this property returns the buffer size in bytes.
+'Relationship between the two is as follows: bt.txbuffsize = num_pages * 256 - 33 (or =0 when num_pages=0), where
+'"num_pages" is the number of buffer pages that was GRANTED through bt.txbuffrq.
+'"-33" is because a number of bytes is needed for internal buffer variables.
+'<br><br>
+'The BLE interface is unable to transmit data when its TX buffer has zero capacity.
     get = syscall(765) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property bt.rxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns total number of committed bytes
-'currently waiting in the RX buffer to be extracted and processed by your application. <br><br>
-'The <font color="teal"><b>on_bt_data_arrival </b></font>event is generated once the RX buffer is not empty, i.e. there is data to
-'process. There may be only one <font color="teal"><b>on_bt_data_arrival </b></font>event for each port waiting to be processed in 
-'the event queue. Another <font color="teal"><b>on_bt_data_arrival </b></font> event for the same port may be generated only after
-'the previous one is handled.<br><br>
-'If, during the <font color="teal"><b>on_bt_data_arrival </b></font>event handler execution, not all data is extracted from the RX 
-'buffer, another <font color="teal"><b>on_ser_data_arrival </b></font>event is generated immediately after the 
-'<font color="teal"><b>on_bt_data_arrival </b></font>event handler is exited.<br><br>
-'Notice that the RX buffer of the bluetooth channel employs "data committing" based on the amount of data in the buffer and intercharacter delay 
-'(<font color="maroon"><b>bt.interchardelay</b></font>). Data in the RX buffer may not be committed yet. Uncommitted data is not visible
-'to your application and is not included in the count returned by the  <font color="maroon"><b>bt.rxlen</b></font>).
+'Returns the total number of bytes currently waiting in the RX buffer of the BLE interface.
     get = syscall(766) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property bt.txlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns returns total number of committed bytes
-'currently found in the TX buffer. The data in the TX buffer does not become committed until you use the  <font color="maroon"><b>bt.send
-'</b></font>) method. <br><br>
-'Your application may use the <font color="maroon"><b>bt.notifysent </b></font>method to get <font color="teal"><b>
-'on_ser_data_sent </b></font>event once the total number of committed bytes in the TX buffer drops below the level defined by the
-'<font color="maroon"><b>bt.notifysent </b></font> method. <br><br>
-'See also <font color="maroon"><b>bt.newtxlen</b></font>.
+'Returns the total number of committed bytes in the TX buffer of the BLE interface.
     get = syscall(767) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property bt.txfree
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns returns the amount of free space in the TX
-'buffer in bytes, not taking into account uncommitted data. <br><br>
-'Actual free space is <font color="maroon"><b>bt.txfree</b></font> - <font color="maroon"><b>bt.newtxlen</b></font>. Your application will not
-'be able to store more data than this amount.<br><br>
-'To achieve asynchronous data processing, use the <font color="maroon"><b>bt.notifysent</b></font> method to get <font color="teal">
-'<b>on_ser_data_sent </b></font>event once the TX buffer gains required amount of free space.
+'Returns the amount of free space, in bytes, in the TX buffer of the BLE interface, not taking into the account uncommitted data.
+'<br><br>
+'The actual free space in the buffer is bt.txfree - bt.newtxlen. Your application will not be able to store more data than this amount.
     get = syscall(768) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 property bt.newtxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the bluetooth channel returns returns the amount of uncommitted TX data
-'in bytes.<br><br>
-'Uncommited data is the one that was added to the TX buffer with the <font color="maroon"><b>bt.setdata </b></font>method but not yet committed
-'using the <font color="maroon"><b>bt.send</b></font>) method.
+'Returns the total number of uncommitted bytes in the TX buffer of the BLE interface.
+'<br><br>
+'Uncommited data is data that was added to the TX buffer using bt.setdata but hasn't been committed using bt.send.
     get = syscall(769) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
 syscall(770) bt.rxclear
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel  clears (deletes all data from) the RX
-'buffer.
+'Clears the RX buffer of the BLE interface.
 
 '--------------------------------------------------------------------
 syscall(771) bt.txclear
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel  clears (deletes all data from) the TX 
-'buffer. This method will only work when the bluetooth is not enabled (<font color="maroon"><b>bt.enabled</b></font>= <font color="olive"><b>
-'0- NO</b></font>).
+'Clears the TX buffer of the BLE interface.
 
 '--------------------------------------------------------------------
 syscall(772) bt.getdata(maxinplen as word) as string
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel returns the string that contains the data
-'extracted from the RX buffer. Extracted data is permanently deleted from the buffer.<br><br>
-'Length of extracted data is limited by one of the three factors (whichever is smaller): amount of committed data in the RX buffer itself,
-'capacity of the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
+'Returns the string containing the data extracted from the RX buffer of the BLE interface. Extracted data is removed from the buffer.
 '<br><br>
-'See also <font color="maroon"><b>bt.peekdata </b></font>method.
+'The length of extracted data is limited by one of the three factors, whichever is smaller: the amount of data in the RX buffer itself,
+'capacity of the receiving string variable, and the limit set by the maxinplen argument.
 
 '--------------------------------------------------------------------
 syscall(773) bt.peekdata(maxinplen as word) as string
-'METHOD.
-'For the bluetooth channel  returns the string that contains the "preview" of the data
-'from the RX buffer. The data is NOT deleted from the buffer. Length of returned data is limited by one of the three factors
-'(whichever is smaller): amount of committed data in the RX buffer itself, capacity of the "receiving" string variable,
+'<b>METHOD.</b><br><br>
+'Returns the string containing the "preview" of data from the RX buffer of the BLE interface. The data is NOT removed from the buffer.
+'<br><br>
+'The length of returned data is limited by one of the three factors, whichever is smaller: the amount of data in the RX buffer itself, capacity of the receiving string variable,
 'and the limit set by the maxinplen argument.
 '<br><br>
-'String variables can hold up to 255 bytes of data, so this method will only
-'allow you to preview up to 255 "next" bytes from the RX buffer.
-'<br><br>
-'See also <font color="maroon"><b>bt.getdata </b></font>method.
+'Since string variables can hold up to 255 bytes of data, this method will only allow you to preview up to this number of bytes.
 
 '--------------------------------------------------------------------
 syscall(774) bt.setdata(byref txdata as string)
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel adds the data passed in the txdata argument
-'to the contents of the TX buffer. <br><br>
-'If the buffer doesn't have enough space to accommodate the data being added then this data will be truncated. Newly saved data is not sent out
-'immediately. This only happens after the  <font color="maroon"><b>bt.send </b></font>) method is used to commit the data. This allows your
-'application to prepare large amounts of data before sending it out.<br><br>
-'Total amount of newly added (uncommitted) data in the buffer can be checked through the <font color="maroon"><b>bt.newtxlen</b></font>
-'setting. <br><br>
-'Also see <font color="maroon"><b>bt.txlen</b></font>, <font color="maroon"><b>bt.txfree</b></font>, <font color="maroon"><b>
-'bt.notifysent</b></font>, and <font color="teal"><b>on_bt_data_sent</b></font>. 
+'Stores the data passed in the txdata argument into the TX buffer of the BLE inteface.
+'<br><br>
+'If the buffer doesn't have enough space to accommodate the data being added then this data will be truncated.
+'<br><br>
+'The newly stored data is not sent out immediately. This only happens after the bt.send method is used to commit this data.
+'This allows your application to prepare large amounts of data before sending it out.
 
 '--------------------------------------------------------------------
 syscall(775) bt.send()
 '<b>METHOD. </b><br><br>
-'For the bluetooth channel commits (allows sending) the data that was
-'previously saved into the TX buffer using the <font color="maroon"><b>bt.setdata</b></font> method.<br><br>
-'You can monitor the sending progress by checking the <font color="maroon"><b>bt.txlen </b></font>property or using the 
-'<font color="maroon"><b>bt.notifysent </b></font>method and the <font color="teal"><b>on_ser_data_sent </b></font>event. 
+'Commits (allows sending out) the data that was previously saved into the TX buffer of the BLE interface using the bt.setdata method.
 
 '--------------------------------------------------------------------
 syscall(776) bt.notifysent(threshold as word)
 '<b>METHOD. </b><br><br>
-'Using this method for the bluetooth channel  will cause the 
-'<font color="teal"><b>on_bt_data_sent </b></font> event to be generated when the amount of committed data in the TX buffer is found 
-'to be equal or below "threshold" number of bytes.<br><br>
-'Only one <font color="teal"><b>on_bt_data_sent </b></font>event will be generated each time after the <font color="maroon"><b>
-'bt.notifysent </b></font> is invoked. This method, together with the <font color="teal"><b>on_bt_data_sent </b></font>event 
-'provides a way to handle data sending asynchronously. <br><br>
-'Just like with <font color="maroon"><b>bt.txfree</b></font>, the trigger you set won't take into account any uncommitted data in the TX buffer.
+'Invoking this method will cause the on_bt_data_sent event to be generated when the amount of committed data in the TX buffer of the BLE interface drops to or below
+'the "threshold" number of bytes.
+'<br><br>
+'This method, together with on_bt_data_sent provides a way to handle data sending asynchronously.
+'<br><br>
+'Only one on_bt_data_sent event will be generated each time after bt.notifysent is invoked.
 
 '--------------------------------------------------------------------
 property bt.advertise
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font> (not enabled). </b><br><br>
-'Setting this property to yes will begin advertising the devices services. Setting the value to no will stop advertising the devices services.<br>
-'Note your <b>phone/central device will cache advertising service data</b>. Please follow your devices recommendation to clear the cache if the advertised services are not updated.<br>
-'On iOS restarting the device will clear the service cache. On android devices you can clear the bluetooth cache via the settings or in your application force a scan without caching.<br>
-
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= <font color="olive"><b>0- NO</b></font></b><br><br>
+'Setting this property to 1 -YES will start the advertising service on the BLE interface. Setting the property to 0- NO halts BLE advertising.
+'<br><br>
+'The value of this property can only be set to 1- YES when the BLE interface is enabled (bt.enabled= 1- YES, i.e. bt.enable was previously called).
+'<br><br>
+'The value of this property is reset to 0- NO if the BLE interface becomes disabled (bt.enabled= 0- NO) for any reason.
     get = syscall(778) as no_yes
     set = syscall(779) (value as no_yes)
 end property
 
 '--------------------------------------------------------------------
 enum pl_bt_events 
-    PL_BT_EVENT_DEV_CONNECTED,     '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been initiated with this device
-    PL_BT_EVENT_DEV_DISCONNECTED  '<b>PLATFORM CONSTANT.</b><br><br>A bluetooth connection has been terminated with this device
-    PL_BT_EVENT_DEV_ENABLED,
-    PL_BT_EVENT_DEV_DISABLED
+    PL_BT_EVENT_CONNECTED,      '<b>PLATFORM CONSTANT.</b><br><br>The BLE interface has accepted an incoming connection.
+    PL_BT_EVENT_DISCONNECTED,   '<b>PLATFORM CONSTANT.</b><br><br>The BLE interface is no longer engaged in a connection.
+    PL_BT_EVENT_ENABLED,        '<b>PLATFORM CONSTANT.</b><br><br>The BLE interface has been enabled.
+    PL_BT_EVENT_DISABLED        '<b>PLATFORM CONSTANT.</b><br><br>The BLE interface has been disabled.
 end enum
 
 event(29)  on_bt_event(bt_event as pl_bt_events)
-'<b>EVENT of the ser object. </b><br><br> Generated when at least one data byte is present in the RX buffer of the bluetooth channel (i.e. for this
-'port the  <font color="maroon"><b>bt.rxlen</b></font>)>0). When the event handler for this event is entered the <font color="maroon"><b>
-'bt.num </b></font>property is automatically switched to the port for which this event was generated. <br><br>
-'Another <font color="teal"><b>on_ser_data_arrival </b></font>event on a particular port is never generated until the previous one is
-'processed. Use <font color="maroon"><b>bt.getdata </b></font>method to extract the data from the RX buffer. <br><br>
-'You don't have to process all  data in the RX buffer at once. If you exit the <font color="teal"><b>on_ser_data_arrival
-'</b></font>event handler while there is still some unprocessed data in the RX buffer another <font color="teal"><b>on_ser_data_arrival
-'</b></font>event will be generated immediately. <br><br>
-'This event is not generated for a particular port when buffer redirection is set for this port through the <font color="maroon"><b>
-'bt.redir</b></font> method.
-
-'--------------------------------------------------------------------
-'enum pl_bt_tasks
-'    PL_BT_TASK_IDLE,
-'	PL_BT_TASK_SCAN,
-'	PL_BT_TASK_CONNECT,
-'	PL_BT_TASK_DISCONNECT,
-'	PL_BT_TASK_GETRSSI
-'end enum
+'<b>EVENT of the bt object. </b><br><br>
+'Generated when the following BLE events occur:
+'<br><br>
+'0- _CONNECTED -- The BLE interface has accepted an incoming connection.
+'<br><br>
+'1- _DISCONNECTED -- The BLE interface is no longer engaged in a connection.
+'<br><br>
+'2- _ENABLED -- The BLE interface has been enabled (through bt.enable).
+'<br><br>
+'3- _DISABLED -- The BLE interface has been disabled (through bt.disable).
 
 '--------------------------------------------------------------------
 event(30) on_bt_data_arrival()
-'<b>EVENT of the ser object. </b><br><br> 
-'Generated after the total amount of committed data in the TX buffer of the bluetooth channel (<font color="maroon"><b>bt.txlen</b></font>) is 
-'found to be less than the threshold that was preset through the <font color="maroon"><b>bt.notifysent </b></font>method. <br><br>
-'This event may be generated only after the <font color="maroon"><b>bt.notifysent </b></font>method was used. Your application needs to use
-'the <font color="maroon"><b>bt.notifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
-'</b></font>event generation for a particular port. <br><br>
-'When the event handler for this event is entered the <font color="maroon"><b>bt.num </b></font>is automatically switched to the port on
-'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
-'<font color="teal"><b>on_sock_data_sent </b></font>event generation.
+'<b>EVENT of the bt object. </b><br><br> 
+'Generated as soon as the BLE interface receives data into the RX buffer.
+'<br><br>
+'There may be only one on_bt_data_arrival event in the event queue.
+'Another on_bt_data_arrival event will be generated only after the previous one is handled.
+'<br><br>
+'If, during the on_bt_data_arrival event handler execution, not all data is extracted from the RX 
+'buffer, another on_bt_data_arrival event is generated immediately after the 
+'on_bt_data_arrival event handler is exited.
 
 '--------------------------------------------------------------------
 event(32) on_bt_data_sent()
-'<b>EVENT of the ser object. </b><br><br> 
-'Generated after the total amount of committed data in the TX buffer of the bluetooth channel (<font color="maroon"><b>bt.txlen</b></font>) is 
-'found to be less than the threshold that was preset through the <font color="maroon"><b>bt.notifysent </b></font>method. <br><br>
-'This event may be generated only after the <font color="maroon"><b>bt.notifysent </b></font>method was used. Your application needs to use
-'the <font color="maroon"><b>bt.notifysent </b></font>method EACH TIME it wants to cause the <font color="teal"><b>on_ser_data_sent
-'</b></font>event generation for a particular port. <br><br>
-'When the event handler for this event is entered the <font color="maroon"><b>bt.num </b></font>is automatically switched to the port on
-'which this event was generated. Please, remember that uncommitted data in the TX buffer is not taken into account for the 
-'<font color="teal"><b>on_sock_data_sent </b></font>event generation.
+'<b>EVENT of the bt object. </b><br><br> 
+'Generated after the total amount of committed data in the TX buffer of the BLE interface drops to or below the threshold that was preset through the bt.notifysent method.
+'<br><br>
+'This event, together with bt.notifysent provides a way to handle data sending asynchronously.
+'<br><br>
+'Only one on_bt_data_sent event will be generated each time after bt.notifysent is invoked.
 
-
-'event(33) on_bt_task_complete()
-
+'--------------------------------------------------------------------
 event(34) on_bt_overrun()
+'<b>EVENT of the bt object. </b><br><br>
+'Generated when the RX buffer of the BLE interface overflows.
+'<br><br>
+'An overrun may happen if the BLE interface is receiving data faster than the speed at which your app is extracting and processing it.
 
 '--------------------------------------------------------------------
 property bt.connected
-'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
-'<br><br>
-'Indicates whether the bluetooth has been connected to by a a central.
-'<br><br>
-'The bluetooth hardware is connected after a central has connected.
-'<br><br>
-'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if the Wi-Fi hardware is disconnected, powered down, malfunctioned,
-'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b><br><br>
+'Indicates whether the BLE interface is engaged in a connection.
     get = syscall(797) as no_yes
 end property
 
 '--------------------------------------------------------------------
 property bt.mac
-'<b>R/O PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
+'<b>R/O PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b><br><br>
+'Returns the MAC address of the BLE interface.
 '<br><br>
-'Returns the MAC address of the Bluetooth interface.
-'<br><br>
-'This property can only be read to while the bluetooth hardware is operational (bt.poweredon = YES).
-'<br><br>
+'This property returns the MAC address only after the Wi-Fi/BLE add-on module is booted using wln.boot (and wln.enabled becomes 1- YES).
+'Prior to that, the property returns "0.0.0.0.0.0".
     get = syscall(794) as string
+    set = syscall(801) (byref mac_str as string)
 end property
 
 '--------------------------------------------------------------------
