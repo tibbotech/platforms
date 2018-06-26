@@ -315,11 +315,16 @@ end property
 
 '--------------------------------------------------------------------
 property bt.mac
-'<b>R/O PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b><br><br>
-'Returns the MAC address of the BLE interface.
+'<b>PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b><br><br>
+'Sets and returns the MAC address of the BLE interface.
 '<br><br>
-'This property returns the MAC address only after the Wi-Fi/BLE add-on module is booted using wln.boot (and wln.enabled becomes 1- YES).
-'Prior to that, the property returns "0.0.0.0.0.0".
+'Each WA2000 device comes with its own unique hardcoded Bluetooth MAC. You can use this MAC or set another MAC programmatically.
+'<br><br>
+'If you do not write to this property, bt.mac returns 0.0.0.0.0.0 before executing wln.boot.
+'The property returns the hardcoded MAC address of the WA2000 after wln.boot is called (and wln.enabled becomes 1- YES).
+'<br><br>
+'To set a different Bluetooth MAC, assign a new value to this property before calling wln.boot.
+'The value of the property cannot be changed after the wln.boot method has been invoked.
     get = syscall(794) as string
     set = syscall(801) (byref mac_str as string)
 end property
