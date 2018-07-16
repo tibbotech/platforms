@@ -519,7 +519,7 @@ public sub wln_proc_timer()
 				wln_rescan()
 				wln_rescan_requested=NO
 			else if wln_updaterssi_requested<>NO then
-				wln.updaterssi()
+				'wln.updaterssi()
 				wln_updaterssi_requested=NO
 			end if
 		end if
