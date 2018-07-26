@@ -153,3 +153,25 @@ property sys.timercountms
     get = syscall(595) as dword
     set = syscall(596) (value as dword)
 end property
+
+'--------------------------------------------------------------------
+
+enum pl_sys_priority
+'<b>ENUM. </b><br><br> 
+'Contains the list of available TiOS priorities.<br><br>
+    PL_SYS_HIGH,          '<b>PLATFORM CONSTANT.</b><br><br> 
+                          'Work in real time without restrictions (GPIO on LTTP3 faster in 22 times then TPP2W, mathematical operations faster about 300 times)
+    PL_SYS_NORMAL,        '<b>PLATFORM CONSTANT. </b><br><br> 
+                          'Normal priority (GPIO on LTTP3 work at the same speed as on TPP2W, mathematical operations faster about 200 times)
+    PL_SYS_LOW            '<b>PLATFORM CONSTANT. </b><br><br> 
+                          'Low priority (GPIO on LTTP3 slower in 7 times then TPP2W, mathematical operations faster about 150 times)
+end enum
+
+property sys.priority
+'<b>PROPERTY (ENUM, PL_SYS_PRIORITY), DEFAULT VALUE = PL_SYS_NORMAL. </b><br><br>
+'Sets the priority of TiOS process in Linux operation system. <br><br>
+'Allows to choose between programs running speed and CPU load depending on needs.
+    get = syscall(806) as pl_sys_priority
+    set = syscall(807) (value as pl_sys_priority)
+end property
+

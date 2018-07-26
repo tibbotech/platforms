@@ -658,7 +658,7 @@ event(28) on_lsock_overrun
 'your application is able to extract it, the buffer runs out of space and "misses" some incoming data. <br><br>
 
 '-------------------------------------------------------------------
-syscall(797) lsock.setaddress(interface as pl_lsock_interface, adr_type as pl_lsock_address_type, byref ip as string, byref netmask as string, byref gw as string, byref dns as string) as accepted_rejected
+syscall(801) lsock.setaddress(interface as pl_lsock_interface, adr_type as pl_lsock_address_type, byref ip as string, byref netmask as string, byref gw as string, byref dns as string) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Set the address for Linux network interface. <br><br>
@@ -666,25 +666,25 @@ syscall(797) lsock.setaddress(interface as pl_lsock_interface, adr_type as pl_ls
 'DNS is optional, allows to set several DNS servers in the format "x.x.x.x, y.y.y.y".
 
 '--------------------------------------------------------------------
-syscall(798) lsock.getip(interface as pl_lsock_interface) as string
+syscall(802) lsock.getip(interface as pl_lsock_interface) as string
 '<b>METHOD.</b>
 '<br><br>
 'Returns the IP address of selected interface 
 
 '--------------------------------------------------------------------
-syscall(799) lsock.getnetmask(interface as pl_lsock_interface) as string
+syscall(803) lsock.getnetmask(interface as pl_lsock_interface) as string
 '<b>METHOD.</b>
 '<br><br>
 'Returns the network netmask address of selected interface 
 
 '--------------------------------------------------------------------
-syscall(800) lsock.getgw(interface as pl_lsock_interface) as string
+syscall(804) lsock.getgw(interface as pl_lsock_interface) as string
 '<b>METHOD.</b>
 '<br><br>
 'Returns the gateway IP address of selected interface 
 
 '--------------------------------------------------------------------
-syscall(801) lsock.getdns(interface as pl_lsock_interface) as string
+syscall(805) lsock.getdns(interface as pl_lsock_interface) as string
 '<b>METHOD.</b>
 '<br><br>
 'Returns the IP address of used DNS server 
