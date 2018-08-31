@@ -253,7 +253,10 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 			end if
 		else
 	#endif
-		wln.boot(0)
+	if wln.boot(0)<>OK then
+		wln_start=WLN_STATUS_BOOT_FAILURE
+		goto wln_start_error
+	end if
 	#if GA1000
 		end if
 	#endif
@@ -1727,7 +1730,7 @@ sub wln_init()
 		io.state=LOW
 		wln_delay_ms(1)
 		io.state=HIGH
-	#endif
+	#endif	
 	wln_module_type = wln.getmoduletype
 	while wln.enabled=YES
 	wend
