@@ -304,6 +304,19 @@ enum pl_wln_module_types
 	PL_WLN_MODULE_TYPE_WA2000
 end enum
 
+
+
+#if  PLATFORM=KLM601N OR PLATFORM=EM1001N
+syscall(417,"70.TDL") wln.getmoduletype() as pl_wln_module_types
+'<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
+'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
+'<br><br>
+'The actual module type detection happens on the first invocation of wln.getmoduletype or wln.boot, whichever is called first after the reset of the Wi-Fi module.
+'<br><br>
+'Wln.getmoduletype also has a side job -- it can be used to boot the WA2000 into the Monitor/Loader, which is necessary for performing firmware updates.
+
+
+#else 
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
 'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
@@ -311,6 +324,7 @@ syscall(780) wln.getmoduletype() as pl_wln_module_types
 'The actual module type detection happens on the first invocation of wln.getmoduletype or wln.boot, whichever is called first after the reset of the Wi-Fi module.
 '<br><br>
 'Wln.getmoduletype also has a side job -- it can be used to boot the WA2000 into the Monitor/Loader, which is necessary for performing firmware updates.
+#endif 
 
 '--------------------------------------------------------------------
 property wln.ip
