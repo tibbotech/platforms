@@ -14,7 +14,7 @@ object wln
 'The wln. object is designed to work with the GA1000 and WA2000 devices.
 
 '--------------------------------------------------------------------
-syscall(580,"71.TDL") wln.activescan(byref ssid as string) as accepted_rejected
+syscall(580,TDL_71) wln.activescan(byref ssid as string) as accepted_rejected
 '<b>METHOD.</b>
 '<b>METHOD.</b>
 '<br><br>
@@ -41,7 +41,7 @@ enum pl_wln_bss_modes
 end enum
 
 '--------------------------------------------------------------------
-syscall(488,"71.TDL") wln.associate(byref bssid as string, byref ssid as string, channel as byte, bssmode as pl_wln_bss_modes) as accepted_rejected
+syscall(488,TDL_71) wln.associate(byref bssid as string, byref ssid as string, channel as byte, bssmode as pl_wln_bss_modes) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to attempt association with the specified wireless network.
@@ -85,7 +85,7 @@ property wln.associationstate
 '<br><br>
 'After the Wi-Fi interface succeeds in creating its own network (see wln.networkstart), the value of this property becomes 2- PL_WLN_OWN_NETWORK.
 'The value is reset back to 0- PL_WLN_NOT_ASSOCIATED when the network is terminated with wln.networkstop.
-    get = syscall(457,"72.TDL"+) as pl_wln_association_states
+    get = syscall(457,TDL_72) as pl_wln_association_states
 end property
 
 '--------------------------------------------------------------------
@@ -117,7 +117,7 @@ property wln.band
 end property
 
 '--------------------------------------------------------------------
-syscall(451,"70.TDL") wln.boot(offset as dword) as ok_ng
+syscall(451,TDL_70) wln.boot(offset as dword) as ok_ng
 '<b>METHOD.</b>
 '<br><br>
 'Boots up the Wi-Fi add-on module.
@@ -155,7 +155,7 @@ property wln.buffsize
 'Returns the current capacity (in bytes) of the wln object's TX buffer.
 '<br><br>
 'Buffer capacity is set using wln.buffrq method.
-    get = syscall(504,"72.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(504,TDL_72) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -168,8 +168,8 @@ property wln.clkmap
 'This selection cannot be changed once the Wi-Fi hardware is already operational (wln.enabled= 1- YES).
 '<br><br>
 'This property has no effect on the EM500W platform.
-    get = syscall(554,"72.TDL"+) as pl_io_num
-    set = syscall(555,"72.TDL"+) (value as pl_io_num)
+    get = syscall(554,TDL_72) as pl_io_num
+    set = syscall(555,TDL_72) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -182,8 +182,8 @@ property wln.csmap
 'This selection cannot be changed once the Wi-Fi hardware is already operational (wln.enabled= 1- YES).
 '<br><br>
 'This property has no effect on the EM500W platform.
-    get = syscall(535,"72.TDL"+) as pl_io_num
-    set = syscall(536,"72.TDL"+) (value as pl_io_num)
+    get = syscall(535,TDL_72) as pl_io_num
+    set = syscall(536,TDL_72) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -198,8 +198,8 @@ property wln.dimap
 'This DI line must be connected to the DO pin of the GA1000.
 '<br><br>
 'This property has no effect on the EM500W platform.
-    get = syscall(550,"72.TDL"+) as pl_io_num
-    set = syscall(551,"72.TDL"+) (value as pl_io_num)
+    get = syscall(550,TDL_72) as pl_io_num
+    set = syscall(551,TDL_72) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -216,7 +216,7 @@ syscall(777) wln.disable()
 'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
 
 '--------------------------------------------------------------------
-syscall(492,"71.TDL") wln.disassociate() as accepted_rejected
+syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence disassociation from a wireless network.
@@ -243,8 +243,8 @@ property wln.domain
 'Passive scanning (wln.scan) is performed on all channels of enabled bands (wln.band), regardless of the value of wln.domain.
 '<br><br>
 'This property can't be changed while the Wi-Fi hardware is operational (wln.enabled= 1- YES).
-    get = syscall(480,"72.TDL"+) as pl_wln_domains
-    set = syscall(481,"72.TDL"+) (value as pl_wln_domains)
+    get = syscall(480,TDL_72) as pl_wln_domains
+    set = syscall(481,TDL_72) (value as pl_wln_domains)
 end property
 
 '--------------------------------------------------------------------
@@ -259,8 +259,8 @@ property wln.domap
 'This DO line must be connected to the DI pin of the GA1000.
 '<br><br>
 'This property has no effect on the EM500W platform.
-    get = syscall(552,"72.TDL"+) as pl_io_num
-    set = syscall(553,"72.TDL"+) (value as pl_io_num)
+    get = syscall(552,TDL_72) as pl_io_num
+    set = syscall(553,TDL_72) (value as pl_io_num)
 end property
 
 '--------------------------------------------------------------------
@@ -273,7 +273,7 @@ property wln.enabled
 '<br><br>
 'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if wln.disable is called, or the Wi-Fi hardware is disconnected, powered down, malfunctioned,
 'or was intentionally reset. In all these cases the on_wln_event(0- PL_WLN_EVENT_DISABLED) event is generated, too.
-    get = syscall(452,"72.TDL"+) as no_yes
+    get = syscall(452,TDL_72) as no_yes
 end property
 
 '--------------------------------------------------------------------
@@ -294,8 +294,8 @@ property wln.gatewayip
 '<br><br>
 'This property can only be written to when no socket is engaged in communicating through the Wi-Fi interface, i.e. there is no socket for which
 'sock.statesimple <> 0- PL_SSTS_CLOSED and sock.currentinterface = 2- PL_INTERFACE_WLN.
-    get = syscall(537,"72.TDL"+) as string
-    set = syscall(538,"72.TDL"+) (byref gateway_ip_str as string)
+    get = syscall(537,TDL_72) as string
+    set = syscall(538,TDL_72) (byref gateway_ip_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -307,7 +307,7 @@ end enum
 
 
 #if  PLATFORM=KLM601N OR PLATFORM=EM1001N
-syscall(417,"70.TDL") wln.getmoduletype() as pl_wln_module_types
+syscall(417,TDL_70) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
 'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
 '<br><br>
@@ -333,8 +333,8 @@ property wln.ip
 '<br><br>
 'This property can only be written to when no socket is engaged in communicating through the Wi-Fi interface, i.e. there is no socket for which
 'sock.statesimple <> 0- PL_SSTS_CLOSED and sock.currentinterface = 2- PL_INTERFACE_WLN.
-    get = syscall(472,"72.TDL"+) as string
-    set = syscall(473,"72.TDL"+) (byref ip_str as string)
+    get = syscall(472,TDL_72) as string
+    set = syscall(473,TDL_72) (byref ip_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -350,8 +350,8 @@ property wln.mac
 '<br><br>
 'Alternatively, set your own MAC address before calling wln.boot. This MAC address, and not the internal MAC of the Wi-Fi module will
 'be used (but only until the module is rebooted). The MAC address hardcoded into the module is never overwitten or erased.
-    get = syscall(470,"72.TDL"+) as string
-    set = syscall(471,"72.TDL"+) (byref mac_str as string)
+    get = syscall(470,TDL_72) as string
+    set = syscall(471,TDL_72) (byref mac_str as string)
 end property
 
 '--------------------------------------------------------------------
@@ -372,12 +372,12 @@ property wln.netmask
 '<br><br>
 'This property can only be written to when no socket is engaged in communicating through the Wi-Fi interface, i.e. there is no socket for which
 'sock.statesimple <> 0- PL_SSTS_CLOSED and sock.currentinterface = 2- PL_INTERFACE_WLN.
-    get = syscall(539,"72.TDL"+) as string
-    set = syscall(540,"72.TDL"+) (byref netmask_str as string)
+    get = syscall(539,TDL_72) as string
+    set = syscall(540,TDL_72) (byref netmask_str as string)
 end property
 
 '--------------------------------------------------------------------
-syscall(475,"71.TDL") wln.networkstart(byref ssid as string,channel as byte) as accepted_rejected
+syscall(475,TDL_71) wln.networkstart(byref ssid as string,channel as byte) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence creating its own network.
@@ -394,7 +394,7 @@ syscall(475,"71.TDL") wln.networkstart(byref ssid as string,channel as byte) as 
 'Completion does not imply success -- the result has to be verified by reading the state of the wln.associationstate R/O property.
 
 '--------------------------------------------------------------------
-syscall(476,"71.TDL") wln.networkstop() as accepted_rejected
+syscall(476,TDL_71) wln.networkstop() as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence the termination of its own network.
@@ -463,17 +463,17 @@ property wln.rssi
 'The signal strength is expressed in 256 arbitrary levels that do not correspond to any standard measurement unit.
 '<br><br>
 'This property is only updated while the Wi-Fi interface is in the non-idle state (wln.associationstate <> 0- PL_WLN_NOT_ASSOCIATED).
-    get = syscall(474,"72.TDL"+) as byte
+    get = syscall(474,TDL_72) as byte
 end property
 
 '--------------------------------------------------------------------
-syscall(581,"71.TDL") !wln.updaterssi() as accepted_rejected
+syscall(581,TDL_71) !wln.updaterssi() as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence RSSI value updating.
 
 '--------------------------------------------------------------------
-syscall(489,"71.TDL") wln.scan(byref ssid as string) as accepted_rejected
+syscall(489,TDL_71) wln.scan(byref ssid as string) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence either the passive detection of available wireless networks or obtainment of an additional information about a particular network specified by its SSID (name).
@@ -505,8 +505,8 @@ property wln.scanfilter
 'Determines what wireless networks are included in the scan results (after scanning with wln.scan or wln.activescan): all networks, only infrastructure networks (access points), or only ad-hoc networks.
 '<br><br>
 'Note that WA2000 does not support association with ad-hoc networks.
-    get = syscall(582,"72.TDL"+) as pl_wln_scan_filter
-    set = syscall(583,"72.TDL"+) (value as pl_wln_scan_filter)
+    get = syscall(582,TDL_72) as pl_wln_scan_filter
+    set = syscall(583,TDL_72) (value as pl_wln_scan_filter)
 end property
 
 '--------------------------------------------------------------------
@@ -516,7 +516,7 @@ property wln.scanresultbssid
 'After a successful scan for a particular network (wln.scan or wln.activescan with the SSID specified) this property will contain the BSSID ("MAC address") of this network. 
 '<br><br>
 'This property will not be updated if wln.scan or wln.activescan is invoked with its ssid argument left empty ("search for all networks" mode).
-    get = syscall(497,"72.TDL"+) as string
+    get = syscall(497,TDL_72) as string
 end property
 
 '--------------------------------------------------------------------
@@ -527,7 +527,7 @@ property wln.scanresultbssmode
 '(infrastructure or ad-hoc).
 '<br><br>
 'This property will not be updated if wln.scan or wln.activescan is invoked with its ssid argument left empty ("search for all networks" mode).
-    get = syscall(500,"72.TDL"+) as pl_wln_bss_modes
+    get = syscall(500,TDL_72) as pl_wln_bss_modes
 end property
 
 '--------------------------------------------------------------------
@@ -537,7 +537,7 @@ property wln.scanresultchannel
 'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain the number of the channel on which this network operates.
 '<br><br>
 'This property will not be updated if wln.scan or wln.activescan is invoked with its ssid argument left empty ("search for all networks" mode).
-    get = syscall(496,"72.TDL"+) as byte
+    get = syscall(496,TDL_72) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -549,7 +549,7 @@ property wln.scanresultrssi
 'This property will not be updated if wln.scan or wln.activescan is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 'The signal strength is expressed in 256 arbitrary levels that do not correspond to any standard measurement unit.
-    get = syscall(499,"72.TDL"+) as byte
+    get = syscall(499,TDL_72) as byte
 end property
 
 '--------------------------------------------------------------------
@@ -561,7 +561,7 @@ property wln.scanresultssid
 'If the wln.scan or wln.activescan method was invoked with its name argument left empty, this property will contain the list of all discovered networks.
 'If the name argument specified a particular network and scanning found this network to be present, then this property will contain the name of this network
 '(otherwise an empty string will be returned).
-    get = syscall(495,"72.TDL"+) as string
+    get = syscall(495,TDL_72) as string
 end property
 
 '--------------------------------------------------------------------
@@ -574,11 +574,11 @@ property wln.scanresultwpainfo
 'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
 '<br><br>
 'The string returned by this property is not intended for humans. The property exists to facilitate the operation of the WLN library, which calculates the WPA key for the GA1000.
-    get = syscall(498,"72.TDL"+) as string
+    get = syscall(498,TDL_72) as string
 end property
 
 '--------------------------------------------------------------------
-syscall(494,"90.TDL") wln.settxpower(level as byte) as accepted_rejected
+syscall(494,TDL_90) wln.settxpower(level as byte) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence the adjustment of the TX power to the specified level.
@@ -614,7 +614,7 @@ enum pl_wln_wep_modes
     PL_WLN_WEP_MODE_128     '<b>PLATFORM CONSTANT.</b><br><br>WEP-128 is enabled.
 end enum
 
-syscall(502,"71.TDL") wln.setwep(byref wepkey as string, wepmode as pl_wln_wep_modes) as accepted_rejected
+syscall(502,TDL_71) wln.setwep(byref wepkey as string, wepmode as pl_wln_wep_modes) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to set new WEP mode and key.
@@ -652,7 +652,7 @@ enum pl_wln_wpa_unicast_multicast
     PL_WLN_WPA_CAST_MULTICAST   '<b>PLATFORM CONSTANT.</b><br><br>Install multicast key.
 end enum
 
-syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wln_wpa_algorithms, byref wpakey as string, cast as pl_wln_wpa_unicast_multicast) as accepted_rejected
+syscall(493,TDL_71) wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wln_wpa_algorithms, byref wpakey as string, cast as pl_wln_wpa_unicast_multicast) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence setting new WPA mode and key.
@@ -683,7 +683,7 @@ property wln.task
 '<br><br>
 'The wln. object will only accept another task for execution after the previous task has been completed
 '(wln.task= 0- PL_WLN_TASK_IDLE). Every time the task completes, the on_wln_task_complete event is generated.
-    get = syscall(501,"72.TDL"+) as pl_wln_tasks
+    get = syscall(501,TDL_72) as pl_wln_tasks
 end property
 
 '--------------------------------------------------------------------
@@ -717,7 +717,7 @@ syscall(787) wln.writeflashpage(byref page as string) as accepted_rejected
 'Invoking this method while using the GA1000 device will have no effect. 
 
 '--------------------------------------------------------------------
-syscall(456,"70.TDL") !wln.mfgboot(offset as dword) as ok_ng
+syscall(456,TDL_70) !wln.mfgboot(offset as dword) as ok_ng
 
 '--------------------------------------------------------------------
 enum pl_wln_mfgtx_modes
@@ -743,12 +743,12 @@ enum pl_wln_mfgtx_rates
     PL_WLN_MFGTX_RATE_72M   '<b>PLATFORM CONSTANT.</b><br><br>Rate = 72 Mbps.
 end enum
 
-syscall(469,"90.TDL") !wln.mfgtx(mode as pl_wln_mfgtx_modes, channel as byte, txpower as byte, datarate as pl_wln_mfgtx_rates) as ok_ng
+syscall(469,TDL_90) !wln.mfgtx(mode as pl_wln_mfgtx_modes, channel as byte, txpower as byte, datarate as pl_wln_mfgtx_rates) as ok_ng
 
 '--------------------------------------------------------------------
 property !wln.mfgenabled
 '<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
-    get = syscall(468,"72.TDL"+) as no_yes
+    get = syscall(468,TDL_72) as no_yes
 end property
 
 #endif
