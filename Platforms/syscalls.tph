@@ -675,3 +675,44 @@ syscall(422,"88.TDL") !debug.tx(byref s as string)
 '--------------------------------------------------------------------
 syscall(423,"88.TDL") !debug.rx() as string
 '<b>METHOD.</b>
+
+
+
+
+
+
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+'--------------------------------------------------------------------
+syscall(802,"91.TDL") sin( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the sin of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(803,"91.TDL") asin( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc sin. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(804,"91.TDL") cos( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the cos of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(805,"91.TDL") acos( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc cos. Return value angle is in degrees
+
+
+'--------------------------------------------------------------------
+syscall(806,"91.TDL") tan( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the tan of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(807,"91.TDL") atan( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc tan. Return value angle is in degrees
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
