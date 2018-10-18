@@ -1,0 +1,53 @@
+'**************************************************************************************************
+'       GPRS object
+'**************************************************************************************************
+
+object gprs
+'This is the object that manages GPRS connections on Linux (Tibbit #47 or USB modem).
+
+'--------------------------------------------------------------------
+
+syscall(814) gprs.start(byref user as string, byref password as string, byref port as string, byref pin as string, byref apn as string, byref atdt as string)
+'<b>METHOD. </b><br><br>
+'Start the GPRS connection.<br><br>
+'<b>user</b> and <b>password</b> are optional. Leave an empty "" string, if authentication is not required.<br>
+'<b>port</b> s a full path for a device in Linux. For LTTP3 has the following values:<br>
+'- <i>/dev/ttyO1</i> for socket S1<br>
+'- <i>/dev/ttyO3</i> for socket S5<br>
+'- <i>/dev/ttyO5</i> for socket S9<br>
+'- <i>/dev/ttyO4</i> for socket S13<br>
+'- <i>/dev/ttyO0</i> for socket S17<br>
+'USB modem have port <i>/dev/ttyUSB0</i> ussually.<br>
+'<b>pin</b> is optional. Leave an empty "" string, if pin-code is not required for SIM-card.<br>
+'<b>apn</b> - access point name, for example: "live.vodafone.com".<br>
+'<b>atdt</b> - number for ATDT-commands, for example: "*99#"<br>
+
+syscall(815) gprs.stop()
+'<b>METHOD. </b><br><br>
+'Stop the GPRS connection.<br><br>
+
+property gprs.ip
+'<b>READ-ONLY PROPERTY (STRING)</b><br><br>
+'Returns the IP address of the GPRS connection.<br><br>   
+    get = syscall(816) as string
+end property
+
+property gprs.rx
+'<b>READ-ONLY PROPERTY (DWORD)</b><br><br>
+'Returns received bytes on current GPRS session.<br>
+    get = syscall(817) as dword
+end property
+
+property gprs.tx
+'<b>READ-ONLY PROPERTY (DWORD)</b><br><br>
+'Returns transmitted bytes on current GPRS session.<br>
+    get = syscall(818) as dword
+end property
+
+event(48) on_gprs_started
+'<b>EVENT of the gprs object. </b><br><br> 
+'Generated when GPRS connection is successfully activated.<br>
+
+event(49) on_gprs_stopped
+'<b>EVENT of the gprs object. </b><br><br> 
+'Generated when GPRS connection is stopped.<br>
