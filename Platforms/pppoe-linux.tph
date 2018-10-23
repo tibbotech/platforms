@@ -1,0 +1,51 @@
+'**************************************************************************************************
+'       PPPoE object
+'**************************************************************************************************
+
+object pppoe
+'This is the object that manages PPPoE connections on Linux.
+
+'--------------------------------------------------------------------
+
+enum pl_pppoe_interface
+    PL_PPPOE_ETHERNET,    '<b>PLATFORM CONSTANT. </b><br><br> 
+                            'Ethernet will be used for PPPoE connection.
+    PL_PPPOE_WIRELESS       '<b>PLATFORM CONSTANT. </b><br><br>
+                            'Wi-Fi will be used for PPPoE connection.
+end enum
+
+syscall(819) pppoe.start(byref user as string, byref password as string, interface as pl_pppoe_interface)
+'<b>METHOD. </b><br><br>
+'Start the PPPoE connection.<br><br>
+'<b>user</b> and <b>password</b> can't be empty.<br>
+
+syscall(820) pppoe.stop()
+'<b>METHOD. </b><br><br>
+'Stop the PPPoE connection.<br><br>
+
+property pppoe.ip
+'<b>READ-ONLY PROPERTY (STRING)</b><br><br>
+'Returns the IP address of the PPPoE connection.<br><br>   
+    get = syscall(821) as string
+end property
+
+property pppoe.rx
+'<b>READ-ONLY PROPERTY (DWORD)</b><br><br>
+'Returns received bytes on current PPPoE session.<br>
+    get = syscall(822) as dword
+end property
+
+property pppoe.tx
+'<b>READ-ONLY PROPERTY (DWORD)</b><br><br>
+'Returns transmitted bytes on current PPPoE session.<br>
+    get = syscall(823) as dword
+end property
+
+event(50) on_pppoe_started
+'<b>EVENT of the pppoe object. </b><br><br> 
+'Generated when PPPoE connection is successfully activated.<br>
+
+event(51) on_pppoe_stopped
+'<b>EVENT of the pppoe object. </b><br><br> 
+'Generated when PPPoE connection is stopped.<br>
+
