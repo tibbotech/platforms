@@ -50,7 +50,11 @@ syscall(738) sys.exec(byref filename as string, byref args as string, byref env 
 'Executes the Linux program.<br><br>
 '<b>filename</b> must be either a binary executable, or a script. Specify only the full path.<br><br>
 '<b>args</b> is an string of arguments list passed to the new program.<br><br>
-'<b>env</b> is an string, conventionally of the form <i>key=value</i>, which are passed as environment to the new program. May be empty. To pass several parameters, separate them with spaces: <i>key1=value1 key2=value2</i>.
+'<b>env</b> is an string, conventionally of the form <i>key=value</i>, which are passed as environment to the new program. May be empty. To pass several parameters, separate them with spaces: <i>key1=value1 key2=value2</i>.<br><br>
+'The function does not block the execution of the main thread.<br><br>
+'<b>See also: </b>
+'sys.execgetresult,
+'sys.execwithresult
 
 '--------------------------------------------------------------------
 property sys.freebuffpages
@@ -174,4 +178,33 @@ property sys.priority
     get = syscall(806) as pl_sys_priority
     set = syscall(807) (value as pl_sys_priority)
 end property
+
+
+'--------------------------------------------------------------------
+
+syscall(824) sys.execwithresult(byref command as string) as byte
+'<b>METHOD. </b><br><br>
+'Executes the Linux shell command with result output.<br><br>
+'<b>Returns</b> the number of strings in a command execution result, or 0 if the command failed.<br><br>
+'The result of the command can be obtained in the function <i>sys.execgetresult</i>.<br><br>
+'The function blocks the execution of the main thread.<br><br>
+'<b>See also: </b>
+'sys.execgetresult,
+'sys.exec
+
+'--------------------------------------------------------------------
+
+syscall(825) sys.execgetresult(num as byte) as string
+'<b>METHOD. </b><br><br>
+'Returns the output of a command obtained using the function <i>sys.execwithresult</i>.<br><br>
+'Short usage example:<br><br>
+'<i>dim s as byte</i><br>
+'<i>s = sys.execwithresult("ls -las")</i><br>
+'<i>dim i as byte</i><br>
+'<i>for i = 0 to s</i><br>
+'&#09;<i>sys.debugprint(sys.execgetresult(i))</i><br>
+'<i>next</i><br><br>
+'<b>See also: </b>
+'sys.execwithresult,
+'sys.exec
 
