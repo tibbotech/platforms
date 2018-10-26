@@ -715,4 +715,10 @@ syscall(807,"91.TDL") atan( x as float) as float
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Calculates the arc tan. Return value angle is in degrees
 
+
+'--------------------------------------------------------------------
+syscall(808,"91.TDL") sqrt( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
+
 '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
