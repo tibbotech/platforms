@@ -1,0 +1,19 @@
+'***********************************************************************************************************
+'			LINUX SOCKET ALLOCATION LIBRARY
+'***********************************************************************************************************
+
+'1- debug output in console.
+'0- no debug output.
+#ifndef LSOCK_DEBUG_PRINT
+	#define LSOCK_DEBUG_PRINT 0
+#endif
+
+'Maximum length of the lsocket user's signature string
+#ifndef LSOCK_MAX_SIGNATURE_LEN
+	#define LSOCK_MAX_SIGNATURE_LEN 3
+#endif
+
+'------------------------------------------------------------------------------
+declare function lsock_get(byref signature as string) as byte
+declare function lsock_who_uses(lsock_num as byte) as string
+declare sub lsock_release(lsock_num as byte)

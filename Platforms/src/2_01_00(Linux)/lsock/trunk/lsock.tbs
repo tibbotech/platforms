@@ -1,0 +1,134 @@
+'***********************************************************************************************************
+'			LINUX SOCKET ALLOCATION LIBRARY
+'
+'***********************************************************************************************************
+
+include "global.tbh"
+
+'--------------------------------------------------------------------
+const LSOCK_STAMP="LSOCK> "
+const LSOCK_CR_LF=chr(13)+chr(10)
+const LSOCK_MAX_SOCKETS=128
+const LSOCK_UNUSED_SIGNATURE="----"
+const LSOCK_INIT_SIGNATURE=&h5850
+
+'--------------------------------------------------------------------
+declare sub lsock_init()
+declare sub lsock_debugprint(byref print_data as string)
+
+'--------------------------------------------------------------------
+dim lsock_in_use(LSOCK_MAX_SOCKETS) as no_yes
+dim lsock_user_signature(LSOCK_MAX_SOCKETS) as string(LSOCK_MAX_SIGNATURE_LEN)
+dim lsock_init_flag as word
+
+'==============================================================================
+public function lsock_get(byref signature as string) as byte
+'Returns a free socket number or 255 if no free sockets left.
+
+	dim f as byte
+
+	if lsock_init_flag<>LSOCK_INIT_SIGNATURE then
+		lsock_init()
+		lsock_init_flag=LSOCK_INIT_SIGNATURE
+	end if
+	
+	for f=0 to LSOCK_MAX_SOCKETS-1
+		if lsock_in_use(f)=NO then
+			lsock_in_use(f)=YES
+			lsock_user_signature(f)=signature
+			lsock_get=f
+			#if LSOCK_DEBUG_PRINT
+				lsock_debugprint("'"+lsock_user_signature(f)+"' got socket #"+str(f))
+			#endif
+			exit function
+		end if
+	next f
+
+	'no free socket found
+	#if LSOCK_DEBUG_PRINT
+		lsock_debugprint("'"+signature+"' could not get a socket: no free sockets left")
+	#endif
+	lsock_get=255
+end function
+
+'--------------------------------------------------------------------
+public function lsock_who_uses(lsock_num as byte) as string
+'Returns the signature of the specified socket's user.
+
+	if lsock_init_flag<>LSOCK_INIT_SIGNATURE then
+		lsock_init()
+		lsock_init_flag=LSOCK_INIT_SIGNATURE
+	end if
+
+	if lsock_in_use(lsock_num)=NO then
+		lsock_who_uses=LSOCK_UNUSED_SIGNATURE
+	else
+		lsock_who_uses=lsock_user_signature(lsock_num)
+	end if
+end function
+
+'--------------------------------------------------------------------
+public sub lsock_release(lsock_num as byte)
+'Releases the socket (number), discards socket connection, restores socket's properties to their default states.
+	dim lsock_bup as byte
+	dim i as word
+
+	if lsock_init_flag<>LSOCK_INIT_SIGNATURE then
+		lsock_init()
+		lsock_init_flag=LSOCK_INIT_SIGNATURE
+	end if
+
+	lsock_bup=lsock.num
+	lsock.num=lsock_num
+
+	'close existing connection, if any
+	i=sys.timercount
+	lsock.close
+	while lsock.state<>PL_LSST_CLOSED and sys.timercount-i<3 and sys.timercount>=i
+	wend
+	
+	'release socket buffers
+	lsock.rxbuffrq(0)
+	lsock.txbuffrq(0)
+	sys.buffalloc
+	
+	'restore the socket to its default state
+	lsock.acceptbcast=NO
+	lsock.connectiontout=0
+	lsock.gendataarrivalevent=YES
+	lsock.inconmode=PL_LSOCK_INCONMODE_NONE
+	lsock.localportlist=""
+	lsock.outport=0
+	lsock.protocol=PL_LSOCK_PROTOCOL_UDP
+	lsock.reconmode=PL_LSOCK_RECONMODE_0
+	lsock.sinkdata=NO
+	lsock.targetbcast=NO
+	lsock.targetip="0.0.0.0"
+	lsock.targetport=0
+
+	#if LSOCK_DEBUG_PRINT
+		lsock_debugprint("'"+lsock_user_signature(lsock_num)+"' released socket #"+str(lsock_num))
+	#endif
+	
+	lsock_in_use(lsock_num)=NO
+	lsock_user_signature(lsock_num)=LSOCK_UNUSED_SIGNATURE
+	lsock.num=lsock_bup
+end sub
+
+'------------------------------------------------------------------------------
+sub lsock_init()
+	dim f as byte
+	
+	for f=0 to LSOCK_MAX_SOCKETS-1
+		lsock_in_use(f)=NO
+		lsock_user_signature(f)=LSOCK_UNUSED_SIGNATURE
+	next f
+end sub
+
+'------------------------------------------------------------------------------
+#if LSOCK_DEBUG_PRINT
+sub lsock_debugprint(byref print_data as string)
+
+	sys.debugprint(LSOCK_STAMP+print_data+LSOCK_CR_LF)
+end sub
+#endif
