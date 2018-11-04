@@ -721,4 +721,12 @@ syscall(808,"91.TDL") sqrt( x as float) as float
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Calculates the square root.
 
+
+
+'--------------------------------------------------------------------
+syscall(809,"91.TDL") atan2( y as float, x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
+
+
 '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
