@@ -31,7 +31,9 @@ end enum
 
 '------------------------------------------------------------------------------
 declare sub sntp_init()
-declare function sntp_start(byref server_ip as string,server_port as word) as en_sntp_status_codes
+
+'server_ip can be IP address or hostname
+declare function sntp_start(byref server_ip as string,server_port as word) as en_sntp_status_codes 
 
 declare sub sntp_proc_timer()
 declare sub sntp_proc_data()

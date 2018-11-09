@@ -8,7 +8,7 @@ include "global.tbh"
 '------------------------------------------------------------------------------
 const SNTP_STAMP="SNTP> "
 const SNTP_CR_LF=chr(13)+chr(10)
-const SNTP_STD_SERVER_IP="216.239.35.0"
+const SNTP_STD_SERVER_IP="time.google.com"
 const SNTP_STD_SERVER_PORT=123
 
 '------------------------------------------------------------------------------
@@ -84,9 +84,9 @@ public function sntp_start(byref server_ip as string,server_port as word) as en_
 	lsock.protocol=PL_LSOCK_PROTOCOL_UDP
 
 	if server_ip="" then
-		lsock.targetip=SNTP_STD_SERVER_IP
+		lsock.targetip=lsock.getipbyhost(SNTP_STD_SERVER_IP)
 	else
-		lsock.targetip=server_ip
+		lsock.targetip=lsock.getipbyhost(server_ip)
 	end if
 	
 	if server_port=0 then
@@ -160,7 +160,7 @@ public sub sntp_proc_timer()
 		sntp_reply_timer=SNTP_REPLY_TIMEOUT
 		
 		#if SNTP_DEBUG_PRINT
-			sntp_debugprint("Connecting to SNTP server at "+sock.targetip+":"+str(sock.targetport))
+			sntp_debugprint("Connecting to SNTP server at "+lsock.targetip+":"+str(lsock.targetport))
 		#endif		
 
 	case SNTP_PHASE_RQUESTING:

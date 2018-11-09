@@ -576,7 +576,7 @@ public sub agg_proc_timer()
 		#if AGG_LOGIN_CONTROL
 			'AggreGate server does not have a logout procedure. logout has to be controled by device, connection is cut only when device logout from AGG mode.
 			
-			comp_result=compare_logins(CMD_MODE_AGGREGATE,pw,agg_sock)
+			comp_result=compare_logins(CMD_MODE_AGGREGATE,pw,agg_lsock)
 			if (login_mode<>CMD_MODE_AGGREGATE and agg_first_conn=NO) or comp_result>=LC_WILL_REJECT_HIGHER_IN_PROGRESS then exit sub
 		#endif
 		if agg_timer>0 then agg_timer=agg_timer-1
@@ -878,7 +878,7 @@ public sub agg_proc_stored_events()
 	if agg_sychronized=NO or agg_event_in_proc=YES then exit sub
 	
 	lsock.num=agg_lsock
-	if sock.statesimple=PL_SSTS_CLOSED then exit sub
+	if lsock.state=PL_LSST_CLOSED then exit sub
 	
 	#if AGG_TABLE_CONTROL=0
 		#if AGG_DEBUG_PRINT
@@ -1014,7 +1014,7 @@ function agg_connect() as en_agg_status_codes
 	if lsock.state=PL_LSST_EST then exit function
 	
 	'arrange buffer space
-	if sock.rxbuffsize<AGG_RX_BUF_SIZE or lsock.txbuffsize<AGG_TX_BUF_SIZE then
+	if lsock.rxbuffsize<AGG_RX_BUF_SIZE or lsock.txbuffsize<AGG_TX_BUF_SIZE then
 		lsock.rxbuffrq(0)
 		lsock.txbuffrq(0)
 		sys.buffalloc()

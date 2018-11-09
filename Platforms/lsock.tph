@@ -688,3 +688,10 @@ syscall(805) lsock.getdns(interface as pl_lsock_interface) as string
 '<b>METHOD.</b>
 '<br><br>
 'Returns the IP address of used DNS server 
+
+'--------------------------------------------------------------------
+syscall(826) lsock.getipbyhost(byref host as string) as string
+'<b>METHOD.</b>
+'<br><br>
+'Function returns an IP address for the given host name (first found) or "127.0.0.1" on the resolve error.<br><br>
+'Function is blocking and takes some time to execute.
