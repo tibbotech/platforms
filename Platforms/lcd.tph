@@ -361,6 +361,7 @@ syscall(358,"61.TDL") lcd.horline(x1 as word,x2 as word,y as word)
 '<font color="maroon"><b>lcd.fill</b></font>.
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property lcd.inverted
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (not inverted, higher memory value = higher pixel brightness).</b><br><br>
 'Specifies whether the image on the display panel has to be inverted: 
@@ -378,8 +379,10 @@ property lcd.inverted
     get = syscall(319,"57.TDL"+) as no_yes
     set = syscall(320,"57.TDL"+) (inversion as no_yes)
 end property
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property lcd.iomapping
 '<b>PROPERTY (STRING), DEFAULT VALUE= "".</b><br><br>
 'Defines the list of I/O lines to interface with the currently selected controller/panel.
@@ -394,6 +397,7 @@ property lcd.iomapping
     get = syscall(321,"25.TDL"+) as string
     set = syscall(322,"26.TDL"+) (byref mapping as string)
 end property
+#endif
 
 '--------------------------------------------------------------------
 syscall(357,"62.TDL") lcd.line(x1 as word,y1 as word, x2 as word, y2 as word)
