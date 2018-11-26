@@ -326,7 +326,7 @@ property bt.mac
 'To set a different Bluetooth MAC, assign a new value to this property before calling wln.boot.
 'The value of the property cannot be changed after the wln.boot method has been invoked.
     get = syscall(794) as string
-    set = syscall(801) (byref mac_str as string)
+    set = syscall(827) (byref mac_str as string)
 end property
 
 '--------------------------------------------------------------------

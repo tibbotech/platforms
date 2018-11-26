@@ -2,6 +2,8 @@
 '       SYS (System) object
 '**************************************************************************************************
 
+#define SYS_VER 2000
+
 object sys
 'This is the system object that loosely combines "general system" stuff such as initialization (boot) event, buffer
 'management, system timer, and some other miscellaneous properties and methods.

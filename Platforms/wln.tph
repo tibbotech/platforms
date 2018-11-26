@@ -203,19 +203,6 @@ property wln.dimap
 end property
 
 '--------------------------------------------------------------------
-syscall(777) wln.disable()
-'<b>METHOD. </b><br><br>
-'Causes the wln. object to be disabled.
-'<br><br>
-'Disabling the wln. object is not the same as shutting down the Wi-Fi module. Disabling the wln. object means that TiOS stops servicing it.
-'The Wi-Fi module itself continues to run. To shut the Wi-Fi module down, put it in reset.   
-'<br><br>
-'Note that the object does not become disabled immediately upon invoking wln.disable. To detect when this actually happens, poll the value of wln.enabled until it becomes 0- NO.
-'Alternatively, wait for the on_wln_event(0- PL_WLN_EVENT_DISABLED) event -- it is generated when the wln. object is disabled.
-'<br><br>
-'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
-
-'--------------------------------------------------------------------
 syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
@@ -277,17 +264,6 @@ property wln.enabled
 end property
 
 '--------------------------------------------------------------------
-property wln.fwversion
-'<b>R/O PROPERTY (STRING). </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's main firmware.
-'<br><br>
-'This property starts returning the firmware version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
-'<br><br>
-'When the GA1000 device is used, this property always returns an empty string.
-    get = syscall(791) as string
-end property
-
-'--------------------------------------------------------------------
 property wln.gatewayip
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0". </b><br><br>
 'Sets/returns the IP address of the default gateway for the Wi-Fi interface of your device.
@@ -304,10 +280,16 @@ enum pl_wln_module_types
 	PL_WLN_MODULE_TYPE_WA2000
 end enum
 
+'--------------------------------------------------------------------
+enum pl_wln_upgrade_regions
+    PL_WLN_UPGRADE_REGION_MAIN,    'Main firmware region.
+	PL_WLN_UPGRADE_REGION_MONITOR  'Monitor/Loader firmware region.
+end enum
 
 
-#if  PLATFORM=KLM601N OR PLATFORM=EM1001N
-syscall(417,TDL_70) wln.getmoduletype() as pl_wln_module_types
+if SYS_VER = 1000    'T1000 Based Devices
+'--------------------------------------------------------------------
+syscall(601,TDL_90) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
 'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
 '<br><br>
@@ -315,8 +297,82 @@ syscall(417,TDL_70) wln.getmoduletype() as pl_wln_module_types
 '<br><br>
 'Wln.getmoduletype also has a side job -- it can be used to boot the WA2000 into the Monitor/Loader, which is necessary for performing firmware updates.
 
+'--------------------------------------------------------------------
+property wln.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's Monitor/Loader.
+'<br><br>
+'This property starts returning the Monitor/Loader version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
+'<br><br>
+'When the GA1000 device is used, this property always returns an empty string.
+    get = syscall(603,TDL_90) as string
+end property
+
+'--------------------------------------------------------------------
+property wln.fwversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's main firmware.
+'<br><br>
+'This property starts returning the firmware version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
+'<br><br>
+'When the GA1000 device is used, this property always returns an empty string.
+    get = syscall(602,TDL_90) as string
+end property
+
+'--------------------------------------------------------------------
+syscall(604,TDL_90) wln.disable()
+'<b>METHOD. </b><br><br>
+'Causes the wln. object to be disabled.
+'<br><br>
+'Disabling the wln. object is not the same as shutting down the Wi-Fi module. Disabling the wln. object means that TiOS stops servicing it.
+'The Wi-Fi module itself continues to run. To shut the Wi-Fi module down, put it in reset.   
+'<br><br>
+'Note that the object does not become disabled immediately upon invoking wln.disable. To detect when this actually happens, poll the value of wln.enabled until it becomes 0- NO.
+'Alternatively, wait for the on_wln_event(0- PL_WLN_EVENT_DISABLED) event -- it is generated when the wln. object is disabled.
+'<br><br>
+'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
+
+syscall(608,TDL_90) wln.setupgraderegion(region as pl_wln_upgrade_regions)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+'--------------------------------------------------------------------
+syscall(605,TDL_90) wln.writeflashpage(byref page as string) as accepted_rejected
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, sends a 128-byte page (block) of firmware data into the module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect. 
+
+'--------------------------------------------------------------------
+syscall(607,TDL_90) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, initiates copying of the firmware "file" (that was uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory. The target region 'is selected with wln.setupgraderegion.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+'--------------------------------------------------------------------
+syscall(606,TDL_90) wln.waitforupgradecompletion() as ok_ng    
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, waits for the firmware copying to complete and returns the result of the copying process. Firmware copying is initiated using wln.upgrade.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
 
 #else 
+
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
 'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
@@ -324,6 +380,83 @@ syscall(780) wln.getmoduletype() as pl_wln_module_types
 'The actual module type detection happens on the first invocation of wln.getmoduletype or wln.boot, whichever is called first after the reset of the Wi-Fi module.
 '<br><br>
 'Wln.getmoduletype also has a side job -- it can be used to boot the WA2000 into the Monitor/Loader, which is necessary for performing firmware updates.
+
+'--------------------------------------------------------------------
+property wln.fwversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's main firmware.
+'<br><br>
+'This property starts returning the firmware version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
+'<br><br>
+'When the GA1000 device is used, this property always returns an empty string.
+    get = syscall(791) as string
+end property
+
+'--------------------------------------------------------------------
+property wln.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's Monitor/Loader.
+'<br><br>
+'This property starts returning the Monitor/Loader version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
+'<br><br>
+'When the GA1000 device is used, this property always returns an empty string.
+  get = syscall(792) as string
+end property
+
+
+'--------------------------------------------------------------------
+syscall(777) wln.disable()
+'<b>METHOD. </b><br><br>
+'Causes the wln. object to be disabled.
+'<br><br>
+'Disabling the wln. object is not the same as shutting down the Wi-Fi module. Disabling the wln. object means that TiOS stops servicing it.
+'The Wi-Fi module itself continues to run. To shut the Wi-Fi module down, put it in reset.   
+'<br><br>
+'Note that the object does not become disabled immediately upon invoking wln.disable. To detect when this actually happens, poll the value of wln.enabled until it becomes 0- NO.
+'Alternatively, wait for the on_wln_event(0- PL_WLN_EVENT_DISABLED) event -- it is generated when the wln. object is disabled.
+'<br><br>
+'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
+
+'--------------------------------------------------------------------
+syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, initiates copying of the firmware "file" (that was uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory. The target region 'is selected with wln.setupgraderegion.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+'--------------------------------------------------------------------
+syscall(793) wln.waitforupgradecompletion() as ok_ng    
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, waits for the firmware copying to complete and returns the result of the copying process. Firmware copying is initiated using wln.upgrade.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+'--------------------------------------------------------------------
+syscall(787) wln.writeflashpage(byref page as string) as accepted_rejected
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, sends a 128-byte page (block) of firmware data into the module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect. 
+
+
+syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
 #endif 
 
 '--------------------------------------------------------------------
@@ -352,17 +485,6 @@ property wln.mac
 'be used (but only until the module is rebooted). The MAC address hardcoded into the module is never overwitten or erased.
     get = syscall(470,TDL_72) as string
     set = syscall(471,TDL_72) (byref mac_str as string)
-end property
-
-'--------------------------------------------------------------------
-property wln.monversion
-'<b>R/O PROPERTY (STRING). </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's Monitor/Loader.
-'<br><br>
-'This property starts returning the Monitor/Loader version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
-'<br><br>
-'When the GA1000 device is used, this property always returns an empty string.
-  get = syscall(792) as string
 end property
 
 '--------------------------------------------------------------------
@@ -592,20 +714,6 @@ syscall(494,TDL_90) wln.settxpower(level as byte) as accepted_rejected
 '"Immediate" means you don't have to wait for the task to complete -- it is finished as soon as wln.settxpower is done executing.
 'The on_wln_task_complete event is still generated.
 
-'--------------------------------------------------------------------
-enum pl_wln_upgrade_regions
-    PL_WLN_UPGRADE_REGION_MAIN,    'Main firmware region.
-	PL_WLN_UPGRADE_REGION_MONITOR  'Monitor/Loader firmware region.
-end enum
-
-syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
-'<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
-'<br><br>
-'Invoking this method while using the GA1000 device will have no effect.
 
 '--------------------------------------------------------------------
 enum pl_wln_wep_modes 
@@ -685,36 +793,6 @@ property wln.task
 '(wln.task= 0- PL_WLN_TASK_IDLE). Every time the task completes, the on_wln_task_complete event is generated.
     get = syscall(501,TDL_72) as pl_wln_tasks
 end property
-
-'--------------------------------------------------------------------
-syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, initiates copying of the firmware "file" (that was uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory. The target region 'is selected with wln.setupgraderegion.
-'<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
-'<br><br>
-'Invoking this method while using the GA1000 device will have no effect.
-
-'--------------------------------------------------------------------
-syscall(793) wln.waitforupgradecompletion() as ok_ng    
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, waits for the firmware copying to complete and returns the result of the copying process. Firmware copying is initiated using wln.upgrade.
-'<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
-'<br><br>
-'Invoking this method while using the GA1000 device will have no effect.
-
-'--------------------------------------------------------------------
-syscall(787) wln.writeflashpage(byref page as string) as accepted_rejected
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, sends a 128-byte page (block) of firmware data into the module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
-'<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
-'<br><br>
-'Invoking this method while using the GA1000 device will have no effect. 
 
 '--------------------------------------------------------------------
 syscall(456,TDL_70) !wln.mfgboot(offset as dword) as ok_ng

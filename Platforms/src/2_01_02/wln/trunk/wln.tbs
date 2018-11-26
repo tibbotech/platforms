@@ -257,6 +257,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 		wln_start=WLN_STATUS_BOOT_FAILURE
 		goto wln_start_error
 	end if
+
 	#if GA1000
 		end if
 	#endif
@@ -473,14 +474,34 @@ function wln_rescan() as en_wln_status_codes
 	wln_rescan_in_prog=YES
 end function
 
+
+#if SYS_VER = 1000
+'----------------------------------------------------------------------------
+sub wln_delay_ms(ms as dword)
+	dim delay as dword = ms * 3
+	while delay > 0
+			delay=delay-1
+	wend	
+end sub
+
+#else
 '----------------------------------------------------------------------------
 sub wln_delay_ms(ms as dword)
 	dim delay as dword
+    delay = sys.timercountms
+    if delay + ms < delay then 
+        delay = delay + ms
+        while sys.timercountms < delay
+	    wend
+    else 
+        while sys.timercountms - delay < ms
+	    wend
+    end if
 	
-	delay = sys.timercountms
-	while sys.timercountms - delay < ms
-	wend
 end sub
+
+#endif 
+
 '-----------------------------------------------------------------------------
 sub wln_start_rescan()
 	wln_rescan_requested=YES
@@ -801,6 +822,9 @@ public sub wln_proc_data()
 		end if	
 	end if
 #endif
+end sub
+#else 
+public sub wln_proc_data()
 end sub
 #endif
 '----------------------------------------------------------------------------
@@ -1717,7 +1741,8 @@ sub wln_init()
 	io.enabled=YES
 	io.num=WLN_RST
 	io.enabled=YES
-	wln.disable
+	
+	wln.disable()
 	'reset Wi-Fi module
 	#if WLN_RESET_MODE 
 		'reset is controlled by the combination of CS and CLK
@@ -1731,7 +1756,10 @@ sub wln_init()
 		wln_delay_ms(1)
 		io.state=HIGH
 	#endif	
+	
 	wln_module_type = wln.getmoduletype
+	 
+ 
 	while wln.enabled=YES
 	wend
 
