@@ -474,7 +474,6 @@ function wln_rescan() as en_wln_status_codes
 	wln_rescan_in_prog=YES
 end function
 
-
 #if SYS_VER = 1000
 '----------------------------------------------------------------------------
 sub wln_delay_ms(ms as dword)
@@ -485,6 +484,7 @@ sub wln_delay_ms(ms as dword)
 end sub
 
 #else
+
 '----------------------------------------------------------------------------
 sub wln_delay_ms(ms as dword)
 	dim delay as dword

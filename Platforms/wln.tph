@@ -287,7 +287,7 @@ enum pl_wln_upgrade_regions
 end enum
 
 
-if SYS_VER = 1000    'T1000 Based Devices
+#if SYS_VER = 1000    'T1000 Based Devices
 '--------------------------------------------------------------------
 syscall(601,TDL_90) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
