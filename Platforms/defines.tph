@@ -44,8 +44,8 @@
 #define EM1001N 35
 #define EM1202N 36
 #define EM1206N 37
-#define DS1102N 38
-#define DS1101N 39
+#define DS1101N 38
+#define DS1102N 39
 #define TPP2N   40
 #define TPP3N   41
 

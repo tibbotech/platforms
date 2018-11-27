@@ -1,7 +1,7 @@
 [platform]
-description=EM1001 Module + WA2000 Wi-Fi add-on
-version=EM1001N-3.61
-rom=3080192
+description=EM1000 Module + WA2000 Wi-Fi add-on
+version=EM1000N-3.61
+rom=983040
 ram=22271
 codebits=24
 sector=256
@@ -18,8 +18,16 @@ description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
+[transport3]
+name=serial
+description=Taiko Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
+
+
 [defineimports]
 import1=../GEN.tp
+
 
 [define1]
 define=OBJECT_LCD
@@ -33,6 +41,7 @@ value=LCD_DISABLED
 [define1.option2]
 description=Enabled
 value=LCD_ENABLED
+
 
 [define2]
 define=LCD_TYPE
@@ -55,6 +64,23 @@ value=SOLOMON_SSD1329
 description=Solomon SSD1963 (Winstar WF35)
 value=SOLOMON_SSD1963
 
+[define2.option5]
+description=DS1102 OLED
+value=DS1102_OLED
+
+[define2.option6]
+description=Himax HX8347
+value=HIMAX_HX8347
+
+[define2.option7]
+description=Ilitek ILI9341
+value=ILITEK_ILI9341
+
+[define2.option8]
+description=Solomon SSD1963 (Winstar WF35, alt. color)
+value=SOLOMON_SSD1963_ALT_COLOR
+
+
 [define3]
 define=OBJECT_KP
 description=Keypad (kp.) object
@@ -68,6 +94,7 @@ value=KP_DISABLED
 description=Enabled
 value=KP_ENABLED
 
+
 [define4]
 define=OBJECT_FD
 description=Flash disk (fd.) object
@@ -80,16 +107,3 @@ value=FD_DISABLED
 [define4.option2]
 description=Enabled
 value=FD_ENABLED
-
-[define5]
-define=OBJECT_WLN
-description=Wi-Fi (wln.) object
-value=WLN_ENABLED
-
-[define5.option1]
-description=Disabled
-value=WLN_DISABLED
-
-[define5.option2]
-description=Enabled
-value=WLN_ENABLED

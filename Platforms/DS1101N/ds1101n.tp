@@ -1,7 +1,7 @@
 [platform]
-description=EM1001 Module + WA2000 Wi-Fi add-on
-version=EM1001N-3.61
-rom=3080192
+description=DS1101 Device + WA2000 Wi-Fi add-on
+version=DS1101N-3.61
+rom=983040
 ram=22271
 codebits=24
 sector=256
@@ -18,8 +18,10 @@ description=Broadcast UDP Transport
 device=taiko.udpdevice
 browsedlg=em202ui.browsedlg
 
+
 [defineimports]
 import1=../GEN.tp
+
 
 [define1]
 define=OBJECT_LCD
@@ -34,62 +36,40 @@ value=LCD_DISABLED
 description=Enabled
 value=LCD_ENABLED
 
+
 [define2]
 define=LCD_TYPE
 description=Display panel type
-value=SAMSUNG_S6B0108
+value=SOLOMON_SSD1305
 
 [define2.option1]
-description=Samsung S6B0108 (Winstar WG12864F)
-value=SAMSUNG_S6B0108
+description=SOLOMON SSD1305 (RitDisplay P20603)
+value=SOLOMON_SSD1305
 
-[define2.option2]
-description=Himax HX8309 (Ampire AM176220)
-value=HIMAX_HX8309
-
-[define2.option3]
-description=Solomon SSD1329 (Ritdisplay RGS13128096)
-value=SOLOMON_SSD1329
-
-[define2.option4]
-description=Solomon SSD1963 (Winstar WF35)
-value=SOLOMON_SSD1963
 
 [define3]
-define=OBJECT_KP
-description=Keypad (kp.) object
-value=KP_ENABLED
-
-[define3.option1]
-description=Disabled
-value=KP_DISABLED
-
-[define3.option2]
-description=Enabled
-value=KP_ENABLED
-
-[define4]
 define=OBJECT_FD
 description=Flash disk (fd.) object
 value=FD_ENABLED
 
-[define4.option1]
+[define3.option1]
 description=Disabled
 value=FD_DISABLED
 
-[define4.option2]
+[define3.option2]
 description=Enabled
 value=FD_ENABLED
 
-[define5]
+
+[define4]
 define=OBJECT_WLN
 description=Wi-Fi (wln.) object
 value=WLN_ENABLED
 
-[define5.option1]
+[define4.option1]
 description=Disabled
 value=WLN_DISABLED
 
-[define5.option2]
+[define4.option2]
 description=Enabled
 value=WLN_ENABLED
