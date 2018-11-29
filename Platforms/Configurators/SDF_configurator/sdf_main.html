@@ -59,6 +59,7 @@
 
 			for (var x = 0; x < groups.length; x++) {
 				var group = groups[x];
+				out += '<div id="group-' + x + '">'
 				out += '<h2>' + group.D + '(' + group.I + ')</h2>';
 				out += '<button type="button" onclick="editGroup(' + group.xIndex + ')">Edit Group</button>';
 				out += '<button type="button" onclick="deleteGroup(' + group.xIndex + ')">Delete Group</button>';
@@ -75,13 +76,14 @@
 				var lastLineInGroup = group.xIndex;
 				for (var i = 0; i < group.items.length; i++) {
 					var line = group.items[i];
-					out += '<tr id="item-' + line.xIndex + '" onmousedown="Multi_select(undefined, ' + line.xIndex + ')" xIndex="' + line.xIndex + '" ondblclick="Edit();" rowIndex="' + line.xIndex + '">';
+					var xI = line.xIndex;
+					out += '<tr id="item-' + xI + '" onmousedown="Multi_select(undefined, ' + xI + ')" xIndex="' + xI + '" ondblclick="Edit();" rowIndex="' + xI + '" groupIndex="' + x + '">';
 					out += '<td>' + line.I + '</td>';
 					out += '<td>' + line.T + '</td>';
 					out += '<td>' + line.D + '</td>';
 					out += '<td>' + line.C + '</td>';
-					out += '<td>' + line.V + '</td>';
-					out += '<td>' + line.S + '</td>';
+					out += '<td>' + (line.V != undefined ? line.V : 'none') + '</td>';
+					out += '<td>' + (line.S != undefined ? line.S : 'none') + '</td>';
 					out += '</tr>';
 					lastLineInGroup = line.xIndex;
 				}
@@ -89,12 +91,15 @@
 				out += '</table><br/>';
 				out += '<p>\
 					<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Add('+ lastLineInGroup + ');">Add</button>&nbsp;\
-					<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;\
-					<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;\
 					</p>';
+				out += '</div>';
 			}
 
 			$('#groups').html(out);
+
+			$('.item-action').hide();
 		}
 
 		function editItem(lineIndex) {
@@ -149,8 +154,25 @@
 					}
 				}
 			}
+			var currentGroup = undefined;
 			//start processing
 			if (ctrlPressed) { //alert('Ctrl');
+				//check in same group
+				if (Selected_Arr.length > 0) {
+					currentGroup = undefined;
+					for (var i = 0; i < Selected_Arr.length; i++) {
+						if (currentGroup == undefined) {
+							currentGroup = Selected_Arr[i].groupIndex;
+						}
+					}
+					if (Row.groupIndex != currentGroup) {
+						clear_selected_arr();
+						$('.item-action').hide();
+					}
+					currentGroup = Row.groupIndex;
+				}
+				
+
 				var s_flag = chk_if_already_selected(Row);
 				if (s_flag == false) {
 					Row.bgColor = 0xff9080;
@@ -158,10 +180,13 @@
 				}
 			}
 			else {
+				currentGroup = Row.groupIndex;
 				clear_selected_arr();		//reset 
 				Row.bgColor = 0xff9080;
 				Selected_Arr.push(Row);
 			}
+
+			$('#group-'+currentGroup+' .item-action').show();
 			return true;
 		}
 
@@ -194,6 +219,7 @@
 				Selected_Arr[i].bgColor = 0xffffff;
 			}
 			Selected_Arr.length = 0;
+			$('.item-action').hide();
 		}
 
 		function Edit() {
