@@ -90,7 +90,7 @@
 
 										<tr>
 											<td>
-												<span title="header=[Storage Type] body=[Specifies whether the setting will be stored in the non-volatile memory (EEPROM or flash as defined by the global Use EEPROM / Use Flash Disk option) or volatile memory (RAM).]">
+												<span title="header=[Control Type] body=[The control type used to edit this field.]">
 													Control Type:
 												</span>
 											</td>
@@ -121,7 +121,8 @@
 												</span>
 											</td>
 											<td>
-												<input type="text" id="edit_Validation" maxlength="254" style="width: 175px" value="<?%external.Context.Target.V?>" />
+												<!-- <input type="text" id="edit_Validation" maxlength="254" style="width: 175px" value="<?%external.Context.Target.V?>" /> -->
+												<textarea id="edit_Validation" rows="4" cols="50"><?%external.Context.Target.V?></textarea>
 											</td>
 										</tr>
 										<tr>
@@ -138,7 +139,8 @@
 												</span>
 											</td>
 											<td>
-												<input type="text" id="edit_Status" maxlength="254" style="width: 175px" value="<?%external.Context.Target.S?>" />
+												<textarea id="edit_Status" rows="4" cols="50"><?%external.Context.Target.S?></textarea>
+												<!-- <input type="text" id="edit_Status" maxlength="254" style="width: 175px" value="<?%external.Context.Target.S?>" /> -->
 											</td>
 										</tr>
 
@@ -173,6 +175,7 @@
 			document.getElementById("edit_Type").value = external.Context.Target.T;
 			document.getElementById("edit_Control").value = external.Context.Target.C;
 			document.getElementById("edit_Description").value = external.Context.Target.D;
+			// $('textarea#edit_Status').val(external.Context.Target.S);
 			if (external.Context.Target.C == 'STATIC') {
 				$('#selectOptionsRow').show();
 			}
