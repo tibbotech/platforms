@@ -104,18 +104,6 @@ enum pl_wln_phy_modes
     WIFI_PHY_11N_5G              '11n-only with 5GHz band, 802.11n. 
 end enum
 
-property wln.band    
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
-'<br><br>
-'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
-'<br><br>
-'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
-'<br><br>
-'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
-    get = syscall(789) as pl_wln_phy_modes    
-    set = syscall(790) (value as no_yes) 
-end property
-
 '--------------------------------------------------------------------
 syscall(451,TDL_70) wln.boot(offset as dword) as ok_ng
 '<b>METHOD.</b>
@@ -371,7 +359,37 @@ syscall(606,TDL_90) wln.waitforupgradecompletion() as ok_ng
 '<br><br>
 'Invoking this method while using the GA1000 device will have no effect.
 
+
+'--------------------------------------------------------------------
+property wln.band    
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
+'<br><br>
+'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
+'<br><br>
+'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
+'<br><br>
+'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
+    get = syscall(609) as pl_wln_phy_modes    
+    set = syscall(610) (value as no_yes) 
+end property
+
+
 #else 
+
+
+'--------------------------------------------------------------------
+property wln.band    
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
+'<br><br>
+'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
+'<br><br>
+'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
+'<br><br>
+'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
+    get = syscall(789) as pl_wln_phy_modes    
+    set = syscall(790) (value as no_yes) 
+end property
+
 
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
