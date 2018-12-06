@@ -59,10 +59,9 @@ syscall(738) sys.exec(byref filename as string, byref args as string, byref env 
 '--------------------------------------------------------------------
 property sys.freebuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
-'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes). Only changes after the <font color="maroon"><b>
-'sys.buffalloc </b></font> method is used. Preparatory methods like <font color="maroon"><b>ser.rxbuffrq </b></font>do not influence what 
+'Returns the number of free (not yet allocated) buffer pages (one page= 256 bytes) for sock object (for ser anf lsock objects all free memory available in Linux can be allocated). 
+'Only changes after the <font color="maroon"><b>'sys.buffalloc </b></font> method is used. Preparatory methods like <font color="maroon"><b>sock.rxbuffrq </b></font>do not influence what 
 'this property returns. <br><br>
-'See also <font color="maroon"><b>sys.totalbuffpages</b></font>.
     get = syscall(84,"33.TDL"+) as word
 end property
 
@@ -207,4 +206,3 @@ syscall(825) sys.execgetresult(num as byte) as string
 '<b>See also: </b>
 'sys.execwithresult,
 'sys.exec
-
