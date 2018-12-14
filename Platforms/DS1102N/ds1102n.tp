@@ -74,7 +74,3 @@ value=WLN_DISABLED
 description=Enabled
 value=WLN_ENABLED
 
-[define5]
-define=SYS_VER
-description=Hardware Generation
-value=1000

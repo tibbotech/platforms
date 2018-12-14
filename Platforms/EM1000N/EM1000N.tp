@@ -108,7 +108,3 @@ value=FD_DISABLED
 description=Enabled
 value=FD_ENABLED
 
-[define5]
-define=SYS_VER
-description=Hardware Generation
-value=1000

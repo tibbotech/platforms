@@ -369,8 +369,8 @@ property wln.band
 'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
 '<br><br>
 'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
-    get = syscall(609) as pl_wln_phy_modes    
-    set = syscall(610) (value as no_yes) 
+    get = syscall(609,TDL_90) as pl_wln_phy_modes    
+    set = syscall(610,TDL_90) (value as no_yes) 
 end property
 
 
@@ -386,8 +386,8 @@ property wln.band
 'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
 '<br><br>
 'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
-    get = syscall(789) as pl_wln_phy_modes    
-    set = syscall(790) (value as no_yes) 
+    get = syscall(789,TDL_90) as pl_wln_phy_modes    
+    set = syscall(790,TDL_90) (value as no_yes) 
 end property
 
 
