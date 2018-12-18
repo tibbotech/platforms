@@ -1779,6 +1779,24 @@ sub wln_init()
 	#endif
 end sub
 
+#if SYS_VER = 1000    'T1000 Based Devices
+
+#if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
+#else 
+'These syscalls are not supported on T1000 devices except for the following specific platforms. This shim allows the wln library to work.  
+function wln.getmoduletype() as pl_wln_module_types
+    wln.getmoduletype=PL_WLN_MODULE_TYPE_GA1000
+end function
+
+sub wln.disable()
+end sub
+#endif
+
+
+#endif
+
+
+
 '----------------------------------------------------------------------------
 #if WLN_DEBUG_PRINT
 sub wln_debug_print_status(status as en_wln_status_codes)
