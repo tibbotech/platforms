@@ -1,0 +1,475 @@
+'**************************************************************************************************
+'       WLN (Wi-Fi) object
+'**************************************************************************************************
+
+#if OBJECT_WLN=WLN_ENABLED
+
+#define WLN_AVAILABLE 1
+
+object wln
+'The wln. object represents the Wi-Fi interface of your device. This object is responsible for finding and associating with Wi-Fi networks.
+'The object is not responsible for sending/transmitting network data. The latter is the job of the sock. or lsock object.
+'<br><br>
+'The wln. object is designed to work with the GA1000 add-on Wi-Fi module.
+
+'--------------------------------------------------------------------
+enum pl_wln_bss_modes 
+    PL_WLN_BSS_MODE_INFRASTRUCTURE, '<b>PLATFORM CONSTANT.</b><br><br> Infrastructure mode.
+    PL_WLN_BSS_MODE_ADHOC       '<b>PLATFORM CONSTANT.</b><br><br> Ad-hoc (device-to-device) mode.
+end enum
+
+'--------------------------------------------------------------------
+syscall(488,"71.TDL") wln.associate(byref bssid as string, byref ssid as string, channel as byte, bssmode as pl_wln_bss_modes) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to attempt association with the wireless network specified by the arguments.
+'<br><br>
+'<b>Bssid </b>-- The BSSID ("MAC address") of the network with which to associate.
+'<br><br>
+'<b>Ssid </b>-- The name of the target network with which to associate.
+'<br><br>
+'<b>Channel </b>-- Channel on which the target network is operating (don't used in Linux).
+'<br><br>
+'<b>Bssmode </b>-- the mode of the target network (infrastructure or ad-hoc) (don't used in Linux).
+'<br><br>
+'All parameters except SSID can be obtained through wln.scan.
+'<br><br>
+'The association process is a "task". As such, wln.associate will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi interface is already non-idle (wln.associationstate is not 0- PL_WLN_NOT_ASSOCIATED),
+'or if the Wi-Fi hardware is not online (wln.enabled=0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time. 
+'Completion does not imply success -- association result has to be verified by reading the state of the wln.associationstate R/O property after the task is completed.
+'<br><br>
+'Wi-Fi security (wln.wep, wln.wpa, wln.seteaptls, wln.seteappeap, wln.seteapttls) must be set prior to associating. 
+'<br><br>
+'<b>See also: </b>wln.disassociate, wln.associationstate.
+
+'--------------------------------------------------------------------
+enum pl_wln_association_states 
+    PL_WLN_NOT_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is idle.
+    PL_WLN_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is associated with a wireless network.
+    PL_WLN_OWN_NETWORK      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is running its own ad-hoc network.   
+end enum
+
+property wln.associationstate
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_NOT_ASSOCIATED (the Wi-Fi interface is idle). </b>
+'<br><br>
+'Indicates whether the Wi-Fi interface is idle, associated with another network, or running its own ad-hoc network.
+'<br><br>
+'After the successful association, which is initiated through the wln.associate method, the value of this property changes to 
+'1- PL_WLN_ASSOCIATED. The value is reset back to 0- PL_WLN_NOT_ASSOCIATED if disassociation occurs (on_wln_event will be generated too).
+'<br><br>
+'Disassociation can be induced through the wln.disassociate method or forced by the access point. Disassociation will also happen if the access point
+'goes offline or out of range, or if the GA1000 is powered down, reset, disconnected, or malfunctions.
+'<br><br>
+'After the Wi-Fi interface succeeds in creating its own ad-hoc network (see wln.networkstart), the value of this property becomes 2- PL_WLN_OWN_NETWORK.
+'The value is reset back to 0- PL_WLN_NOT_ASSOCIATED when the ad-hoc network is terminated with wln.networkstop.
+    get = syscall(457,"72.TDL"+) as pl_wln_association_states
+end property
+
+'--------------------------------------------------------------------
+syscall(451,"70.TDL") wln.boot(offset as dword) as ok_ng
+'<b>METHOD.</b>
+'<br><br>
+'Brings up the Wi-Fi interface, which involves sending to the Wi-Fi hardware a firmware file for its embedded processor.
+'<br><br>
+'<b>Offset </b>-- specify 0 for Linux (saved for compatibility).
+'<br><br>
+'The method will return 0- OK if the boot was completed successfully. At that moment, wln.enabled will become 1- YES.
+'<br><br>
+'The boot will fail (return 1- NG) if the Wi-Fi hardware is not powered, not properly reset, connected improperly, mapped incorrectly, or malfunctions.
+'<br><br>
+'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
+
+'--------------------------------------------------------------------
+syscall(492,"71.TDL") wln.disassociate() as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence disassociation from the wireless network.
+'<br><br>
+'The disassociation process is a "task". As such, wln.disassociate will be rejected (return 1- REJECTED) if another task is currently in progress.
+'<br><br>
+'<b>See also: </b>wln.associate, wln.associationstate.
+
+'--------------------------------------------------------------------
+enum pl_wln_domains 
+    PL_WLN_DOMAIN_FCC,  '<b>PLATFORM CONSTANT.</b><br><br> FCC (US, Canada, Taiwan...). Allowed channels: 1-11.
+    PL_WLN_DOMAIN_EU,   '<b>PLATFORM CONSTANT.</b><br><br> European Union. Allowed channels: 1-13.
+    PL_WLN_DOMAIN_JAPAN,    '<b>PLATFORM CONSTANT.</b><br><br> Japan. Allowed channels: 1-14.
+    PL_WLN_DOMAIN_OTHER '<b>PLATFORM CONSTANT.</b><br><br>  All other countries. Allowed channels: 1-14. 
+end enum
+
+'--------------------------------------------------------------------
+property wln.domain
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_DOMAIN_FCC. </b>
+'<br><br>
+'Selects the domain (area of the world) in which this device is operating. This defines the list of channels of which the Wi-Fi interface will be
+'allowed to associate with wireless networks.
+'<br><br>
+'This property can't be changed while the Wi-Fi hardware is operational (wln.enabled= 1- YES).
+'<br><br>
+'Domain selection only affects association (wln.associate), not the scanning process (wln.scan) or the ability of the Wi-Fi interface to start
+'its own ad-hoc network (wln.networkstart) on whatever channel you specify.
+    get = syscall(480,"72.TDL"+) as pl_wln_domains
+    set = syscall(481,"72.TDL"+) (value as pl_wln_domains)
+end property
+
+'--------------------------------------------------------------------
+property wln.enabled
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO.</b>
+'<br><br>
+'Indicates whether the Wi-Fi interface is operational.
+'<br><br>
+'The Wi-Fi hardware becomes operational after a successful boot using the wln.boot method, at which time wln.enabled is set to 1- YES.
+'<br><br>
+'The Wi-Fi interface is disabled and the wln.enabled is reset to 0- NO if the Wi-Fi hardware is disconnected, powered down, malfunctioned,
+'or was intentionally reset. When this happens, the on_wln_event event is generated, too.
+    get = syscall(452,"72.TDL"+) as no_yes
+end property
+
+'--------------------------------------------------------------------
+property wln.ip
+'<b>READ-ONLY PROPERTY (STRING)</b><br><br>
+'Returns the IP address of the Wi-Fi interface of your device.
+'<br><br>
+    get = syscall(472,"72.TDL"+) as string
+end property
+
+'--------------------------------------------------------------------
+syscall(475,"71.TDL") wln.networkstart(byref ssid as string,channel as byte) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence creating its own ad-hoc network.
+'<br><br>
+'<b>Ssid </b>-- The name of the ad-hoc network to create.
+'<br><br>
+'<b>Channel </b>-- Channel on which the new ad-hoc network will operate.
+'<br><br>
+'Network creation process is a "task". As such, wln.networkstart will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi interface is already non-idle (wln.associationstate is not 0- PL_WLN_NOT_ASSOCIATED),
+'or if the Wi-Fi hardware is not online (wln.enabled=0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time. 
+'Completion does not imply success -- the result has to be verified by reading the state of the wln.associationstate R/O property after the task is completed.
+'<br><br>
+'<b>See also: </b>wln.networkstop.
+
+'--------------------------------------------------------------------
+syscall(476,"71.TDL") wln.networkstop() as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence the termination of its own ad-hoc network.
+'<br><br>
+'Network termination process is a "task". As such, wln.networkstop will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi hardware is not online (wln.enabled=0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time.
+'<br><br>
+'<b>See also: </b>wln.networkstart, wln.associationstate. 
+
+'--------------------------------------------------------------------
+enum pl_wln_events 
+    PL_WLN_EVENT_DISABLED,      '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
+    PL_WLN_EVENT_DISASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
+end enum
+
+event(23)  on_wln_event(wln_event as pl_wln_events)
+'<b>EVENT of the wln object.</b>
+'<br><br>
+'Generated when the wln object detects disassociation from the wireless network or the Wi-Fi hardware is disconnected, powered-down, reset, or is malfunctioning.
+'<br><br>
+'<b>Wln_event </b>-- registered event (DISABLED or DISASSOCIATED).
+'<br><br>
+'Multiple on_wln_event events may be waiting in the event queue.
+'For this reason the doevents statement will be skipped (not executed) if encountered within the event handler
+'for this event or the body of any procedure in the related call chain.
+'<br><br>
+'<b>See also: </b>on_wln_task_complete.
+
+'--------------------------------------------------------------------
+enum pl_wln_tasks 
+    PL_WLN_TASK_IDLE,       	'<b>PLATFORM CONSTANT.</b><br><br>No task (idle). 
+    PL_WLN_TASK_SCAN,       	'<b>PLATFORM CONSTANT.</b><br><br>Passive scan task.
+    PL_WLN_TASK_ASSOCIATE,      '<b>PLATFORM CONSTANT.</b><br><br>Association task.
+    PL_WLN_TASK_SETTXPOWER,     '<b>PLATFORM CONSTANT.</b><br><br>TX power adjustment task (completes immediately).
+    PL_WLN_TASK_SETWEP,     	'<b>PLATFORM CONSTANT.</b><br><br>WEP mode and keys setup task (completes immediately).
+    PL_WLN_TASK_DISASSOCIATE,   '<b>PLATFORM CONSTANT.</b><br><br>Disassociation task.
+    PL_WLN_TASK_NETWORK_START,  '<b>PLATFORM CONSTANT.</b><br><br>Network start task.
+    PL_WLN_TASK_NETWORK_STOP,   '<b>PLATFORM CONSTANT.</b><br><br>Network stop task.
+    PL_WLN_TASK_SETWPA,     	'<b>PLATFORM CONSTANT.</b><br><br>WPA mode and keys setup task (completes immediately). 
+    PL_WLN_TASK_ACTIVESCAN,     '<b>PLATFORM CONSTANT.</b><br><br>Active scan task.
+    PL_WLN_TASK_UPDATERSSI,     '<b>PLATFORM CONSTANT.</b><br><br>Update current RSSI task.
+	PL_WLN_TASK_SET_EAP_TLS,    '<b>PLATFORM CONSTANT.</b><br><br>EAP-TLS mode and keys setup task (completes immediately). 
+	PL_WLN_TASK_SET_EAP_PEAP,   '<b>PLATFORM CONSTANT.</b><br><br>EAP-PEAP mode and keys setup task (completes immediately). 
+	PL_WLN_TASK_SET_EAP_TTLS    '<b>PLATFORM CONSTANT.</b><br><br>EAP-TTLS mode and keys setup task (completes immediately).     
+end enum
+
+event(22)  on_wln_task_complete(completed_task as pl_wln_tasks)
+'<b>EVENT of the wln object.</b>
+'<br><br>
+'Generated when the Wi-Fi interface completes executing a given task.
+'<br><br>
+'<b>Wln_event </b>-- the task completed.
+'<br><br>
+'The wln.task read-only property will change to 0- PL_WLN_TASK_IDLE along with this event generation.
+'The wln object will only accept another task for execution after the previous task has been completed.
+'<br><br>
+'Multiple on_wln_task_complete events may be waiting in the event queue.
+'For this reason the doevents statement will be skipped (not executed) if encountered within the event handler
+'for this event or the body of any procedure in the related call chain.
+'<br><br>
+'<b>See also: </b>on_wln_event.
+
+'--------------------------------------------------------------------
+property wln.rssi
+'<b>R/O PROPERTY (BYTE), DEFAULT VALUE= 0.</b>
+'<br><br>
+'Indicates the strength of the signal being received from the wireless network that the Wi-Fi interface is currently associated with,
+'or wireless peer in case of the ad-hoc network.
+'<br><br>
+'The signal strength is expressed in 256 arbitrary levels that do not correspond to any standard measurement unit.
+'<br><br>
+'This property is only updated while the Wi-Fi interface is in the non-idle state (wln.associationstate is not 0- PL_WLN_NOT_ASSOCIATED).
+'<br><br>
+'<b>See also: </b>wln.scanresultrssi.
+    get = syscall(474,"72.TDL"+) as byte
+end property
+
+'--------------------------------------------------------------------
+syscall(581,"71.TDL") wln.updaterssi() as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence RSSI value updating.
+
+'--------------------------------------------------------------------
+syscall(489,"71.TDL") wln.scan(byref ssid as string) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence either the search for available wireless networks or obtainment of additional information about a particular network specified by its SSID (name).
+'<br><br>
+'<b>Ssid </b>-- Network name. Leave empty to scan for all available networks -- after the scan, the comma-delimited list of networks will be in wln.scanresultssid.
+'Alternatively, specify the network name. If the network is found, its parameters will be available through
+'wln.scanresultssid, wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, and wln.scanresultwpainfo.
+'<br><br>
+'The scan process is a "task". As such, wln.scan will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi hardware is not online (wln.enabled=0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time and the values of related R/O properties are updated. 
+'<br><br>
+'Scanning while the Wi-Fi interface is in the associated state (wln.associationstate= 1- PL_WLN_ASSOCIATED) or running its own ad-hoc network
+'(wln.associationstate= 2- PL_WLN_OWN_NETWORK) will temporarily disrupt communications between the device and the "current" access point.
+
+'--------------------------------------------------------------------
+syscall(580,"71.TDL") wln.activescan(byref ssid as string) as accepted_rejected
+'<b>METHOD.</b>
+
+'--------------------------------------------------------------------
+enum pl_wln_scan_filter 
+    PL_WLN_SCAN_ALL,            '<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure and ad-hoc networks.
+    PL_WLN_ASCAN_INFRASTRUCTURE,    '<b>PLATFORM CONSTANT.</b><br><br> Scan for infrastructure networks only.
+    PL_WLN_OWN_ADHOC            '<b>PLATFORM CONSTANT.</b><br><br> Scan for ad-hoc networks only.
+end enum
+
+property wln.scanfilter
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_SCAN_ALL. </b>
+'<br><br>
+'Defines what types of networks will be included in the scan results: all, infrastructre networks only (wln.scanresultbssmode= PL_WLN_BSS_MODE_INFRASTRUCTURE),
+'or ad-hoc networks only (wln.scanresultbssmode= PL_WLN_BSS_MODE_ADHOC).
+'<br><br>
+'<b>See also: </b>wln.scan, wln.activescan
+    get = syscall(582,"72.TDL"+) as pl_wln_scan_filter
+    set = syscall(583,"72.TDL"+) (value as pl_wln_scan_filter)
+end property
+
+'--------------------------------------------------------------------
+property wln.scanresultbssid
+'<b>R/O PROPERTY (STRING), DEFAULT VALUE= "".</b>
+'<br><br>
+'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain the BSSID ("MAC address") of this network. 
+'<br><br>
+'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
+'<br><br>
+'<b>See also: </b>wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
+    get = syscall(497,"72.TDL"+) as string
+end property
+
+'--------------------------------------------------------------------
+property wln.scanresultbssmode
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_BSS_MODE_INFRASTRUCTURE.</b>
+'<br><br>
+'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain the network mode of this network
+'(infrastructure or ad-hoc).
+'<br><br>
+'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
+'<br><br>
+'<b>See also: </b>wln.scanresultbssid, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
+    get = syscall(500,"72.TDL"+) as pl_wln_bss_modes
+end property
+
+'--------------------------------------------------------------------
+property wln.scanresultchannel
+'<b>R/O PROPERTY (BYTE), DEFAULT VALUE= 1 (channel 1).</b>
+'<br><br>
+'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain the number of the channel on which this network operates.
+'<br><br>
+'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
+'<br><br>
+'<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultrssi, wln.scanresultssid, wln.scanresultwpainfo.
+    get = syscall(496,"72.TDL"+) as byte
+end property
+
+'--------------------------------------------------------------------
+property wln.scanresultrssi
+'<b>R/O PROPERTY (BYTE), DEFAULT VALUE= 0.</b>
+'<br><br>
+'After a successful scan for a particular network (wln.scan with the ssid specified) this property will contain the strength of the signal received from this network.
+'<br><br>
+'This property will not be updated if the wln.scan method is invoked with its ssid argument left empty ("search for all networks" mode).
+'<br><br>
+'<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultssid, wln.scanresultwpainfo, wln.rssi.
+    get = syscall(499,"72.TDL"+) as byte
+end property
+
+'--------------------------------------------------------------------
+property wln.scanresultssid
+'<b>R/O PROPERTY (STRING), DEFAULT VALUE= "".</b>
+'<br><br>
+'After the scan this property will contain a comma-delimited list of discovered networks or the name of a particular network depending on how the scan was performed.
+'<br><br>
+'If the wln.scan method was invoked with its name argument left empty, this property will contain the list of all discovered networks.
+'If the name argument specified a particular network and scanning found this network to be present, then this property will contain the name of this network.
+'<br><br>
+'<b>See also: </b>wln.scanresultbssid, wln.scanresultbssmode, wln.scanresultchannel, wln.scanresultrssi, wln.scanresultwpainfo.
+    get = syscall(495,"72.TDL"+) as string
+end property
+
+'--------------------------------------------------------------------
+enum pl_wln_wep_modes 
+    PL_WLN_WEP_MODE_DISABLED,   '<b>PLATFORM CONSTANT.</b><br><br>WEP is disabled.
+    PL_WLN_WEP_MODE_64,     '<b>PLATFORM CONSTANT.</b><br><br>WEP-64 is enabled.
+    PL_WLN_WEP_MODE_128     '<b>PLATFORM CONSTANT.</b><br><br>WEP-128 is enabled.
+end enum
+
+syscall(502,"71.TDL") wln.setwep(byref wepkey as string, wepmode as pl_wln_wep_modes) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting new WEP mode and key.
+'<br><br>
+'<b>Wepkey </b>-- A string containing new WEP key. This is a "HEX strings" -- each character in the string represents one HEX digit.
+'The string must contain 10 HEX digits for WEP64 and 26 HEX digits for WEP128. Excessive digits are ignored. Missing digits are assumed to be 0.
+'<br><br>
+'<b>Wepmode </b>-- choose between "disabled", "WEP64", or "WEP128".
+'<br><br>
+'The WEP mode must be set prior to performing association (wln.associate) or starting own ad-hoc network (wln.networkstart).
+'<br><br>
+'Only one WEP key (wepkey1) is used by the wln. object.
+'<br><br>
+'Changing WEP mode and keys is an immediate task. As such, wln.setwep will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi interface is non-idle (wln.associationstate is not 0- PL_WLN_NOT_ASSOCIATED),
+'or if the Wi-Fi hardware is not online (wln.enabled= 0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'"Immediate" means you don't have to wait for the task to complete -- it is finished as soon as wln.setwep is done executing.
+'The on_wln_task_complete event is still generated.
+'<br><br>
+'You need to call wln.setwep every time before associating with the access point (wln.associate) or starting own network (wln.networkstart).
+'If you are switching from an access point using WEP security to another access point with no security or WPA security, you still need to execute wln.setwep("",PL_WLN_WEP_MODE_DISABLED)!
+'<br><br>
+'<b>See also: </b>wln.setwpa. 
+
+'--------------------------------------------------------------------
+enum pl_wln_wpa_modes
+    PL_WLN_WPA_DISABLED,    '<b>PLATFORM CONSTANT.</b><br><br>WPA disabled.
+    PL_WLN_WPA_WPA1_PSK,    '<b>PLATFORM CONSTANT.</b><br><br>WPA1-PSK mode.
+    PL_WLN_WPA_WPA2_PSK '<b>PLATFORM CONSTANT.</b><br><br>WPA2-PSK mode.
+end enum
+
+enum pl_wln_wpa_algorithms
+    PL_WLN_WPA_ALGORITHM_TKIP,  '<b>PLATFORM CONSTANT.</b><br><br>Install TKIP key.
+    PL_WLN_WPA_ALGORITHM_AES    '<b>PLATFORM CONSTANT.</b><br><br>Install AES key.
+end enum
+
+enum pl_wln_wpa_unicast_multicast 
+    PL_WLN_WPA_CAST_UNICAST,    '<b>PLATFORM CONSTANT.</b><br><br>Install unicast key.
+    PL_WLN_WPA_CAST_MULTICAST   '<b>PLATFORM CONSTANT.</b><br><br>Install multicast key.
+end enum
+
+syscall(493,"71.TDL") wln.setwpa(wpamode as pl_wln_wpa_modes, algorithm as pl_wln_wpa_algorithms, byref wpakey as string, cast as pl_wln_wpa_unicast_multicast) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting new WPA mode and key.
+'<br><br>
+'<b>Wpamode </b>-- choose between "disabled", "WPA1", or "WPA2" (don't used in Linux).
+'<br><br>
+'<b>Algorithm </b>-- choices are "TKIP" and "AES" (don't used in Linux).
+'<br><br>
+'<b>Wpakey </b>-- A string containing new WPA key. Supposed to be 16 characters long.
+'<br><br>
+'<b>Cast </b>-- key type: "unicast" or "multicast" (don't used in Linux).
+'<br><br>
+'Changing WPA mode and keys is an immediate task. As such, wln.setwpa will be rejected (return 1- REJECTED) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi hardware is not online (wln.enabled= 0- NO). The method will return 0- ACCEPTED if the task is accepted for processing.
+'<br><br>
+'"Immediate" means you don't have to wait for the task to complete -- it is finished as soon as wln.setwpa is done executing.
+'The on_wln_task_complete event is still generated.
+'<br><br>
+'WPA/WPA2 security is very complex. We recommend using the WLN library.
+'<br><br>
+'If you are switching from an access point using WPA security to another access point with no security or WEP security, you still need to execute wln.setwpa(PL_WLN_WPA_DISABLED,0,"",0)!
+'<br><br>
+'<b>See also: </b>wln.setwep.
+
+'--------------------------------------------------------------------
+property wln.task
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_TASK_IDLE.</b>
+'<br><br>
+'Indicates current wln. task being executed.
+'<br><br>
+'The wln. object will only accept another task for execution after the previous task has been completed
+'(wln.task= 0- PL_WLN_TASK_IDLE). Every time the task completes, the on_wln_task_complete event is generated.
+    get = syscall(501,"72.TDL"+) as pl_wln_tasks
+end property
+
+'--------------------------------------------------------------------
+
+syscall(739) wln.seteaptls(byref ca_cert as string, byref client_cert as string, byref private_key as string, byref private_key_passwd as string, byref identify as string) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP TLS Enterprise ciphering.
+
+'--------------------------------------------------------------------
+enum pl_wln_peap_phase1
+    PL_WLN_PEAP_PHASE2_0,
+	PL_WLN_PEAP_PHASE2_1
+end enum
+
+enum pl_wln_peap_phase2
+    PL_WLN_PEAP_PHASE2_MSCHAPV2,
+	PL_WLN_PEAP_PHASE2_TLS,
+	PL_WLN_PEAP_PHASE2_GTC,
+	PL_WLN_PEAP_PHASE2_OTP,
+	PL_WLN_PEAP_PHASE2_MD5
+end enum
+
+syscall(740) wln.seteappeap(byref ca_cert as string, byref identify as string, byref password as string, phase1 as pl_wln_peap_phase1, phase2 as pl_wln_peap_phase2) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
+
+'--------------------------------------------------------------------
+enum pl_wln_ttls_phase2
+    PL_WLN_TTLS_PHASE2_EAP_MD5,
+	PL_WLN_TTLS_PHASE2_EAP_GTC,
+	PL_WLN_TTLS_PHASE2_EAP_OTP,
+	PL_WLN_TTLS_PHASE2_EAP_MSCHAPV2,
+	PL_WLN_TTLS_PHASE2_EAP_TLS,
+	PL_WLN_TTLS_PHASE2_MSCHAPV2,
+	PL_WLN_TTLS_PHASE2_MSCHAP,
+	PL_WLN_TTLS_PHASE2_PAP,
+	PL_WLN_TTLS_PHASE2_CHAP
+end enum
+
+syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, byref password as string, phase2 as pl_wln_ttls_phase2) as accepted_rejected
+'<b>METHOD.</b>
+'<br><br>
+'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.

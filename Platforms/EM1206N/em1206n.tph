@@ -1,0 +1,25 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			DS1206 DEVICE + WA2000 Wi-Fi Add On
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#define PLATFORM_ID 37
+#define WLN_HARDWARE 2
+#define BUFF_PAGE_TYPE byte
+#define BUFF_SIZE_TYPE word
+#define COPY_FIRMWARE 1
+
+
+'--------------------------------------------------------------------
+enum pl_sock_interfaces
+	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
+	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP=3,	'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
+end enum
+
+'====================================================================
+include "..\GEN-EM1206.tph"
+include "..\WLN.tph"
