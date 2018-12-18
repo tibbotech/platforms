@@ -25,7 +25,7 @@
 #define DS1101W 18
 #define TPP2W 19
 #define TPP3W 20
-#define TPP2N 21
+'#define TPP2N 21  NOT USED
 #define EM1001 22
 #define EM1001W 23
 #define EM2000W 24

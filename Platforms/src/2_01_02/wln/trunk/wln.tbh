@@ -130,13 +130,12 @@ declare sub wln_proc_event(wln_event as pl_wln_events)
 declare sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 
 declare wln_module_type as pl_wln_module_types
-
-#if GA1000
 declare sub wln_proc_data()
+
 #if WLN_WPA
 declare function wln_wpa_mkey_get(byref password as string, byref ssid as string) as string
 #endif
-#endif
+
 declare sub wln_update_rssi()
 declare sub wln_start_rescan()
 declare sub wln_check_for_better_ap(rssi_lvl as byte)
