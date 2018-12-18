@@ -1147,37 +1147,41 @@ function wln_prepare_security(security_mode as pl_wln_security_modes,byref key a
 end function
 
 '------------------------------------------------------------------------------
-#if GA1000
-	#if WLN_WPA
-		public function wln_wpa_mkey_get(byref password as string, byref ssid as string) as string
-			dim count as dword
-			dim pos, plen, left1 as byte
-			dim digest,s as string(SHA1_MAC_LEN)
-			dim buf as string(32)
-			dim f as byte
-			
-			buf=""
-			count=0
-			left1=32
-			pos=1
-			for f=0 to 1
-				count=count+1
-				wln_pbkdf2_sha1_f(password, ssid, f, 4096, count,digest)
-				if left1>SHA1_MAC_LEN then
-					plen=SHA1_MAC_LEN
-				else
-					plen=left1
-				end if
-				s=left(digest,plen)
-				insert(buf,pos,s)
-				pos=pos+plen
-				left1=left1-plen
-			next f
-			wln_wpa_mkey_get=buf
-			callback_wln_mkey_progress_update(100)
-		end function
-		#endif
 
+#if WLN_WPA
+public function wln_wpa_mkey_get(byref password as string, byref ssid as string) as string
+	#if GA1000
+	dim count as dword
+	dim pos, plen, left1 as byte
+	dim digest,s as string(SHA1_MAC_LEN)
+	dim buf as string(32)
+	dim f as byte
+	buf=""
+	count=0
+	left1=32
+	pos=1
+	for f=0 to 1
+		count=count+1
+		wln_pbkdf2_sha1_f(password, ssid, f, 4096, count,digest)
+		if left1>SHA1_MAC_LEN then
+			plen=SHA1_MAC_LEN
+		else
+			plen=left1
+		end if
+		s=left(digest,plen)
+		insert(buf,pos,s)
+		pos=pos+plen
+		left1=left1-plen
+	next f
+	wln_wpa_mkey_get=buf
+	callback_wln_mkey_progress_update(100)
+	#else 
+	wln_wpa_mkey_get = password
+	#endif 
+end function
+#endif
+
+#if GA1000
 		'--------------------------------------------------------------------------------------------- 
 		#if WLN_WPA
 		sub wln_wpa_supplicant_process_1_of_4(byref snonce as string, byref anonce as string, byref ptk as string)
