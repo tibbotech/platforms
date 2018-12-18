@@ -1,10 +1,11 @@
 [platform]
-description=KLM601 platform
-version=KLM601-3.60
-rom=983040
-ram=21760
+description=KLM106 platform
+version=KLM106_32-3.80
+rom=786432
+ram=86784
 codebits=24
-sector=256
+databits=32
+sector=131072
 
 [transport1]
 name=serial
@@ -30,11 +31,11 @@ value=LCD_ENABLED
 [define2]
 define=LCD_TYPE
 description=Display panel type
-value=SITRONIX_ST7789S
+value=SOLOMON_SSD1963_FIXED_IO
 
 [define2.option1]
-description=Sitronix ST7789S (Ampire AM240320J4TZQW), fixed I/O
-value=SITRONIX_ST7789S
+description=Solomon SSD1963 (Winstar WF35), fixed I/O
+value=SOLOMON_SSD1963_FIXED_IO
 
 [define3]
 define=OBJECT_KP
@@ -76,3 +77,17 @@ value=WLN_DISABLED
 [define5.option2]
 description=Enabled
 value=WLN_ENABLED
+
+[define6]
+define=OBJECT_BT
+description=BT (wln.bt) object
+value=BT_ENABLED
+
+[define6.option1]
+description=Disabled
+value=BT_DISABLED
+
+[define6.option2]
+description=Enabled
+value=BT_ENABLED
+

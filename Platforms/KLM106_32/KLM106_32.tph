@@ -1,15 +1,25 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			KLM601 WITH WI-FI INTERFACE
+'			KLM106 WITH WI-FI/BT INTERFACE
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#define PLATFORM_ID 7
+#define __notdl
 
-#define BUFF_PAGE_TYPE byte
-#define BUFF_SIZE_TYPE word
+#define PLATFORM_ID 33
+
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
+#define EXTENDED_SOCK 1
+#define SER_7BIT_LIMITATION 1
+#define PLATFORM_TYPE_32 1
 #define COPY_FIRMWARE 1
+#define EXTENDED_FD 1
 
+'--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
 
 '--------------------------------------------------------------------
 enum pl_sock_interfaces
@@ -18,6 +28,22 @@ enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_PPP=3		'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
 end enum
 
+'--------------------------------------------------------------------
+enum pl_adc_num 
+	PL_ADC_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 0 (mapped to I/O line 40).
+
+	PL_ADC_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 1 (mapped to I/O line 41).
+
+	PL_ADC_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 2 (mapped to I/O line 42).
+
+	PL_ADC_NUM_3		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 3 (mapped to I/O line 43).
+end enum
+
 '====================================================================
-include "..\GEN-T1000.tph"
+include "..\GEN-ST.tph"
 include "..\WLN.tph"
+include "..\BT.tph"

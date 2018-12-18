@@ -2,6 +2,8 @@
 '       SYS (System) object
 '**************************************************************************************************
 
+#define SYS_VER 2000
+
 object sys
 'This is the system object that loosely combines "general system" stuff such as initialization (boot) event, buffer
 'management, system timer, and some other miscellaneous properties and methods.
@@ -289,5 +291,45 @@ property !sys.userbuffpages
 '<b>R/O PROPERTY (WORD). </b><br><br>
     get = syscall(785) as word
 end property
+
+'--------------------------------------------------------------------
+syscall(808,"91.TDL") sin( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the sin of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(809,"91.TDL") asin( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc sin. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(810,"91.TDL") cos( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the cos of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(811,"91.TDL") acos( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc cos. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(812,"91.TDL") tan( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the tan of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(813,"91.TDL") atan( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc tan. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(828,"91.TDL") sqrt( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
+
+'--------------------------------------------------------------------
+syscall(829,"91.TDL") atan2( y as float, x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
 
 

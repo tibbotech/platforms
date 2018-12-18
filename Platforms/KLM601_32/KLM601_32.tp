@@ -1,6 +1,6 @@
 [platform]
 description=KLM601 platform
-version=KLM601_32-3.72
+version=KLM601_32-3.80
 rom=786432
 ram=86784
 codebits=24
@@ -77,3 +77,16 @@ value=WLN_DISABLED
 [define5.option2]
 description=Enabled
 value=WLN_ENABLED
+
+[define6]
+define=OBJECT_BT
+description=BT (wln.bt) object
+value=BT_ENABLED
+
+[define6.option1]
+description=Disabled
+value=BT_DISABLED
+
+[define6.option2]
+description=Enabled
+value=BT_ENABLED

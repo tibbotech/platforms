@@ -165,7 +165,7 @@ syscall(68,"76.TDL") fd.copyfirmwarefromfile() as pl_fd_status_codes
 '--------------------------------------------------------------------
 #if COPY_FIRMWARE=1
 #if EXTENDED_FD=1 'ARM
-#if PLATFORM_ID=KLM601_32 'Keytroller
+#if PLATFORM_ID=KLM601_32 or PLATFORM_ID=KLM106_32  'Keytroller
 	syscall(20) fd.copyfirmwarelzo(app_present as no_yes, source_sector as word) as byte
 #else 'EM2000, TPP2(G2), TPP3(G2), other ARM platforms
 	syscall(20) fd.copyfirmwarelzo(app_present as no_yes)
@@ -903,7 +903,7 @@ property fd.transactionstarted
 end property
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID=KLM601_32 'Keytroller
+#if PLATFORM_ID=KLM601_32 or PLATFORM_ID=KLM106_32  'Keytroller
 syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte, source_sector as word)
 #else
 syscall(722) fd.copymonitor(x1 as byte, x2 as byte, x3 as byte, x4 as byte)

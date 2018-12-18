@@ -1,0 +1,19 @@
+'***********************************************************************************************************
+'			SOCKET ALLOCATION LIBRARY
+'***********************************************************************************************************
+
+'1- debug output in console.
+'0- no debug output.
+#ifndef SOCK_DEBUG_PRINT
+	#define SOCK_DEBUG_PRINT 0
+#endif
+
+'Maximum length of the socket user's signature string
+#ifndef SOCK_MAX_SIGNATURE_LEN
+	#define SOCK_MAX_SIGNATURE_LEN 3
+#endif
+
+'------------------------------------------------------------------------------
+declare function sock_get(byref signature as string) as byte
+declare function sock_who_uses(sock_num as byte) as string
+declare sub sock_release(sock_num as byte)
