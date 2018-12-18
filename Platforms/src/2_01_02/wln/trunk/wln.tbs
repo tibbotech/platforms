@@ -190,7 +190,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 		end if
 	#endif
 	
-	#if WLN_WPA
+	#if WLN_WPA and GA1000
 		if security_mode=WLN_SECURITY_MODE_WPA1 or security_mode=WLN_SECURITY_MODE_WPA2 then
 			wln_wpa_socket=sock_get(WLN_SOCK_GET_SIGNATURE_WPA)		
 			if wln_wpa_socket>=sock.numofsock then
@@ -212,7 +212,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 	end if
 
 
-	#if WLN_WPA
+	#if WLN_WPA and GA1000
 		if security_mode=WLN_SECURITY_MODE_WPA1 or security_mode=WLN_SECURITY_MODE_WPA2 then
 			sock.num=wln_wpa_socket
 			sock.rxbuffrq(1)
@@ -887,13 +887,11 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 				goto finish
 			end if
 		
-		#if WLN_WPA
-		
-			
-			'Luis Note We need security not to be reset. 				
+		#if WLN_WPA			
+			'WA2000 Note: We need security not to be reset to make the module more responsive. 				
 			case WLN_SECURITY_MODE_WPA1:
-				if wln.getmoduletype =  PL_WLN_MODULE_TYPE_GA1000 then
-					if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
+				if wln.getmoduletype =  PL_WLN_MODULE_TYPE_WA2000 then
+					if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_TKIP,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
 						wln_result=WLN_STATUS_UNEXPECTED_ERROR
 						goto finish			
 					end if
@@ -929,21 +927,25 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 
 	case PL_WLN_TASK_ASSOCIATE:
 		if wln.associationstate=PL_WLN_ASSOCIATED then
-				
+		
 			#if WLN_WPA	
 				if wln_security_mode=WLN_SECURITY_MODE_WPA1 or wln_security_mode=WLN_SECURITY_MODE_WPA2 then
-					#if WLN_DEBUG_PRINT
-						wln_debugprint("Pre-associated for WPA1/2-PSK, starting handshake")
-					#endif
-					'Luis Note The handshake timer is only available in WLN_WPA for the GA1000
-					wln_debugprint("---ASSOCIATED(WPA1 or WPA2)---")
-					wln_associated=WLN_ASSOCIATION_RETVAL_YES'<<<<<<<<<<<<<<<<<<<<<<<<<<< in GA1000 this is set after WPA2 complete
-					callback_wln_ok() '<<<<<<<<<<<<<<<<<<<<<<<<<<
-					#if GA1000
-						if wln.getmoduletype= PL_WLN_MODULE_TYPE_GA1000 then
+                    if wln.getmoduletype =  PL_WLN_MODULE_TYPE_GA1000 then
+#if WLN_DEBUG_PRINT
+                        'GA1000 Note The handshake timer is only available in WLN_WPA for the GA1000
+					    wln_debugprint("Pre-associated for WPA1/2-PSK, starting handshake")                        
+#endif					
+#if GA1000
 						wln_wpa_handshake_timer=WLN_WPA_HANDSHAKE_TIMEOUT
-						end if
-					#endif
+#endif
+                    else 
+#if WLN_DEBUG_PRINT                        
+					    wln_debugprint("---ASSOCIATED(WPA1 or WPA2)---")
+#endif                     
+                        'WA2000 is already associated at this stage. The wln_associated value is set after wpa for GA1000
+                        wln_associated=WLN_ASSOCIATION_RETVAL_YES 
+					    callback_wln_ok() 
+                    end if 
 					goto finish
 				end if
 			#endif
