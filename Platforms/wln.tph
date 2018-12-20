@@ -277,6 +277,7 @@ end enum
 
 #if SYS_VER = 1000    'T1000 Based Devices
 
+#if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
 '--------------------------------------------------------------------
 syscall(601,TDL_90) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
@@ -375,6 +376,15 @@ property wln.band
 end property
 
 #else 
+
+'These syscalls are not supported on T1000 devices except for the N platforms
+
+declare function wln.getmoduletype() as pl_wln_module_types
+declare sub wln.disable()
+
+#endif 
+
+#elif SYS_VER=2000
 
 '--------------------------------------------------------------------
 syscall(780) wln.getmoduletype() as pl_wln_module_types
