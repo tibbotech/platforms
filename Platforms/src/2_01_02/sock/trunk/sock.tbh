@@ -8,9 +8,18 @@
 	#define SOCK_DEBUG_PRINT 0
 #endif
 
+'Total amount of TCP/UDP sockets
+#ifndef SOCK_MAX_SOCKETS
+	#if PLATFORM_TYPE_32
+		#define SOCK_MAX_SOCKETS 32
+	#else
+		#define SOCK_MAX_SOCKETS 16
+	#endif
+#endif
+
 'Maximum length of the socket user's signature string
 #ifndef SOCK_MAX_SIGNATURE_LEN
-	#define SOCK_MAX_SIGNATURE_LEN 3
+	#define SOCK_MAX_SIGNATURE_LEN 4
 #endif
 
 '------------------------------------------------------------------------------
