@@ -104,7 +104,7 @@ end enum
 
 '--------------------------------------------------------------------
 include "..\GEN.tph"
-include "..\SYS-5xx.tph"
+include "..\SYS-2xxx.tph"
 include "..\NET.tph"
 include "..\PPPOE.tph"
 include "..\IO-5xx.tph"
