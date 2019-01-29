@@ -768,7 +768,7 @@ property sock.rxpacketlen
 '<b>R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes). </b><br><br>
 'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the length (in bytes) of the UDP 
 'datagram being extracted from the RX buffer. This property is only relevant when the <font color="maroon"><b>sock.protocol</b></font>= 
-'<font color="olive"><b>1-PL_SOCK_PROTOCOL_TCP</b></font>. <br><br>
+'<font color="olive"><b>1-PL_SOCK_PROTOCOL_UDP</b></font>. <br><br>
 'Correct way of using this property is within the <font color="teal"><b>on_sock_data_arrival </b></font>event or in conjunction with the
 '<font color="maroon"><b>sock.nextpacket</b></font> method.<br><br> 
 'See also <font color="maroon"><b>sock.rxlen </b></font> property.
