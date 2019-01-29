@@ -67,9 +67,9 @@ function ParseLine(Line) {
 	if (!PropertyCount) // empty or ill-formatted line
 		return null;
 
-	var Options = Obj.O ? ParseOptions(Obj.O) : null;
-	if (Options)
-		Obj.Options = Options;
+	// var Options = Obj.O ? ParseOptions(Obj.O) : null;
+	// if (Options)
+	// 	Obj.Options = Options;
 
 
 	return Obj;

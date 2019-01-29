@@ -70,6 +70,16 @@
 										</tr>
 										<tr>
 											<td>
+												<span title="header=[Notes] body=[Additional notes for the field]">
+													Notes:
+												</span>
+											</td>
+											<td>
+												<textarea id="edit_Notes" rows="2" cols="50"><?%external.Context.Target.N?></textarea>
+											</td>
+										</tr>
+										<tr>
+											<td>
 												<span title="header=[Setting Type] body=[The type of a field]">
 													Setting Type:
 												</span>
@@ -84,6 +94,7 @@
 													<option value="BYTE">BYTE</option>
 													<option value="CHAR">CHAR</option>
 													<option value="STRING">STRING</option>
+													<option value="DECIMAL">DECIMAL</option>
 												</select>
 											</td>
 										</tr>
@@ -110,7 +121,8 @@
 												</p>
 											</td>
 											<td>
-												<div id="selectOptions"></div>
+												<div id="selectOptions" style="height: 150px; overflow-y: scroll;"></div>
+												<button type="button" onclick="addOption()">Add New Option</button>
 											</td>
 										</tr>
 
@@ -123,6 +135,18 @@
 											<td>
 												<!-- <input type="text" id="edit_Validation" maxlength="254" style="width: 175px" value="<?%external.Context.Target.V?>" /> -->
 												<textarea id="edit_Validation" rows="4" cols="50"><?%external.Context.Target.V?></textarea>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												
+											</td>
+											<td>
+												<div style="font-size: 8pt;">
+													A C-like expression returning either an empty string "" for SUCCESS, or an error string (e.g. "Value is out of bounds") in case of an invalid value.
+													<br/>
+													e.g. RG>0?"":"RG must be greater than 0"
+												</div>
 											</td>
 										</tr>
 										<tr>
@@ -140,7 +164,20 @@
 											</td>
 											<td>
 												<textarea id="edit_Status" rows="4" cols="50"><?%external.Context.Target.S?></textarea>
-												<!-- <input type="text" id="edit_Status" maxlength="254" style="width: 175px" value="<?%external.Context.Target.S?>" /> -->
+											</td>
+										</tr>
+										<tr>
+											<td></td>
+											<td>
+												<div style="font-size: 8pt;">
+													A C-like expression returning a string, the first character of which must be (case insensitive):<br/>
+
+													E - normal (enabled)<br/>
+													I - irrelevant (displayed as grayed "(irrelevant)")<br/>
+													F - fixed (followed by value; cannot edit this setting)<br/>
+													A - auto-configured (displayed in red color; still can edit, but the user value may be overriden/ignored, e.g. IP when DHCP is ON)<br/>
+													H - hidden (only in the newest TDST -- still unpublished at the moment)<br/>
+												</div>
 											</td>
 										</tr>
 
@@ -210,17 +247,26 @@
 			for (var i = 0; i < options.length; i++) {
 				var option = options[i];
 				out += '<div>';
-				out += '<span>label:</span><input type="text" value="' + option.optionText + '"/>';
-				out += '<span>value:</span><input type="text" value="' + option.optionValue + '"/>';
+				out += '<span>label:</span><input type="text" id="option-label-' + i + '" value="' + option.optionText + '"/>';
+				out += '<span>value:</span><input type="text" id="option-value-' + i + '" value="' + option.optionValue + '"/>';
 				out += '<button type="button" onclick="removeOption(' + i + ')">X</button>';
 				out += '</div>';
 			}
-			out += '<button type="button" onclick="addOption()">Add New Option</button>';
 
 			$('#selectOptions').html(out);
 		}
 
 		function addOption() {
+			updateOptions();
+			if (options.length > 0) {
+				var lastOption = options[options.length - 1];
+				var lastOptionId = (options.length - 1).toString();
+				var optionText = lastOption.optionText;
+				var optionValue = lastOption.optionValue;
+				if (optionText.trim() == '' || optionValue.trim() == '') {
+					return;
+				}
+			}
 			options.push({
 				optionText: '',
 				optionValue: ''
@@ -228,7 +274,17 @@
 			setOptions();
 		}
 
+		function updateOptions() {
+			for (var i = 0; i < options.length; i++) {
+				options[i] = {
+					optionText: $('#option-label-' + i.toString()).val(),
+					optionValue: $('#option-value-' + i.toString()).val()
+				}
+			}
+		}
+
 		function removeOption(index) {
+			updateOptions();
 			options.splice(index, 1);
 			setOptions();
 		}
@@ -246,11 +302,11 @@
 				for (i = 0; i < external.XText.length; i++) {
 					var Obj2 = external.XText[i];
 				?>
-				if (id == '<?%Obj2.I?>') {
+					if (id == '<?%Obj2.I?>') {
 						alert('You already have a setting with this name. Setting names must be unique.');
 						set_focus($('#edit_Id')[0]);
 						return false;
-					}									
+					}
 				<?}?>
 			}
 			var controlType = $('#edit_Control').val();
@@ -258,6 +314,7 @@
 			external.Context.Target.I = id;
 			external.Context.Target.T = $('#edit_Type').val();
 			external.Context.Target.D = $('#edit_Description').val();
+			external.Context.Target.N = $('#edit_Notes').val();
 			if ($('#edit_Validation').val().trim().length > 0) {
 				external.Context.Target.V = $('#edit_Validation').val();
 			}
@@ -266,12 +323,24 @@
 			}
 			external.Context.Target.C = controlType;
 			external.Context.Target.O = "";
+			var validOptions = options.length;
 			if (controlType == "STATIC") {
 				var optionOutput = "";
+				var finalOptions = [];
 				for (var i = 0; i < options.length; i++) {
 					var option = options[i];
-					optionOutput += option.optionText + '/' + option.optionValue;
-					if (i < options.length - 1) {
+					var optionText = $('#option-label-' + i.toString()).val();
+					var optionValue = $('#option-value-' + i.toString()).val();
+					if (optionText.trim() != '' && optionValue.trim() != '') {
+						finalOptions.push({
+							optionText: optionText,
+							optionValue: optionValue
+						})
+					}
+				}
+				for (var i = 0; i < finalOptions.length; i++) {
+					optionOutput += finalOptions[i].optionText + '/' + finalOptions[i].optionValue;
+					if (i < finalOptions.length - 1) {
 						optionOutput += '/';
 					}
 				}

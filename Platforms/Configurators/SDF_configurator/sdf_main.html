@@ -21,8 +21,8 @@
 		<h2>Settings Options</h2>
 	</div>
 	<button type="button" onclick="addGroup()">Add Group</button>
-	<br/>
-	<br/>
+	<br />
+	<br />
 	<div class="posttext" id="groups">
 	</div>
 
@@ -52,7 +52,10 @@
 				else {
 					var item = line;
 					item.xIndex = i;
-					currentGroup.items.push(item);
+					if (currentGroup != undefined) {
+						currentGroup.items.push(item);
+					}
+
 				}
 			}
 			if (currentGroup != undefined) {
@@ -65,11 +68,12 @@
 				out += '<h2><img class="imgleft" src="tdoc.ico" width="30" height="32" />' + group.D + '(' + group.I + ')</h2>';
 				out += '<button type="button" onclick="editGroup(' + group.xIndex + ')">Edit Group</button>';
 				out += '<button type="button" onclick="deleteGroup(' + group.xIndex + ')">Delete Group</button>';
-				out += '<table border="1" class="cls_main_table" id="my_table">';
+				out += '<table border="1" class="cls_main_table" id="my_table'+x+'">';
 				out += '<thead class=""><tr style="background-color:#FFD700">'
 				out += '<th>ID</th>';
 				out += '<th>Type</th>';
 				out += '<th>Description</th>';
+				
 				out += '<th>Control</th>';
 				out += '<th>Validation</th>';
 				out += '<th>Status</th>';
@@ -83,6 +87,7 @@
 					out += '<td>' + line.I + '</td>';
 					out += '<td>' + line.T + '</td>';
 					out += '<td>' + line.D + '</td>';
+					
 					out += '<td>' + line.C + '</td>';
 					out += '<td>' + (line.V != undefined ? line.V : 'none') + '</td>';
 					out += '<td>' + (line.S != undefined ? line.S : 'none') + '</td>';
@@ -95,6 +100,8 @@
 					<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Add('+ lastLineInGroup + ');">Add</button>&nbsp;\
 					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;\
 					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick="move_to_next(\'up\');">Move Up</button>\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick="move_to_next(\'down\');">Move Down</button>\
 					</p>';
 				out += '</div>';
 			}
@@ -335,14 +342,81 @@
 			Context.Target = external.XText[rowIndex];
 
 			var ans;
-			ans = confirm('You are going to delete the group ' + Context.Target.I + '\r\n\r\nConfirm to delete it, or Cancel to resume.')
+			ans = confirm('You are going to delete the group ' + Context.Target.D + '\r\n\r\nConfirm to delete it, or Cancel to resume.')
 			if (ans != 1) return;
 
+			
 			external.XText.splice(rowIndex, 1);
+
+			var lines = external.XText;
+			var currentGroup = undefined;
+			var out = '';
+			for (var i = rowIndex; i < lines.length; i++) {			
+				if (lines[i].T != undefined && lines[i].T != 'GROUP') {
+					external.XText.splice(i, 1);
+					i--;
+				}
+				else {
+					break;
+				}
+			}
+
 			external.SetModified(true);
 
 			setSDFGroups();
 		}
+
+		//move_to_next(up/down)			//Selected_Arr
+		function move_to_next(Dir) {
+			if (!Dir) return;
+			//0.check eof
+			var dir_offset = new Number();
+			if (!Selected_Arr) return;
+			if (Selected_Arr.length == 0) return;
+			var Row = Selected_Arr[0];
+			Multi_select(Row);
+
+
+			if (!Row) return;																												//It means no pointer in the table. Nothing to move.
+			if (!external.XText) return;																						//if the XTXT Object is not avaiable, exit function.
+
+			if (Dir == 'up') {
+				dir_offset = -1;
+			}
+			else {
+				var eof = get_eof_index();																							//external.XText.length
+				if (eof <= (Row.rowIndex)) return;																			//if (external.XText.length<=(Row.rowIndex)) return; //Avoid that the index is out of the range.	
+				dir_offset = 1;
+			}
+
+			var newIndex = Number(Row.rowIndex) + dir_offset;
+			if (newIndex < 0 || newIndex > eof-1 || external.XText[newIndex].T == 'GROUP') {
+				return;
+			}
+
+			//1.get the selected record. then delete it. then insert it.
+			Selected_Arr.length = 0;//Selected_Arr = null;
+			var tmp_Row_Index = Number(Row.rowIndex);
+			var tmp_record_obj = external.XText[tmp_Row_Index];											//get the whole record(single).
+			external.XText.splice(tmp_Row_Index, 1); 																//1. delete it first
+			external.XText.splice(tmp_Row_Index + dir_offset, 0, tmp_record_obj); 			//2. then insert	
+			external.SetModified(true);
+
+
+			//2.refresh(reload) the HTML Table(Parent).
+			setSDFGroups();
+
+			//3.Set the pointer to the record that we just moved. 
+			var cur_fld_index = tmp_Row_Index + dir_offset;																			//tmp_Row_Index+(dir_offset+1)
+			point_on_index(cur_fld_index);
+		}
+
+
+		function point_on_index(p_index) {
+			if (isNaN(p_index)) return;
+			Multi_select(undefined, p_index);
+		}
+
 
 		//EOF   function-------
 		function get_eof_index() {
