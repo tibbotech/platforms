@@ -108,6 +108,7 @@ end property
 
 #else
 
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property pat.greenmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's green LED.
@@ -118,6 +119,7 @@ property pat.greenmap
     get = syscall(7,"31.TDL"+) as pl_io_num
     set = syscall(8,"31.TDL"+) (value as pl_io_num)
 end property
+#endif
 
 #endif
 
@@ -146,6 +148,7 @@ end property
 
 #else
 
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 property pat.redmap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE: channel 0: (-1), R/0; channels 1-4: PL_IO_NULL.</b><br><br>
 'For the currently selected pattern channel (selection is made through the pat.channel property), sets/returns the number of the I/O line that will act as the control line for this channel's red LED.
@@ -156,6 +159,7 @@ property pat.redmap
     get = syscall(9,"31.TDL"+) as pl_io_num
     set = syscall(10,"31.TDL"+) (value as pl_io_num)
 end property
+#endif
 
 #endif
 
