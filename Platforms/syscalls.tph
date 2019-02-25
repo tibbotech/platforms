@@ -606,6 +606,7 @@ syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as s
 #endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(579,"88.TDL") rc4(byref key as string, skip as word, byref data as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Encrypts/decrypts the data stream according to the RC4 algorithm. Returns processed data.
@@ -620,6 +621,7 @@ syscall(579,"88.TDL") rc4(byref key as string, skip as word, byref data as strin
 'With RC4 algorithm, the same function is used both for encrypting and decrypting the data.
 '<br><br>
 '<b>See also: </b>aes128enc, aes128dec.
+#endif
 
 '--------------------------------------------------------------------
 syscall(465,"85.TDL") strand(byref str1 as string,byref str2 as string) as string
@@ -667,10 +669,14 @@ syscall(585,"45.TDL") !lshl(byref val as dword, num_bits as byte) as dword
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(586,"02.TDL") strtobin(byref dst, byref src as string, size as byte)
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(587,"03.TDL") bintostr(byref dst as string, byref src, size as byte)
+#endif
 
 '--------------------------------------------------------------------
 syscall(422,"88.TDL") !debug.tx(byref s as string)
