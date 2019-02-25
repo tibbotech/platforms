@@ -486,6 +486,7 @@ syscall(64,"51.TDL") !objcpy(byref dst, byref src)
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 enum md5_modes
     MD5_UPDATE, 'Set this mode for all data portions except the last one.
     MD5_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
@@ -514,8 +515,10 @@ syscall(290,"52.TDL") md5(byref str as string,byref input_hash as string,md5_mod
 '<br><br>
 'See also:
 '<font color="teal"><b>sha1</b</font>.
+#endif
 
 '--------------------------------------------------------------------
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 enum sha1_modes
     SHA1_UPDATE, 'Set this mode for all data portions except the last one.
     SHA1_FINISH 'Set this mode for the last data portion; also use this selection if you only have a single data portion.
@@ -544,6 +547,7 @@ syscall(291,"53.TDL") sha1(byref str as string,byref input_hash as string,sha1_m
 '<br><br>
 'See also:
 '<font color="teal"><b>md5</b</font>.
+#endif
 
 '--------------------------------------------------------------------
 syscall(253,"52.TDL") random(len as byte) as string
@@ -570,7 +574,7 @@ syscall(549,"09.TDL") insert(byref dest_str as string,pos as byte,byref insert_s
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID<>EM500W
-    #if PLATFORM_ID<>DS1100
+    #if PLATFORM_ID<>DS1100 and PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Encrypts data in 16-byte blocks according to the AES128 algorithm. Returns encrypted data (which will consist of complete 16-character blocks).
@@ -586,7 +590,7 @@ syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as st
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID<>EM500W
-    #if PLATFORM_ID<>DS1100
+    #if PLATFORM_ID<>DS1100 and PLATFORM_ID<>LTPP3 and PLATFORM_ID<>LKLM601
 syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Decrypts data in 16-byte blocks according to the AES128 algorithm. Returns decrypted data (which will consist of complete 16-character blocks).
