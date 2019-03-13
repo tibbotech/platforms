@@ -1,0 +1,164 @@
+/* ==================== GENERAL ================== */
+	body 
+	{
+		  font-family: Times New Roman,Times,serif;
+  		font-size: 1em;/*15px;*/ 
+	}
+	
+	table.cls_main_table	td{
+		padding-right:5px; 
+		padding-left:5px; }
+	table.cls_main_table th{
+		white-space: nowrap;
+		text-align : center;
+		padding-right:5px; 
+		padding-left:5px; }
+	table.cls_main_table tr:hover {
+		background: #F0E68C; }
+	table.cls_main_table
+	{font-family: Times New Roman,Times,serif;
+	text-align: left;
+	font-size: 1em;
+	color: black;
+	background-color: #ffffff;}
+ 
+	
+	table.selection
+	{font-family: Arial, Helvetica, Sans Serif;
+	text-align: left;
+	font-size: 14px;
+	color: black;
+	background-color: #fafafa;
+	border: 1px black solid;
+	border-collapse: collapse;
+	border-spacing: 0px;}
+	table.selection th{background-color:yellow; text-align: center;} 
+	table.selection td{font-size: 14px;}
+		
+	table.defval_list 
+	{font-family: Arial, Helvetica, Sans Serif;
+	text-align: left;
+	font-size: 35px;
+	color: black;
+	background-color: white;
+	border: 1px black solid;
+	border-collapse: collapse;
+	border-spacing: 0px;}
+	
+
+	table.related_field_info																							/*for agg */
+	{font-family: Arial, Helvetica, Sans Serif;
+	text-align: left;
+	font-size: 15px;
+	color: black;
+	background-color: white;
+	border: 0px black solid;
+	border-collapse:separate;
+	border-spacing:24px 50px;}
+	table.related_field_info	td{font-size: 14px;padding-bottom:3px; }
+
+		
+/* =================== Section ==================== */
+.imgleft	{float: left;
+	margin-right: 15px;
+	margin-bottom: 15px;}
+
+.verRight	{float: right;
+	font-style: italic;
+	font-size: 0.8em;
+	margin: 0;
+	margin-bottom: 15px;
+	background-color: #f2f2f2;
+	line-height: 32px;
+	padding-left: 10px;
+}
+	
+.posttext	{font-size: 0.875em;
+	line-height: 1.5}
+	
+.posttext h2	{font-size: 1em;
+	margin: 0;
+	margin-bottom: 15px;
+	background-color: #f2f2f2;
+	line-height: 32px;
+	padding-left: 10px;}
+
+.posttext p	{margin: 0;
+	margin-bottom: 16px;}
+	
+/* ==================== Footer ==================== */
+#footer	{width: auto;
+	border-top: solid 5px #f2f2f2;
+	padding-top: 10px;
+	padding-bottom: 20px;}
+
+#footer p	{color: #000000;
+	font-size: 0.75em;
+	margin: 0;}
+
+/*===================== TAB ======================*/
+  #tab_header ul 
+  {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+  }
+
+	#tab_header li 
+	{
+		float: left;
+		border: 1px solid #bbb;
+		border-bottom-width:0;
+		margin: 0;
+  }
+
+	#tab_header a 
+	{
+		text-decoration: none;
+		display: block;
+		background: #DCDCDC;
+		padding: 0.24em 1em;
+		color: #808080;
+		width: 8em;
+		text-align: center;
+  }
+    
+	#tab_header a:hover 
+	{
+		background: #F78181;
+		color: #000000;
+	}
+
+	#tab_header #selected 
+	{
+		border-color: black;
+	}
+
+	#tab_header #selected a 
+	{
+		position: relative;
+		top: 1px;
+		background: white;
+		color: black;
+		font-weight: bold;
+	}
+
+	#tab_content 
+	{
+		border: 1px solid black;
+		clear: both;
+		padding: 0 1em;
+		background: white;
+	}
+	
+	h1 
+	{
+		margin: 0;
+		padding: 0 0 1em 0;
+	}
+
+
+
+	
+
+
