@@ -1,6 +1,6 @@
 [platform]
 description=EM1206 Module + WA2000 Wi-Fi add-on
-version=EM1206W-3.61
+version=EM1206N-3.70
 rom=983040
 ram=22271
 codebits=24
@@ -100,8 +100,3 @@ value=WLN_DISABLED
 description=Enabled
 value=WLN_ENABLED
 
-
-[define6]
-define=SYS_VER
-description=Hardware Generation
-value=1000

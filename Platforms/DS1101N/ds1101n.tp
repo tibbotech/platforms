@@ -1,6 +1,6 @@
 [platform]
 description=DS1101 Device + WA2000 Wi-Fi add-on
-version=DS1101N-3.61
+version=DS1101N-3.70
 rom=983040
 ram=22271
 codebits=24
@@ -74,7 +74,3 @@ value=WLN_DISABLED
 description=Enabled
 value=WLN_ENABLED
 
-[define5]
-define=SYS_VER
-description=Hardware Generation
-value=1000

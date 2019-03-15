@@ -1,6 +1,6 @@
 [platform]
 description=TPP3 Board + WA2000 Wi-Fi add on
-version=TPP3N-3.61
+version=TPP3N-3.70
 rom=983040
 ram=22271
 codebits=24
@@ -92,7 +92,3 @@ value=SOLOMON_SSD1963
 description=Solomon SSD1963 (Winstar WF35), fixed I/O-2
 value=SOLOMON_SSD1963_FIXED_IO2
 
-[define6]
-define=SYS_VER
-description=Hardware Generation
-value=1000

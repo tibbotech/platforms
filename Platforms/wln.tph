@@ -104,18 +104,6 @@ enum pl_wln_phy_modes
     WIFI_PHY_11N_5G              '11n-only with 5GHz band, 802.11n. 
 end enum
 
-property wln.band    
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
-'<br><br>
-'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
-'<br><br>
-'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
-'<br><br>
-'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
-    get = syscall(789) as pl_wln_phy_modes    
-    set = syscall(790) (value as no_yes) 
-end property
-
 '--------------------------------------------------------------------
 syscall(451,TDL_70) wln.boot(offset as dword) as ok_ng
 '<b>METHOD.</b>
@@ -288,6 +276,8 @@ end enum
 
 
 #if SYS_VER = 1000    'T1000 Based Devices
+
+#if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
 '--------------------------------------------------------------------
 syscall(601,TDL_90) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
@@ -332,6 +322,7 @@ syscall(604,TDL_90) wln.disable()
 '<br><br>
 'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
 
+'--------------------------------------------------------------------
 syscall(608,TDL_90) wln.setupgraderegion(region as pl_wln_upgrade_regions)
 '<b>METHOD. </b><br><br>
 'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
@@ -371,8 +362,31 @@ syscall(606,TDL_90) wln.waitforupgradecompletion() as ok_ng
 '<br><br>
 'Invoking this method while using the GA1000 device will have no effect.
 
+'--------------------------------------------------------------------
+property wln.band    
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
+'<br><br>
+'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
+'<br><br>
+'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
+'<br><br>
+'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
+    get = syscall(609,TDL_90) as pl_wln_phy_modes    
+    set = syscall(610,TDL_90) (value as no_yes) 
+end property
+
 #else 
 
+'These syscalls are not supported on T1000 devices except for the N platforms
+
+declare function wln.getmoduletype() as pl_wln_module_types
+declare sub wln.disable()
+
+#endif 
+
+#elif SYS_VER=2000
+
+'--------------------------------------------------------------------
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
 'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
@@ -380,6 +394,17 @@ syscall(780) wln.getmoduletype() as pl_wln_module_types
 'The actual module type detection happens on the first invocation of wln.getmoduletype or wln.boot, whichever is called first after the reset of the Wi-Fi module.
 '<br><br>
 'Wln.getmoduletype also has a side job -- it can be used to boot the WA2000 into the Monitor/Loader, which is necessary for performing firmware updates.
+
+'--------------------------------------------------------------------
+property wln.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's Monitor/Loader.
+'<br><br>
+'This property starts returning the Monitor/Loader version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
+'<br><br>
+'When the GA1000 device is used, this property always returns an empty string.
+  get = syscall(792) as string
+end property
 
 '--------------------------------------------------------------------
 property wln.fwversion
@@ -393,18 +418,6 @@ property wln.fwversion
 end property
 
 '--------------------------------------------------------------------
-property wln.monversion
-'<b>R/O PROPERTY (STRING). </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, returns the version string of the module's Monitor/Loader.
-'<br><br>
-'This property starts returning the Monitor/Loader version after the WA2000 is booted (wln.boot) or after the Wi-Fi module type is detected (wln.getmoduletype).
-'<br><br>
-'When the GA1000 device is used, this property always returns an empty string.
-  get = syscall(792) as string
-end property
-
-
-'--------------------------------------------------------------------
 syscall(777) wln.disable()
 '<b>METHOD. </b><br><br>
 'Causes the wln. object to be disabled.
@@ -416,6 +429,26 @@ syscall(777) wln.disable()
 'Alternatively, wait for the on_wln_event(0- PL_WLN_EVENT_DISABLED) event -- it is generated when the wln. object is disabled.
 '<br><br>
 'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
+
+'--------------------------------------------------------------------
+syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+'--------------------------------------------------------------------
+syscall(787) wln.writeflashpage(byref page as string) as accepted_rejected
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, sends a 128-byte page (block) of firmware data into the module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect. 
 
 '--------------------------------------------------------------------
 syscall(788) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
@@ -438,24 +471,17 @@ syscall(793) wln.waitforupgradecompletion() as ok_ng
 'Invoking this method while using the GA1000 device will have no effect.
 
 '--------------------------------------------------------------------
-syscall(787) wln.writeflashpage(byref page as string) as accepted_rejected
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, sends a 128-byte page (block) of firmware data into the module. The method should be called repeatedly until the entire firmware "file" has been uploaded onto the WA2000.
+property wln.band    
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
 '<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'Specifies what frequency bands (2.4GHz, 5.0GHz, or both) and 802.11 communications standards ("a", "b", "g", "n" or combinations thereof) are enabled.
 '<br><br>
-'Invoking this method while using the GA1000 device will have no effect. 
-
-
-syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
-'<b>METHOD. </b><br><br>
-'For the WA2000 Wi-Fi/BLE add-on, specifies what region (portion) of the WA2000's firmware is going to be upgraded -- the main firmware or the Monitor/Loader.
+'Since the GA1000 device only supports 2.4GHz "b" and "g" modes, the value of this property is reset to 0- WIFI_PHY_11BG_MIXED as soon as the wln.boot or wln.getmoduletype method is executed (and the Wi-Fi module type is detected).
 '<br><br>
-'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
-'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
-'<br><br>
-'Invoking this method while using the GA1000 device will have no effect.
+'The value of this property cannot be changed when the wln.enabled R/O property is at 1- ENABLED (the wln.boot method has been executed). 
+    get = syscall(789,TDL_90) as pl_wln_phy_modes    
+    set = syscall(790,TDL_90) (value as no_yes) 
+end property
 
 #endif 
 
@@ -831,19 +857,21 @@ end property
 
 #endif
 
-'--------------------------------------------------------------------
 #if PLATFORM_ID=LTPP3 Or PLATFORM_ID=LKLM601
 
+'--------------------------------------------------------------------
 syscall(739) wln.seteaptls(byref ca_cert as string, byref client_cert as string, byref private_key as string, byref private_key_passwd as string, byref identify as string) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence setting the new data for EAP TLS Enterprise ciphering.
 
+'--------------------------------------------------------------------
 enum pl_wln_peap_phase1
     PL_WLN_PEAP_PHASE2_0,
 	PL_WLN_PEAP_PHASE2_1
 end enum
 
+'--------------------------------------------------------------------
 enum pl_wln_peap_phase2
     PL_WLN_PEAP_PHASE2_MSCHAPV2,
 	PL_WLN_PEAP_PHASE2_TLS,
@@ -852,12 +880,13 @@ enum pl_wln_peap_phase2
 	PL_WLN_PEAP_PHASE2_MD5
 end enum
 
+'--------------------------------------------------------------------
 syscall(740) wln.seteappeap(byref ca_cert as string, byref identify as string, byref password as string, phase1 as pl_wln_peap_phase1, phase2 as pl_wln_peap_phase2) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
 
-
+'--------------------------------------------------------------------
 enum pl_wln_ttls_phase2
     PL_WLN_TTLS_PHASE2_EAP_MD5,
 	PL_WLN_TTLS_PHASE2_EAP_GTC,
@@ -870,11 +899,10 @@ enum pl_wln_ttls_phase2
 	PL_WLN_TTLS_PHASE2_CHAP
 end enum
 
+'--------------------------------------------------------------------
 syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, byref password as string, phase2 as pl_wln_ttls_phase2) as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
 
 #endif
-
-
