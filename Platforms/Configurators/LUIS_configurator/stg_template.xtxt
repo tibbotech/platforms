@@ -1,5 +1,0 @@
-I=$RD;D=Radio;T=GROUP
-I=BT;D=This is a byte setting;T=BYTE;
-I=WD;D=This is a word setting;T=WORD;
-I=ST;D=This is a string setting;T=STRING;
-I=DD;D=This is a dot-decimal string setting;T=STRING;C=IPCTRL;

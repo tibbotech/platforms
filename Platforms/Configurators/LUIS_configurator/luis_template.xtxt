@@ -20,3 +20,5 @@ I=NT;D=Normal Send Timeout;T=INT;C=EDIT;V=NT<1000||NT>5000?"Must be between 1000
 I=NS;D=Normal Sleep Time;T=INT;C=EDIT;V=NS<60||NT>65535?"Must be between 60 and 0xFFFF":""
 I=LX;D=Link Check TX Timeout;T=INT;C=EDIT;V=LX<1000||LX>5000?"Must be between 1000 and 5000":""
 I=NX;D=Normal Radio TX Timeout;T=INT;C=EDIT;V=NX<1000||NX>5000?"Must be between 1000 and 5000":""
+
+@@STG_RefPath=settings.xtxt

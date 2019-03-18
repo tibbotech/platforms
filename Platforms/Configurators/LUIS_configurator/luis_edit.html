@@ -20,6 +20,7 @@
 		.fButton {
 			width: 75px;
 		}
+
 		#auto_size {
 			width: 470px;
 		}
@@ -41,7 +42,7 @@
 									<table>
 										<!----------------------------------------------------------------------->
 										<!-- SETTING NAME-->
-										<tr>
+										<!-- <tr>
 											<td>
 												<span title="header=[ID] body=[ID of setting in corresponding settings file.]">
 													<b>ID:</b>
@@ -49,6 +50,37 @@
 											</td>
 											<td>
 												<input type="text" id="edit_Id" maxlength="254" style="width: 175px" value="<?%external.Context.Target.I?>" />
+											</td>
+										</tr> -->
+										<tr>
+											<td>
+												<p><span title="header=[Variable Name:] body=[Name of variable (from referenced settings file)]">Setting:</span>
+											</td>
+											<td>
+												<select id="edit_Id" style="width: 175px"
+													onChange="load_data_from_lib();">
+
+												</select></p>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span title="header=[Setting Type] body=[The type of a field]">
+													Setting Type:
+												</span>
+											</td>
+											<td>
+												<select id="edit_Type" style="width: 175px" disabled>
+													<option value="INT">Integer (INT)</option>
+													<option value="DWORD">DWORD</option>
+													<option value="LONG">LONG</option>
+													<option value="WORD">WORD</option>
+													<option value="SHORT">SHORT</option>
+													<option value="BYTE">BYTE</option>
+													<option value="CHAR">CHAR</option>
+													<option value="STRING">STRING</option>
+													<option value="DECIMAL">DECIMAL</option>
+												</select>
 											</td>
 										</tr>
 										<tr>
@@ -65,43 +97,26 @@
 												</span>
 											</td>
 											<td>
-												<input type="text" id="edit_Description" maxlength="254" style="width: 175px" value="<?%external.Context.Target.D?>" />
+												<input type="text" id="edit_Description" maxlength="254"
+													style="width: 175px" value="<?%external.Context.Target.D?>" />
 											</td>
 										</tr>
-										<tr>
+										<!--<tr>
 											<td>
 												<span title="header=[Notes] body=[Additional notes for the field]">
 													Notes:
 												</span>
 											</td>
 											<td>
-												<textarea id="edit_Notes" rows="2" cols="50"><?%external.Context.Target.N?></textarea>
+												<textarea id="edit_Notes" rows="2"
+													cols="50"><?%external.Context.Target.N?></textarea>
 											</td>
-										</tr>
-										<tr>
-											<td>
-												<span title="header=[Setting Type] body=[The type of a field]">
-													Setting Type:
-												</span>
-											</td>
-											<td>
-												<select id="edit_Type" style="width: 175px">
-													<option value="INT">Integer (INT)</option>
-													<option value="DWORD">DWORD</option>
-													<option value="LONG">LONG</option>
-													<option value="WORD">WORD</option>
-													<option value="SHORT">SHORT</option>
-													<option value="BYTE">BYTE</option>
-													<option value="CHAR">CHAR</option>
-													<option value="STRING">STRING</option>
-													<option value="DECIMAL">DECIMAL</option>
-												</select>
-											</td>
-										</tr>
+										</tr>-->
 
 										<tr>
 											<td>
-												<span title="header=[Control Type] body=[The control type used to edit this field.]">
+												<span
+													title="header=[Control Type] body=[The control type used to edit this field.]">
 													Control Type:
 												</span>
 											</td>
@@ -110,41 +125,48 @@
 													<option value="STATIC">Static (STATIC)</option>
 													<option value="EDIT">Edit (EDIT)</option>
 													<option value="IPCTRL">IP Control (IPCTRL)</option>
-													<option value="ETHERNETCTRL">Ethernet Control (ETHERNETCTRL)</option>
+													<option value="ETHERNETCTRL">Ethernet Control (ETHERNETCTRL)
+													</option>
 												</select>
 											</td>
 										</tr>
 										<tr id="selectOptionsRow" style="display:none;">
 											<td>
-												<p title="header=[P1 Parameter (Min)] body=[Minimum value for byte and word settings, minimum length for string and dot-decimal settings.]">
+												<p
+													title="header=[P1 Parameter (Min)] body=[Minimum value for byte and word settings, minimum length for string and dot-decimal settings.]">
 													Options:
 												</p>
 											</td>
 											<td>
-												<div id="selectOptions" style="height: 150px; overflow-y: scroll;"></div>
+												<div id="selectOptions" style="height: 150px; overflow-y: scroll;">
+												</div>
 												<button type="button" onclick="addOption()">Add New Option</button>
 											</td>
 										</tr>
 
 										<tr>
 											<td>
-												<span title="header=[Validation] body=[A C-like expression returning either an empty string &quot;&quot; for SUCCESS, or an error string (e.g. &quot;Value is out of bounds&quot;) in case of an invalid value.]">
+												<span
+													title="header=[Validation] body=[A C-like expression returning either an empty string &quot;&quot; for SUCCESS, or an error string (e.g. &quot;Value is out of bounds&quot;) in case of an invalid value.]">
 													Validation:
 												</span>
 											</td>
 											<td>
 												<!-- <input type="text" id="edit_Validation" maxlength="254" style="width: 175px" value="<?%external.Context.Target.V?>" /> -->
-												<textarea id="edit_Validation" rows="4" cols="50"><?%external.Context.Target.V?></textarea>
+												<textarea id="edit_Validation" rows="4"
+													cols="50"><?%external.Context.Target.V?></textarea>
 											</td>
 										</tr>
 										<tr>
 											<td>
-												
+
 											</td>
 											<td>
 												<div style="font-size: 8pt;">
-													A C-like expression returning either an empty string "" for SUCCESS, or an error string (e.g. "Value is out of bounds") in case of an invalid value.
-													<br/>
+													A C-like expression returning either an empty string "" for SUCCESS,
+													or an error string (e.g. "Value is out of bounds") in case of an
+													invalid value.
+													<br />
 													e.g. RG>0?"":"RG must be greater than 0"
 												</div>
 											</td>
@@ -163,20 +185,24 @@
 												</span>
 											</td>
 											<td>
-												<textarea id="edit_Status" rows="4" cols="50"><?%external.Context.Target.S?></textarea>
+												<textarea id="edit_Status" rows="4"
+													cols="50"><?%external.Context.Target.S?></textarea>
 											</td>
 										</tr>
 										<tr>
 											<td></td>
 											<td>
 												<div style="font-size: 8pt;">
-													A C-like expression returning a string, the first character of which must be (case insensitive):<br/>
+													A C-like expression returning a string, the first character of which
+													must be (case insensitive):<br />
 
-													E - normal (enabled)<br/>
-													I - irrelevant (displayed as grayed "(irrelevant)")<br/>
-													F - fixed (followed by value; cannot edit this setting)<br/>
-													A - auto-configured (displayed in red color; still can edit, but the user value may be overriden/ignored, e.g. IP when DHCP is ON)<br/>
-													H - hidden (only in the newest TDST -- still unpublished at the moment)<br/>
+													E - normal (enabled)<br />
+													I - irrelevant (displayed as grayed "(irrelevant)")<br />
+													F - fixed (followed by value; cannot edit this setting)<br />
+													A - auto-configured (displayed in red color; still can edit, but the
+													user value may be overriden/ignored, e.g. IP when DHCP is ON)<br />
+													H - hidden (only in the newest TDST -- still unpublished at the
+													moment)<br />
 												</div>
 											</td>
 										</tr>
@@ -198,7 +224,8 @@
 					<br>
 					<button class="fButton" onclick="OnOK()">OK</button> &nbsp;
 					<button class="fButton" onclick="external.EndDialog(2)">Cancel</button> &nbsp;
-					<button class="fButton" onclick="alert(isNaN(''));//alert(IsNumeric('^'));" style="display : none;">IsNumeric</button>
+					<button class="fButton" onclick="alert(isNaN(''));//alert(IsNumeric('^'));"
+						style="display : none;">IsNumeric</button>
 					&nbsp;
 				</div>
 			</td>
@@ -208,7 +235,10 @@
 	<script>
 		//------------------------------init----------------------------------------
 		var options = [];
+		var STG_Path = external.Context.STG_Path;
 		$(document).ready(function () {
+			load_settings();
+			document.getElementById("edit_Id").value = external.Context.Target.I;
 			document.getElementById("edit_Type").value = external.Context.Target.T;
 			document.getElementById("edit_Control").value = external.Context.Target.C;
 			document.getElementById("edit_Description").value = external.Context.Target.D;
@@ -216,6 +246,7 @@
 			if (external.Context.Target.C == 'STATIC') {
 				$('#selectOptionsRow').show();
 			}
+
 			readOptions();
 			setOptions();
 			$('#edit_Control').change(function () {
@@ -227,6 +258,74 @@
 				}
 			});
 		});
+
+		function load_settings() {
+			var sel = document.getElementById('edit_Id');
+			var stg_lib_data = external.XTextEx(STG_Path);
+			if (!stg_lib_data) {
+				alert('Cannot locate the settings library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.');
+				external.EndDialog(0);
+				return;
+			}
+			for (var i = 0; i < stg_lib_data.length; i++) {
+				if ((typeof (stg_lib_data[i].NAME) != 'undefined') && (stg_lib_data[i].NAME != null)) {
+					sel.options.add(new Option(stg_lib_data[i].NAME + " - " + stg_lib_data[i].C, stg_lib_data[i].NAME));
+				}
+
+			}
+			sel.value = '';
+		}
+
+		function load_data_from_lib() {
+			var stg_lib_data = external.XTextEx(STG_Path);
+			var sel = document.getElementById('edit_Id');
+			var sel_value = sel.value;
+			for (var i = 0; i < stg_lib_data.length; i++) {
+				if ((typeof (stg_lib_data[i].NAME) != 'undefined') && (stg_lib_data[i].NAME != null)) {
+					if (stg_lib_data[i].NAME == sel_value) {
+						setSettingType(stg_lib_data[i].TYPE);
+						break;
+					}
+				}
+			}
+		}
+
+		function setSettingType(settingType) {
+			var element = document.getElementById('edit_Type');
+			var convertedType = "";
+			/*
+	<option value="B">Byte</option> 
+	<option value="W">Word</option> 
+	<option value="S">String</option>
+	<option value="D">Dot-Decimal String</option>	
+
+
+	<option value="INT">Integer (INT)</option>
+	<option value="DWORD">DWORD</option>
+	<option value="LONG">LONG</option>
+	<option value="WORD">WORD</option>
+	<option value="SHORT">SHORT</option>
+	<option value="BYTE">BYTE</option>
+	<option value="CHAR">CHAR</option>
+	<option value="STRING">STRING</option>
+	<option value="DECIMAL">DECIMAL</option>
+			*/
+			switch(settingType) {
+				case 'B':
+				convertedType = 'BYTE';
+				break;
+				case 'W':
+				convertedType = 'WORD';
+				break;
+				case 'S':
+				convertedType = 'STRING';
+				break;
+				default:
+				convertedType = 'STRING';
+				break;
+			}
+			element.value = convertedType;
+		}
 
 		function readOptions() {
 			if (external.Context.Target.O != undefined) {
@@ -304,7 +403,6 @@
 				?>
 					if (id == '<?%Obj2.I?>') {
 						alert('You already have a setting with this name. Setting names must be unique.');
-						set_focus($('#edit_Id')[0]);
 						return false;
 					}
 				<?}?>
@@ -754,6 +852,53 @@
 				elm.focus();
 				elm.select();
 			}
+		}
+
+		function reset_name_option(sel) {
+			var srcFORMTYPE = external.Context.srcFORMTYPE; //get srcFORMTYPE, we may have different process.
+			//Remove all options when it needs to change the value.(sel=edit_VAR_NAME)
+			sel.options.length = 0;
+			ref_src = document.getElementById("edit_VAR_TYPE").value;
+			switch (ref_src) {
+				case "T":
+					var tbl_lib_data = external.XTextEx(TBL_Path);
+					if (!tbl_lib_data) {
+						alert('Cannot locate the tables library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.');
+						//Please enter the correct Reference Path in the main screen.
+						external.EndDialog(0);
+						return;
+					}
+					for (var i = 0; i < tbl_lib_data.TableSet.length; i++) {
+						if (tbl_lib_data.TableSet[i].TBL_STRUCT == 'T')  //*-*-* Add this, cuz the "table" type record are allowed in variable library. (Definiately need to add validation in agg_main later.)
+							addOption(sel, tbl_lib_data.TableSet[i].TBL_NAME, tbl_lib_data.TableSet[i].TBL_NAME);
+					}
+					sel.value = '';
+					break;
+
+				case "S":
+					var stg_lib_data = external.XTextEx(STG_Path);
+					if (!stg_lib_data) {
+						alert('Cannot locate the settings library. \r\n Possible Reasons:\r\n -1.The Reference Path is incorrect. \r\n -2.The Reference Path is correct but the handler is not activated.');
+						external.EndDialog(0);
+						return;
+					}
+					for (var i = 0; i < stg_lib_data.length; i++) {
+						if ((typeof (stg_lib_data[i].NAME) != 'undefined') && (stg_lib_data[i].NAME != null)) //@@
+							addOption(sel, stg_lib_data[i].NAME, stg_lib_data[i].NAME);
+					}
+					sel.value = '';
+					break;
+
+				default:
+					//addNew will go here. So...
+					if (srcFORMTYPE == 'EDIT') {
+						alert('Unrecognized Reference Type.');
+						return;
+					}
+					break;
+
+			}
+			if (sel.value == '') disable_elements(true); //cuz no record...
 		}
 
 		if (typeof String.prototype.trim !== 'function') {

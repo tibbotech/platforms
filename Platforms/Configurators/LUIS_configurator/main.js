@@ -15,6 +15,7 @@ function cleanArray(actual) {
 function Decode(Text) {
 	var XText = new Array;
 	var Lines = Text.split("\n");
+	XText.STG_RefPath= ''; //Reference source. STG
 
 	for (var i = 0; i < Lines.length; i++) {
 		var j = Lines[i].indexOf("\r"); // get rid of \r
@@ -25,15 +26,10 @@ function Decode(Text) {
 			if (Obj)
 				XText.push(Obj);
 		}
-	}
-	for (var i = 0; i < Lines.length; i++) {
-		var j = Lines[i].indexOf("\r"); // get rid of \r
-		var s = j == -1 ? Lines[i] : Lines[i].substr(0, j);
-		if (s.substr(0, 1) == "#") //|| i==0) 
+		else if (s.substr(0,14)=="@@STG_RefPath=")
 		{
-			var Obj = ParseLine(s)
-			if (Obj)
-				XText.push(Obj);
+			s=s.substr(14);
+			XText.STG_RefPath=s;
 		}
 	}
 	//XText.concat
@@ -120,6 +116,9 @@ function Encode(XText) {
 		Text += "\r\n";
 	}
 
+	var s = XText.STG_RefPath; 
+	Text+="@@STG_RefPath="+s+"\r\n";
+	
 	return Text;
 }
 

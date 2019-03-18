@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
 
 <head>
@@ -19,6 +20,25 @@
 		<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img>
 		<div id="VersionTag" class="verRight">LUIS Configurator Version(LUIS) - 0.1.0 &#160;&#160;</div>
 		<h2>Settings Options</h2>
+		<div id="stg_file_div" style="">
+			<table border="0" style=" height:80px; border-collapse: collapse; margin: 0px; padding: 0px;">
+
+				<tr style="background-color:#FFFFFF;">
+					<td>
+						<span
+							title="header=[<img src='info.ico' width='20' height='20'></img> Referenced Library] body=[The option is for Variables. If checked, make sure the filename is correct, and the invoked handler(s) is Activated.]">
+							Reference Library (Settings):
+						</span>
+					</td>
+					<td><input type="text" ID="stg_filename" onpropertychange="syn_path_to_ex();" maxlength="20"
+							value="" /></td>
+					<!-- <td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td> -->
+					<td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td>
+				</tr>
+			</table>
+			<p></p>
+
+		</div>
 	</div>
 	<button type="button" onclick="addGroup()">Add Group</button>
 	<br />
@@ -30,8 +50,12 @@
 
 		var groups = [];
 		var Selected_Arr = [];
+		var old_STG_link_state = new Boolean();	//for trigger onchange
+		var stg_lib_data;
 		$(document).ready(function () {
 			setSDFGroups();
+			show_reference_src();
+			get_link_state();
 		});
 
 		function setSDFGroups() {
@@ -68,12 +92,12 @@
 				out += '<h2><img class="imgleft" src="tdoc.ico" width="30" height="32" />' + group.D + '(' + group.I + ')</h2>';
 				out += '<button type="button" onclick="editGroup(' + group.xIndex + ')">Edit Group</button>';
 				out += '<button type="button" onclick="deleteGroup(' + group.xIndex + ')">Delete Group</button>';
-				out += '<table border="1" class="cls_main_table" id="my_table'+x+'">';
+				out += '<table border="1" class="cls_main_table" id="my_table' + x + '">';
 				out += '<thead class=""><tr style="background-color:#FFD700">'
 				out += '<th>ID</th>';
 				out += '<th>Type</th>';
 				out += '<th>Description</th>';
-				
+
 				out += '<th>Control</th>';
 				out += '<th>Validation</th>';
 				out += '<th>Status</th>';
@@ -87,7 +111,7 @@
 					out += '<td>' + line.I + '</td>';
 					out += '<td>' + line.T + '</td>';
 					out += '<td>' + line.D + '</td>';
-					
+
 					out += '<td>' + line.C + '</td>';
 					out += '<td>' + (line.V != undefined ? line.V : 'none') + '</td>';
 					out += '<td>' + (line.S != undefined ? line.S : 'none') + '</td>';
@@ -232,6 +256,11 @@
 		}
 
 		function Edit() {
+			if (!stg_lib_data) {
+				alert("Please define a valid reference settings file");
+				document.getElementById('stg_filename').focus();
+				return;
+			}
 			if (!Selected_Arr) return;
 			if (Selected_Arr.length == 0) return;
 			var Row = Selected_Arr[0];
@@ -239,8 +268,9 @@
 
 			var Context = new Object;
 			Context.Target = external.XText[Row.xIndex];
+			Context.STG_Path = STG_Path;
 
-			var Result = external.ModalDialog("luis_edit.html", "Edit Setting Item", Context);
+			var Result = external.ModalDialog("luis_edit.html", "Edit Configuration Item", Context);
 			if (Result != 1) {
 				return;
 			}
@@ -256,6 +286,11 @@
 		}
 
 		function Add(rowIndex) {
+			if (!stg_lib_data) {
+				alert("Please define a valid reference settings file");
+				document.getElementById('stg_filename').focus();
+				return;
+			}
 			var Context = new Object;
 			Context.Target = new Object;
 			var Obj = new Object;
@@ -266,8 +301,9 @@
 			Context.Target.C = "EDIT";
 			Context.Target.V = "";
 			Context.Target.S = "";
+			Context.STG_Path = STG_Path;
 
-			var Result = external.ModalDialog("luis_edit.html", "Add New Setting", Context);
+			var Result = external.ModalDialog("luis_edit.html", "Add New Configuration", Context);
 			if (Result != 1)
 				return;
 
@@ -345,13 +381,13 @@
 			ans = confirm('You are going to delete the group ' + Context.Target.D + '\r\n\r\nConfirm to delete it, or Cancel to resume.')
 			if (ans != 1) return;
 
-			
+
 			external.XText.splice(rowIndex, 1);
 
 			var lines = external.XText;
 			var currentGroup = undefined;
 			var out = '';
-			for (var i = rowIndex; i < lines.length; i++) {			
+			for (var i = rowIndex; i < lines.length; i++) {
 				if (lines[i].T != undefined && lines[i].T != 'GROUP') {
 					external.XText.splice(i, 1);
 					i--;
@@ -390,7 +426,7 @@
 			}
 
 			var newIndex = Number(Row.rowIndex) + dir_offset;
-			if (newIndex < 0 || newIndex > eof-1 || external.XText[newIndex].T == 'GROUP') {
+			if (newIndex < 0 || newIndex > eof - 1 || external.XText[newIndex].T == 'GROUP') {
 				return;
 			}
 
@@ -448,12 +484,52 @@
 			}
 			return copy;
 		}
+
+		//show reference source path on the webpage at beginning
+		function show_reference_src() {
+			var obj = document.getElementById("stg_filename");
+			STG_Path = external.XText.STG_RefPath;
+			obj.value = STG_Path;
+		}
+
+		//Check if the reference path value has changed. if so, assign the value to global variables and set modify .
+		function syn_path_to_ex() {//get the value form webpage then compare the value with the old value to see if it has been changed.
+			//If the value(s) have changed, update the changes to the external object. 
+
+			var local_change_flag = false;
+			var tmp_STG = document.getElementById("stg_filename").value;
+			if (tmp_STG != STG_Path) { STG_Path = tmp_STG; local_change_flag = true; }
+
+			if (local_change_flag == true) {
+				external.XText.STG_RefPath = STG_Path;
+				//external.NotificationFilter = STG_Path+'/'+TBL_Path; //reassign this too
+				external.SetModified(true);
+			}
+			get_link_state();
+		}
+
+		//get states(only at beginning)
+		function get_link_state() {
+			stg_lib_data = external.XTextEx(STG_Path);
+			var html_stg_img = document.getElementById("stg_img");
+			if (!stg_lib_data) {
+				html_stg_img.src = 'image\\unplug.jpg';
+			}
+			else {
+				html_stg_img.src = 'image\\plug.jpg';
+			}
+		}
+
+		//show if the AGG interface have linked to the both libs.
+		function show_link_state_stg() {// stg_img tbl_img
+			
+		}
+
 		if (typeof String.prototype.trim !== 'function') {
 			String.prototype.trim = function () {
 				return this.replace(/^\s+|\s+$/g, '');
 			}
 		}
-
 
 	</script>
 </body>
