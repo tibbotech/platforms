@@ -46,7 +46,7 @@
 #define DS1102N 39
 #define TPP2N   40
 #define TPP3N   41
-
+#define NB1010N  42
 
 
 #define LCD_DISABLED 0

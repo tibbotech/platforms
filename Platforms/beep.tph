@@ -174,7 +174,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=NB1010W
+#if PLATFORM_ID=NB1010W or PLATFORM_ID=NB1010N
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).

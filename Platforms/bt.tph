@@ -346,4 +346,23 @@ syscall(796) !bt.setcommitrxdata(byref txdata as string)
 '    set = syscall(799) (value as byte)
 'end property
 
+
+
+
+enum pl_bt_flowcontrol
+'<b>ENUM. </b><br><br> 
+'Contains the list of constants related to the flow control for the bluetooth object.
+    PL_BT_FC_DISABLED, '<b>PLATFORM CONSTANT (DEFAULT). </b><br><br> 
+                'No flow control, the on_bt_overrun event will be received.
+    PL_BT_FC_ENABLED   '<b>PLATFORM CONSTANT. </b><br><br> 
+                'Flow control enabled. When receiving data via reliable writes the data will no longer be accepted once all bluetooth buffers are full. 
+end enum
+
+property bt.flowcontrol
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- DISABLED. </b><br><br> 
+'Sets/returns flow control mode for bluetooth object. When enabled this property will stop receiving data from the bluetooth link when its RX buffer is full. It is only relevant when the application that is sending data to the device is using reliable writes. When this property is enabled it is not possible to receive the on_bt_overrun event. 
+    get = syscall(832) as pl_bt_flowcontrol
+    set = syscall(833) (value as pl_bt_flowcontrol)
+end property
+
 #endif
