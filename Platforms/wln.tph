@@ -343,6 +343,19 @@ syscall(605,TDL_90) wln.writeflashpage(byref page as string) as accepted_rejecte
 'Invoking this method while using the GA1000 device will have no effect. 
 
 '--------------------------------------------------------------------
+#if SYS_VER = 1000
+
+syscall(607,TDL_90) wln.upgrade(region as pl_wln_upgrade_regions, fwlength_l as word, fwlength_h as word , checksum_l as word, checksum_h as word)
+'<b>METHOD. </b><br><br>
+'For the WA2000 Wi-Fi/BLE add-on, initiates copying of the firmware "file" (that was uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory. The target region 'is selected with wln.setupgraderegion.
+'<br><br>
+'The algorithm of upgrading the firmware of the WA2000 is rather complex and it is not possible to explain it in tooltips. For more information see
+'<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
+'<br><br>
+'Invoking this method while using the GA1000 device will have no effect.
+
+#else
+
 syscall(607,TDL_90) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dword, checksum as dword)
 '<b>METHOD. </b><br><br>
 'For the WA2000 Wi-Fi/BLE add-on, initiates copying of the firmware "file" (that was uploaded onto the WA2000 using wln.writeflashpage) from the spare area into the target region of the module's flash memory. The target region 'is selected with wln.setupgraderegion.
@@ -351,6 +364,9 @@ syscall(607,TDL_90) wln.upgrade(region as pl_wln_upgrade_regions, fwlength as dw
 '<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
 '<br><br>
 'Invoking this method while using the GA1000 device will have no effect.
+
+#endif
+
 
 '--------------------------------------------------------------------
 syscall(606,TDL_90) wln.waitforupgradecompletion() as ok_ng    
