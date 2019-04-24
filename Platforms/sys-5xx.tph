@@ -6,6 +6,9 @@ object sys
 'This is the system object that loosely combines "general system" stuff such as initialization (boot) event, buffer
 'management, system timer, and some other miscellaneous properties and methods.
 
+
+
+
 '--------------------------------------------------------------------
 event(2)  on_sys_timer
 '<b>EVENT of the sys object. </b><br><br> Periodic event that is generated at intervals defined by the <font color="maroon"><b>sys.onsystimerperiod </b></font>property.
@@ -151,3 +154,25 @@ syscall(543,"74.TDL") sys.debugprint(byref str as string)
 '<font color="maroon"><b>sys.runmode</b></font>= <font color="olive"><b>1- PL_SYS_MODE_DEBUG</b></font>.
 'The method allows you to trace the execution of your debug application by
 'printing messages in the console output pane of TIDE. 
+
+
+
+#if PLATFORM_ID = EM510W
+'--------------------------------------------------------------------
+property !sys.userbuffpages
+'<b>R/O PROPERTY (WORD). </b><br><br>
+    get = syscall(785) as word
+end property
+
+'--------------------------------------------------------------------
+syscall(628) !sys.getbuffbasesize(buff_num as byte, byref base as dword, byref size as dword)
+
+
+'--------------------------------------------------------------------
+property sys.timercountms
+'<b> PROPERTY (DWORD). </b><br><br>
+    get = syscall(595) as dword
+    set = syscall(596) (value as dword)
+end property
+
+#endif 

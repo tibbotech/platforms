@@ -1,0 +1,117 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			EM510W WITH WI-FI INTERFACE
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#define __notdl
+
+#define PLATFORM_ID 43
+#define SYS_VER 2000
+
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
+#define EXTENDED_SOCK 1
+#define SER_7BIT_LIMITATION 1
+#define PLATFORM_TYPE_32 1
+'#define OBJECT_KP KP_ENABLED
+'#define OBJECT_FD FD_ENABLED
+#define OBJECT_WLN WLN_ENABLED
+#define OBJECT_BT BT_ENABLED
+'#define OBJECT_LCD LCD_ENABLED
+#define COPY_FIRMWARE 1
+#define EXTENDED_FD 1
+
+'--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
+
+'--------------------------------------------------------------------
+enum pl_sock_interfaces
+	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
+	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP=3,	'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
+end enum
+
+'--------------------------------------------------------------------
+enum pl_io_num 
+	PL_IO_NUM_0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 0 (P0.0), aslo the interrupt line 0.<br><br>
+
+	PL_IO_NUM_1_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 1 (P0.1), also the interrupt line 1.<br><br>
+
+	PL_IO_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 2 (P0.2). 				
+
+	PL_IO_NUM_3,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 3 (P0.3). 				
+
+	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 4 (P0.4). 				
+
+	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 5 (P0.5). 				
+
+	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 6 (P0.6). 				
+
+	PL_IO_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 7 (P0.7). 	
+
+	PL_IO_NUM_8_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 8 , aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_9_TX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 9 , also the TX/W1out/dout output of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer.				
+
+	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL line that does not physically exist.
+				'The state of this line is always detected as LOW. Setting this line has no effect.  
+end enum
+
+
+'--------------------------------------------------------------------
+enum pl_io_port_num
+	PL_IO_PORT_NUM_0	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'8-bit port 0, contains I/O lines 0-7.
+				
+	PL_IO_PORT_NUM_1	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'2-bit port 1, contains I/O lines 8-9.				
+end enum
+
+
+'--------------------------------------------------------------------
+enum pl_int_num 
+	PL_INT_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 0 (mapped to I/O line 0).<br><br>
+
+	PL_INT_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 1 (mapped to I/O line 1).<br><br>
+				
+	PL_INT_NULL		'<b>PLATFORM CONSTANT.</b><br><br>This is a NULL interrupt line that does not physically exist.
+end enum
+
+'--------------------------------------------------------------------
+include "..\GEN.tph"
+include "..\SYS-5xx.tph"
+include "..\NET.tph"
+include "..\PPPOE.tph"
+include "..\IO-5xx.tph"
+include "..\FD.tph"
+include "..\WLN.tph"
+include "..\BT.tph"

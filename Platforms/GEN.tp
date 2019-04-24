@@ -164,3 +164,7 @@ value=TPP2N
 [define1.option39
 description=TPP3N
 value=TPP3N
+
+[define1.option40]
+description=EM510W
+value=EM510W
