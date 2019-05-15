@@ -214,4 +214,21 @@ syscall(829,"91.TDL") atan2( y as float, x as float) as float
 'Calculates the square root.
 
 
+'--------------------------------------------------------------------
+property sys.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'Returns the version of the Monitor/Loader.
+    get = syscall(751) as string
+end property
+
+
+'--------------------------------------------------------------------
+property sys.timercount32
+'<b>R/O PROPERTY (DWORD). </b><br><br>
+'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches &hFFFFFFFF it rolls over to 0.<br><br>
+'See also <font color="teal"><b>on_sys_timer </b></font> event.
+    get = syscall(594) as dword
+end property
+
+
 #endif 
