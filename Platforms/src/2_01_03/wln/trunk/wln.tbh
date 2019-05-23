@@ -151,4 +151,5 @@ declare sub callback_wln_rescan_for_better_ap()
 declare sub wln_delay_ms(ms as dword)
 declare sub wln_init()
 declare sub wln_init_gpio()
+declare sub wln_reset()
 #endif '#############################################################

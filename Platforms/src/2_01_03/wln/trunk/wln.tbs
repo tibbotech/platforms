@@ -366,24 +366,10 @@ public sub wln_stop()
 
 	wln_scan_and_assoc_in_prog=NO
 	wln_associated=WLN_ASSOCIATION_RETVAL_NO
-
-	'reset the Wi-Fi module
-	#if WLN_RESET_MODE 
-		'reset is controlled by the combination of CS and CLK
-		io.lineset(wln.csmap,HIGH)
-		io.lineset(wln.clkmap,LOW)
-		io.lineset(wln.clkmap,HIGH)
-	#else	
-		'there is a dedicated reset line
-		'wln.disable()
-		io.num=WLN_RST
-		io.state=LOW
-		wln_delay_ms(1)
-		io.state=HIGH
-	#endif
-	
+	wln.disable()
 	while wln.enabled=YES
-	wend
+	wend	 
+	wln_reset()	 
  
 	'deallocate buffers and release sockets
 	#if WLN_KEEP_ALIVE
