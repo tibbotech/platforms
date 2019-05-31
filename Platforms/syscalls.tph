@@ -663,10 +663,10 @@ syscall(585,"45.TDL") !lshl(byref val as dword, num_bits as byte) as dword
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
-syscall(586,"02.TDL") strtobin(byref dst, byref src as string, size as byte)
+syscall(586,"02.TDL") !strtobin(byref dst, byref src as string, size as byte)
 
 '--------------------------------------------------------------------
-syscall(587,"03.TDL") bintostr(byref dst as string, byref src, size as byte)
+syscall(587,"03.TDL") !bintostr(byref dst as string, byref src, size as byte)
 
 '--------------------------------------------------------------------
 syscall(422,"88.TDL") !debug.tx(byref s as string)
