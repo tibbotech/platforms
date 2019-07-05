@@ -1,0 +1,771 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+	<base href="<?%BaseDir?>" />
+	<style type="text/css">
+		@import url(universal.css);
+	</style>
+	<script src="../libs/jquery-1.12.4.min.js"></script>
+	<style type="text/css">
+		body {
+			font-family: Arial, Helvetica, Sans Serif;
+			overflow: auto;
+		}
+
+		td {
+			font-size: 15px;
+		}
+
+		.fButton {
+			width: 75px;
+		}
+		#auto_size {
+			width: 470px;
+		}
+	</style>
+</head>
+
+<body>
+	<table id="auto_size">
+		<tr>
+			<td>
+				<div id="tab_content">
+					<br>
+					<!----------------------------------------------------------------------->
+					<table id="inner_table">
+						<tr>
+							<td>
+								<div class="posttext">
+
+									<table>
+										<!----------------------------------------------------------------------->
+										<!-- SETTING NAME-->
+										<tr>
+											<td>
+												<span title="header=[ID] body=[ID of setting in corresponding settings file.]">
+													<b>ID:</b>
+												</span>
+											</td>
+											<td>
+												<input type="text" id="edit_Id" maxlength="254" style="width: 175px" value="<?%external.Context.Target.I?>" />
+											</td>
+										</tr>
+										<tr>
+											<td colspan=2>
+												<hr>
+											</td>
+										</tr>
+										<!----------------------------------------------------------------------->
+										<!-- Setting Type -->
+										<tr>
+											<td>
+												<span title="header=[Description] body=[Setting description]">
+													Description:
+												</span>
+											</td>
+											<td>
+												<input type="text" id="edit_Description" maxlength="254" style="width: 175px" value="<?%external.Context.Target.D?>" />
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span title="header=[Notes] body=[Additional notes for the field]">
+													Notes:
+												</span>
+											</td>
+											<td>
+												<textarea id="edit_Notes" rows="2" cols="50"><?%external.Context.Target.N?></textarea>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span title="header=[Setting Type] body=[The type of a field]">
+													Setting Type:
+												</span>
+											</td>
+											<td>
+												<select id="edit_Type" style="width: 175px">
+													<option value="INT">Integer (INT)</option>
+													<option value="DWORD">DWORD</option>
+													<option value="LONG">LONG</option>
+													<option value="WORD">WORD</option>
+													<option value="SHORT">SHORT</option>
+													<option value="BYTE">BYTE</option>
+													<option value="CHAR">CHAR</option>
+													<option value="STRING">STRING</option>
+													<option value="DECIMAL">DECIMAL</option>
+												</select>
+											</td>
+										</tr>
+
+										<tr>
+											<td>
+												<span title="header=[Control Type] body=[The control type used to edit this field.]">
+													Control Type:
+												</span>
+											</td>
+											<td>
+												<select id="edit_Control" style="width: 175px">
+													<option value="STATIC">Static (STATIC)</option>
+													<option value="EDIT">Edit (EDIT)</option>
+													<option value="IPCTRL">IP Control (IPCTRL)</option>
+													<option value="ETHERNETCTRL">Ethernet Control (ETHERNETCTRL)</option>
+												</select>
+											</td>
+										</tr>
+										<tr id="selectOptionsRow" style="display:none;">
+											<td>
+												<p title="header=[P1 Parameter (Min)] body=[Minimum value for byte and word settings, minimum length for string and dot-decimal settings.]">
+													Options:
+												</p>
+											</td>
+											<td>
+												<div id="selectOptions" style="height: 150px; overflow-y: scroll;"></div>
+												<button type="button" onclick="addOption()">Add New Option</button>
+											</td>
+										</tr>
+
+										<tr>
+											<td>
+												<span title="header=[Validation] body=[A C-like expression returning either an empty string &quot;&quot; for SUCCESS, or an error string (e.g. &quot;Value is out of bounds&quot;) in case of an invalid value.]">
+													Validation:
+												</span>
+											</td>
+											<td>
+												<!-- <input type="text" id="edit_Validation" maxlength="254" style="width: 175px" value="<?%external.Context.Target.V?>" /> -->
+												<textarea id="edit_Validation" rows="4" cols="50"><?%external.Context.Target.V?></textarea>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												
+											</td>
+											<td>
+												<div style="font-size: 8pt;">
+													A C-like expression returning either an empty string "" for SUCCESS, or an error string (e.g. "Value is out of bounds") in case of an invalid value.
+													<br/>
+													e.g. RG>0?"":"RG must be greater than 0"
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span title="header=[Status] body=[A C-like expression returning a string, the first character of which must be (case insensitive):
+												
+												E - normal (enabled)
+												I - irrelevant (displayed as grayed &quot;(irrelevant)&quot;)
+												F - fixed (followed by value; cannot edit this setting)
+												A - auto-configured (displayed in red color; still can edit, but the user value may be overriden/ignored, e.g. IP when DHCP is ON)
+												H - hidden (only in the newest TDST -- still unpublished at the moment)
+												]">
+													Status:
+												</span>
+											</td>
+											<td>
+												<textarea id="edit_Status" rows="4" cols="50"><?%external.Context.Target.S?></textarea>
+											</td>
+										</tr>
+										<tr>
+											<td></td>
+											<td>
+												<div style="font-size: 8pt;">
+													A C-like expression returning a string, the first character of which must be (case insensitive):<br/>
+
+													E - normal (enabled)<br/>
+													I - irrelevant (displayed as grayed "(irrelevant)")<br/>
+													F - fixed (followed by value; cannot edit this setting)<br/>
+													A - auto-configured (displayed in red color; still can edit, but the user value may be overriden/ignored, e.g. IP when DHCP is ON)<br/>
+													H - hidden (only in the newest TDST -- still unpublished at the moment)<br/>
+												</div>
+											</td>
+										</tr>
+
+
+									</table>
+								</div>
+								<div id="esc_div" style="display:block;"></div>
+
+
+							</td>
+						</tr>
+					</table>
+
+				</div>
+				<!-----------------------------TAB END(div content)------------------------------------>
+
+				<div style="text-align:right;">
+					<br>
+					<button class="fButton" onclick="OnOK()">OK</button> &nbsp;
+					<button class="fButton" onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+					<button class="fButton" onclick="alert(isNaN(''));//alert(IsNumeric('^'));" style="display : none;">IsNumeric</button>
+					&nbsp;
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<script>
+		//------------------------------init----------------------------------------
+		var options = [];
+		$(document).ready(function () {
+			document.getElementById("edit_Type").value = external.Context.Target.T;
+			document.getElementById("edit_Control").value = external.Context.Target.C;
+			document.getElementById("edit_Description").value = external.Context.Target.D;
+			// $('textarea#edit_Status').val(external.Context.Target.S);
+			if (external.Context.Target.C == 'STATIC') {
+				$('#selectOptionsRow').show();
+			}
+			readOptions();
+			setOptions();
+			$('#edit_Control').change(function () {
+				if ($(this).val() == 'STATIC') {
+					$('#selectOptionsRow').show();
+				}
+				else {
+					$('#selectOptionsRow').hide();
+				}
+			});
+		});
+
+		function readOptions() {
+			if (external.Context.Target.O != undefined) {
+				var parts = external.Context.Target.O.split('/');
+				for (var i = 0; i < parts.length; i += 2) {
+					var text = parts[i];
+					var value = parts[i + 1];
+					options.push({
+						optionText: text,
+						optionValue: value
+					});
+				}
+			}
+		}
+
+		function setOptions() {
+			var out = '';
+			for (var i = 0; i < options.length; i++) {
+				var option = options[i];
+				out += '<div>';
+				out += '<span>label:</span><input type="text" id="option-label-' + i + '" value="' + option.optionText + '"/>';
+				out += '<span>value:</span><input type="text" id="option-value-' + i + '" value="' + option.optionValue + '"/>';
+				out += '<button type="button" onclick="removeOption(' + i + ')">X</button>';
+				out += '</div>';
+			}
+
+			$('#selectOptions').html(out);
+		}
+
+		function addOption() {
+			updateOptions();
+			if (options.length > 0) {
+				var lastOption = options[options.length - 1];
+				var lastOptionId = (options.length - 1).toString();
+				var optionText = lastOption.optionText;
+				var optionValue = lastOption.optionValue;
+				if (optionText.trim() == '' || optionValue.trim() == '') {
+					return;
+				}
+			}
+			options.push({
+				optionText: '',
+				optionValue: ''
+			});
+			setOptions();
+		}
+
+		function updateOptions() {
+			for (var i = 0; i < options.length; i++) {
+				options[i] = {
+					optionText: $('#option-label-' + i.toString()).val(),
+					optionValue: $('#option-value-' + i.toString()).val()
+				}
+			}
+		}
+
+		function removeOption(index) {
+			updateOptions();
+			options.splice(index, 1);
+			setOptions();
+		}
+
+		function OnOK() {
+			var id = $('#edit_Id').val();
+			if (id.trim().length == 0) {
+				alert('ID cannot be empty');
+				return;
+			}
+			var old_name = external.Context.Target.I;
+			if (old_name != id) //don't check if it's oringinal name
+			{
+				<? 
+				for (i = 0; i < external.XText.length; i++) {
+					var Obj2 = external.XText[i];
+				?>
+					if (id == '<?%Obj2.I?>') {
+						alert('You already have a setting with this name. Setting names must be unique.');
+						set_focus($('#edit_Id')[0]);
+						return false;
+					}
+				<?}?>
+			}
+			var controlType = $('#edit_Control').val();
+
+			external.Context.Target.I = id;
+			external.Context.Target.T = $('#edit_Type').val();
+			external.Context.Target.D = $('#edit_Description').val();
+			external.Context.Target.N = $('#edit_Notes').val();
+			if ($('#edit_Validation').val().trim().length > 0) {
+				external.Context.Target.V = $('#edit_Validation').val();
+			}
+			if ($('#edit_Status').val().trim().length > 0) {
+				external.Context.Target.S = $('#edit_Status').val();
+			}
+			external.Context.Target.C = controlType;
+			external.Context.Target.O = "";
+			var validOptions = options.length;
+			if (controlType == "STATIC") {
+				var optionOutput = "";
+				var finalOptions = [];
+				for (var i = 0; i < options.length; i++) {
+					var option = options[i];
+					var optionText = $('#option-label-' + i.toString()).val();
+					var optionValue = $('#option-value-' + i.toString()).val();
+					if (optionText.trim() != '' && optionValue.trim() != '') {
+						finalOptions.push({
+							optionText: optionText,
+							optionValue: optionValue
+						})
+					}
+				}
+				for (var i = 0; i < finalOptions.length; i++) {
+					optionOutput += finalOptions[i].optionText + '/' + finalOptions[i].optionValue;
+					if (i < finalOptions.length - 1) {
+						optionOutput += '/';
+					}
+				}
+				external.Context.Target.O = optionOutput;
+			}
+			external.EndDialog(1);
+		}
+
+
+		var old_name = "<?%external.Context.Target.NAME?>"; //for edit dialog
+
+		var STG_TIMESTAMP = external.Context.TIMESTAMP;
+		var STG_REDUNDANCY = external.Context.REDUNDANCY;
+
+		var already_generate = new Boolean(); already_generate = false; //this flag is for td_inputter.
+		var SelectedRow;																					 //for field table
+		//-----------------------------tooltip--------------------------------------
+
+		if (typeof document.attachEvent != 'undefined') {
+			window.attachEvent('onload', init);
+			document.attachEvent('onmousemove', moveMouse);
+			document.attachEvent('onclick', checkMove);
+		}
+		else {
+			window.addEventListener('load', init, false);
+			document.addEventListener('mousemove', moveMouse, false);
+			document.addEventListener('click', checkMove, false);
+		}
+
+		var oDv = document.createElement("div");
+		var dvHdr = document.createElement("div");
+		var dvBdy = document.createElement("div");
+		var windowlock, boxMove, fixposx, fixposy, lockX, lockY, fixx, fixy, ox, oy, boxLeft, boxRight, boxTop, boxBottom, evt, mouseX, mouseY, boxOpen, totalScrollTop, totalScrollLeft;
+		boxOpen = false;
+		ox = 10;
+		oy = 10;
+		lockX = 0;
+		lockY = 0;
+
+		function init() {
+			oDv.appendChild(dvHdr);
+			oDv.appendChild(dvBdy);
+			oDv.style.position = "absolute";
+			oDv.style.visibility = 'hidden';
+			document.body.appendChild(oDv);
+		}
+
+		function defHdrStyle() {
+			dvHdr.innerHTML = '<img  style="vertical-align:middle"  src="xxx.gif">&nbsp;&nbsp;' + dvHdr.innerHTML;
+			dvHdr.style.fontWeight = 'bold';
+			dvHdr.style.width = '180px'; //def 15
+			dvHdr.style.fontFamily = 'arial';
+			dvHdr.style.border = '1px solid #A5CFE9';
+			dvHdr.style.padding = '3';
+			dvHdr.style.fontSize = '11';
+			dvHdr.style.color = '#ffffff'; '4B7A98';
+			dvHdr.style.background = '#8A0808';//D5EBF9'; 
+			dvHdr.style.filter = 'alpha(opacity=100)'; // IE
+			dvHdr.style.opacity = '0.85'; // FF
+		}
+
+		function defBdyStyle() {
+			dvBdy.style.borderBottom = '1px solid #A5CFE9';
+			dvBdy.style.borderLeft = '1px solid #A5CFE9';
+			dvBdy.style.borderRight = '1px solid #A5CFE9';
+			dvBdy.style.width = '180px';
+			dvBdy.style.fontFamily = 'arial';
+			dvBdy.style.fontSize = '12';
+			dvBdy.style.padding = '3';
+			dvBdy.style.color = '#fffAAA';
+			dvBdy.style.background = '#FA58AC';
+			dvBdy.style.filter = 'alpha(opacity=100)'; // IE
+			dvBdy.style.opacity = '0.90'; // FF
+		}
+
+		function checkElemBO(txt) {
+			if (!txt || typeof (txt) != 'string') return false;
+			if ((txt.indexOf('header') > -1) && (txt.indexOf('body') > -1) && (txt.indexOf('[') > -1) && (txt.indexOf('[') > -1))
+				return true;
+			else
+				return false;
+		}
+
+		function scanBO(curNode) {
+			if (checkElemBO(curNode.title)) {
+				curNode.boHDR = getParam('header', curNode.title);
+				curNode.boBDY = getParam('body', curNode.title);
+				curNode.boCSSBDY = getParam('cssbody', curNode.title);
+				curNode.boCSSHDR = getParam('cssheader', curNode.title);
+				curNode.IEbugfix = (getParam('hideselects', curNode.title) == 'on') ? true : false;
+				curNode.fixX = parseInt(getParam('fixedrelx', curNode.title));
+				curNode.fixY = parseInt(getParam('fixedrely', curNode.title));
+				curNode.absX = parseInt(getParam('fixedabsx', curNode.title));
+				curNode.absY = parseInt(getParam('fixedabsy', curNode.title));
+				curNode.offY = (getParam('offsety', curNode.title) != '') ? parseInt(getParam('offsety', curNode.title)) : 10;
+				curNode.offX = (getParam('offsetx', curNode.title) != '') ? parseInt(getParam('offsetx', curNode.title)) : 10;
+				curNode.fade = (getParam('fade', curNode.title) == 'on') ? true : false;
+				curNode.fadespeed = (getParam('fadespeed', curNode.title) != '') ? getParam('fadespeed', curNode.title) : 0.04;
+				curNode.delay = (getParam('delay', curNode.title) != '') ? parseInt(getParam('delay', curNode.title)) : 0;
+				if (getParam('requireclick', curNode.title) == 'on') {
+					curNode.requireclick = true;
+					document.all ? curNode.attachEvent('onclick', showHideBox) : curNode.addEventListener('click', showHideBox, false);
+					document.all ? curNode.attachEvent('onmouseover', hideBox) : curNode.addEventListener('mouseover', hideBox, false);
+				}
+				else {// Note : if requireclick is on the stop clicks are ignored   			
+					if (getParam('doubleclickstop', curNode.title) != 'off') {
+						document.all ? curNode.attachEvent('ondblclick', pauseBox) : curNode.addEventListener('dblclick', pauseBox, false);
+					}
+					if (getParam('singleclickstop', curNode.title) == 'on') {
+						document.all ? curNode.attachEvent('onclick', pauseBox) : curNode.addEventListener('click', pauseBox, false);
+					}
+				}
+				curNode.windowLock = getParam('windowlock', curNode.title).toLowerCase() == 'off' ? false : true;
+				curNode.title = '';
+				curNode.hasbox = 1;
+			}
+			else
+				curNode.hasbox = 2;
+		}
+
+
+		function getParam(param, list) {
+			var reg = new RegExp('([^a-zA-Z]' + param + '|^' + param + ')\\s*=\\s*\\[\\s*(((\\[\\[)|(\\]\\])|([^\\]\\[]))*)\\s*\\]');
+			var res = reg.exec(list);
+			var returnvar;
+			if (res)
+				return res[2].replace('[[', '[').replace(']]', ']');
+			else
+				return '';
+		}
+
+		function Left(elem) {
+			var x = 0;
+			if (elem.calcLeft)
+				return elem.calcLeft;
+			var oElem = elem;
+			while (elem) {
+				if ((elem.currentStyle) && (!isNaN(parseInt(elem.currentStyle.borderLeftWidth))) && (x != 0))
+					x += parseInt(elem.currentStyle.borderLeftWidth);
+				x += elem.offsetLeft;
+				elem = elem.offsetParent;
+			}
+			oElem.calcLeft = x;
+			return x;
+		}
+
+		function Top(elem) {
+			var x = 0;
+			if (elem.calcTop)
+				return elem.calcTop;
+			var oElem = elem;
+			while (elem) {
+				if ((elem.currentStyle) && (!isNaN(parseInt(elem.currentStyle.borderTopWidth))) && (x != 0))
+					x += parseInt(elem.currentStyle.borderTopWidth);
+				x += elem.offsetTop;
+				elem = elem.offsetParent;
+			}
+			oElem.calcTop = x;
+			return x;
+
+		}
+
+		var ah, ab;
+		function applyStyles() {
+			if (ab)
+				oDv.removeChild(dvBdy);
+			if (ah)
+				oDv.removeChild(dvHdr);
+			dvHdr = document.createElement("div");
+			dvBdy = document.createElement("div");
+			CBE.boCSSBDY ? dvBdy.className = CBE.boCSSBDY : defBdyStyle();
+			CBE.boCSSHDR ? dvHdr.className = CBE.boCSSHDR : defHdrStyle();
+			dvHdr.innerHTML = CBE.boHDR;
+			dvBdy.innerHTML = CBE.boBDY;
+			ah = false;
+			ab = false;
+			if (CBE.boHDR != '') {
+				oDv.appendChild(dvHdr);
+				ah = true;
+			}
+			if (CBE.boBDY != '') {
+				oDv.appendChild(dvBdy);
+				ab = true;
+			}
+		}
+
+		var CSE, iterElem, LSE, CBE, LBE, totalScrollLeft, totalScrollTop, width, height;
+		var ini = false;
+
+		// Customised function for inner window dimension
+		function SHW() {
+			if (document.body && (document.body.clientWidth != 0)) {
+				width = document.body.clientWidth;
+				height = document.body.clientHeight;
+			}
+			if (document.documentElement && (document.documentElement.clientWidth != 0) && (document.body.clientWidth + 20 >= document.documentElement.clientWidth)) {
+				width = document.documentElement.clientWidth;
+				height = document.documentElement.clientHeight;
+			}
+			return [width, height];
+		}
+
+
+		var ID = null;
+		function moveMouse(e) {
+			//boxMove=true;
+			e ? evt = e : evt = event;
+
+			CSE = evt.target ? evt.target : evt.srcElement;
+
+			if (!CSE.hasbox) {
+				// Note we need to scan up DOM here, some elements like TR don't get triggered as srcElement
+				iElem = CSE;
+				while ((iElem.parentNode) && (!iElem.hasbox)) {
+					scanBO(iElem);
+					iElem = iElem.parentNode;
+				}
+			}
+
+			if ((CSE != LSE) && (!isChild(CSE, dvHdr)) && (!isChild(CSE, dvBdy))) {
+				if (!CSE.boxItem) {
+					iterElem = CSE;
+					while ((iterElem.hasbox == 2) && (iterElem.parentNode))
+						iterElem = iterElem.parentNode;
+					CSE.boxItem = iterElem;
+				}
+				iterElem = CSE.boxItem;
+				if (CSE.boxItem && (CSE.boxItem.hasbox == 1)) {
+					LBE = CBE;
+					CBE = iterElem;
+					if (CBE != LBE) {
+						applyStyles();
+						if (!CBE.requireclick)
+							if (CBE.fade) {
+								if (ID != null)
+									clearTimeout(ID);
+								ID = setTimeout("fadeIn(" + CBE.fadespeed + ")", CBE.delay);
+							}
+							else {
+								if (ID != null)
+									clearTimeout(ID);
+								COL = 1;
+								ID = setTimeout("oDv.style.visibility='visible';ID=null;", CBE.delay);
+							}
+						if (CBE.IEbugfix) { hideSelects(); }
+						fixposx = !isNaN(CBE.fixX) ? Left(CBE) + CBE.fixX : CBE.absX;
+						fixposy = !isNaN(CBE.fixY) ? Top(CBE) + CBE.fixY : CBE.absY;
+						lockX = 0;
+						lockY = 0;
+						boxMove = true;
+						ox = CBE.offX ? CBE.offX : 10;
+						oy = CBE.offY ? CBE.offY : 10;
+					}
+				}
+				else if (!isChild(CSE, dvHdr) && !isChild(CSE, dvBdy) && (boxMove)) {
+					// The conditional here fixes flickering between tables cells.
+					if ((!isChild(CBE, CSE)) || (CSE.tagName != 'TABLE')) {
+						CBE = null;
+						if (ID != null)
+							clearTimeout(ID);
+						fadeOut();
+						showSelects();
+					}
+				}
+				LSE = CSE;
+			}
+			else if (((isChild(CSE, dvHdr) || isChild(CSE, dvBdy)) && (boxMove))) {
+				totalScrollLeft = 0;
+				totalScrollTop = 0;
+
+				iterElem = CSE;
+				while (iterElem) {
+					if (!isNaN(parseInt(iterElem.scrollTop)))
+						totalScrollTop += parseInt(iterElem.scrollTop);
+					if (!isNaN(parseInt(iterElem.scrollLeft)))
+						totalScrollLeft += parseInt(iterElem.scrollLeft);
+					iterElem = iterElem.parentNode;
+				}
+				if (CBE != null) {
+					boxLeft = Left(CBE) - totalScrollLeft;
+					boxRight = parseInt(Left(CBE) + CBE.offsetWidth) - totalScrollLeft;
+					boxTop = Top(CBE) - totalScrollTop;
+					boxBottom = parseInt(Top(CBE) + CBE.offsetHeight) - totalScrollTop;
+					doCheck();
+				}
+			}
+
+			if (boxMove && CBE) {
+				// This added to alleviate bug in IE6 w.r.t DOCTYPE
+				bodyScrollTop = document.documentElement && document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+				bodyScrollLet = document.documentElement && document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft;
+				mouseX = evt.pageX ? evt.pageX - bodyScrollLet : evt.clientX - document.body.clientLeft;
+				mouseY = evt.pageY ? evt.pageY - bodyScrollTop : evt.clientY - document.body.clientTop;
+				if ((CBE) && (CBE.windowLock)) {
+					mouseY < -oy ? lockY = -mouseY - oy : lockY = 0;
+					mouseX < -ox ? lockX = -mouseX - ox : lockX = 0;
+					mouseY > (SHW()[1] - oDv.offsetHeight - oy) ? lockY = -mouseY + SHW()[1] - oDv.offsetHeight - oy : lockY = lockY;
+					mouseX > (SHW()[0] - dvBdy.offsetWidth - ox) ? lockX = -mouseX - ox + SHW()[0] - dvBdy.offsetWidth : lockX = lockX;
+				}
+				oDv.style.left = ((fixposx) || (fixposx == 0)) ? fixposx : bodyScrollLet + mouseX + ox + lockX + "px";
+				oDv.style.top = ((fixposy) || (fixposy == 0)) ? fixposy : bodyScrollTop + mouseY + oy + lockY + "px";
+
+			}
+		}
+
+		function doCheck() {
+			if ((mouseX < boxLeft) || (mouseX > boxRight) || (mouseY < boxTop) || (mouseY > boxBottom)) {
+				if (!CBE.requireclick)
+					fadeOut();
+				if (CBE.IEbugfix) { showSelects(); }
+				CBE = null;
+			}
+		}
+
+		function pauseBox(e) {
+			e ? evt = e : evt = event;
+			boxMove = false;
+			evt.cancelBubble = true;
+		}
+
+		function showHideBox(e) {
+			oDv.style.visibility = (oDv.style.visibility != 'visible') ? 'visible' : 'hidden';
+		}
+
+		function hideBox(e) {
+			oDv.style.visibility = 'hidden';
+		}
+
+		var COL = 0;
+		var stopfade = false;
+		function fadeIn(fs) {
+			ID = null;
+			COL = 0;
+			oDv.style.visibility = 'visible';
+			fadeIn2(fs);
+		}
+
+		function fadeIn2(fs) {
+			COL = COL + fs;
+			COL = (COL > 1) ? 1 : COL;
+			oDv.style.filter = 'alpha(opacity=' + parseInt(100 * COL) + ')';
+			oDv.style.opacity = COL;
+			if (COL < 1)
+				setTimeout("fadeIn2(" + fs + ")", 20);
+		}
+
+
+		function fadeOut() {
+			oDv.style.visibility = 'hidden';
+
+		}
+
+		function isChild(s, d) {
+			while (s) {
+				if (s == d)
+					return true;
+				s = s.parentNode;
+			}
+			return false;
+		}
+
+		var cSrc;
+		function checkMove(e) {
+			e ? evt = e : evt = event;
+			cSrc = evt.target ? evt.target : evt.srcElement;
+			if ((!boxMove) && (!isChild(cSrc, oDv))) {
+				fadeOut();
+				if (CBE && CBE.IEbugfix) { showSelects(); }
+				boxMove = true;
+				CBE = null;
+			}
+		}
+
+		function showSelects() {
+			var elements = document.getElementsByTagName("select");
+			for (i = 0; i < elements.length; i++) {
+				elements[i].style.visibility = 'visible';
+			}
+		}
+
+		function hideSelects() {
+			var elements = document.getElementsByTagName("select");
+			for (i = 0; i < elements.length; i++) {
+				elements[i].style.visibility = 'hidden';
+			}
+		}
+		//------------------trim   function-------------------------------------------------
+		function trim(stringToTrim) {
+			return stringToTrim.replace(/^\s+|\s+$/g, "");
+		}
+		function ltrim(stringToTrim) {
+			return stringToTrim.replace(/^\s+/, "");
+		}
+		function rtrim(stringToTrim) {
+			return stringToTrim.replace(/\s+$/, "");
+		}
+
+		// ---------------------clear all----------------------
+		function clear_all() {
+			var HTML_DEFVAL = document.getElementById("edit_DEFVAL");
+			HTML_DEFVAL.value = '';
+			reset_mem_list();
+			get_list_value();
+		}
+
+		function set_focus(elm) {
+			if (typeof (elm) == 'string') {
+				elm = xGetElementById(elm);
+			}
+			if (elm) {
+				elm.focus();
+				elm.select();
+			}
+		}
+
+		if (typeof String.prototype.trim !== 'function') {
+			String.prototype.trim = function () {
+				return this.replace(/^\s+|\s+$/g, '');
+			}
+		}
+
+
+	</script>
+
+
+</body>
+
+</html>

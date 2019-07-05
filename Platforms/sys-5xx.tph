@@ -151,3 +151,84 @@ syscall(543,"74.TDL") sys.debugprint(byref str as string)
 '<font color="maroon"><b>sys.runmode</b></font>= <font color="olive"><b>1- PL_SYS_MODE_DEBUG</b></font>.
 'The method allows you to trace the execution of your debug application by
 'printing messages in the console output pane of TIDE. 
+
+
+
+#if PLATFORM_ID = EM510W
+'--------------------------------------------------------------------
+property !sys.userbuffpages
+'<b>R/O PROPERTY (WORD). </b><br><br>
+    get = syscall(785) as word
+end property
+
+'--------------------------------------------------------------------
+syscall(628) !sys.getbuffbasesize(buff_num as byte, byref base as dword, byref size as dword)
+
+
+'--------------------------------------------------------------------
+property sys.timercountms
+'<b> PROPERTY (DWORD). </b><br><br>
+    get = syscall(595) as dword
+    set = syscall(596) (value as dword)
+end property
+
+
+'--------------------------------------------------------------------
+syscall(808,"91.TDL") sin( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the sin of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(809,"91.TDL") asin( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc sin. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(810,"91.TDL") cos( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the cos of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(811,"91.TDL") acos( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc cos. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(812,"91.TDL") tan( angle as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the tan of angle. Angle is specified in degrees
+
+'--------------------------------------------------------------------
+syscall(813,"91.TDL") atan( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the arc tan. Return value angle is in degrees
+
+'--------------------------------------------------------------------
+syscall(828,"91.TDL") sqrt( x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
+
+'--------------------------------------------------------------------
+syscall(829,"91.TDL") atan2( y as float, x as float) as float
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the square root.
+
+
+'--------------------------------------------------------------------
+property sys.monversion
+'<b>R/O PROPERTY (STRING). </b><br><br>
+'Returns the version of the Monitor/Loader.
+    get = syscall(751) as string
+end property
+
+
+'--------------------------------------------------------------------
+property sys.timercount32
+'<b>R/O PROPERTY (DWORD). </b><br><br>
+'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches &hFFFFFFFF it rolls over to 0.<br><br>
+'See also <font color="teal"><b>on_sys_timer </b></font> event.
+    get = syscall(594) as dword
+end property
+
+
+#endif 

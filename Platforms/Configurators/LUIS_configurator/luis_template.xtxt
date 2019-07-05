@@ -1,0 +1,24 @@
+I=$RD;D=Radio;T=GROUP
+I=MM;D=Modem Mode;T=INT;C=STATIC;O=0- FSK Mode/0/1- LoRa Mode/1
+I=RB;D=Radio Band;T=INT;C=STATIC;O=0- 868MHz/0/1- 915MHz/1
+I=RP;D=Radio Power;T=INT;C=EDIT;V=RP<0||RP>20?"Must be between 0 and 20":""
+I=BF;D=Radio Band Frequency;T=INT;C=EDIT;V=(RB==0&&(BF>870000000||BF<863000000))||(RB==1&&(BF>928000000||BF<902000000))?"must be between 863000000~870000000 for 868MHz and between 902000000~928000000 for 915MHz":""
+I=FD;D=FSK Deviation Frequency;T=INT;C=EDIT;S=MM==0?"e":"i";V=FD>200000&&FD<600?"must be between 600 and 200000":""
+I=DR;D=Data Rate;T=INT;C=STATIC;S=MM==1?"e":"i";O=6- 64 chips/6/7- 128chips/7/8- 256chips/8/9- 512chips/9/10- 1024chips/10/11- 2048chips/11/12- 4096chips/12
+I=CR;D=Error Coding Rate;T=INT;C=STATIC;S=MM==1?"e":"i";O=1- 415/1/2- 416/2/3- 417/3/4- 418/4
+I=BW;D=Radio Bandwidth;T=INT;C=STATIC;O=0- 125K/0/1- 250K/1/2- 500K/2
+I=AB;D=Radio AFC Bandwidth;T=INT;C=STATIC;O=2600/0/3100/1/3900/2/5200/3/6300/4/7800/5/10400/6/12500/7/15600/8/20800/9/2500/10/31300/11/41700/12/50000/13/62500/14/8333/15/100000/16/12500/17/166700/18/200000/19/250K/20/300K/21
+I=CE;D=Radio CRC Enabled/Disabled;T=INT;C=STATIC;O=0- Disabled/0/1- Enabled/1
+I=TA;D=Radio Target Address;T=INT;C=EDIT;V=TA<0||TA>65535?"Must be between 0 and 0xFFFF":""
+I=DA;D=Radio Device Address;T=INT;C=EDIT;V=DA<0||DA>65535?"Must be between 0 and 0xFFFF":""
+
+I=$TM;D=Timing;T=GROUP
+I=LT;D=Device Link Check Timeout;T=INT;C=EDIT;V=LT<1000||LT>5000?"Must be between 1000 and 5000":""
+I=LS;D=Device Link Check Sleep Time;T=INT;C=EDIT;V=LS<60||LS>65535?"Must be between 60 and 0xFFFF":""
+I=ST;D=Deivce Sensor Type;T=INT;C=STATIC;O=0- H1H6130/0/1- ADXL312/1/2- MCP9808/2/3- BH1721FVL/3/4- Flood/4
+I=NT;D=Normal Send Timeout;T=INT;C=EDIT;V=NT<1000||NT>5000?"Must be between 1000 and 5000":""
+I=NS;D=Normal Sleep Time;T=INT;C=EDIT;V=NS<60||NT>65535?"Must be between 60 and 0xFFFF":""
+I=LX;D=Link Check TX Timeout;T=INT;C=EDIT;V=LX<1000||LX>5000?"Must be between 1000 and 5000":""
+I=NX;D=Normal Radio TX Timeout;T=INT;C=EDIT;V=NX<1000||NX>5000?"Must be between 1000 and 5000":""
+
+@@STG_RefPath=settings.xtxt

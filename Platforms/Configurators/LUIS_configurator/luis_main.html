@@ -1,0 +1,537 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw" lang="zh-tw">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+	<title>SETTING INTERFACE</title>
+	<base href="<?%BaseDir?>" />
+	<script src="../libs/jquery-1.12.4.min.js"></script>
+	<style type="text/css">
+		@import url(universal.css);
+	</style>
+
+</head>
+
+<body>
+
+	<div class="posttext">
+		<img class="imgleft" src="tdoc.ico" width="30" height="32" /></img>
+		<div id="VersionTag" class="verRight">LUIS Configurator Version(LUIS) - 0.1.0 &#160;&#160;</div>
+		<h2>Settings Options</h2>
+		<div id="stg_file_div" style="">
+			<table border="0" style=" height:80px; border-collapse: collapse; margin: 0px; padding: 0px;">
+
+				<tr style="background-color:#FFFFFF;">
+					<td>
+						<span
+							title="header=[<img src='info.ico' width='20' height='20'></img> Referenced Library] body=[The option is for Variables. If checked, make sure the filename is correct, and the invoked handler(s) is Activated.]">
+							Reference Library (Settings):
+						</span>
+					</td>
+					<td><input type="text" ID="stg_filename" onpropertychange="syn_path_to_ex();" maxlength="20"
+							value="" /></td>
+					<!-- <td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td> -->
+					<td><img ID="stg_img" src='image\plug.jpg' width='40' height='20'></img></td>
+				</tr>
+			</table>
+			<p></p>
+
+		</div>
+	</div>
+	<button type="button" onclick="addGroup()">Add Group</button>
+	<br />
+	<br />
+	<div class="posttext" id="groups">
+	</div>
+
+	<script>
+
+		var groups = [];
+		var Selected_Arr = [];
+		var old_STG_link_state = new Boolean();	//for trigger onchange
+		var stg_lib_data;
+		$(document).ready(function () {
+			setSDFGroups();
+			show_reference_src();
+			get_link_state();
+		});
+
+		function setSDFGroups() {
+			groups = [];
+			var lines = external.XText;
+			var currentGroup = undefined;
+			var out = '';
+			for (var i = 0; i < lines.length; i++) {
+				var line = lines[i];
+				if (line.T == 'GROUP') {
+					if (currentGroup != undefined) {
+						groups.push(currentGroup);
+					}
+					currentGroup = clone(line);
+					currentGroup.items = [];
+					currentGroup.xIndex = i;
+				}
+				else {
+					var item = line;
+					item.xIndex = i;
+					if (currentGroup != undefined) {
+						currentGroup.items.push(item);
+					}
+
+				}
+			}
+			if (currentGroup != undefined) {
+				groups.push(currentGroup);
+			}
+
+			for (var x = 0; x < groups.length; x++) {
+				var group = groups[x];
+				out += '<div id="group-' + x + '">'
+				out += '<h2><img class="imgleft" src="tdoc.ico" width="30" height="32" />' + group.D + '(' + group.I + ')</h2>';
+				out += '<button type="button" onclick="editGroup(' + group.xIndex + ')">Edit Group</button>';
+				out += '<button type="button" onclick="deleteGroup(' + group.xIndex + ')">Delete Group</button>';
+				out += '<table border="1" class="cls_main_table" id="my_table' + x + '">';
+				out += '<thead class=""><tr style="background-color:#FFD700">'
+				out += '<th>ID</th>';
+				out += '<th>Type</th>';
+				out += '<th>Description</th>';
+
+				out += '<th>Control</th>';
+				out += '<th>Validation</th>';
+				out += '<th>Status</th>';
+				out += '</tr></thead>'
+				out += '<tbody>';
+				var lastLineInGroup = group.xIndex;
+				for (var i = 0; i < group.items.length; i++) {
+					var line = group.items[i];
+					var xI = line.xIndex;
+					out += '<tr id="item-' + xI + '" onmousedown="Multi_select(undefined, ' + xI + ')" xIndex="' + xI + '" ondblclick="Edit();" rowIndex="' + xI + '" groupIndex="' + x + '">';
+					out += '<td>' + line.I + '</td>';
+					out += '<td>' + line.T + '</td>';
+					out += '<td>' + line.D + '</td>';
+
+					out += '<td>' + line.C + '</td>';
+					out += '<td>' + (line.V != undefined ? line.V : 'none') + '</td>';
+					out += '<td>' + (line.S != undefined ? line.S : 'none') + '</td>';
+					out += '</tr>';
+					lastLineInGroup = line.xIndex;
+				}
+				out += '</tbody>';
+				out += '</table><br/>';
+				out += '<p>\
+					<button style="WIDTH: 80px; HEIGHT: 25px" onclick = "Add('+ lastLineInGroup + ');">Add</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Edit();">Edit</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick = "Delete(Selected_Arr);">Delete</button>&nbsp;\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick="move_to_next(\'up\');">Move Up</button>\
+					<button class="item-action" style="WIDTH: 80px; HEIGHT: 25px" onclick="move_to_next(\'down\');">Move Down</button>\
+					</p>';
+				out += '</div>';
+			}
+
+			$('#groups').html(out);
+
+			$('.item-action').hide();
+		}
+
+		function editItem(lineIndex) {
+			var item = undefined;
+			for (var i = 0; i < groups.length; i++) {
+				var group = groups[i];
+				for (var j = 0; j < group.items.length; j++) {
+					if (group.items[j].xIndex == lineIndex) {
+						item = group.items[j];
+						break;
+					}
+				}
+			}
+			return;
+			if (item != undefined) {
+				var Context = new Object;
+				Context.Target = external.XText[item.xIndex];
+
+				var Result = external.ModalDialog("luis_edit.html", "Edit Definition Item", Context);
+				if (Result != 1) {
+					return;
+				}
+			}
+		}
+
+		function Multi_select(Row, rowIndex) {
+			if (Row == undefined) {
+				Row = document.getElementById('item-' + rowIndex.toString());
+			}
+			var ctrlPressed = 0;
+			var altPressed = 0;
+			var shiftPressed = 0;
+			if (parseInt(navigator.appVersion) > 3) {
+				var evt = navigator.appName == "Netscape" ? e : event;
+				if (evt != null)  //this for if we excute the function not by physical action.
+				{
+					if (navigator.appName == "Netscape" && parseInt(navigator.appVersion) == 4) {
+						var mString = (e.modifiers + 32).toString(2).substring(3, 6);
+						shiftPressed = (mString.charAt(0) == "1");
+						ctrlPressed = (mString.charAt(1) == "1");
+						altPressed = (mString.charAt(2) == "1");
+						self.status = "modifiers=" + e.modifiers + " (" + mString + ")"
+					}
+					else {
+						shiftPressed = evt.shiftKey;
+						altPressed = evt.altKey;
+						ctrlPressed = evt.ctrlKey;
+						self.status = ""
+							+ "shiftKey=" + shiftPressed
+							+ ", altKey=" + altPressed
+							+ ", ctrlKey=" + ctrlPressed
+					}
+				}
+			}
+			var currentGroup = undefined;
+			//start processing
+			if (ctrlPressed) { //alert('Ctrl');
+				//check in same group
+				if (Selected_Arr.length > 0) {
+					currentGroup = undefined;
+					for (var i = 0; i < Selected_Arr.length; i++) {
+						if (currentGroup == undefined) {
+							currentGroup = Selected_Arr[i].groupIndex;
+						}
+					}
+					if (Row.groupIndex != currentGroup) {
+						clear_selected_arr();
+						$('.item-action').hide();
+					}
+					currentGroup = Row.groupIndex;
+				}
+
+
+				var s_flag = chk_if_already_selected(Row);
+				if (s_flag == false) {
+					Row.bgColor = 0xff9080;
+					Selected_Arr.push(Row);
+				}
+			}
+			else {
+				currentGroup = Row.groupIndex;
+				clear_selected_arr();		//reset 
+				Row.bgColor = 0xff9080;
+				Selected_Arr.push(Row);
+			}
+
+			$('#group-' + currentGroup + ' .item-action').show();
+			return true;
+		}
+
+		//chk_if_selected 1.chk 2.unselecte it if it already in the array.
+		function chk_if_already_selected(Row) {
+			var s_flag = false;
+			var tmp_index_in_arr = new Number();
+			if (Selected_Arr.length == 0) return s_flag;
+			for (var i = 0; i < Selected_Arr.length; i++) {
+				if (Row.rowIndex == Selected_Arr[i].rowIndex) {
+					s_flag = true;
+					tmp_index_in_arr = i;
+				}
+			}
+
+			if (s_flag == true) {//already selected
+				if (Selected_Arr.length > 1) //unselecte it (only if length>1)
+				{
+					Selected_Arr[tmp_index_in_arr].bgColor = 0xffffff;
+					Selected_Arr.splice(tmp_index_in_arr, 1); //delete it from array.
+				}
+			}
+			return s_flag;
+		}
+
+		//reset array 1.change color back 2.clear all element
+		function clear_selected_arr() {
+			if (Selected_Arr.length == 0) return;
+			for (var i = 0; i < Selected_Arr.length; i++) {
+				Selected_Arr[i].bgColor = 0xffffff;
+			}
+			Selected_Arr.length = 0;
+			$('.item-action').hide();
+		}
+
+		function Edit() {
+			if (!stg_lib_data) {
+				alert("Please define a valid reference settings file");
+				document.getElementById('stg_filename').focus();
+				return;
+			}
+			if (!Selected_Arr) return;
+			if (Selected_Arr.length == 0) return;
+			var Row = Selected_Arr[0];
+			Multi_select(Row);
+
+			var Context = new Object;
+			Context.Target = external.XText[Row.xIndex];
+			Context.STG_Path = STG_Path;
+
+			var Result = external.ModalDialog("luis_edit.html", "Edit Configuration Item", Context);
+			if (Result != 1) {
+				return;
+			}
+
+			$(Row).find('td').eq(0).html(Context.Target.I);
+			$(Row).find('td').eq(1).html(Context.Target.T);
+			$(Row).find('td').eq(2).html(Context.Target.D);
+			$(Row).find('td').eq(3).html(Context.Target.C);
+			$(Row).find('td').eq(4).html(Context.Target.V);
+			$(Row).find('td').eq(5).html(Context.Target.S);
+
+			external.SetModified(true);
+		}
+
+		function Add(rowIndex) {
+			if (!stg_lib_data) {
+				alert("Please define a valid reference settings file");
+				document.getElementById('stg_filename').focus();
+				return;
+			}
+			var Context = new Object;
+			Context.Target = new Object;
+			var Obj = new Object;
+			// initial value of ADD dialog box(caution: note that must be by order)
+			Context.Target.I = "";
+			Context.Target.T = "INT";
+			Context.Target.D = "";
+			Context.Target.C = "EDIT";
+			Context.Target.V = "";
+			Context.Target.S = "";
+			Context.STG_Path = STG_Path;
+
+			var Result = external.ModalDialog("luis_edit.html", "Add New Configuration", Context);
+			if (Result != 1)
+				return;
+
+			external.XText.splice(rowIndex + 1, 0, Context.Target);    //insert new record behind the setting records.(but before the "#define...." list.)
+			external.SetModified(true);
+
+			setSDFGroups();
+		}
+
+		function Delete() {
+			if (!Selected_Arr) return;
+			if (Selected_Arr.length == 0) return;
+
+			if (Selected_Arr.length > 1) {
+				var ans;
+				ans = confirm('You are going to delete the ' + Selected_Arr.length + ' selected records.\r\n\r\nConfirm to delete them, or Cancel to resume.')
+				if (ans != 1) return;
+			}
+			for (var i = Selected_Arr.length - 1; i > -1; i--) {
+				var Row = Selected_Arr[i];
+				external.XText.splice(Row.rowIndex, 1);
+			}
+			external.SetModified(true);
+			Selected_Arr.length = 0;
+
+			setSDFGroups();
+		}
+
+		function validate_all() {
+			var all_ok = true;
+
+			return all_ok;
+		}
+
+		function addGroup() {
+			var Context = new Object;
+			Context.Target = new Object;
+			var Obj = new Object;
+			// initial value of ADD dialog box(caution: note that must be by order)
+			Context.Target.I = "";
+			Context.Target.D = "";
+			Context.Target.T = "GROUP";
+
+			var Result = external.ModalDialog("luis_group_edit.html", "Add New Group", Context);
+			if (Result != 1)
+				return;
+
+
+			var eof = get_eof_index();
+
+			external.XText.splice(eof, 0, Context.Target);    //insert new record behind the setting records.(but before the "#define...." list.)
+			external.SetModified(true);
+
+			setSDFGroups();
+		}
+
+		function editGroup(rowIndex) {
+			var Context = new Object;
+			Context.Target = external.XText[rowIndex];
+
+			var Result = external.ModalDialog("luis_group_edit.html", "Add New Group", Context);
+			if (Result != 1)
+				return;
+
+			external.SetModified(true);
+
+			setSDFGroups();
+		}
+
+		function deleteGroup(rowIndex) {
+			var Context = new Object;
+			Context.Target = external.XText[rowIndex];
+
+			var ans;
+			ans = confirm('You are going to delete the group ' + Context.Target.D + '\r\n\r\nConfirm to delete it, or Cancel to resume.')
+			if (ans != 1) return;
+
+
+			external.XText.splice(rowIndex, 1);
+
+			var lines = external.XText;
+			var currentGroup = undefined;
+			var out = '';
+			for (var i = rowIndex; i < lines.length; i++) {
+				if (lines[i].T != undefined && lines[i].T != 'GROUP') {
+					external.XText.splice(i, 1);
+					i--;
+				}
+				else {
+					break;
+				}
+			}
+
+			external.SetModified(true);
+
+			setSDFGroups();
+		}
+
+		//move_to_next(up/down)			//Selected_Arr
+		function move_to_next(Dir) {
+			if (!Dir) return;
+			//0.check eof
+			var dir_offset = new Number();
+			if (!Selected_Arr) return;
+			if (Selected_Arr.length == 0) return;
+			var Row = Selected_Arr[0];
+			Multi_select(Row);
+
+
+			if (!Row) return;																												//It means no pointer in the table. Nothing to move.
+			if (!external.XText) return;																						//if the XTXT Object is not avaiable, exit function.
+
+			if (Dir == 'up') {
+				dir_offset = -1;
+			}
+			else {
+				var eof = get_eof_index();																							//external.XText.length
+				if (eof <= (Row.rowIndex)) return;																			//if (external.XText.length<=(Row.rowIndex)) return; //Avoid that the index is out of the range.	
+				dir_offset = 1;
+			}
+
+			var newIndex = Number(Row.rowIndex) + dir_offset;
+			if (newIndex < 0 || newIndex > eof - 1 || external.XText[newIndex].T == 'GROUP') {
+				return;
+			}
+
+			//1.get the selected record. then delete it. then insert it.
+			Selected_Arr.length = 0;//Selected_Arr = null;
+			var tmp_Row_Index = Number(Row.rowIndex);
+			var tmp_record_obj = external.XText[tmp_Row_Index];											//get the whole record(single).
+			external.XText.splice(tmp_Row_Index, 1); 																//1. delete it first
+			external.XText.splice(tmp_Row_Index + dir_offset, 0, tmp_record_obj); 			//2. then insert	
+			external.SetModified(true);
+
+
+			//2.refresh(reload) the HTML Table(Parent).
+			setSDFGroups();
+
+			//3.Set the pointer to the record that we just moved. 
+			var cur_fld_index = tmp_Row_Index + dir_offset;																			//tmp_Row_Index+(dir_offset+1)
+			point_on_index(cur_fld_index);
+		}
+
+
+		function point_on_index(p_index) {
+			if (isNaN(p_index)) return;
+			Multi_select(undefined, p_index);
+		}
+
+
+		//EOF   function-------
+		function get_eof_index() {
+			//get index of the end of the setting(not define_data_list)
+			//xtext is sorted in the beginning, therefore the first found would be the eof of the setting.
+			var i = 0;
+			for (i = 0; i < external.XText.length; i++) {
+				if (typeof (external.XText[i].CONFIG) != 'undefined') {
+					return i;
+				}
+			}
+			//return (external.XText.length);
+			return i;
+		}
+
+		//clear all config-------
+		function clear_all_config() {
+			// xtext is sorted in the beginning, therefore the first found would be the eof of the setting.
+			var start_pos = get_eof_index();
+			external.XText.splice(start_pos, Number(external.XText.length));
+			//external.SetModified(true); //fff 
+		}
+
+		function clone(obj) {
+			if (null == obj || "object" != typeof obj) return obj;
+			var copy = obj.constructor();
+			for (var attr in obj) {
+				if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+			}
+			return copy;
+		}
+
+		//show reference source path on the webpage at beginning
+		function show_reference_src() {
+			var obj = document.getElementById("stg_filename");
+			STG_Path = external.XText.STG_RefPath;
+			obj.value = STG_Path;
+		}
+
+		//Check if the reference path value has changed. if so, assign the value to global variables and set modify .
+		function syn_path_to_ex() {//get the value form webpage then compare the value with the old value to see if it has been changed.
+			//If the value(s) have changed, update the changes to the external object. 
+
+			var local_change_flag = false;
+			var tmp_STG = document.getElementById("stg_filename").value;
+			if (tmp_STG != STG_Path) { STG_Path = tmp_STG; local_change_flag = true; }
+
+			if (local_change_flag == true) {
+				external.XText.STG_RefPath = STG_Path;
+				//external.NotificationFilter = STG_Path+'/'+TBL_Path; //reassign this too
+				external.SetModified(true);
+			}
+			get_link_state();
+		}
+
+		//get states(only at beginning)
+		function get_link_state() {
+			stg_lib_data = external.XTextEx(STG_Path);
+			var html_stg_img = document.getElementById("stg_img");
+			if (!stg_lib_data) {
+				html_stg_img.src = 'image\\unplug.jpg';
+			}
+			else {
+				html_stg_img.src = 'image\\plug.jpg';
+			}
+		}
+
+		//show if the AGG interface have linked to the both libs.
+		function show_link_state_stg() {// stg_img tbl_img
+			
+		}
+
+		if (typeof String.prototype.trim !== 'function') {
+			String.prototype.trim = function () {
+				return this.replace(/^\s+|\s+$/g, '');
+			}
+		}
+
+	</script>
+</body>
+
+</html>

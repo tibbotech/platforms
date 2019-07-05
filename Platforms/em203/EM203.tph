@@ -1467,7 +1467,7 @@ end property
 property sock.rxpacketlen
 'R/O PROPERTY (WORD), DEFAULT VALUE= 0 (0 bytes).
 'For the selected socket (selection is made through sock.num) returns the length (in bytes) of the UDP datagram
-'being extracted from the RX buffer. This property is only relevant when the sock.protocol= 1-PL_SOCK_PROTOCOL_TCP. Correct
+'being extracted from the RX buffer. This property is only relevant when the sock.protocol= 1-PL_SOCK_PROTOCOL_UDP. Correct
 'way of using this property is within the on_sock_data_arrival event or in conjunction with the sock.nextpacket
 'method. See also sock.rxlen property.
 	get = syscall(241) as word

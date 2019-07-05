@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+	<base href="<?%BaseDir?>" />
+	<style type="text/css">
+		@import url(universal.css);
+	</style>
+	<script src="../libs/jquery-1.12.4.min.js"></script>
+	<style type="text/css">
+		body {
+			font-family: Arial, Helvetica, Sans Serif;
+			overflow: auto;
+		}
+
+		td {
+			font-size: 15px;
+		}
+
+		.fButton {
+			width: 75px;
+		}
+	</style>
+</head>
+
+<body>
+	<table id="auto_size">
+		<tr>
+			<td>
+				<div id="tab_content">
+					<br>
+					<!----------------------------------------------------------------------->
+					<table id="inner_table">
+						<tr>
+							<td>
+								<div class="posttext">
+
+									<table>
+										<!----------------------------------------------------------------------->
+										<!-- SETTING NAME-->
+										<tr>
+											<td>
+												<span title="header=[ID] body=[ID of setting in corresponding settings file.]">
+													<b>Group Name:</b>
+												</span>
+											</td>
+											<td>
+												<input type="text" id="edit_Id" maxlength="254" style="width: 175px" value="<?%external.Context.Target.I?>" />
+											</td>
+										</tr>
+										<tr>
+											<td colspan=2>
+												<hr>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<span title="header=[Description] body=[Setting description]">
+													Description:
+												</span>
+											</td>
+											<td>
+												<input type="text" id="edit_Description" maxlength="254" style="width: 175px" value="<?%external.Context.Target.D?>" />
+											</td>
+										</tr>
+
+
+
+									</table>
+								</div>
+								<div id="esc_div" style="display:block;"></div>
+
+
+							</td>
+						</tr>
+					</table>
+
+				</div>
+				<!-----------------------------TAB END(div content)------------------------------------>
+
+				<div style="text-align:right;">
+					<br>
+					<button class="fButton" onclick="OnOK()">OK</button> &nbsp;
+					<button class="fButton" onclick="external.EndDialog(2)">Cancel</button> &nbsp;
+					&nbsp;
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<script>
+		//------------------------------init----------------------------------------
+
+
+		function OnOK() {
+			var id = $('#edit_Id').val();
+			if (id.trim().length == 0) {
+				alert('ID cannot be empty');
+				return;
+			}
+			var old_name = external.Context.Target.I;
+			if (old_name != id) //don't check if it's oringinal name
+			{
+				<? 
+				for (i = 0; i < external.XText.length; i++) {
+					var Obj2 = external.XText[i];
+				?>
+				if (id == '<?%Obj2.I?>') {
+						alert('You already have a setting with this name. Setting names must be unique.');
+						set_focus($('#edit_Id')[0]);
+						return false;
+					}									
+				<?}?>
+			}
+			var controlType = $('#edit_Control').val();
+
+			external.Context.Target.I = id;
+			external.Context.Target.D = $('#edit_Description').val();
+			external.EndDialog(1);
+		}
+
+
+		if (typeof String.prototype.trim !== 'function') {
+			String.prototype.trim = function () {
+				return this.replace(/^\s+|\s+$/g, '');
+			}
+		}
+
+
+	</script>
+
+
+</body>
+
+</html>
