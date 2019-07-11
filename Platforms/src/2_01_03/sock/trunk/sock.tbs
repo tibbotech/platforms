@@ -8,7 +8,7 @@ include "global.tbh"
 '--------------------------------------------------------------------
 const SOCK_STAMP="SOCK> "
 const SOCK_CR_LF=chr(13)+chr(10)
-const SOCK_MAX_SOCKETS=16
+const SOCK_MAX_SOCKETS=SOCK_MAX_SOCKETS_PLATFORM
 const SOCK_UNUSED_SIGNATURE="----"
 const SOCK_INIT_SIGNATURE=&h4740
 

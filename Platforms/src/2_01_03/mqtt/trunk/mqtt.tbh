@@ -39,10 +39,10 @@ declare function mqtt_reconnect()as ok_ng
 declare sub mqtt_disconnect()
 'API procedure, disconnects the device from the MQTT server (broker).	
 
-declare sub mqtt_publish(byref topic as string, byref data as string)
+declare sub mqtt_publish(byref topic as string, byref data as string, qos as en_qos_choices)
 'API procedure, publishes a <b>topic</b> and its <b>data</b> to the MQTT server (broker).
 
-declare sub mqtt_sub(byref topic as string,qos as en_qos_choices)
+declare sub mqtt_sub(byref topic as string, qos as en_qos_choices)
 'API procedure, subscribes the device to the specified topic on the MQTT server (broker).<br><br>
 '<b>topic</b>- the topic to subscribe to,<br>
 '<b>qos</b>- requested quality of service, according to the en_qos_choices enum.
