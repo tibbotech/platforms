@@ -1,5 +1,8 @@
 include "global.tbh"
 
+'http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/mqtt-v3.1.1.html
+'https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/
+
 const MQTT_INIT_SIGNATURE=&h1688
 const MQTT_STAMP="MQTT> "
 const MQTT_CR_LF=chr(13)+chr(10)
@@ -21,7 +24,9 @@ const PINGRESP 		=&hD0
 const DISCONNECT 	=&hE0
 
 'mqtt protocol string
-const MQTT_PROTOCOL="MQIsdp"
+const MQTT_LEVEL	=&h04
+const MQTT_PROTOCOL	="MQTT"
+const MQTT_CLIENT_ID="TibboMqtt"
 
 enum mqtt_state
 	ms_idle				=0,
@@ -29,14 +34,15 @@ enum mqtt_state
 end enum
 
 dim mqtt_init_flag as word
+dim mqtt_packet_identifier as word
 dim mqtt_sock_num as byte
 dim mqtt_cur_state as mqtt_state
 dim mqtt_keep_alive_timer as word
 dim mqtt_timer_record as word
 dim mqtt_server_port as word
-dim mqtt_server_ip as string
-dim mqtt_user as string
-dim mqtt_pw	as string
+dim mqtt_server_ip as string(15)
+dim mqtt_user as string(30)
+dim mqtt_pw	as string(23)
 
 #if MQTT_DEBUG_PRINT=1
 	declare sub mqtt_debug_print(data as string)
@@ -61,12 +67,15 @@ sub mqtt_start()
 	mqtt_init_flag=MQTT_INIT_SIGNATURE
 	mqtt_cur_state=ms_idle
 	mqtt_keep_alive_timer=0
-	'TODO : mqtt socket pool management
+	mqtt_packet_identifier=0
 	mqtt_sock_num=sock_get("MQTT")
 	sock.num=mqtt_sock_num
 	sock.protocol=PL_SOCK_PROTOCOL_TCP
-	sock.splittcppackets=YES
+	sock.inconmode = PL_SOCK_INCONMODE_ANY_IP_ANY_PORT
+	'sock.splittcppackets=YES
 	sock.gendataarrivalevent=YES
+	sock.reconmode=PL_SOCK_RECONMODE_3
+	sock.connectiontout=0
 	if sys.freebuffpages<MQTT_RX_BUFF+MQTT_TX_BUFF then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Insufficient buffer memory.")
@@ -78,7 +87,55 @@ sub mqtt_start()
 	sys.buffalloc
 end sub
 
-function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as string,byref password as string,keep_alive as byte) as ok_ng
+function mqtt_build_remaining_length(size as byte) as string(2)
+	mqtt_build_remaining_length = ""
+	do
+		dim encodedByte as byte = size mod 128
+		size = size / 128
+		if (size > 0) then encodedByte = encodedByte or 128
+		mqtt_build_remaining_length = mqtt_build_remaining_length + chr(encodedByte)
+	loop while (size > 0)
+end function
+
+function mqtt_get_packet_identifier() as string(2)
+	mqtt_packet_identifier = (mqtt_packet_identifier mod 65535) + 1
+	mqtt_get_packet_identifier = chr(mqtt_packet_identifier/256)+chr(mqtt_packet_identifier mod 256)
+end function
+
+function mqtt_call_connect() as pl_sock_state_simple	
+		
+	#if PLATFORM_TYPE_32
+		dim t_counter as word = 18000	'about 100ms
+	#else
+		dim t_counter as word = 500		'about 100ms
+	#endif
+
+	sock.num=mqtt_sock_num
+	sock.targetip=mqtt_server_ip
+	sock.targetport=mqtt_server_port
+	sock.connect
+	
+	do
+		mqtt_call_connect = sock.statesimple
+		t_counter = t_counter - 1
+	loop while (mqtt_call_connect <> sock.statesimple) and (t_counter > 0)
+end function
+
+sub mqtt_send_login()
+	dim buf as string	
+	
+	if ((mqtt_user = "") or (mqtt_pw = "")) then
+		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&h02)+chr(0)+chr(&h3c)+chr(0)+chr(len(MQTT_CLIENT_ID))+MQTT_CLIENT_ID
+	else
+		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&hc2)+chr(0)+chr(&h3c)+chr(0)+chr(len(MQTT_CLIENT_ID))+MQTT_CLIENT_ID + chr(0)+chr(len(mqtt_user)) + mqtt_user + chr(0)+chr(len(mqtt_pw)) + mqtt_pw
+	end if
+	buf=chr(CONNECT)+mqtt_build_remaining_length(len(buf)) + buf
+
+	sock.setdata(buf)
+	sock.send	
+end sub
+
+function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as string,byref password as string,keep_alive as byte) as boolean
 'API function, instructs the library to connect to the MQTT server (broker).<br><br>
 '<b>dst_ip</b>- the IP address of the MQTT server,<br>
 '<b>dst_port</b>- target port on the MATT server,<br>
@@ -86,10 +143,7 @@ function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as stri
 '<b>keep_alive</b>- the interval, in seconds, at which the server will ping this device.<br><br>
 'Returns OK if executed successfully.
 	
-	const WAIT_CONNECT_TIMEOUT=10
-	dim tmr as word
-
-	mqtt_connect=NG
+	mqtt_connect = false
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("ERROR: mqtt_start() wasn't called.")
@@ -104,31 +158,18 @@ function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as stri
 
 	mqtt_keep_alive_timer=keep_alive*2  ' half second * 2
 
-	sock.num=mqtt_sock_num
-	sock.targetip=mqtt_server_ip
-	sock.targetport=mqtt_server_port
-	sock.connect
-	tmr=sys.timercount
-	while sys.timercount-tmr<WAIT_CONNECT_TIMEOUT and sock.statesimple<>PL_SSTS_EST
-		doevents
-	wend
-	if sock.statesimple<>PL_SSTS_EST then exit function
-
-	dim buf as string
-	buf=chr(CONNECT)+chr(14+len(mqtt_user)+len(mqtt_pw)+1)+chr(&h0)+chr(&h6)+MQTT_PROTOCOL+chr(&h3)+chr(&h2)+chr(0)+chr(&h3c)+chr(0)+chr(&h11)+mqtt_user+chr(&h2f)+mqtt_pw
-	sock.setdata(buf)
-	sock.send
+	if (mqtt_call_connect() = PL_SSTS_EST) then
+		mqtt_send_login()		
+		mqtt_connect = true
+	end if
 	
-	mqtt_connect=OK
 end function
 
-function mqtt_reconnect() as ok_ng
+function mqtt_reconnect() as boolean
 'API function, instructs the library to reconnect to the MQTT server (broker) using connection parameters previously supplied with mqtt_connect().<br>
 'Returns OK if executed successfully.
 	
-	const WAIT_CONNECT_TIMEOUT=10
-	dim tmr as word
-	mqtt_reconnect=NG
+	mqtt_reconnect = false
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("ERROR: mqtt_start() wasn't called.")
@@ -137,24 +178,17 @@ function mqtt_reconnect() as ok_ng
 	end if
 
 	sock.num=mqtt_sock_num
-	if sock.statesimple<>PL_SSTS_CLOSED then exit function
+		
+	if (sock.statesimple = PL_SSTS_CLOSED) then
+		sock.close
+		mqtt_call_connect()
+	end if
 	
-	sock.close
-	sock.targetip=mqtt_server_ip
-	sock.targetport=mqtt_server_port
-
-	sock.connect
-	tmr=sys.timercount
-	while sys.timercount-tmr<WAIT_CONNECT_TIMEOUT and sock.statesimple<>PL_SSTS_EST
-		doevents
-	wend
-	if sock.statesimple<>PL_SSTS_EST then exit function
-
-	dim buf as string
-	buf=chr(CONNECT)+chr(14+len(mqtt_user)+len(mqtt_pw)+1)+chr(&h0)+chr(&h6)+MQTT_PROTOCOL+chr(&h3)+chr(&h2)+chr(0)+chr(&h3c)+chr(0)+chr(&h11)+mqtt_user+chr(&h2f)+mqtt_pw
-	sock.setdata(buf)
-	sock.send
-	mqtt_reconnect=OK
+	if (sock.statesimple = PL_SSTS_EST) then
+		mqtt_send_login()
+		mqtt_reconnect = true
+	end if
+	
 end function
 
 sub mqtt_disconnect()
@@ -167,14 +201,18 @@ sub mqtt_disconnect()
 		exit sub
 	end if
 	if mqtt_cur_state<>ms_connected then exit sub
+	dim current_sock as byte = sock.num
 
-	dim buf as string
-	buf=chr(DISCONNECT)+chr(0)
+	dim buf as string = chr(DISCONNECT)+chr(0)
+	
+	sock.num = mqtt_sock_num
 	sock.setdata(buf)
 	sock.send
+	
+	sock.num = current_sock
 end sub
 
-sub mqtt_publish(byref topic as string, byref data as string)
+sub mqtt_publish(byref topic as string, byref data as string, qos as en_qos_choices)
 'API procedure, publishes a <b>topic</b> and its <b>data</b> to the MQTT server (broker).
 	
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then
@@ -187,17 +225,25 @@ sub mqtt_publish(byref topic as string, byref data as string)
 
 	dim buf as string
 	dim remaining_length as byte
+	dim current_sock as byte = sock.num
 
 	#if MQTT_DEBUG_PRINT=1
 		mqtt_debug_print("Publishing: topic="+topic+", data="+data)
 	#endif
 
-	remaining_length=len(topic)+len(data)
-	buf=chr(PUBLISH+1)+chr(remaining_length+2)+chr(0)+chr(len(topic))+topic+data
+	if (qos = QOS_AT_MOST_ONCE) then
+		buf=chr(0)+chr(len(topic))+topic+data
+	else
+		buf=chr(0)+chr(len(topic))+topic+mqtt_get_packet_identifier()+data
+	end if
+	
+	buf=chr(PUBLISH+1+(qos*2))+mqtt_build_remaining_length(len(buf)) + buf
 
 	sock.num=mqtt_sock_num
 	sock.setdata(buf)
 	sock.send
+	
+	sock.num = current_sock
 end sub
 
 sub mqtt_sub(byref topic as string,qos as en_qos_choices)
@@ -214,16 +260,20 @@ sub mqtt_sub(byref topic as string,qos as en_qos_choices)
 	if mqtt_cur_state<>ms_connected then exit sub
 
 	dim buf as string
-
+	dim current_sock as byte = sock.num
+	
 	#if MQTT_DEBUG_PRINT=1
 		mqtt_debug_print("Subscribing to: data="+topic)
 	#endif
 	
-	buf=chr(SUBSCRIBE+2)+chr(2+2+len(topic)+1)+chr(0)+chr(1)+chr(0)+chr(len(topic))+topic+chr(qos)
+	buf=mqtt_get_packet_identifier()+chr(0)+chr(len(topic))+topic+chr(qos)
+	buf=chr(SUBSCRIBE+2)+mqtt_build_remaining_length(len(buf)) + buf
 
 	sock.num=mqtt_sock_num
 	sock.setdata(buf)
 	sock.send
+	
+	sock.num = current_sock
 end sub
 
 sub mqtt_unsub(byref topic as string)
@@ -239,15 +289,20 @@ sub mqtt_unsub(byref topic as string)
 	if mqtt_cur_state<>ms_connected then exit sub
 
 	dim buf as string
+	dim current_sock as byte = sock.num
 	
 	#if MQTT_DEBUG_PRINT=1
 		mqtt_debug_print("Unsubscribing from: data="+topic)
 	#endif
 	
-	buf=chr(UNSUBSCRIBE+2)+chr(2+2+len(topic)+1)+chr(0)+chr(1)+chr(0)+chr(len(topic))+topic+chr(1)
+	buf=mqtt_get_packet_identifier()+chr(0)+chr(len(topic))+topic
+	buf=chr(UNSUBSCRIBE+2)+mqtt_build_remaining_length(len(buf)) + buf
+	
 	sock.num=mqtt_sock_num
 	sock.setdata(buf)
 	sock.send
+	
+	sock.num = current_sock
 end sub
 
 sub mqtt_proc_timer()
@@ -269,13 +324,13 @@ sub mqtt_proc_timer()
 				mqtt_timer_record=0
 			end if
 		end if
-		if sock.statesimple<>PL_SSTS_EST then
-			mqtt_cur_state=ms_idle
-			#if MQTT_DEBUG_PRINT=1
-				mqtt_debug_print("Lost server connection.")
-			#endif
-			callback_mqtt_connect_lost()
-		end if
+	end if
+	if sock.statesimple<>PL_SSTS_EST then
+		mqtt_cur_state=ms_idle
+		#if MQTT_DEBUG_PRINT=1
+			mqtt_debug_print("Lost server connection.")
+		#endif
+		callback_mqtt_connect_lost()
 	end if
 end sub
 
@@ -284,43 +339,90 @@ sub mqtt_proc_data()
 	
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then exit sub
 	if sock.num<>mqtt_sock_num then exit sub
-	
-	dim head,data_length as byte
-	dim buf as string
-	dim publish_length as word
 
-	sock.num=mqtt_sock_num
-	head=asc(sock.getdata(1))
-	data_length=asc(sock.getdata(1))
-	buf=sock.getdata(data_length)
-
-	if (head and &hF0)= CONNACK then
-		#if MQTT_DEBUG_PRINT=1
-			mqtt_debug_print("Connected to server.")
-		#endif
-		mqtt_timer_record=0
-		mqtt_cur_state=ms_connected
-		callback_mqtt_connect_ok()
-	else if (head and &hF0)= PUBLISH then
-		publish_length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
-		#if MQTT_DEBUG_PRINT=1
-			mqtt_debug_print("Notification: topic="+mid(buf,3,publish_length)+", data="+mid(buf,publish_length+3,len(buf)-3-publish_length+1))
-		#endif
-		callback_mqtt_notif(mid(buf,3,publish_length),mid(buf,publish_length+3,len(buf)-3-publish_length+1))
-	else if (head and &hF0)= PUBACK then
-		#if MQTT_DEBUG_PRINT=1
-			mqtt_debug_print("Publish ack.")
-		#endif
-	else if (head and &hF0)= SUBACK then
-		#if MQTT_DEBUG_PRINT=1
-			mqtt_debug_print("Subscribe ack.")
-		#endif
-		callback_mqtt_sub_ok()
-	else if (head and &hF0)= PINGRESP then
-		#if MQTT_DEBUG_PRINT=1
-			mqtt_debug_print("Ping response.")
-		#endif
+	dim pos as byte = 2
+	dim buf as string = sock.peekdata(2)
+		
+	if (len(buf) < 2) then
+		exit sub
 	end if
+
+	'total sequence length
+	dim length as word = asc(right(buf,1))
+	if (length > 127) then pos = pos + 1
+		
+	if (length + pos <= sock.rxlen) then
+		buf = sock.getdata(length + pos)
+	else
+		exit sub	
+	end if
+
+	dim head as byte = asc(left(buf,1))
+	dim qos as en_qos_choices = (head and &h06) shr 1
+	head = (head and &hF0)
+	
+	buf = right(buf,length)
+
+	select case (head)
+		
+		case CONNACK:	#if MQTT_DEBUG_PRINT=1		
+							mqtt_debug_print("Connected to server.")
+						#endif
+						mqtt_timer_record=0
+						mqtt_cur_state=ms_connected
+						callback_mqtt_connect_ok()
+		
+		case PUBLISH:	length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
+						#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Notification: topic="+mid(buf,3,length)+", data="+right(buf,len(buf)-length-2-((qos<>QOS_AT_MOST_ONCE)*2)))
+						#endif
+						callback_mqtt_notif(mid(buf,3,length),right(buf,len(buf)-length-2-((qos<>QOS_AT_MOST_ONCE)*2)))
+						if (qos = QOS_AT_LEAST_ONCE) then
+							buf = chr(PUBACK) + chr(2) + mid(buf,length+3,2)
+							sock.setdata(buf)
+							sock.send
+						else if (qos = QOS_EXACTLY_ONCE) then
+							buf = chr(PUBREC) + chr(2) + mid(buf,length+3,2)
+							sock.setdata(buf)
+							sock.send
+						end if
+		
+		case PUBACK:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Publish ack.")
+						#endif
+		
+		case PUBREC:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Publish rec.")
+						#endif
+						buf=chr(PUBREL+2) + chr(2) + buf
+						sock.setdata(buf)
+						sock.send
+		
+		case PUBREL:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Publish rel.")
+						#endif
+						buf=chr(PUBCOMP) + chr(2) + buf
+						sock.setdata(buf)
+						sock.send						
+		
+		case PUBCOMP:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Publish comp.")
+						#endif
+		
+		case SUBACK:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Subscribe ack.")
+						#endif
+						callback_mqtt_sub_ok()
+		
+		case UNSUBACK:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Unsubscribe ack.")
+						#endif
+		
+		case PINGRESP:	#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Ping response.")
+						#endif
+	end select
+
 end sub
 
 #if MQTT_DEBUG_PRINT=1

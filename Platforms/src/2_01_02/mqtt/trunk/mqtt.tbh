@@ -7,11 +7,11 @@
 #endif
 
 #ifndef MQTT_RX_BUFF
-	#define MQTT_RX_BUFF 1
+	#define MQTT_RX_BUFF 2
 #endif
 
 #ifndef MQTT_TX_BUFF
-	#define MQTT_TX_BUFF 1
+	#define MQTT_TX_BUFF 2
 #endif
 
 enum en_qos_choices
@@ -24,7 +24,7 @@ declare sub mqtt_start()
 'API procedure, starts the MQTT library.
 'MUST be called first, before any other procedure in this library is used.
 
-declare function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as string,byref password as string,keep_alive as byte) as ok_ng
+declare function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as string,byref password as string,keep_alive as byte) as boolean
 'API function, instructs the library to connect to the MQTT server (broker).<br><br>
 '<b>dst_ip</b>- the IP address of the MQTT server,<br>
 '<b>dst_port</b>- target port on the MATT server,<br>
@@ -32,17 +32,17 @@ declare function mqtt_connect(byref dst_ip as string,dst_port as word,byref user
 '<b>keep_alive</b>- the interval, in seconds, at which the server will ping this device.<br><br>
 'Returns OK if executed successfully.
 
-declare function mqtt_reconnect()as ok_ng
+declare function mqtt_reconnect()as boolean
 'API function, instructs the library to reconnect to the MQTT server (broker) using connection parameters previously supplied with mqtt_connect().<br>
 'Returns OK if executed successfully.
 
 declare sub mqtt_disconnect()
 'API procedure, disconnects the device from the MQTT server (broker).	
 
-declare sub mqtt_publish(byref topic as string, byref data as string)
+declare sub mqtt_publish(byref topic as string, byref data as string, qos as en_qos_choices)
 'API procedure, publishes a <b>topic</b> and its <b>data</b> to the MQTT server (broker).
 
-declare sub mqtt_sub(byref topic as string,qos as en_qos_choices)
+declare sub mqtt_sub(byref topic as string, qos as en_qos_choices)
 'API procedure, subscribes the device to the specified topic on the MQTT server (broker).<br><br>
 '<b>topic</b>- the topic to subscribe to,<br>
 '<b>qos</b>- requested quality of service, according to the en_qos_choices enum.
