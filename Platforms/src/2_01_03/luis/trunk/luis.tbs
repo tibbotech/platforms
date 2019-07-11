@@ -97,13 +97,17 @@ function luis_start(byref bt_name as string) as en_luis_status_codes
 	romfile.open(LUIS_HTML_FILE)
 	if romfile.pointer32<>1 then
 		luis_start=EN_LUIS_FILE_HTML_ERROR
+		#if LUIS_DEBUG_PRINT
 		luis_debugprint("Failed to open HTML file")
+		#endif 
 	end if
 	dim html_size as integer = romfile.size
 	romfile.open(LUIS_CONFIG_FILE)
 	if romfile.pointer32<>1 then
 		luis_start=EN_LUIS_FILE_CONFIG_ERROR
+		#if LUIS_DEBUG_PRINT
 		luis_debugprint("Failed to open LUIS Library file")
+		#endif
 	end if
 	dim config_size as integer = romfile.size
 	LUIS_GOP_result="{\x22type\x22:\x22spa\x22,\x22length\x22:"+lstr(html_size + config_size - len(LUIS_PLACEHOLDER_STR))+"}"
