@@ -829,7 +829,7 @@ reset_socket:
 end sub
 
 '------------------------------------------------------------------------------
-public sub agg_fire_instant_event(byref context_name as string, byref event_name as string, byref event_string as string, event_level as byte)
+public sub agg_fire_instant_event(byref context_name as string, byref event_name as string, byref event_string as string, event_level as en_agg_event_levels)
 'API procedure, process the AggreGate instant event.  The user need to prepare the event data and put them into instant_event_buff first.
 'instant_event_buff is an arrary of string, all fields of the instant event should be in readable string form.
 
