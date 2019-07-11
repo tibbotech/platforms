@@ -122,23 +122,18 @@ declare function stg_set_ts(byref stg_name_or_num as string) as en_stg_status_co
 declare function stg_find(byref stg_name_or_num as string) as byte
 declare function stg_stype_get(byref stg_name_or_num as string) as byte
 
-declare sub callback_stg_error(byref stg_name_or_num as string, index as byte, status as en_stg_status_codes)
+declare sub callback_stg_error(byref stg_name_or_num as string,index as byte,status as en_stg_status_codes)
 'Callback procedure, informs of the error during the execution of stg_get() or set_set().
 'Procedure body has to be created elsewhere in the project (externally with respect to the library).
 
-declare sub callback_stg_pre_get(byref stg_name_or_num as string, index as byte, byref stg_value as string)
+declare sub callback_stg_pre_get(byref stg_name_or_num as string,index as byte,byref stg_value as string)
 'Callback procedure, informs that the setting member's value is being read through one of the STG library's procedures;
 'allows to update the setting member's value before it is returned by the STG library.
 'Procedure body has to be created elsewhere in the project (externally with respect to the library).
 
-declare sub callback_stg_post_set(byref stg_name_or_num as string, index as byte, byref stg_value as string)
+declare sub callback_stg_post_set(byref stg_name_or_num as string, index as byte,byref stg_value as string)
 'Callback procedure, informs that the setting member's value is being written to through one of the STG library's procedures;
 'allows to respond to the value change.
-'Procedure body has to be created elsewhere in the project (externally with respect to the library).
-
-declare sub callback_stg_validation_check(byref stg_name_or_num as string, index as byte, byref stg_value as string) as en_stg_status_codes
-'Callback procedure, before writing a value to a setting member, allow doing validation check according to the system rules;
-'For example: validation to a field that holds email address, or not allowing to set value '80' to a system port (creates a collision).
 'Procedure body has to be created elsewhere in the project (externally with respect to the library).
 
 declare function callback_stg_vm_read(address as word) as byte

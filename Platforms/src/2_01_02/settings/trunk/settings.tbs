@@ -980,7 +980,7 @@ init_this:
 
 				'we have two cases: when there is a single value for all setting members, and when there are
 				'separate values
-				if (instr(1,s,"/",1)<>0) and (stg_sdr(f).members>1) then
+				if instr(1,s,"/",1)<>0 then
 					'there are 2 or more initialization values
 					for f2=0 to stg_sdr(f).members-1
 						pos=instr(1,s,"/",1)
@@ -1414,23 +1414,14 @@ lb1:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 	
 	else
 		'WRITE OPERATION
-
-		'Validation check
-		stg_sg_internal = callback_stg_validation_check(stg_name_or_num,index,stg_value)
-		if (stg_sg_internal<>EN_STG_STATUS_OK) then	'invalid input
-			#if STG_DEBUG_PRINT
-				stg_debug_print_error(debug_str,stg_sg_internal)
-			#endif
-			exit function
-		end if
-
+		
 		'Branch according to the setting type and verify new value
 		select case chr(stg_sdr(num).stype)
 		case "B":	'byte- convert into value
 			i=val(stg_value)
 			new_member_str=chr(i)
 			goto lb2
-
+						
 		case "W":	'word- convert into value
 			i=val(stg_value)
 			x=i/256
@@ -1454,7 +1445,7 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 				exit function
 			end if
 		
-		end select
+		end select		
 
 		'insert new member value into the setting data
 		if index<>255 then
@@ -1466,7 +1457,7 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 				insert(stg_str,f*stg_sdr(num).member_size+1,new_member_str)
 			next f
 		end if
-
+		
 		#if STG_TIMESTAMP<>0
 			ts_str=chr(stg_timestamp.ts_daycount/256)
 			ts_str=ts_str+chr(stg_timestamp.ts_daycount and &hFF)
@@ -1477,7 +1468,7 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 			ts_str=ts_str+chr(stg_timestamp.ts_milsec and &hFF)
 			insert(stg_str,len(stg_str)-STG_TIMESTAMP_LENGTH+1-1,ts_str) '-1 because of checksum field in the end 
 		#endif
-
+		
 		'recalculate the checksum
 		stg_str=left(stg_str,len(stg_str)-1)
 		cs=strsum(stg_str)
@@ -1486,8 +1477,8 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 		if stg_sdr(num).storage=`E` then
 			'store the data into the NV MEM
 			stg_sg_internal=EN_STG_STATUS_FAILURE
-
-
+			
+			
 			#if STG_STORAGE_MEMORY=0
 				if stor.setdata(stg_str,stg_sdr(num).memaddr)=len(stg_str) then
 					stg_sg_internal=EN_STG_STATUS_OK
@@ -1510,9 +1501,9 @@ lb2:		if i<stg_sdr(num).p1 or i>stg_sdr(num).p2 then
 				
 				if suspend_flushing=NO then
 					fd.flush
-				end if
+				end if	
 			#endif
-
+		
 			if (stg_sg_internal<>EN_STG_STATUS_OK) then
 				#if STG_DEBUG_PRINT
 					stg_debug_print_error(debug_str,stg_sg_internal)
@@ -1544,7 +1535,7 @@ public function stg_set_ts_internal(byref stg_name_or_num as string,read_backup 
 'Writes the timestamp of the setting without changing its value. The timestamp is passed in a
 'global stg_timestamp structure (the reason we don't use a function argument is because all other
 'procedures in this library use the stg_timestamp, so we do this for uniformity).
-
+	
 	dim cs as byte
 	dim num as byte
 	dim stg_str as string
