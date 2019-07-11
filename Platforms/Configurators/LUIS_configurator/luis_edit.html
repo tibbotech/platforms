@@ -204,7 +204,7 @@
 													A - auto-configured (displayed in red color; still can edit, but the
 													user value may be overriden/ignored, e.g. IP when DHCP is ON)<br />
 													H - hidden (only in the newest TDST -- still unpublished at the
-													moment)<br />												
+													moment)<br />
 												</div>
 											</td>
 										</tr>
@@ -271,9 +271,7 @@
 			}
 			for (var i = 0; i < stg_lib_data.length; i++) {
 				if ((typeof (stg_lib_data[i].NAME) != 'undefined') && (stg_lib_data[i].NAME != null)) {
-					var settingValue = stg_lib_data[i].NAME;
-					
-					sel.options.add(new Option(stg_lib_data[i].NAME + " - " + stg_lib_data[i].C, settingValue));
+					sel.options.add(new Option(stg_lib_data[i].NAME + " - " + stg_lib_data[i].C, stg_lib_data[i].NAME));
 				}
 
 			}
@@ -400,8 +398,12 @@
 			external.Context.Target.T = $('#edit_Type').val();
 			external.Context.Target.D = $('#edit_Description').val();
 			external.Context.Target.N = $('#edit_Notes').val();
-			external.Context.Target.V = $('#edit_Validation').val();
-			external.Context.Target.S = $('#edit_Status').val();
+			if ($('#edit_Validation').val().trim().length > 0) {
+				external.Context.Target.V = $('#edit_Validation').val();
+			}
+			if ($('#edit_Status').val().trim().length > 0) {
+				external.Context.Target.S = $('#edit_Status').val();
+			}
 			external.Context.Target.C = controlType;
 			external.Context.Target.O = "";
 			var validOptions = options.length;
