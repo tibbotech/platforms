@@ -14,6 +14,10 @@
 	#define MQTT_TX_BUFF 1
 #endif
 
+#ifndef MQTT_APP_CLIENT_ID
+	#error "A unique client ID string for your app must be defined to use MQTT"
+#endif 
+
 enum en_qos_choices
 	QOS_AT_MOST_ONCE=0,
 	QOS_AT_LEAST_ONCE=1,

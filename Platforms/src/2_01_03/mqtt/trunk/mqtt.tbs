@@ -26,7 +26,7 @@ const DISCONNECT 	=&hE0
 'mqtt protocol string
 const MQTT_LEVEL	=&h04
 const MQTT_PROTOCOL	="MQTT"
-const MQTT_CLIENT_ID="TibboMqtt"
+const MQTT_CLIENT_ID= MQTT_APP_CLIENT_ID
 
 enum mqtt_state
 	ms_idle				=0,
