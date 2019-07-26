@@ -274,8 +274,7 @@ enum pl_wln_upgrade_regions
 	PL_WLN_UPGRADE_REGION_MONITOR  'Monitor/Loader firmware region.
 end enum
 
-
-#if SYS_VER = 1000    'T1000 Based Devices
+#if SYS_VER = 1000 or PLATFORM_ID=EM500W    'T1000 Based Devices and EM500W
 
 #if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
 '--------------------------------------------------------------------

@@ -158,13 +158,9 @@ description=DS1102N
 value=DS1102N
 
 [define1.option38
-description=TPP2N
-value=TPP2N
-
-[define1.option39
 description=TPP3N
 value=TPP3N
 
-[define1.option40]
+[define1.option39]
 description=EM510W
 value=EM510W

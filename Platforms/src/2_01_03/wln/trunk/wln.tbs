@@ -460,7 +460,7 @@ function wln_rescan() as en_wln_status_codes
 	wln_rescan_in_prog=YES
 end function
 
-#if SYS_VER = 1000
+#if SYS_VER = 1000  or PLATFORM_ID=EM500W 
 '----------------------------------------------------------------------------
 sub wln_delay_ms(ms as dword)
 	dim delay as dword = ms * 3
@@ -1808,7 +1808,8 @@ sub wln_init()
 end sub
 
 
-#if SYS_VER = 1000    'T1000 Based Devices
+#if SYS_VER = 1000 or PLATFORM_ID=EM500W  'T1000 Based Devices and EM500W
+
 #if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
 #else 
 'These syscalls are not supported on T1000 devices except for the following specific platforms. This shim allows the wln library to work.  
@@ -1824,9 +1825,7 @@ end sub
 
 #endif
 
-
 #endif
-
 
 
 '----------------------------------------------------------------------------
