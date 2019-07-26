@@ -41,126 +41,122 @@ value=T1000W
 description=KLM601
 value=KLM601
 
-[define1.option9]
-description=EM500
-value=EM500
-
-[define1.option10]
+[define1.option09]
 description=NB1010
 value=NB1010
 
-[define1.option11]
+[define1.option10]
 description=NB1010W
 value=NB1010W
 
-[define1.option12]
+[define1.option11]
 description=EM1000W
 value=EM1000W
 
-[define1.option13]
+[define1.option12]
 description=EM1202W
 value=EM1202W
 
-[define1.option14]
+[define1.option13]
 description=EM1206W
 value=EM1206W
 
-[define1.option15]
+[define1.option14]
 description=EM202
 value=EM202
 
-[define1.option16]
+[define1.option15]
 description=EM500W
 value=EM500W
 
-[define1.option17]
+[define1.option16]
 description=DS1102W
 value=DS1102W
 
-[define1.option18]
+[define1.option17]
 description=DS1100
 value=DS1100
 
-[define1.option19]
+[define1.option18]
 description=DS1101W
 value=DS1101W
 
-[define1.option20]
+[define1.option19]
 description=TPP2W
 value=TPP2W
 
-[define1.option21]
+[define1.option20]
 description=TPP3W
 value=TPP3W
 
-[define1.option22]
+[define1.option21]
 description=TPP2N
 value=TPP2N
 
-[define1.option23]
+[define1.option22]
 description=EM1001
 value=EM1001
 
-[define1.option24]
+[define1.option23]
 description=EM1001W
 value=EM1001W
 
-[define1.option25]
+[define1.option24]
 description=EM2000W
 value=EM2000W
 
-[define1.option26]
+[define1.option25]
 description=TPP2WG2
 value=TPP2WG2
 
-[define1.option27]
+[define1.option26]
 description=TPP3WG2
 value=TPP3WG2
 
-[define1.option28]
+[define1.option27]
 description=KLM601_32
 value=KLM601_32
 
-[define1.option29]
+[define1.option28]
 description=SIMULATOR
 value=SIMULATOR
 
-[define1.option30]
+[define1.option29]
 description=LTPP3
 value=LTPP3
 
-[define1.option31]
+[define1.option30]
 description=KLM106_32
 value=KLM106_32
 
-[define1.option32]
+[define1.option31]
 description=EM1000N
 value=EM1000N
 
-[define1.option33]
+[define1.option32]
 description=EM1001N
 value=EM1001N
 
-[define1.option34]
+[define1.option33]
 description=EM1202N
 value=EM1202N
 
-[define1.option35]
+[define1.option34]
 description=EM1206N
 value=EM1206N
 
-[define1.option36]
+[define1.option35]
 description=DS1101N
 value=DS1101N
 
-[define1.option37]
+[define1.option36]
 description=DS1102N
 value=DS1102N
 
-[define1.option38
+[define1.option37]
 description=TPP3N
 value=TPP3N
 
-[define1.option39]
+[define1.option38]
 description=EM510W
 value=EM510W

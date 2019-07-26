@@ -12,7 +12,7 @@
 #define DS1202 5
 #define T1000W 6
 #define KLM601 7
-#define EM500 8 'unused
+'#define EM500 8   NOT USED
 #define NB1010 9
 #define NB1010W 10
 #define EM1000W 11
