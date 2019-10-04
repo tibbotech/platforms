@@ -24,31 +24,39 @@
 	#define LUIS_BT_TX_BUF_SIZE 5
 #endif
 
-'RST line mapping
-#ifndef LUIS_BT_RST
-	#define LUIS_BT_RST PL_IO_NUM_51
-#endif
+#if PLATFORM_ID<>EM510W
+	'RST line mapping
+	#ifndef LUIS_BT_RST
+		#define LUIS_BT_RST PL_IO_NUM_51
+	#endif
 
-'CS line mapping
-#ifndef LUIS_BT_CS
-	#define LUIS_BT_CS PL_IO_NUM_49
-#endif
+	'CS line mapping
+	#ifndef LUIS_BT_CS
+		#define LUIS_BT_CS PL_IO_NUM_49
+	#endif
 
-'DI line mapping
-#ifndef LUIS_BT_DI
-	#define LUIS_BT_DI PL_IO_NUM_52
-#endif
+	'DI line mapping
+	#ifndef LUIS_BT_DI
+		#define LUIS_BT_DI PL_IO_NUM_52
+	#endif
 
-'DO line mapping
-#ifndef LUIS_BT_DO
-	#define LUIS_BT_DO PL_IO_NUM_50
-#endif
+	'DO line mapping
+	#ifndef LUIS_BT_DO
+		#define LUIS_BT_DO PL_IO_NUM_50
+	#endif
 
-'CLK line mapping
-#ifndef LUIS_BT_CLK
-	#define LUIS_BT_CLK PL_IO_NUM_53
+	'CLK line mapping
+	#ifndef LUIS_BT_CLK
+		#define LUIS_BT_CLK PL_IO_NUM_53
+	#endif
+#else
+	#define WLN_RESET_MODE 1
+	#define LUIS_BT_RST PL_IO_NULL
+	#define LUIS_BT_CS PL_IO_NULL
+	#define LUIS_BT_DI PL_IO_NULL
+	#define LUIS_BT_DO PL_IO_NULL
+	#define LUIS_BT_CLK PL_IO_NULL
 #endif
-
 'Status codes
 enum en_luis_status_codes	
 	EN_LUIS_STATUS_OK,			'Operation completed successfully
