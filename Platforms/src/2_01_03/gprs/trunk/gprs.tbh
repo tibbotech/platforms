@@ -38,7 +38,7 @@
 'Defines below intentionally use I/O pin numbers instead of names.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_SER_PORT_RTSMAP
-	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N	
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_SER_PORT_RTSMAP 0
 		#elif GPRS_SER_PORT=1
@@ -65,7 +65,7 @@
 'Defines below intentionally use I/O pin numbers instead of names.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_SER_PORT_CTSMAP
-	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N	
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2	
 		#if GPRS_SER_PORT=0
 			#define GPRS_SER_PORT_CTSMAP 0
 		#elif GPRS_SER_PORT=1
@@ -113,7 +113,7 @@
 'Only relevant when GPRS_MODULE_EXTERNAL is 0.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_RESET
-	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_RESET PL_IO_NUM_1
 		#elif GPRS_SER_PORT=1
@@ -123,7 +123,7 @@
 		#elif GPRS_SER_PORT=3
 			'this choice is not available
 		#endif
-	#elif PLATFORM_ID=TPP3W  or PLATFORM_ID=TPP3N
+	#elif PLATFORM_ID=TPP3W  or PLATFORM_ID=TPP3N or PLATFORM_ID=TPP3WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_RESET PL_IO_NUM_4
 		#elif GPRS_SER_PORT=1
@@ -144,7 +144,7 @@
 'Only relevant when GPRS_MODULE_EXTERNAL is 0.
 'Keep at default value for NB1010 and DS101x devices.
 #ifndef GPRS_POWER
-	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_POWER PL_IO_NUM_10_RX1
 		#elif GPRS_SER_PORT=1
@@ -154,7 +154,7 @@
 		#elif GPRS_SER_PORT=3
 			'this choice is not available
 		#endif
-	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N
+	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N or PLATFORM_ID=TPP3WG2
 		#if GPRS_SER_PORT=0
 			#define GPRS_POWER PL_IO_NUM_33
 		#elif GPRS_SER_PORT=1
