@@ -60,8 +60,6 @@ dim dhcp_interface_token as pl_sock_interfaces
 dim dhcp_current_interface as byte
 dim dhcp_init_flag as word
 dim dhcp_host_name(NUM_INTERFACES) as string(DHCP_MAX_HOST_NAME_LEN)
-dim dhcp_last_sys_timercount as word
-
 #if DHCP_DEBUG_PRINT
 	dim dhcp_media_linked(NUM_INTERFACES) as no_yes 
 #endif
@@ -315,28 +313,14 @@ sub dhcp_proc_one_interface(interface as pl_sock_interfaces)
 		end if
 	#endif
 
-      if dhcp_timer(dhcp_i)=0 then
-            exit sub
-      else
-            dim timercounts as word
-            if sys.timercount > dhcp_last_sys_timercount then
-                  timercounts = sys.timercount - dhcp_last_sys_timercount    
-            else
-                  timercounts = 65535 - dhcp_last_sys_timercount + sys.timercount
-            end if
-            
-			dhcp_last_sys_timercount = sys.timercount
-            timercounts = timercounts / 2       'timercounts are half seconds, convert to seconds
-            if timercounts >= dhcp_timer(dhcp_i) then
-                  dhcp_timer(dhcp_i) = 0
-            else
-                  dhcp_timer(dhcp_i) = dhcp_timer(dhcp_i) - timercounts
-            end if
-            
-			if dhcp_timer(dhcp_i)>0 then
-                  exit sub
-            end if
-      end if
+	if dhcp_timer(dhcp_i)=0 then
+		exit sub
+	else
+		dhcp_timer(dhcp_i)=dhcp_timer(dhcp_i)-1
+		if dhcp_timer(dhcp_i)>0 then
+			exit sub
+		end if
+	end if
 	
 	#if NET_AVAILABLE and WLN_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_NET then
@@ -993,4 +977,3 @@ dhcp_debugprint_1:
 	sys.debugprint(DHCP_STAMP1+s+DHCP_STAMP2+print_data+DHCP_CR_LF)
 end sub
 #endif
-
