@@ -1,17 +1,28 @@
 '***********************************************************************************************************
 '											MQTT Library 
 '***********************************************************************************************************
+#ifndef MQTT_LARGE_PACKETS
+	#define MQTT_LARGE_PACKETS 0
+#endif
+
+#ifndef MQTT_SSL
+	#define MQTT_SSL 0
+#endif
+
+#ifndef MQTT_DEBUG_PRINT
+	#define MQTT_DEBUG_PRINT 0
+#endif
 
 #ifndef MQTT_DEBUG_PRINT
 	#define MQTT_DEBUG_PRINT 0
 #endif
 
 #ifndef MQTT_RX_BUFF
-	#define MQTT_RX_BUFF 1
+	#define MQTT_RX_BUFF 16
 #endif
 
 #ifndef MQTT_TX_BUFF
-	#define MQTT_TX_BUFF 1
+	#define MQTT_TX_BUFF 16
 #endif
 
 #ifndef MQTT_APP_CLIENT_ID
@@ -69,11 +80,38 @@ declare sub callback_mqtt_connect_lost()
 'MQTT callback procedure. Must be implemented elsewhere in the user's program.
 'Called when connection to the MQTT server is lost.
 
-declare sub callback_mqtt_notif(byref topic as string,byref data as string)
-'MQTT callback function. Must be implemented elsewhere in the user's program.
-'Called when the subscriber receives a message from the MQTT server for the topic this subscriber is subscribed to.
-
 declare sub callback_mqtt_sub_ok()
 'MQTT callback procedure. Must be implemented elsewhere in the user's program.
 'Called on the subscriber when the MQTT server confirms the requested subscription.
+
+declare sub sock_setdata(byref txdata as string)
+declare function sock_getdata(byref maxinplen as word) as string
+declare function sock_peekdata(byref maxinplen as word) as string
+
+#if MQTT_LARGE_PACKETS 
+
+	declare sub mqtt_start_publish(byref topic as string, qos as en_qos_choices, length as dword)
+	'API procedure, starts the procedure of publishing to the MQTT server (broker). Must be called before calling mqtt_continue_publish().
+	'<b>topic</b> - Name of the topic to be published
+	'<b>qos</b> - QoS level
+	'<b>length</b> - Total length of the payload to be sent
+
+	declare sub mqtt_continue_publish(byref data as string)
+	'API procedure, continues publishing to the MQTT server (broker). Must be called until the number of bytes set in mqtt_start_publish() has been reached.
+	'<b>data</b> - Data to be sent. Cannot exceed 255 bytes. To send a payload greater than 255 bytes, the subroutine must be called again.
+	
+	declare sub callback_mqtt_notif(byref topic as string,byref data as string,remaining_bytes as dword)
+	'MQTT callback function. Must be implemented elsewhere in the user's program.
+	'Called when the subscriber receives a message from the MQTT server for the topic this subscriber is subscribed to.
+	'<b>topic</b> - Name of the topic receieved
+	'<b>data</b> - Data received
+	'<b>length</b> - Total number of bytes remaining to be received. When this value is 0, the entire packet has been sent.
+	
+#else
+
+	declare sub callback_mqtt_notif(byref topic as string,byref data as string)
+	'MQTT callback function. Must be implemented elsewhere in the user's program.
+	'Called when the subscriber receives a message from the MQTT server for the topic this subscriber is subscribed to.
+
+#endif
 
