@@ -160,3 +160,8 @@ value=TPP3N
 [define1.option38]
 description=EM510W
 value=EM510W
+
+
+[define1.option39]
+description=WM2000
+value=WM2000

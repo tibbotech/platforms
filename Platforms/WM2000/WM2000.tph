@@ -6,7 +6,7 @@
 
 #define __notdl
 
-#define PLATFORM_ID 24
+#define PLATFORM_ID 44
 
 #define BUFF_PAGE_TYPE word
 #define BUFF_SIZE_TYPE dword
@@ -20,6 +20,7 @@
 #define OBJECT_LCD LCD_ENABLED
 #define COPY_FIRMWARE 1
 #define EXTENDED_FD 1
+#define WLN_AVAILABLE 1
 
 
 '--------------------------------------------------------------------
