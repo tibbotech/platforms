@@ -98,7 +98,11 @@ public sub sock_release(sock_num as byte)
 	
 	'restore the socket to its default state
 	sock.acceptbcast=NO
+	#if PLATFORM_ID <> WM2000
 	sock.allowedinterfaces="NET"
+	#else 
+	sock.allowedinterfaces="WLN"
+	#endif 
 	sock.connectiontout=0
 	sock.endchar=13
 	sock.escchar=255
