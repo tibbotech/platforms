@@ -1,6 +1,6 @@
 [platform]
 description=LTPP3 Board
-version=LTPP3-3.71
+version=LTPP3-3.72
 rom=983040
 ram=86784
 codebits=24
@@ -50,3 +50,13 @@ value=FD_DISABLED
 [define2.option2]
 description=Enabled
 value=FD_ENABLED
+
+[define3]
+define=OBJECT_LCD
+description=Display (lcd.) object
+value=LCD_ENABLED
+
+[define3.option1]
+description=Enabled
+value=LCD_ENABLED
+

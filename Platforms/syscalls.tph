@@ -618,7 +618,7 @@ syscall(579,"88.TDL") rc4(byref key as string, skip as word, byref data as strin
 '<b>See also: </b>aes128enc, aes128dec.
 
 '--------------------------------------------------------------------
-syscall(465,"85.TDL") strand(byref str1 as string,byref str2 as string) as string
+syscall(449,"85.TDL") strand(byref str1 as string,byref str2 as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Returns a string containing the result of logical AND operation on data in str1 and str2 arguments.
 '<br><br>

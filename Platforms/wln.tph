@@ -265,7 +265,8 @@ end property
 '--------------------------------------------------------------------
 enum pl_wln_module_types    
 	PL_WLN_MODULE_TYPE_GA1000,
-	PL_WLN_MODULE_TYPE_WA2000
+	PL_WLN_MODULE_TYPE_WA2000,
+    PL_WLN_MODULE_TYPE_WM2000
 end enum
 
 '--------------------------------------------------------------------

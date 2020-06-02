@@ -1745,21 +1745,24 @@ end sub
 sub wln_init_gpio()
 	'map interface lines (on platforms with fixed mapping this will have no effect and do no harm)
 	'WA2000 Will remap DI as output and DO as input and clock as input as required. 
-	wln.csmap=WLN_CS
-	io.num=WLN_CS
-	io.enabled=YES
-	wln.dimap=WLN_DI
-	wln.domap=WLN_DO
-	io.num=WLN_DO
-	io.enabled=YES
-	wln.clkmap=WLN_CLK
-	io.num=WLN_CLK
-	io.enabled=YES
-	io.num=WLN_RST
-	io.enabled=YES
+	#if PLATFORM_ID <> WM2000
+		wln.csmap=WLN_CS
+		io.num=WLN_CS
+		io.enabled=YES
+		wln.dimap=WLN_DI
+		wln.domap=WLN_DO
+		io.num=WLN_DO
+		io.enabled=YES
+		wln.clkmap=WLN_CLK
+		io.num=WLN_CLK
+		io.enabled=YES
+		io.num=WLN_RST
+		io.enabled=YES
+	#endif 
 end sub
 
 sub wln_reset()
+	#if PLATFORM_ID <> WM2000
 	#if WLN_RESET_MODE 
 		io.lineset(wln.csmap,HIGH)
 		io.lineset(wln.clkmap,LOW)
@@ -1770,6 +1773,7 @@ sub wln_reset()
 		io.state=LOW
 		wln_delay_ms(1)
 		io.state=HIGH
+	#endif
 	#endif
 end sub
 

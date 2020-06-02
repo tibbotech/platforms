@@ -9,6 +9,41 @@ object ssi
 'The ssi. object implements up to four serial synchronous interfaces (SSI) on the general-purpose I/O lines of your device.
 'Examples of such interfaces are SPI, I2C, clock/data, and numerous variations on these interfaces.
 
+#if PLATFORM_ID = WM2000
+enum  pl_ssi_baudrates
+
+	
+	PL_SSI_BAUDRATES_50kHz = 255, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
+
+end enum
+
+#else if SYS_VER=1000
+enum  pl_ssi_baudrates
+
+	PL_SSI_BAUDRATES_1MHz = 3, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 1MHz.
+	PL_SSI_BAUDRATES_900kHz = 4, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 900kHz.
+	PL_SSI_BAUDRATES_800kHz = 5, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 800kHz.
+	PL_SSI_BAUDRATES_400kHz = 17, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 400kHz.
+	PL_SSI_BAUDRATES_300kHz = 24, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 300kHz.
+	PL_SSI_BAUDRATES_200kHz = 39, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 200kHz.
+	PL_SSI_BAUDRATES_100kHz = 84, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
+	PL_SSI_BAUDRATES_90kHz = 93, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 90kHz.
+	PL_SSI_BAUDRATES_80kHz = 105, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 80kHz.
+	PL_SSI_BAUDRATES_70kHz = 121, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 70kHz.
+	PL_SSI_BAUDRATES_60kHz = 142, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 60kHz.
+	PL_SSI_BAUDRATES_50kHz = 171, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
+
+end enum
+#else if SYS_VER=2000 
+
+
+
+
+#endif 
+
+
+
+
 '--------------------------------------------------------------------
 property ssi.baudrate
 '<b>R/O PROPERTY (BYTE), DEFAULT VALUE= 1 (the fastest clock rate possible). </b><br><br>
@@ -22,8 +57,8 @@ property ssi.baudrate
 'It is actually permissible to set the property to 0 -- this will be like setting it to 256 (slowest possible clock rate).
 '<br><br>
 'See also: ssi.direction, ssi.mode, ssi.zmode.
-    get = syscall(564,"82.TDL"+) as byte
-    set = syscall(565,"82.TDL"+) (value as byte)
+    get = syscall(564,"82.TDL"+) as pl_ssi_baudrates
+    set = syscall(565,"82.TDL"+) (value as pl_ssi_baudrates)
 end property
 
 '--------------------------------------------------------------------
