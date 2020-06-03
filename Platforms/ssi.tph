@@ -17,7 +17,7 @@ enum  pl_ssi_baudrates
 
 end enum
 
-#else if SYS_VER=1000
+#elif SYS_VER=1000
 enum  pl_ssi_baudrates
 
 	PL_SSI_BAUDRATES_1MHz = 3, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 1MHz.
@@ -34,7 +34,8 @@ enum  pl_ssi_baudrates
 	PL_SSI_BAUDRATES_50kHz = 171, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
 
 end enum
-#else if SYS_VER=2000 
+
+#elif SYS_VER=2000 
 
 enum  pl_ssi_baudrates
 
