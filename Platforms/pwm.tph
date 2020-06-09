@@ -1,0 +1,52 @@
+'**************************************************************************************************
+'       PWM (Pusle-width modulation) object
+'**************************************************************************************************
+
+object pwm
+'PWM. object provides access to the Pusle-width modulation (PWM).
+
+'--------------------------------------------------------------------
+property pwm.num
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0.</b><br><br>
+'Sets/returns the number of the currently selected ADC channel.
+'<br><br>
+'ADC inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_adc_num enum.
+'<br><br>
+'After changing the channel, discard the first result returned by adc.getdata.
+    get = syscall(855) as byte
+    set = syscall(856) (num as byte)
+end property
+
+'--------------------------------------------------------------------
+property pwm.frequency
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the PWM frequency 
+'<br><br>
+'The output frequency is equal to pwm.frequency value:
+'<br><br>
+    get = syscall(857) as word
+    set = syscall(858) (value as word)
+end property
+
+'--------------------------------------------------------------------
+property pwm.dutycycle
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the PWM duty cycle.
+'<br><br>
+'The output duty cycle is equal to pwm.dutycycle value:
+'<br><br>
+    get = syscall(859) as byte
+    set = syscall(860) (value as byte)
+end property
+
+'--------------------------------------------------------------------
+property pwm.enabled
+'<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
+'For the currently selected PWM channel (selection is made through the pwm.num property), defines whether this PWM channel is enabled or disabled.
+'<br><br>
+'Setting this property to 0- NO disables the PWM channel and allows the corresponding line to work as a regular GPIO line.
+'Note that after you set pwm.enabled to 0- NO, the corresponding GPIO line will be configured as an input and its output register will be set to HIGH.
+'<br><br>
+    get = syscall(861) as no_yes
+    set = syscall(862) (state as no_yes)
+end property

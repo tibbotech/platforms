@@ -1,0 +1,185 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'			EM2000W WITH WI-FI INTERFACE
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#define __notdl
+
+#define PLATFORM_ID 44
+
+#define BUFF_PAGE_TYPE word
+#define BUFF_SIZE_TYPE dword
+#define EXTENDED_SOCK 1
+#define SER_7BIT_LIMITATION 1
+#define PLATFORM_TYPE_32 1
+#define OBJECT_KP KP_ENABLED
+#define OBJECT_FD FD_ENABLED
+#define OBJECT_WLN WLN_ENABLED
+#define OBJECT_BT BT_ENABLED
+#define OBJECT_LCD LCD_ENABLED
+#define COPY_FIRMWARE 1
+#define EXTENDED_FD 1
+#define WLN_AVAILABLE 1
+
+
+'--------------------------------------------------------------------
+#if OBJECT_FD=FD_ENABLED
+	#define __cfgstr "<FD>"
+#endif
+
+'--------------------------------------------------------------------
+enum pl_sock_interfaces
+	PL_SOCK_INTERFACE_NULL,		'<b>PLATFORM CONSTANT.</b><br><br>Null interface (no connection possible).
+	PL_SOCK_INTERFACE_NET,		'<b>PLATFORM CONSTANT.</b><br><br>Ethernet interface.
+	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
+	PL_SOCK_INTERFACE_PPP=3,	'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
+	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
+end enum
+
+'--------------------------------------------------------------------
+enum pl_adc_num 
+	PL_ADC_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 0 (mapped to I/O line 40).
+
+	PL_ADC_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 1 (mapped to I/O line 41).
+
+	PL_ADC_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 2 (mapped to I/O line 42).
+
+	PL_ADC_NUM_3		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 3 (mapped to I/O line 43).
+end enum
+
+'--------------------------------------------------------------------
+enum pl_pwm_num 
+	PL_PWM_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 0 (mapped to I/O line 0).
+
+	PL_PWM_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 1 (mapped to I/O line 1).
+
+	PL_PWM_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 2 (mapped to I/O line 2).
+
+	PL_PWM_NUM_3,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 3 (mapped to I/O line 3).
+				
+	PL_PWM_NUM_4,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 4 (mapped to I/O line 4).
+
+	PL_PWM_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 5 (mapped to I/O line 5).
+
+	PL_PWM_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 6 (mapped to I/O line 6).
+
+	PL_PWM_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 7 (mapped to I/O line 7).
+
+	PL_PWM_NUM_8		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'PWM channel 8 (mapped to I/O line 8).				
+end enum
+
+'--------------------------------------------------------------------
+enum pl_io_num 
+	PL_IO_NUM_0_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 0 (P0.0), aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_1_TX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 1 (P0.1), also the TX/W1out/dout output of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_2_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 2 (P0.2), also the interrupt line 0.
+
+	PL_IO_NUM_3_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	
+
+	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT. </b><br><br>
+				'General-purpose I/O line 4 (P0.4).
+
+	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 5 (P0.5).
+
+	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 6 (P0.6).
+
+	PL_IO_NUM_7_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 7 (P0.7), aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_8_TX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 8 (P1.0), also the TX/W1out/dout output of the serial port 0.<br><br>
+				'When this serial port is in the UART mode
+				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
+				'and is enabled
+				'(<font color="maroon"><b>ser.enabled</b></font>= <font color="olive"><b>1- YES</b></font>)
+				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer. 				
+
+	PL_IO_NUM_9,			'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 9 (P1.1).
+
+	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
+				'This is a NULL line that does not physically exist.
+				'The state of this line is always detected as LOW. Setting this line has no effect.				
+end enum
+
+'--------------------------------------------------------------------
+enum pl_io_port_num
+	PL_IO_PORT_NUM_0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'8-bit port 0, contains I/O lines 0-7. This is a virtual port.<br><br>
+				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 8 lines is handled individually,
+				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in the state writing and reading.				
+
+	PL_IO_PORT_NUM_1	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'8-bit port 1, contains I/O lines 8-11. This is a virtual port.<br><br>
+				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)) each one of the port's 4 lines is handled individually,
+				'starting with line 0 and ending with line 1. Hence, there is a small rolling delay in the state writing and reading.
+end enum
+
+'--------------------------------------------------------------------
+enum pl_int_num 
+	PL_INT_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 0 (mapped to I/O line 2).
+
+	PL_INT_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'Interrupt line 1 (mapped to I/O line 3).
+
+	 
+	PL_INT_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
+				'This is a NULL interrupt line that does not physically exist.
+end enum
+
+'--------------------------------------------------------------------
+include "..\GEN.tph"
+include "..\SYS-2xxx.tph"
+include "..\IO-wm2xxx.tph"
+
+include "..\ADC.tph"
+include "..\BEEP.tph"
+include "..\BT.tph"
+include "..\FD.tph"
+include "..\KP.tph"
+include "..\PWM.tph"
+include "..\RTC.tph"
+include "..\SSI.tph"
+include "..\WLN.tph"

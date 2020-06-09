@@ -48,6 +48,7 @@
 #define TPP3N   41
 #define NB1010N 42
 #define EM510W  43
+#define WM2000  44
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
