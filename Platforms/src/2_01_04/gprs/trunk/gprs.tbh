@@ -171,6 +171,65 @@
 	#endif
 #endif
 
+'GPIO line that is used for controlling -SDWN
+#ifndef GPRS_SDWN
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2
+		#if GPRS_SER_PORT=0
+		
+			#define GPRS_SDWN PL_IO_NUM_11_TX1
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SDWN PL_IO_NUM_15_TX3
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif
+	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N or PLATFORM_ID=TPP3WG2
+		#if GPRS_SER_PORT=0
+			#define GPRS_SDWN PL_IO_NUM_32
+		#elif GPRS_SER_PORT=1
+			#define GPRS_SDWN PL_IO_NUM_34
+		#elif GPRS_SER_PORT=2
+			#define GPRS_SDWN PL_IO_NUM_36
+		#elif GPRS_SER_PORT=3
+			#define GPRS_SDWN PL_IO_NUM_38
+		#endif
+	#elif PLATFORM_ID=NB1010 or PLATFORM_ID=NB1010W or PLATFORM_ID=NB1010N
+		#error "Update as neccessary"
+	#else
+		#error "Update as neccessary"
+	#endif
+#endif
+
+'GPIO line that is used for monitoring STATUS
+#ifndef GPRS_STATUS
+	#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP2WG2
+		#if GPRS_SER_PORT=0
+			#define GPRS_STATUS PL_IO_NUM_17_INT1
+		#elif GPRS_SER_PORT=1
+			'this choice is not available
+		#elif GPRS_SER_PORT=2
+			#define GPRS_STATUS PL_IO_NUM_19_INT3
+		#elif GPRS_SER_PORT=3
+			'this choice is not available
+		#endif
+	#elif PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N or PLATFORM_ID=TPP3WG2
+		#if GPRS_SER_PORT=0
+			#define GPRS_STATUS PL_IO_NUM_20_INT4
+		#elif GPRS_SER_PORT=1
+			#define GPRS_STATUS PL_IO_NUM_21_INT5
+		#elif GPRS_SER_PORT=2
+			#define GPRS_STATUS PL_IO_NUM_22_INT6
+		#elif GPRS_SER_PORT=3
+			#define GPRS_STATUS PL_IO_NUM_23_INT7
+		#endif
+	#elif PLATFORM_ID=NB1010 or PLATFORM_ID=NB1010W or PLATFORM_ID=NB1010N
+		#error "Update as neccessary"
+	#else
+		#error "Update as neccessary"
+	#endif
+#endif
+
 
 'Size of TCP and UDP packets that the GPRS interface will be able to carry, expressed in 256-byte units.
 'Do not set >4 or <1.
