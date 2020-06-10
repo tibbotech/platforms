@@ -959,11 +959,4 @@ property wln.autoconnectpassword
 	set = syscall(850)  (byref value as string)
 end property
 
-''--------------------------------------------------------------------
-property wln.autodhcp
-	get = syscall(867) as no_yes
-	set = syscall(868) (value as no_yes)
-end property
-
-
 #endif 
