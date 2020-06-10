@@ -1,0 +1,18 @@
+'**************************************************************************************************
+'       SYS (System) object WM2000 Extensions
+'**************************************************************************************************
+
+enum PL_DEBUG_MODE 
+	PL_SYS_DBG_SERIAL
+	PL_SYS_DBG_NET
+	PL_SYS_DBG_BT
+end enum
+
+syscall(598) sys.rtcsleep(daycount as word, mincount as word, seconds as byte)
+
+property sys.debugmode 
+	get = syscall(841) as PL_DEBUG_MODE
+	set = syscall(842) (value as PL_DEBUG_MODE)
+end property
+
+ 

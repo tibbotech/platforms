@@ -20,7 +20,6 @@
 #define OBJECT_LCD LCD_ENABLED
 #define COPY_FIRMWARE 1
 #define EXTENDED_FD 1
-#define WLN_AVAILABLE 1
 
 
 '--------------------------------------------------------------------
@@ -171,12 +170,14 @@ end enum
 
 '--------------------------------------------------------------------
 include "..\GEN.tph"
-include "..\SYS-2xxx.tph"
-include "..\IO-wm2xxx.tph"
+include "..\sys-2xxx.tph"
+include "..\sys-wm2000.tph"
+include "..\io-wm2xxx.tph"
 
 include "..\ADC.tph"
 include "..\BEEP.tph"
 include "..\BT.tph"
+include "..\dhcp.tph"
 include "..\FD.tph"
 include "..\KP.tph"
 include "..\PWM.tph"

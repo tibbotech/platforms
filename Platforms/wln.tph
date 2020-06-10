@@ -922,3 +922,48 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 'Causes the Wi-Fi interface to commence setting the new data for EAP PEAP Enterprise ciphering.
 
 #endif
+
+
+#if PLATFORM_ID=WM2000
+
+property wln.autodhcp  
+    get = syscall(867) as no_yes
+	set = syscall(868)  (value as no_yes)
+end property
+
+property wln.dhcp
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- DHCP_ON (when the module associates DHCP will start). </b>
+'<br><br>
+'Indicates whether DHCP is enabled
+'<br><br>
+	get = syscall(843) as byte
+	set = syscall(844) (value as no_yes)
+end property
+
+''--------------------------------------------------------------------
+property wln.autoconnect
+	get = syscall(845) as no_yes
+	set = syscall(846) (value as no_yes)
+end property
+
+''--------------------------------------------------------------------
+property wln.autoconnectssid 
+    get = syscall(847) as string
+	set = syscall(848)  (byref value as string)
+end property
+
+
+''--------------------------------------------------------------------
+property wln.autoconnectpassword  
+    get = syscall(849) as string
+	set = syscall(850)  (byref value as string)
+end property
+
+''--------------------------------------------------------------------
+property wln.autodhcp
+	get = syscall(867) as no_yes
+	set = syscall(868) (value as no_yes)
+end property
+
+
+#endif 
