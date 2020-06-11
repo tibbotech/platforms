@@ -2,7 +2,7 @@
 '       SYS (System) object WM2000 Extensions
 '**************************************************************************************************
 
-enum PL_DEBUG_MODE 
+enum pl_debug_mode
 	PL_SYS_DBG_SERIAL
 	PL_SYS_DBG_NET
 	PL_SYS_DBG_BT
@@ -15,4 +15,21 @@ property sys.debugmode
 	set = syscall(842) (value as PL_DEBUG_MODE)
 end property
 
+enum pl_app 
+	PL_APP0
+	PL_APP1
+end enum
  
+property sys.defaultapp
+	get = syscall(869) as pl_app
+	set = syscall(870) (app as pl_app)
+end property
+
+
+syscall(863) !sys.getsmcs() as string
+
+syscall(864) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
+
+syscall(865) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
+
+syscall(866) sys.reboottoapp(value as pl_app)
