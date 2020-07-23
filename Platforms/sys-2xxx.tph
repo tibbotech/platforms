@@ -220,13 +220,11 @@ syscall(19) !sys.sw() as string
 '--------------------------------------------------------------------
 #if PLATFORM_ID <> WM2000
 syscall(598) sys.sleep()
-#endif 
 
 '--------------------------------------------------------------------
 syscall(599) sys.stop()
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID <> WM2000
 syscall(600) sys.standby()
 #endif 
 
@@ -251,6 +249,9 @@ end property
 '--------------------------------------------------------------------
 syscall(607) sys.wdreset()
 
+
+
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 enum pl_sys_speed_choices
     PL_SYS_SPEED_LOW,       '<b>PLATFORM CONSTANT. </b><br><br> The slowest execution speed.
@@ -269,6 +270,8 @@ property sys.hsclock
     set = syscall(611) (value as dis_en)
 end property
 
+#endif 
+
 '--------------------------------------------------------------------
 property sys.wakeupperiod
     get = syscall(612) as dword
@@ -282,7 +285,7 @@ syscall(628) !sys.getbuffbasesize(buff_num as byte, byref base as dword, byref s
 syscall(724) sys.getexceptioninfo(byref hfsr as dword, byref cfsr as dword, byref lr as dword, byref pc as dword, byref current_lr as dword)
 
 '--------------------------------------------------------------------
-syscall(725) sys.causeexception()
+syscall(725) !sys.causeexception()
 
 '--------------------------------------------------------------------
 property sys.monversion

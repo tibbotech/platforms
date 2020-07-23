@@ -8,9 +8,9 @@ object pwm
 '--------------------------------------------------------------------
 property pwm.num
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0.</b><br><br>
-'Sets/returns the number of the currently selected ADC channel.
+'Sets/returns the number of the currently selected PWM channel.
 '<br><br>
-'ADC inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_adc_num enum.
+'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_pwm_num enum.
 '<br><br>
 'After changing the channel, discard the first result returned by adc.getdata.
     get = syscall(855) as byte

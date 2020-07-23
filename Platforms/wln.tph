@@ -123,6 +123,7 @@ syscall(451,TDL_70) wln.boot(offset as dword) as ok_ng
 '<br><br>
 'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
 
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
@@ -190,6 +191,8 @@ property wln.dimap
     set = syscall(551,TDL_72) (value as pl_io_num)
 end property
 
+#endif 
+
 '--------------------------------------------------------------------
 syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 '<b>METHOD.</b>
@@ -222,6 +225,8 @@ property wln.domain
     set = syscall(481,TDL_72) (value as pl_wln_domains)
 end property
 
+
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 property wln.domap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
@@ -237,6 +242,8 @@ property wln.domap
     get = syscall(552,TDL_72) as pl_io_num
     set = syscall(553,TDL_72) (value as pl_io_num)
 end property
+
+#endif 
 
 '--------------------------------------------------------------------
 property wln.enabled
@@ -402,6 +409,7 @@ declare sub wln.disable()
 
 #elif SYS_VER=2000
 
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
@@ -433,6 +441,8 @@ property wln.fwversion
     get = syscall(791) as string
 end property
 
+#endif 
+
 '--------------------------------------------------------------------
 syscall(777) wln.disable()
 '<b>METHOD. </b><br><br>
@@ -446,6 +456,7 @@ syscall(777) wln.disable()
 '<br><br>
 'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
 
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
 '<b>METHOD. </b><br><br>
@@ -485,7 +496,7 @@ syscall(793) wln.waitforupgradecompletion() as ok_ng
 '<b>TIDE, TiOS, Tibbo BASIC and Tibbo C Manual</b> (you can access it by pressing F1 in TIDE) <b>-> THE REFERENCE -> Objects -> Wln Object -> Overview -> Updating Firmware (WA2000 only)</b>. 
 '<br><br>
 'Invoking this method while using the GA1000 device will have no effect.
-
+#endif 
 '--------------------------------------------------------------------
 property wln.band    
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 5- WIFI_PHY_11ABGN_MIXED (2.4G and 5G bands, 802.11a/b/g/n).</b>
@@ -728,6 +739,7 @@ property wln.scanresultssid
     get = syscall(495,TDL_72) as string
 end property
 
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 property wln.scanresultwpainfo
 '<b>R/O PROPERTY (STRING), DEFAULT VALUE= "".</b>
@@ -740,7 +752,7 @@ property wln.scanresultwpainfo
 'The string returned by this property is not intended for humans. The property exists to facilitate the operation of the WLN library, which calculates the WPA key for the GA1000.
     get = syscall(498,TDL_72) as string
 end property
-
+#endif 
 '--------------------------------------------------------------------
 syscall(494,TDL_90) wln.settxpower(level as byte) as accepted_rejected
 '<b>METHOD.</b>
