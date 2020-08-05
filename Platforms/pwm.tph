@@ -13,8 +13,8 @@ property pwm.num
 'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_pwm_num enum.
 '<br><br>
 'After changing the channel, discard the first result returned by adc.getdata.
-    get = syscall(855) as byte
-    set = syscall(856) (num as byte)
+    get = syscall(855) as pl_io_num
+    set = syscall(856) (num as pl_io_num)
 end property
 
 '--------------------------------------------------------------------

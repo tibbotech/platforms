@@ -204,13 +204,15 @@ syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 'Wln.disassociate will also be rejected if the Wi-Fi interface is not operational (wln.enabled=0- NO) or
 'if the Wi-Fi interface is not currently associated (wln.associationstate <> 1- PL_WLN_ASSOCIATED).
 
+
+#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 enum pl_wln_domains 
     PL_WLN_DOMAIN_FCC,  '<b>PLATFORM CONSTANT.</b><br><br> FCC (US), default. GA1000: channels 1-11 of the 2.4GHz range; WA2000: the same plus channels 52-64, 100-140, 149-165 of the 5.0GHz range.
     PL_WLN_DOMAIN_EU,   '<b>PLATFORM CONSTANT.</b><br><br> European Union. GA1000: channels 1-13 of the 2.4GHz range; WA2000: the same plus channels 52-64, 100-140, 149-165 of the 5.0GHz range. 
     PL_WLN_DOMAIN_JAPAN    '<b>PLATFORM CONSTANT.</b><br><br> Japan. GA1000: channels 1-14 of the 2.4GHz range; WA2000: the same plus channels 34-36 of the 5.0GHz range. 
 end enum
-
+#endif 
 '--------------------------------------------------------------------
 property wln.domain
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_DOMAIN_FCC. </b>
@@ -523,6 +525,8 @@ property wln.ip
     set = syscall(473,TDL_72) (byref ip_str as string)
 end property
 
+
+#if PLATFORM_ID<> WM2000
 '--------------------------------------------------------------------
 property wln.mac
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
@@ -539,6 +543,7 @@ property wln.mac
     get = syscall(470,TDL_72) as string
     set = syscall(471,TDL_72) (byref mac_str as string)
 end property
+#endif 
 
 '--------------------------------------------------------------------
 property wln.netmask

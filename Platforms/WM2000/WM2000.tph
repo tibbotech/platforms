@@ -169,8 +169,9 @@ end enum
 '--------------------------------------------------------------------
 include "..\GEN.tph"
 include "..\sys-2xxx.tph"
-include "..\sys-wm2000.tph"
-include "..\io-wm2xxx.tph"
+include "wm2000_sys.tph"
+include "wm2000_wln.tph"
+include "..\IO-1xxx.tph"
 
 include "..\ADC.tph"
 include "..\BEEP.tph"
@@ -181,4 +182,6 @@ include "..\KP.tph"
 include "..\PWM.tph"
 include "..\RTC.tph"
 include "..\SSI.tph"
+
 include "..\WLN.tph"
+
