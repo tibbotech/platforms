@@ -13,8 +13,8 @@ property pwm.num
 'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_pwm_num enum.
 '<br><br>
 'After changing the channel, discard the first result returned by adc.getdata.
-    get = syscall(855) as pl_io_num
-    set = syscall(856) (num as pl_io_num)
+    get = syscall(855) as pl_pwm_num
+    set = syscall(856) (num as pl_pwm_num)
 end property
 
 '--------------------------------------------------------------------
@@ -50,3 +50,14 @@ property pwm.enabled
     get = syscall(861) as no_yes
     set = syscall(862) (state as no_yes)
 end property
+
+
+syscall(871) pwm.update()
+'<b>METHOD. </b><br><br>
+'For the currently selected PWM channel (selection is made through the pwm.num property), updates the frequency and duty cycle. 
+
+
+syscall(872) pwm.updateall()
+'<b>METHOD. </b><br><br>
+'For all enabled PWM channels updates the frequency and duty cycle. 
+
