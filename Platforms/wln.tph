@@ -443,6 +443,16 @@ property wln.fwversion
     get = syscall(791) as string
 end property
 
+#else ' PLATFORM_ID = WM2000
+
+'--------------------------------------------------------------------
+syscall(780) wln.getmoduletype() as pl_wln_module_types
+'<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
+'Detects and returns the Wi-Fi module type, or just returns the module type if it has already been detected earlier.
+'<br><br>
+'The actual module type detection happens on the first invocation of wln.getmoduletype or wln.boot, whichever is called first after the reset of the Wi-Fi module.
+'<br><br>
+
 #endif 
 
 '--------------------------------------------------------------------
@@ -944,8 +954,8 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 #if PLATFORM_ID=WM2000
 
 property wln.autodhcp  
-    get = syscall(867) as no_yes
-	set = syscall(868)  (value as no_yes)
+    get = syscall(869) as no_yes
+	set = syscall(870)  (value as no_yes)
 end property
 
 property wln.dhcp
@@ -953,27 +963,27 @@ property wln.dhcp
 '<br><br>
 'Indicates whether DHCP is enabled
 '<br><br>
-	get = syscall(843) as byte
-	set = syscall(844) (value as no_yes)
-end property
-
-''--------------------------------------------------------------------
-property wln.autoconnect
-	get = syscall(845) as no_yes
+	get = syscall(845) as byte
 	set = syscall(846) (value as no_yes)
 end property
 
 ''--------------------------------------------------------------------
+property wln.autoconnect
+	get = syscall(847) as no_yes
+	set = syscall(848) (value as no_yes)
+end property
+
+''--------------------------------------------------------------------
 property wln.autoconnectssid 
-    get = syscall(847) as string
-	set = syscall(848)  (byref value as string)
+    get = syscall(849) as string
+	set = syscall(850)  (byref value as string)
 end property
 
 
 ''--------------------------------------------------------------------
 property wln.autoconnectpassword  
-    get = syscall(849) as string
-	set = syscall(850)  (byref value as string)
+    get = syscall(851) as string
+	set = syscall(852)  (byref value as string)
 end property
 
 #endif 

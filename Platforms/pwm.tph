@@ -13,8 +13,8 @@ property pwm.num
 'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_pwm_num enum.
 '<br><br>
 'After changing the channel, discard the first result returned by adc.getdata.
-    get = syscall(855) as pl_pwm_num
-    set = syscall(856) (num as pl_pwm_num)
+    get = syscall(857) as pl_pwm_num
+    set = syscall(858) (num as pl_pwm_num)
 end property
 
 '--------------------------------------------------------------------
@@ -24,8 +24,8 @@ property pwm.frequency
 '<br><br>
 'The output frequency is equal to pwm.frequency value:
 '<br><br>
-    get = syscall(857) as word
-    set = syscall(858) (value as word)
+    get = syscall(859) as word
+    set = syscall(860) (value as word)
 end property
 
 '--------------------------------------------------------------------
@@ -35,8 +35,8 @@ property pwm.dutycycle
 '<br><br>
 'The output duty cycle is equal to pwm.dutycycle value:
 '<br><br>
-    get = syscall(859) as byte
-    set = syscall(860) (value as byte)
+    get = syscall(861) as byte
+    set = syscall(862) (value as byte)
 end property
 
 '--------------------------------------------------------------------
@@ -47,17 +47,17 @@ property pwm.enabled
 'Setting this property to 0- NO disables the PWM channel and allows the corresponding line to work as a regular GPIO line.
 'Note that after you set pwm.enabled to 0- NO, the corresponding GPIO line will be configured as an input and its output register will be set to HIGH.
 '<br><br>
-    get = syscall(861) as no_yes
-    set = syscall(862) (state as no_yes)
+    get = syscall(863) as no_yes
+    set = syscall(864) (state as no_yes)
 end property
 
 
-syscall(871) pwm.update()
+syscall(873) pwm.update()
 '<b>METHOD. </b><br><br>
 'For the currently selected PWM channel (selection is made through the pwm.num property), updates the frequency and duty cycle. 
 
 
-syscall(872) pwm.updateall()
+syscall(875) pwm.updateall()
 '<b>METHOD. </b><br><br>
 'For all enabled PWM channels updates the frequency and duty cycle. 
 

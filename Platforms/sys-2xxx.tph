@@ -65,10 +65,12 @@ enum pl_sys_ext_reset_type
     PL_SYS_EXT_RESET_TYPE_RSTPIN    '<b>PLATFORM CONSTANT. </b><br><br> The most recent reset was initiated from the RST pin.
 end enum
 
+#if PLATFORM_ID <> WM2000
 property sys.extresettype
 '<b>R/O PROPERTY (BYTE, enum pl_sys_ext_reset_type). </b><br><br>
     get = syscall(597) as pl_sys_ext_reset_type
 end property
+#endif
 
 '--------------------------------------------------------------------
 property sys.totalbuffpages
@@ -226,7 +228,7 @@ syscall(599) sys.stop()
 
 '--------------------------------------------------------------------
 syscall(600) sys.standby()
-#endif 
+
 
 '--------------------------------------------------------------------
 property sys.wdenabled
@@ -249,9 +251,6 @@ end property
 '--------------------------------------------------------------------
 syscall(607) sys.wdreset()
 
-
-
-#if PLATFORM_ID <> WM2000
 '--------------------------------------------------------------------
 enum pl_sys_speed_choices
     PL_SYS_SPEED_LOW,       '<b>PLATFORM CONSTANT. </b><br><br> The slowest execution speed.
@@ -270,7 +269,7 @@ property sys.hsclock
     set = syscall(611) (value as dis_en)
 end property
 
-#endif 
+
 
 '--------------------------------------------------------------------
 property sys.wakeupperiod
@@ -278,12 +277,16 @@ property sys.wakeupperiod
     set = syscall(613) (value as dword)
 end property
 
+#endif 
 '--------------------------------------------------------------------
 syscall(628) !sys.getbuffbasesize(buff_num as byte, byref base as dword, byref size as dword)
+
+#if PLATFORM_ID <> WM2000
 
 '--------------------------------------------------------------------
 syscall(724) sys.getexceptioninfo(byref hfsr as dword, byref cfsr as dword, byref lr as dword, byref pc as dword, byref current_lr as dword)
 
+#endif 
 '--------------------------------------------------------------------
 syscall(725) !sys.causeexception()
 

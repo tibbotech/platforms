@@ -15,6 +15,10 @@ const WLN_ASSOCIATION_HOLDOFF_CONST=6 'waiting time in (0.5 sec intervals) until
 const WLN_STAMP="WLN> "
 const WLN_CR_LF=chr(13)+chr(10)
 
+#if PLATFORM_ID = WM2000
+#define WLN_REQ_BUFFERS 0
+#endif 
+
 #if GA1000 
 	
 	const WLN_FIRMWARE_FILE="ga1000fw.bin"
@@ -144,6 +148,15 @@ end function
 '--------------------------------------------------------------------
 public function wln_start(byref ap_name as string,security_mode as pl_wln_security_modes,byref key as string,domain as pl_wln_domains,active_scan as no_yes, scanfilter as pl_wln_scan_filter) as en_wln_status_codes
 	dim x as byte
+
+	#if PLATFORM_ID = WM2000
+		if wln.autoconnect = YES then 
+			wln_start = WLN_STATUS_AUTOCONNECT
+			goto wln_start_error
+		end if 
+
+	#endif 
+
 	#if GA1000
 		zero_replay_count_data(0) = 0
 		zero_replay_count_data(1) = 0
@@ -238,8 +251,11 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 		wln_keep_alive_ctr=0
 	#endif
 
+	#if WLN_REQ_BUFFERS
 	wln.buffrq(WLN_BUFFER_PAGES)
-	sys.buffalloc
+
+	sys.buffalloc	
+	#endif 
 	#if GA1000
 		if wln_module_type =  PL_WLN_MODULE_TYPE_GA1000 then
 			romfile.open(WLN_FIRMWARE_FILE)
@@ -413,8 +429,10 @@ wait_close_kal_socket:
 		#endif	
 	#endif	
 
+	#if WLN_REQ_BUFFERS
 	wln.buffrq(0)
 	sys.buffalloc
+	#endif
 end sub
 
 '----------------------------------------------------------------------------
@@ -876,14 +894,14 @@ public sub wln_proc_task_complete(completed_task as pl_wln_tasks)
 		#if WLN_WPA			
 			'WA2000 Note: We need security not to be reset to make the module more responsive. 				
 			case WLN_SECURITY_MODE_WPA1:
-				if wln.getmoduletype =  PL_WLN_MODULE_TYPE_WA2000 then
+				if wln.getmoduletype =  PL_WLN_MODULE_TYPE_WA2000  or wln.getmoduletype =  PL_WLN_MODULE_TYPE_WM2000 then
 					if wln.setwpa(PL_WLN_WPA_WPA1_PSK,PL_WLN_WPA_ALGORITHM_TKIP,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
 						wln_result=WLN_STATUS_UNEXPECTED_ERROR
 						goto finish			
 					end if
 				end if
 			case WLN_SECURITY_MODE_WPA2
-				if wln.getmoduletype= PL_WLN_MODULE_TYPE_WA2000 then
+				if wln.getmoduletype= PL_WLN_MODULE_TYPE_WA2000  or wln.getmoduletype =  PL_WLN_MODULE_TYPE_WM2000 then
 					if wln.setwpa(PL_WLN_WPA_WPA2_PSK,PL_WLN_WPA_ALGORITHM_AES,wln_key,PL_WLN_WPA_CAST_MULTICAST)<>ACCEPTED then
 						wln_result=WLN_STATUS_UNEXPECTED_ERROR
 						goto finish			
@@ -1850,6 +1868,7 @@ case WLN_STATUS_BOOT_FAILURE: s="ERROR: boot failure"
 	case WLN_STATUS_ASSOCIATION_FAILURE: s="Association failure"
 	case WLN_STATUS_DISASSOCIATION: s="Disassociation (or link loss)"
 	case WLN_STATUS_UNEXPECTED_ERROR: s="ERROR: unexpected error (Wi-Fi module is busy when it shoudn't be)"
+	case WLN_STATUS_AUTOCONNECT : s="ERROR: Autoconnect is enabled. Module is automatically handling connections."
 	end select
 
 	wln_debugprint(s)

@@ -8,7 +8,7 @@ enum pl_debug_mode
 	PL_SYS_DBG_BT
 end enum
 
-syscall(598) sys.rtcsleep(daycount as word, mincount as word, seconds as byte)
+syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
 
 property sys.debugmode 
 	get = syscall(841) as PL_DEBUG_MODE
@@ -21,15 +21,21 @@ enum pl_app
 end enum
  
 property sys.defaultapp
-	get = syscall(869) as pl_app
-	set = syscall(870) (app as pl_app)
+	get = syscall(871) as pl_app
+	set = syscall(872) (app as pl_app)
 end property
 
 
-syscall(863) !sys.getsmcs() as string
+syscall(865) !sys.getsmcs() as string
 
-syscall(864) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte, both as no_yes) as accepted_rejected
+syscall(866) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte, both as no_yes) as accepted_rejected
 
-syscall(865) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
+syscall(867) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
 
-syscall(866) sys.reboottoapp(value as pl_app)
+syscall(868) sys.reboottoapp(value as pl_app)
+
+
+
+property sys.timercountmse
+	get = syscall(875) as dword
+end property

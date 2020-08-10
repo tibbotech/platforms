@@ -182,6 +182,6 @@ include "..\KP.tph"
 include "..\PWM.tph"
 include "..\RTC.tph"
 include "..\SSI.tph"
-
 include "..\WLN.tph"
+include "..\tls.tph"
 

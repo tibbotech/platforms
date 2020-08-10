@@ -4,7 +4,7 @@
 
 
 '--------------------------------------------------------------------
-CONST PL_TLS_EST = &h82
+
 
 '--------------------------------------------------------------------
 enum pl_tls_state
@@ -53,6 +53,22 @@ syscall(840) sock.tlspeekdata(maxinplen as word) as string
 'the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
 
 
+'--------------------------------------------------------------------
+property sock.tlstxfree
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of free space in the TX 
+'buffer in byets for tls data. Sock.tlstxfree = sock.txbufflen - sock.txlen-encryption data.<br><br>
+'Your application will not be able to store more data than this amount. To achieve asynchronous data processing, use the <font color="maroon">
+'<b>sock.notifysent</b></font> method to get <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains required 
+'amount of free space.
+    get = syscall(841,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
+
 
 '--------------------------------------------------------------------
-syscall(839,"35.TDL") sock.tlsbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
+property sock.tlspeeklen
+'<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
+'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns total number of bytes currently waiting
+'in the peek buffer for peeking. Please note data is eencrypted. 
+    get = syscall(842,"36.TDL"+) as BUFF_SIZE_TYPE
+end property
