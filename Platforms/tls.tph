@@ -18,10 +18,10 @@ enum pl_tls_state
 end enum
 
 '--------------------------------------------------------------------
-syscall(834) sock.tlsinit() as pl_tls_state
+syscall(834) sock.tlsinit(length as dword, byref pem as byte) as pl_tls_state
 
 '--------------------------------------------------------------------
-syscall(835) sock.tlshandshake()
+syscall(835) sock.tlshandshake(byref sever_name as string )
 
 '--------------------------------------------------------------------
 syscall(836) sock.tlsdeinit()

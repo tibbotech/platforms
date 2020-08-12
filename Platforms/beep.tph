@@ -384,11 +384,9 @@ end property
 #endif
 
 #if PLATFORM_ID=WM2000
-property beep.divider
+property beep.frequency
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency is equal to beep.divider value:
+'Defines the buzzer frequency (frequency of the square wave output on the line).
 '<br><br>
 'The optimal buzzer frequency depends on the buzzer model.
     get = syscall(179) as word
