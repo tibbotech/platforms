@@ -7,21 +7,23 @@
 
 
 '--------------------------------------------------------------------
-enum pl_tls_state
+enum pl_tls_result
 '<b>ENUM. </b><br><br> Contains a list of constants related to possible TLS errors.
     PL_TLS_SUCCESS,   
-    PL_TLS_ERROR_RND,   '<b>PLATFORM CONSTANT. </b><br><br> Unable to make random seed.  
-    PL_TLS_ERROR_CFG,   '<b>PLATFORM CONSTANT. </b><br><br> Unable to upgrade socket to ssl.      
-    PL_TLS_ERROR_CTX,   '<b>PLATFORM CONSTANT. </b><br><br> Unable to upgrade socket to ssl.      
-    PL_TLS_ERROR_SOCKNUM,   '<b>PLATFORM CONSTANT. </b><br><br> Unable to upgrade socket to ssl.  
+    PL_TLS_ERROR_RND,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize random generator.  
+    PL_TLS_ERROR_CTX,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize tls context.   
+    PL_TLE_ERROR_CERT,     '<b>PLATFORM CONSTANT. </b><br><br> Unable to load certificate pem file.
+    PL_TLS_ERROR_SOCKNUM,  '<b>PLATFORM CONSTANT. </b><br><br> Unable to upgrade socket to ssl.  
     PL_TLS_ERROR_NOBUFF 	
 end enum
 
-'--------------------------------------------------------------------
-syscall(834) sock.tlsinit(length as dword, byref pem as byte) as pl_tls_state
+
 
 '--------------------------------------------------------------------
-syscall(835) sock.tlshandshake(byref sever_name as string )
+syscall(834) sock.tlsinit(offset as dword) as pl_tls_result
+
+'--------------------------------------------------------------------
+syscall(835) sock.tlshandshake(byref sever_name as string ) as accepted_rejected
 
 '--------------------------------------------------------------------
 syscall(836) sock.tlsdeinit()
