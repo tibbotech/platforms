@@ -8,10 +8,11 @@
 
 object wln
 'The wln. object represents the Wi-Fi interface of your device. This object is responsible for finding and associating with Wi-Fi networks, as well as for creating your own network.
-'It also specifies various parameters related to the Wi-Fi interface (IP address, default gateway IP, netmask, etc.).  The object is not in charge of
-'sending/transmitting data. The latter is the job of the sock. object.
+'It also specifies various parameters related to the Wi-Fi interface (IP address, default gateway IP, netmask, etc.).  
+'The wln. object is not in charge of sending/transmitting data, which is the job of the sock. object.
 '<br><br>
-'The wln. object is designed to work with the GA1000 and WA2000 devices.
+'Certain parts of the wln. object work differently if your platform supports <font color="maroon"><b>wln.autoconnect</b></font>.
+'Please refer to the online documentation for more information.
 
 '--------------------------------------------------------------------
 syscall(580,TDL_71) wln.activescan(byref ssid as string) as accepted_rejected

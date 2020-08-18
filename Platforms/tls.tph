@@ -10,67 +10,83 @@
 enum pl_tls_result
 '<b>ENUM. </b><br><br> Contains a list of constants related to possible TLS errors.
     PL_TLS_SUCCESS,   
-    PL_TLS_ERROR_RND,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize random generator.  
-    PL_TLS_ERROR_CTX,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize tls context.   
-    PL_TLE_ERROR_CERT,     '<b>PLATFORM CONSTANT. </b><br><br> Unable to load certificate pem file.
-    PL_TLS_ERROR_SOCKNUM,  '<b>PLATFORM CONSTANT. </b><br><br> Unable to upgrade socket to ssl.  
-    PL_TLS_ERROR_NOBUFF 	
+    PL_TLS_ERROR_RNG,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize random generator.  
+    PL_TLS_ERROR_CTX,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize TLS context.   
+    PL_TLE_ERROR_CERT,     '<b>PLATFORM CONSTANT. </b><br><br> Unable to load certificate for trusted authority.
 end enum
 
 
 
 '--------------------------------------------------------------------
 syscall(834) sock.tlsinit(offset as dword) as pl_tls_result
+'<b>METHOD. </b><br><br>
+'Initializes all processes needed to establish a secure connection.
+'This method initializes the certificate authority - based on the certificate included in the project as a resource file - and the TLS context for the current socket.<br><br>
+'Note that as only one TLS context can exist at a time, calling the method while a secure connection already exists will break that link.<br><br>
+'This method returns one of the following enums:<ul> 
+'<li>0 - PL_TLS_SUCCESS - Initialization was completed successfully.</li>
+'<li>1 - PL_TLS_ERROR_RNG - Unable to initialize random number generator.</li> 
+'<li>2 - PL_TLS_ERROR_CTX - Unable to initialize TLS context.</li>
+'<li>3 - PL_TLS_ERROT_CERT - Unable to load certificate for trusted authority.</li></ul>
 
 '--------------------------------------------------------------------
-syscall(835) sock.tlshandshake(byref sever_name as string ) as accepted_rejected
+syscall(835) sock.tlshandshake(byref server_name as string ) as accepted_rejected
+'<b>METHOD. </b><br><br>
+'Establishes a secure connection with the designated server.
+'This method's sole parameter, <em>server_name</em>, takes <b>only</b> a fully qualified domain name (i.e., everything between the protocol and the path), 
+'which can be manually entered in your project. Alternatively, the HTTP library can parse an URL to provide just the domain.
+'If you're attempting to establish a secure connection to a specific IP address, an empty string should be passed.<br><br>
+'This method returns either accepted or rejected.
 
 '--------------------------------------------------------------------
 syscall(836) sock.tlsdeinit()
+'<b>METHOD. </b><br><br>
+'Clears all TLS-related memory, including certificates and buffers. 
+'Before calling this method, the socket should have already been closed as normal.<br><br>
+'If you're going to re-establish the connection in a reasonably short period (i.e., before the server clears the connection information), 
+'calling this method is optional because the server can resume the session, potentially saving time.
 
 '--------------------------------------------------------------------
 syscall(837) sock.tlssetdata(byref txdata as string) as word
 '<b>METHOD. </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) adds the data passed in the txdata argument to
-'the contents of the TX buffer. If the buffer doesn't have enough space to accommodate the data being added then this data will be truncated. 
-'Newly saved data is not sent out immediately. This only happens after the data has been encrypted. 
-'Returns the number of bytes sent. 
-
+'Encrypts the data passed in the <em>txdata</em> parameter and adds it to the TX buffer for the selected socket (<font color="maroon"><b>sock.num</b></font>).
+'This method does <b>not</b> automatically send the data; it only places it in the TX buffer. 
+'Sending the contents of the TX buffer remains the function of <font color="maroon"><b>sock.send</b></font>, which should be called after placing the encrypted data in the buffer.<br><br>
+'If the amount of encrypted data exceeds the TX buffer's capacity, <font color="maroon"><b>sock.tlssetdata</b></font> will truncate the data into segments. 
+'In such a case, your project will require logic to sequentially set the data and send it until the transmission is complete.<br><br>
+'This method returns the number of bytes sent.
 
 '--------------------------------------------------------------------
 syscall(838) sock.tlsgetdata(maxinplen as word) as string
 '<b>METHOD. </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the string that contains the unencrypted data
-'extracted from the RX buffer. Extracted data is permanently deleted from the buffer. <br><br>
-'Length of extracted data is limited by one of the three factors (whichever is smaller): amount of data in the RX buffer itself, capacity of 
-'the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
-
+'Retrieves decrypted data from the RX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>) and deletes it from the buffer.
+'The length of the extracted data is limited by whichever is the smallest of three factors: 
+'the amount of data in the RX buffer, the capacity of the "receiving" string variable, and the limit set by the <em>maxinplen</em> parameter.<br><br>
+'When using TLS, <font color="maroon"><b>sock.getdata</b></font> should <b>never</b> be used to retrieve encrypted data; doing so will result in the corruption of that string of data.<br><br>
+'This method returns a string of decrypted data that was contained in the RX buffer.
 
 '--------------------------------------------------------------------
 syscall(840) sock.tlspeekdata(maxinplen as word) as string
 '<b>METHOD. </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the string that contains the unencrypted data
-'extracted from the RX buffer. Extracted data is permanently deleted from the buffer. <br><br>
-'Length of extracted data is limited by one of the three factors (whichever is smaller): amount of data in the RX buffer itself, capacity of 
-'the "receiving" string variable, and the limit set by the maxinplen argument.<br><br>
-
+'Retrieves decrypted data from the RX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>).
+'This method is similar to <font color="maroon"><b>sock.tlsgetdata</b></font>, but it doesn't clear the RX buffer.
+'The length of the extracted data is limited by whichever is the smallest of three factors: 
+'the amount of data in the RX buffer, the capacity of the "receiving" string variable, and the limit set by the <em>maxinplen</em> parameter.<br><br>
+'This method returns a string of decrypted data that was contained in the RX buffer.
 
 '--------------------------------------------------------------------
 property sock.tlstxfree
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns the amount of free space in the TX 
-'buffer in byets for tls data. Sock.tlstxfree = sock.txbufflen - sock.txlen-encryption data.<br><br>
-'Your application will not be able to store more data than this amount. To achieve asynchronous data processing, use the <font color="maroon">
-'<b>sock.notifysent</b></font> method to get <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains required 
-'amount of free space.
+'Indicates the amount of available space in the TX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>).
+'The amount of space remaining in the TX buffer is calculated by subtracting the size of the encrypted data placed in the buffer and overhead from the overall capacity.<br><br>
+'For asynchronous data processing, use the <font color="maroon"><b>sock.notifysent</b></font> method to generate the <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains the necessary free space.
     get = syscall(841,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
-
 
 '--------------------------------------------------------------------
 property sock.tlspeeklen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns total number of bytes currently waiting
-'in the peek buffer for peeking. Please note data is eencrypted. 
+'Indicates the total number of bytes waiting in the RX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>) that can be accessed via <font color="maroon"><b>sock.tlspeekdata</b></font>.
+'The returned value is for encrypted data.
     get = syscall(842,"36.TDL"+) as BUFF_SIZE_TYPE
 end property
