@@ -11,8 +11,8 @@ end enum
 syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
 
 property sys.debugmode 
-	get = syscall(841) as PL_DEBUG_MODE
-	set = syscall(842) (value as PL_DEBUG_MODE)
+	get = syscall(843) as PL_DEBUG_MODE
+	set = syscall(844) (value as PL_DEBUG_MODE)
 end property
 
 enum pl_app 
