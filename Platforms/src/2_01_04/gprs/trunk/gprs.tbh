@@ -5,8 +5,8 @@
 
 '0- GPRS disabled (library code won't be compiled into the project)
 '1- GPRS enabled
-#ifndef SUPPORTS_GPRS
-	#define SUPPORTS_GPRS 0
+#ifndef SUPPORTS_CELL
+	#define SUPPORTS_CELL 0
 #endif
 
 '0- no debug output.

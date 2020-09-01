@@ -106,7 +106,7 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 		end if
 	#endif
 
-	#if SUPPORTS_GPRS
+	#if SUPPORTS_CELL
 		if interface=PL_SOCK_INTERFACE_PPP then
 			sock.targetinterface=PL_SOCK_INTERFACE_PPP
 			goto l1

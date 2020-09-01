@@ -249,7 +249,7 @@ public function agg_start(interface as pl_sock_interfaces, byref owner_name as s
 		end if
 	#endif
 
-	#if SUPPORTS_GPRS
+	#if SUPPORTS_CELL
 		if interface=PL_SOCK_INTERFACE_PPP then
 			sock.targetinterface=PL_SOCK_INTERFACE_PPP
 			goto l1
