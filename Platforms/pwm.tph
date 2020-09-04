@@ -8,10 +8,8 @@ object pwm
 '--------------------------------------------------------------------
 property pwm.num
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0.</b><br><br>
-'Sets/returns the number of the currently selected PWM channel.
-'<br><br>
-'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For information see the pl_pwm_num enum.
-'<br><br>
+'Sets or returns the number of the currently selected PWM channel.<br><br>
+'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For more information, see the pl_pwm_num enum of your platform.<br><br>
 'After changing the channel, discard the first result returned by adc.getdata.
     get = syscall(857) as pl_pwm_num
     set = syscall(858) (num as pl_pwm_num)
@@ -19,22 +17,18 @@ end property
 
 '--------------------------------------------------------------------
 property pwm.frequency
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the PWM frequency 
-'<br><br>
-'The output frequency is equal to pwm.frequency value:
-'<br><br>
+'<b>PROPERTY (WORD), DEFAULT VALUE=1. </b><br><br>
+'Indicates the frequency of modulation for the currently selected PWM channel.<br><br>
+'The unit for the value range is hertz, meaning the usable range is from 1Hz to 20Khz.
     get = syscall(859) as word
     set = syscall(860) (value as word)
 end property
 
 '--------------------------------------------------------------------
 property pwm.dutycycle
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the PWM duty cycle.
-'<br><br>
-'The output duty cycle is equal to pwm.dutycycle value:
-'<br><br>
+'<b>PROPERTY (WORD), DEFAULT VALUE=0. </b><br><br>
+'Indicates the duty cycle for the currently selected PWM channel.<br><br>
+'The duty cycle is the proportion of “on” time for the channel, where 0 is always off and 100 is always on.
     get = syscall(861) as byte
     set = syscall(862) (value as byte)
 end property
@@ -42,8 +36,7 @@ end property
 '--------------------------------------------------------------------
 property pwm.enabled
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- NO.</b><br><br>
-'For the currently selected PWM channel (selection is made through the pwm.num property), defines whether this PWM channel is enabled or disabled.
-'<br><br>
+'Indicates whether the currently selected PWM channel is enabled or disabled.<br><br>
 'Setting this property to 0- NO disables the PWM channel and allows the corresponding line to work as a regular GPIO line.
 'Note that after you set pwm.enabled to 0- NO, the corresponding GPIO line will be configured as an input and its output register will be set to HIGH.
 '<br><br>
@@ -54,10 +47,10 @@ end property
 
 syscall(873) pwm.update()
 '<b>METHOD. </b><br><br>
-'For the currently selected PWM channel (selection is made through the pwm.num property), updates the frequency and duty cycle. 
+'Updates the frequency and duty cycle for the currently selected PWM channel.
 
 
 syscall(875) pwm.updateall()
 '<b>METHOD. </b><br><br>
-'For all enabled PWM channels updates the frequency and duty cycle. 
+'Updates the frequency and duty cycle for all enabled PWM channels.
 

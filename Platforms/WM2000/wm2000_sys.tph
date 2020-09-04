@@ -9,8 +9,14 @@ enum pl_debug_mode
 end enum
 
 syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
+'<b>METHOD.</b><br><br>
+'Reboots the device from a low-power state at the specified date and time.<br><br>
+'The parameters specify the desired time and date to "wake" the system in days (daycount), minutes (mincount), and seconds in relative terms. If improperly configured, the device might not wake up at the desired time.
 
 property sys.debugmode 
+'<b>PROPERTY.</b><br><br>
+'Indicates whether the device will use the serial, network, or Bluetooth interface for debugging.<br><br>
+'If this property is set to PL_SYS_DBG_NET, wln.autoconnect must be enabled for debugging to be possible.
 	get = syscall(843) as PL_DEBUG_MODE
 	set = syscall(844) (value as PL_DEBUG_MODE)
 end property
@@ -21,6 +27,8 @@ enum pl_app
 end enum
  
 property sys.defaultapp
+'<b>PROPERTY.</b><br><br>
+'Indicates the default app space the device should load when booting.
 	get = syscall(871) as pl_app
 	set = syscall(872) (app as pl_app)
 end property
@@ -33,9 +41,13 @@ syscall(866) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte, bot
 syscall(867) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
 
 syscall(868) sys.reboottoapp(value as pl_app)
+'<b>METHOD.</b><br><br>
+'Reboots the device to the specified app space.
 
 
 
 property sys.timercountmse
+'<b>PROPERTY.</b><br><br>
+'A read-only property that returns the amount of time (in milliseconds) elapsed since the device powered up.
 	get = syscall(875) as dword
 end property
