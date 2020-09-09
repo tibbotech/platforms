@@ -15,9 +15,9 @@ property sys.debugmode
 	set = syscall(844) (value as PL_DEBUG_MODE)
 end property
 
-enum pl_app 
-	PL_APP0
-	PL_APP1
+enum pl_app_num 
+	PL_APP_NUM_0
+	PL_APP_NUM_1
 end enum
  
 property sys.defaultapp
