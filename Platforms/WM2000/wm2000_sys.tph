@@ -21,8 +21,8 @@ enum pl_app_num
 end enum
  
 property sys.defaultapp
-	get = syscall(871) as pl_app
-	set = syscall(872) (app as pl_app)
+	get = syscall(871) as pl_app_num
+	set = syscall(872) (app as pl_app_num)
 end property
 
 
@@ -32,7 +32,7 @@ syscall(866) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte, bot
 
 syscall(867) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
 
-syscall(868) sys.reboottoapp(value as pl_app)
+syscall(868) sys.reboottoapp(value as pl_app_num)
 
 
 
