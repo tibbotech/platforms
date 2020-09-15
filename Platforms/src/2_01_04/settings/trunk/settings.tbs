@@ -770,6 +770,710 @@ create_newfile:
 end function
 
 '-------------------------------------------------------------
+
+public function stg_start_no_init() as en_stg_status_codes
+'API procedure, starts the STG library, parses the descriptor file, DOES NOT restore volatile (RAM) settings
+''MUST be called first, before any other procedure in this library is used.
+
+	dim stg_sdr_member as byte
+	dim max_stg_name_len as byte
+	dim len_of_str_rep,max_len_of_str_rep as word
+	dim s as string
+	dim i,j,c,line_end,nvmem_offset_ctr,ramarr_offset_ctr as word
+	dim f,x as byte
+	dim field_start_pos as word
+	dim l as long
+	dim pos as byte
+	#if STG_STORAGE_MEMORY
+		dim fd_status as pl_fd_status_codes
+		dim newfile as no_yes
+	#endif
+	
+	stg_start_no_init=EN_STG_STATUS_OK
+
+	#if STG_DEBUG_PRINT
+		stg_debugprint("---START---")
+	#endif
+
+	if STG_MAX_NUM_SETTINGS=0 or STG_MAX_NUM_SETTINGS>255 then
+		#if STG_DEBUG_PRINT
+			stg_debugprint("ERROR: STG_MAX_NUM_SETTINGS must be between 1 and 255, you now have '#STG_MAX_NUM_SETTINGS "+str(STG_MAX_NUM_SETTINGS)+"'.")
+		#endif
+		stg_num_settings=0 'STG_MAX_NUM_SETTINGS must be between 1 and 255.
+		stg_start_no_init=EN_STG_STATUS_WRONG_DEFINE
+		exit function
+	end if
+
+	if STG_MAX_SETTING_NAME_LEN=0 or STG_MAX_SETTING_NAME_LEN>255 then
+		#if STG_DEBUG_PRINT
+			stg_debugprint("ERROR: STG_MAX_SETTING_NAME_LEN must be between 1 and 255, you now have 'STG_MAX_SETTING_NAME_LEN "+str(STG_MAX_SETTING_NAME_LEN)+"'.")
+		#endif
+		stg_num_settings=0 'STG_MAX_SETTING_NAME_LEN must be between 1 and 255.
+		stg_start_no_init=EN_STG_STATUS_WRONG_DEFINE
+		exit function
+	end if
+
+	#if STG_TIMESTAMP
+		if STG_MAX_SETTING_VALUE_LEN=0 or STG_MAX_SETTING_VALUE_LEN>246 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR: STG_MAX_SETTING_VALUE_LEN must be between 1 and 246, you now have '"+str(STG_MAX_SETTING_VALUE_LEN)+"'.")
+			#endif
+			stg_num_settings=0 'STG_MAX_SETTING_VALUE_LEN must be between 1 and 246.
+			stg_start_no_init=EN_STG_STATUS_WRONG_DEFINE
+			exit function
+		end if
+	#else
+		if STG_MAX_SETTING_VALUE_LEN=0 or STG_MAX_SETTING_VALUE_LEN>253 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR: STG_MAX_SETTING_VALUE_LEN must be between 1 and 253, it is now 'STG_MAX_SETTING_VALUE_LEN "+str(STG_MAX_SETTING_VALUE_LEN)+"'.")
+			#endif
+			stg_num_settings=0 'STG_MAX_SETTING_VALUE_LEN must be between 1 and 253.
+			stg_start=EN_STG_STATUS_WRONG_DEFINE
+			exit function
+		end if
+	#endif
+
+	#if STG_STORAGE_MEMORY
+		if fd.ready=NO then
+			if fd.mount<>PL_FD_STATUS_OK then
+				#if STG_DEBUG_PRINT
+					stg_debugprint("ERROR: the flash disk is not formatted or malfunctioned.")
+				#endif
+				stg_start=EN_STG_STATUS_FAILURE
+				exit function
+			end if
+		end if
+		
+		suspend_flushing=NO
+		
+		stg_filenum=filenum_get("STG")
+		if stg_filenum>=fd.maxopenedfiles then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR: out of file numbers")
+			#endif
+			stg_start=EN_STG_STATUS_OUT_OF_FILE_NUMBERS
+			exit function
+		end if
+		
+		newfile=NO
+		fd.filenum=stg_filenum
+		fd_status=fd.open(STG_FILENAME)
+		select case fd_status
+		case PL_FD_STATUS_NOT_FOUND
+			'need to create this file
+			fd_status=fd.create(STG_FILENAME)
+			if fd_status<>PL_FD_STATUS_OK then
+				#if STG_DEBUG_PRINT
+					stg_debugprint("ERROR: could not create the file")
+				#endif
+				stg_start=EN_STG_STATUS_FAILURE
+				exit function
+			end if
+			newfile=YES
+			fd_status=fd.open(STG_FILENAME)
+			if fd_status<>PL_FD_STATUS_OK then
+				#if STG_DEBUG_PRINT
+					stg_debugprint("ERROR: could not open the file")
+				#endif
+				stg_start=EN_STG_STATUS_FAILURE
+				exit function
+			end if
+
+		case PL_FD_STATUS_OK
+			'all is good -- just reset the file size to 0
+		
+		case else
+			'some other problem
+			#if STG_DEBUG_PRINT
+				stg_debugprint("DISK ERROR")
+			#endif
+			stg_start=EN_STG_STATUS_FAILURE
+			exit function
+		end select
+	#endif
+
+	stg_num_settings=0 'will count all settings in the descriptor file
+	stg_sdr_member=0 'will select stg_sdr array member (follows stg_num_settings but is limited by array size)
+	max_stg_name_len=0 'will keep the longest setting name encountered
+	max_len_of_str_rep=0 'will keep the largest string length required to represent setting value
+	nvmem_offset_ctr=1 'will count offset in the NV MEM (addresses start from 1).
+	ramarr_offset_ctr=0 'will count offset in the RAM array (addresses start from 0).
+
+	romfile.open(STG_DESCRIPTOR_FILE)				'this file is a setting descriptor table
+	if romfile.size=0 then
+		#if STG_DEBUG_PRINT
+			stg_debugprint("ERROR: '"+STG_DESCRIPTOR_FILE+"' is not in your project or file is empty.")
+		#endif
+		stg_num_settings=0 'setting descriptor file is not in your project (or file is empty)
+		stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+		exit function
+	end if
+	
+	i=romfile.find(romfile.pointer,">>",1)
+	while i<>0
+		'we are now at the ">>" pointing at the beginning of one setting descriptor line
+		romfile.pointer=i+2
+		
+		'find the end of this setting descriptor line (or the end of file)
+		line_end=romfile.find(romfile.pointer,chr(STG_END_OF_LINE),1)
+		if line_end=0 then
+			line_end=romfile.size+1
+		end if
+		
+		'extract setting name
+		s=stg_get_descriptor_field(line_end,field_start_pos)			
+		if s="" then
+			'missing setting name field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting #"+str(stg_sdr_member)+"): missing setting name field (settings are counted from 0).")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		if len(s)>STG_MAX_SETTING_NAME_LEN then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+s+"'): this setting's name length is "+str(len(s))+", while you have 'STG_MAX_SETTING_NAME_LEN "+str(STG_MAX_SETTING_NAME_LEN)+"'.")
+			#endif
+			stg_num_settings=0 'you need to increase STG_MAX_SETTING_NAME_LEN!
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		stg_sdr(stg_sdr_member).name=s
+		if len(s)>max_stg_name_len then
+			max_stg_name_len=len(s)
+		end if
+
+		'extract storage type (non-volatile or RAM)
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing storage type field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing storage type field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		if len(s)<>1 or (asc(s)<>`E` and asc(s)<>`R`) then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): unknown storage type '"+s+"', use 'E' or 'R' only.")
+			#endif
+			stg_num_settings=0 'unknown storage type; use "E" for non-volatile (EEPROM/FD) or "R" for volatile (RAM); capital letters only!
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		stg_sdr(stg_sdr_member).storage=asc(s)
+		
+		'extract setting type
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing setting type field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing setting type field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+
+		if len(s)<>1 then goto unknown_setting_type
+		select case asc(s)
+		case `B`
+		case `W`
+		case `S`
+		case `D`
+		case else
+unknown_setting_type:
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): unknown setting type '"+s+"', use 'B', 'W', 'S' or 'D' only.")
+			#endif
+			stg_num_settings=0 'unknown setting type; use "B" for byte, "W" for word, "S" for string, "D" for dot-decimal string; capital letters only!
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end select
+		stg_sdr(stg_sdr_member).stype=asc(s)
+
+		'extract the number of members
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing number of members field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing number of members field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		if val(s)=0 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): the number of members can't be 0, each setting must have at least one member.")
+			#endif
+			stg_num_settings=0	'the number of members can't be 0, each setting must have at least one member
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		if val(s)>254 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): the number of members is "+s+", while it can't exceed 254.")
+			#endif
+			stg_num_settings=0	'max number of members can't exceed 254, 255 is a special value- see stg_sg_internal()
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		stg_sdr(stg_sdr_member).members=val(s)
+		
+		'extract P1
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing p1 parameter field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing P1 parameter field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		select case stg_sdr(stg_sdr_member).stype
+		case `B`:
+			if val(s)>255 then goto p1_too_large
+
+		case `W`:
+			if lval(s)>65535 then goto p1_too_large
+
+		case `S`:
+			if val(s)>254 then goto p1_too_large
+		case `D`:
+			if val(s)>63 then
+p1_too_large:
+				#if STG_DEBUG_PRINT
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): minimum value (P1 param) can't exceed 255 for byte, 65535 for word, 254 for strings, and 63 for dot-decimal strings, it is now "+s)
+				#endif
+				stg_num_settings=0
+				stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+				exit function
+			end if
+		end select
+		stg_sdr(stg_sdr_member).p1=val(s)
+
+		'extract P2
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing P2 parameter field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing P2 parameter field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		if val(s)=0 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): maximum value (P2 param) can't be zero!")
+			#endif
+			'maximum value (P2 param) can't be zero
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		select case stg_sdr(stg_sdr_member).stype
+		case `B`:
+			if val(s)>255 then goto p2_too_large
+
+		case `W`:
+			if lval(s)>65535 then goto p2_too_large
+
+		case `S`:
+			if val(s)>254 then goto p2_too_large
+		
+		case `D`:
+			if val(s)>63 then
+p2_too_large:
+				#if STG_DEBUG_PRINT
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): maximum value (P2 param) can't exceed 255 for byte, 65535 for word, 254 for strings, and 63 for dot-decimal strings, it is now "+s)
+				#endif
+				'maximum value (P2 param) for byte, string, and dot-decimal settings can't exceed 255
+				stg_num_settings=0
+				stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+				exit function
+			end if
+		end select
+		stg_sdr(stg_sdr_member).p2=val(s)
+
+		if stg_sdr(stg_sdr_member).p2<stg_sdr(stg_sdr_member).p1 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): P2 parameter (now "+str(stg_sdr(stg_sdr_member).p2)+") cannot be smaller than P1 parameter (now "+str(stg_sdr(stg_sdr_member).p1)+").")
+			#endif
+			stg_num_settings=0	'P2 parameter cannot be smaller than P1 parameter
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+
+		'calculate how much space this setting will need in memory
+		select case stg_sdr(stg_sdr_member).stype
+		case `B`:
+			j=1
+			len_of_str_rep=3
+		case `W`:
+			j=2
+			len_of_str_rep=5
+		case `S`:
+			j=stg_sdr(stg_sdr_member).p2+1
+			len_of_str_rep=stg_sdr(stg_sdr_member).p2
+		case `D`
+			j=stg_sdr(stg_sdr_member).p2+1
+			len_of_str_rep=stg_sdr(stg_sdr_member).p2*4
+			if len_of_str_rep>0 then
+				len_of_str_rep=len_of_str_rep-1
+			end if
+		end select
+		
+		if len_of_str_rep>STG_MAX_SETTING_VALUE_LEN then
+			#if STG_DEBUG_PRINT			
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): this setting would occupy up to "+str(len_of_str_rep)+" chars in string form, while you have 'STG_MAX_SETTING_VALUE_LEN "+str(STG_MAX_SETTING_VALUE_LEN)+"'.")
+			#endif
+			stg_num_settings=0 'this setting (with its type, number of members, etc.) would occupy more than 255 bytes, which is not allowed
+			stg_start_no_init=EN_STG_STATUS_WRONG_DEFINE
+			exit function
+		end if
+
+		if max_len_of_str_rep<len_of_str_rep then
+			max_len_of_str_rep=len_of_str_rep
+		end if
+
+		stg_sdr(stg_sdr_member).member_size=j 	'fill out member length
+		j=j*stg_sdr(stg_sdr_member).members+1
+		#if STG_TIMESTAMP
+			x=STG_TIMESTAMP_LENGTH
+		#else
+			x=0
+		#endif
+		j=j+x
+		if j>255 then
+			#if STG_DEBUG_PRINT
+				
+				select case stg_sdr(stg_sdr_member).stype
+				case `B`:
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): only up to "+str(254-x)+" members are possible for this word setting, you now have "+str(stg_sdr(stg_sdr_member).members)+".")
+				case `W`:
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): only up to "+str((254-x)/2)+" members are possible for this word setting, you now have "+str(stg_sdr(stg_sdr_member).members)+".")
+				case `S`:
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): with P2="+str(stg_sdr(stg_sdr_member).p2)+", only up to "+str((254-x)/(stg_sdr(stg_sdr_member).p2+1))+" members are possible for this string setting, you now have "+str(stg_sdr(stg_sdr_member).members)+".")
+				case `D`:
+					stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): with P2="+str(stg_sdr(stg_sdr_member).p2)+", only up to "+str((254-x)/(stg_sdr(stg_sdr_member).p2+1))+" members are possible for this dot-decimal setting, you now have "+str(stg_sdr(stg_sdr_member).members)+".")
+				end select
+			#endif
+			stg_num_settings=0 'this setting (with its type, number of members, etc.) would occupy more than 255 bytes, which is not allowed
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		stg_sdr(stg_sdr_member).setting_size=j
+		
+		'save the address of the setting in memory, increment memory counters
+		if stg_sdr(stg_sdr_member).storage=`E` then
+			stg_sdr(stg_sdr_member).memaddr=nvmem_offset_ctr
+			nvmem_offset_ctr=nvmem_offset_ctr+stg_sdr(stg_sdr_member).setting_size
+		else
+			stg_sdr(stg_sdr_member).memaddr=ramarr_offset_ctr
+			ramarr_offset_ctr=ramarr_offset_ctr+stg_sdr(stg_sdr_member).setting_size
+		end if
+
+		'extract initialization mode
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		if s="" then
+			'missing initialization mode field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing intialization mode field.")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+		
+		if len(s)<>1 then goto unknown_init_mode
+		select case asc(s)
+		case `I`
+		case `A`
+		case else
+unknown_init_mode:
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): unknown initialization mode '"+s+"', use 'I', or 'A' only.")
+			#endif
+			stg_num_settings=0 'unknown initialization mode; use "I" for "when invalid", "A" for "always"
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end select
+		stg_sdr(stg_sdr_member).ini=asc(s)
+
+		'extract default value field
+		s=stg_get_descriptor_field(line_end,field_start_pos)
+		stg_process_esc_seq(s)
+	
+		if s="" then
+			'missing default value field
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): missing default value field (use '^' to specify NULL default value.).")
+			#endif
+			stg_num_settings=0
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+
+		'save default value field position
+		stg_sdr(stg_sdr_member).romaddr_def=field_start_pos
+
+		'verify the validity of the default value	
+		for f=0 to stg_sdr(stg_sdr_member).members-1
+			pos=instr(1,s,"/",1)
+			if pos=0 then
+				pos=len(s)+1
+			end if
+
+			select case stg_sdr(stg_sdr_member).stype
+			case `B`:
+				j=val(left(s,pos-1))
+				if left(s,pos-1)="^" then
+					j=0
+				end if
+				if j<stg_sdr(stg_sdr_member).p1 then
+					'def value < P1
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value for member #"+str(f)+" = "+str(j)+", which is below P1 parameter ("+str(stg_sdr(stg_sdr_member).p1)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+				if j>stg_sdr(stg_sdr_member).p2 then
+					'def value > P2
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value for member #"+str(f)+" = "+str(j)+", which is above P2 parameter ("+str(stg_sdr(stg_sdr_member).p2)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+			
+			case `W`:
+				l=lval(left(s,pos-1))
+				if left(s,pos-1)="^" then
+					l=0
+				end if
+				if l<stg_sdr(stg_sdr_member).p1 then
+					'def value < P1
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value for member #"+str(f)+" = "+lstr(l)+", which is below P1 parameter ("+str(stg_sdr(stg_sdr_member).p1)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+				if l>stg_sdr(stg_sdr_member).p2 then
+					'def value > P2
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value for member #"+str(f)+" = "+lstr(l)+", which is above P2 parameter ("+str(stg_sdr(stg_sdr_member).p2)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+
+			case `S`:
+				j=len(left(s,pos-1))
+				if left(s,pos-1)="^" then
+					j=0
+				end if
+				if j<stg_sdr(stg_sdr_member).p1 then
+					'def value < P1
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value length for member #"+str(f)+" = "+str(j)+" ("+left(s,pos-1)+"), which is below P1 parameter ("+str(stg_sdr(stg_sdr_member).p1)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+				if j>stg_sdr(stg_sdr_member).p2 then
+					'def value > P2
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default value length for member #"+str(f)+" = "+str(j)+" ("+left(s,pos-1)+"), which is above P2 parameter ("+str(stg_sdr(stg_sdr_member).p2)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+			
+			case `D`:
+				j=len(ddval(left(s,pos-1)))
+				if left(s,pos-1)="^" then
+					j=0
+				end if
+				if j<stg_sdr(stg_sdr_member).p1 then
+					'def value < P1
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default number of bytes for member #"+str(f)+" = "+str(j)+" ("+left(s,pos-1)+"), which is below P1 parameter ("+str(stg_sdr(stg_sdr_member).p1)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+				if j>stg_sdr(stg_sdr_member).p2 then
+					'def value > P2
+					#if STG_DEBUG_PRINT
+						stg_debugprint("ERROR (setting '"+stg_sdr(stg_sdr_member).name+"'): default number of bytes for member #"+str(f)+" = "+str(j)+" ("+left(s,pos-1)+"), which is above P2 parameter ("+str(stg_sdr(stg_sdr_member).p2)+").")
+					#endif
+					stg_num_settings=0
+					stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+					exit function
+				end if
+
+			end select
+			s=mid(s,pos+1,255)
+			if s="" then goto skip_def_value_check
+		next f
+skip_def_value_check:
+
+
+		'done with this setting, move to next one
+		i=romfile.find(romfile.pointer,">>",1)
+		if stg_sdr_member<STG_MAX_NUM_SETTINGS-1 then
+			stg_sdr_member=stg_sdr_member+1
+		end if
+		stg_num_settings=stg_num_settings+1
+		c=c+x
+	wend
+
+	if stg_num_settings>STG_MAX_NUM_SETTINGS then
+		#if STG_DEBUG_PRINT
+			stg_debugprint("ERROR: total number of settings is "+str(stg_num_settings)+" while you have 'STG_MAX_NUM_SETTINGS "+str(STG_MAX_NUM_SETTINGS)+"'.")
+		#endif
+		stg_num_settings=0 'you need to increase STG_MAX_NUM_SETTINGS!
+		stg_start_no_init=EN_STG_STATUS_WRONG_DEFINE
+		exit function
+	end if
+
+
+#if STG_STORAGE_MEMORY=0
+	'exceeded EEPROM capacity? (we do not check this for the flash disk
+	#if STG_REDUNDANCY=0
+		if nvmem_offset_ctr-1>stor.size then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR: your non-volatile settings do not fit in the EEPROM (needed: "+str(nvmem_offset_ctr-1)+", available: "+str(stor.size)+").")
+			#endif
+			stg_num_settings=0 'your non-volatile settings do not fit in the EEPROM!
+			stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+	#else
+		if nvmem_offset_ctr-1>=stor.size/2 then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("ERROR: your non-volatile settings do not fit in HALF of the EEPROM (needed: "+str(nvmem_offset_ctr-1)+", available: "+str(stor.size/2)+").")
+			#endif
+			stg_num_settings=0 'your non-volatile settings do not fit in HALF of the EEPROM (we need other half for backup)!
+			stg_start=EN_STG_STATUS_WRONG_DESCRIPTOR
+			exit function
+		end if
+	#endif
+#else
+	
+	c=nvmem_offset_ctr
+	#if STG_REDUNDANCY
+		c=c*2 '*2 because we have a backup copy to accommodate too
+	#endif
+		
+	if newfile=YES then
+		'create a file of required size
+		
+create_newfile:
+		fd_status=fd.setfilesize(0)
+		if fd_status<>PL_FD_STATUS_OK then
+			#if STG_DEBUG_PRINT
+				stg_debugprint("DISK ERROR")
+			#endif
+			stg_start=EN_STG_STATUS_FAILURE
+			exit function
+		end if
+		
+		while fd.filesize<c
+			if c-fd.filesize>255 then
+				x=255
+			else
+				x=c-fd.filesize
+			end if
+			s=strgen(x,chr(0))
+			fd_status=fd.setdata(s)
+			if fd_status<>PL_FD_STATUS_OK then
+				#if STG_DEBUG_PRINT
+					stg_debugprint("DISK ERROR")
+				#endif
+				stg_start=EN_STG_STATUS_FAILURE
+				exit function
+			end if
+		wend
+	else
+		if fd.filesize<>c then
+			goto create_newfile
+		end if
+	end if
+#endif
+
+
+	'exceeded RAM array capacity?
+	#if STG_REDUNDANCY>=2
+		ramarr_offset_ctr=ramarr_offset_ctr*2
+	#endif
+	
+	
+	if ramarr_offset_ctr>STG_RAM_ARRAY_SIZE then
+		#if STG_DEBUG_PRINT
+			stg_debugprint("ERROR: your volatile settings need "+str(ramarr_offset_ctr)+" bytes in the RAM, you now have 'STG_RAM_ARRAY_SIZE "+str(STG_RAM_ARRAY_SIZE)+"'.")
+		#endif
+		stg_num_settings=0 'your RAM settings do not fit in the RAM array!
+		stg_start_no_init=EN_STG_STATUS_WRONG_DESCRIPTOR
+		exit function
+	end if
+
+	stg_init_flag=STG_INIT_SIGNATURE 'we need to set this before we call stg_restore_multiple()
+
+	'initialized settings stored in RAM
+	#if STG_DEBUG_PRINT
+		stg_debugprint("Check/init RAM (volatile) settings...")
+	#endif
+
+	#if STG_DEBUG_PRINT
+		stg_debugprint("Number of settings: "+str(stg_num_settings))
+		if stg_num_settings<STG_MAX_NUM_SETTINGS then
+			stg_debugprint("YOU ARE WASTING MEMORY!!! Set 'STG_MAX_NUM_SETTINGS "+str(stg_num_settings)+"'. It is now "+str(STG_MAX_NUM_SETTINGS)+".")
+		end if
+				
+		#if STG_REDUNDANCY
+			stg_debugprint("Non-volatile memory space required: "+str(nvmem_offset_ctr*2))
+		#else
+			stg_debugprint("Non-volatile memory space required: "+str(nvmem_offset_ctr))
+		#endif
+		
+		stg_debugprint("RAM (volatile memory) space required: "+str(ramarr_offset_ctr))
+		if ramarr_offset_ctr<STG_RAM_ARRAY_SIZE then
+			stg_debugprint("YOU ARE WASTING MEMORY!!! Set 'STG_RAM_ARRAY_SIZE "+str(ramarr_offset_ctr)+"'. It is now "+str(STG_RAM_ARRAY_SIZE)+".")
+		end if
+	
+		if max_stg_name_len<STG_MAX_SETTING_NAME_LEN then
+			stg_debugprint("YOU ARE WASTING MEMORY!!! Set STG_MAX_SETTING_NAME_LEN to "+str(max_stg_name_len)+". It is now "+str(STG_MAX_SETTING_NAME_LEN)+".")
+		end if
+		
+		if max_len_of_str_rep<STG_MAX_SETTING_VALUE_LEN then
+			stg_debugprint("YOU ARE WASTING MEMORY!!! Set STG_MAX_SETTING_VALUE_LEN to "+str(max_len_of_str_rep)+". It is now "+str(STG_MAX_SETTING_VALUE_LEN)+".")
+		end if
+	#endif
+
+end function
+
+'-------------------------------------------------------------
 public function stg_check_all(byref problem_stg as string) as en_stg_status_codes
 'API procedure, verifies each setting by reading its value thru stg_sg().
 
