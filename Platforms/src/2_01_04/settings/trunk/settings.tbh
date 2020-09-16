@@ -116,6 +116,8 @@ end type
 
 '--------------------------------------------------------------------------------
 declare function stg_start() as en_stg_status_codes
+declare function stg_start_no_init() as en_stg_status_codes
+declare function stg_start_with_params(init as no_yes) as en_stg_status_codes
 declare function stg_check_all(byref problem_stg as string) as en_stg_status_codes
 declare function stg_get_def(byref stg_name_or_num as string,index as byte,byref def_value as string) as en_stg_status_codes
 declare function stg_restore_member(byref stg_name_or_num as string, index as byte) as en_stg_status_codes
