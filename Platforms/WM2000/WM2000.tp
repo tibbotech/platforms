@@ -1,8 +1,8 @@
 [platform]
 description=WM2000 Module
 version=WM2000-3.80
-rom=1048576
-ram=122880
+rom=1728512
+ram=59392
 codebits=24
 databits=32
 sector=4096
