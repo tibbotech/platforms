@@ -954,35 +954,48 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 
 #if PLATFORM_ID=WM2000
 
-property wln.autodhcp  
+property wln.autodhcp
+'<b>PROPERTY.</b><br><br>
+'Indicates whether wln.dhcp should be called when wln.autoconnect is enabled.<br><br>
+'This property is mostly backwards-compatible with the DHCP library, but is more specific about parameters. DHCP callbacks — whose names remain the same — must still be handled.
     get = syscall(869) as no_yes
 	set = syscall(870)  (value as no_yes)
 end property
 
 property wln.dhcp
-'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- DHCP_ON (when the module associates DHCP will start). </b>
-'<br><br>
-'Indicates whether DHCP is enabled
-'<br><br>
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- DHCP_ON (when the module associates, DHCP will start).</b><br><br>
+'Indicates whether DHCP is enabled.<br><br>
+'This property replaces the functions of the DHCP library and is enabled automatically by wln.autodhcp.<br>
+'If wln.autoconnect is disabled, wln.dhcp must be called before wln.boot to enable DHCP functionality in the traditional Wi-Fi operating mode.
 	get = syscall(845) as byte
 	set = syscall(846) (value as no_yes)
 end property
 
 ''--------------------------------------------------------------------
 property wln.autoconnect
+'<b>PROPERTY.</b><br><br>
+'Determines whether the device will automatically initialize all connectivity hardware and attempt to associate with a designated Wi-Fi network, maintain the connection, and reconnect if disconnected.<br><br>
+'This property is read at boot and must be enabled to enter Wi-Fi debug mode.<br>
+'This property requires wln.autoconnectssid and wln.autoconnectpassword to provide the desired Wi-Fi network SSID and password, respectively. After altering either of those properties, the device must be rebooted for the changes to take effect.
 	get = syscall(847) as no_yes
 	set = syscall(848) (value as no_yes)
 end property
 
 ''--------------------------------------------------------------------
 property wln.autoconnectssid 
+'<b>PROPERTY.</b><br><br>
+'Contains the SSID of the network with which the device will attempt to connect when wln.autoconnect is called.<br><br>
+'The 32-character limit was imposed because that is the maximum length allowed for an SSID in the WPA specification.
     get = syscall(849) as string
 	set = syscall(850)  (byref value as string)
 end property
 
 
 ''--------------------------------------------------------------------
-property wln.autoconnectpassword  
+property wln.autoconnectpassword
+'<b>PROPERTY.</b><br><br>
+'Contains the password of the network with which the device will attempt to connect when wln.autoconnect is called.
+'The 63-character limit was imposed because that is the maximum length allowed for a password in the WPA specification.  
     get = syscall(851) as string
 	set = syscall(852)  (byref value as string)
 end property
