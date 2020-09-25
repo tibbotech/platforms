@@ -2,10 +2,10 @@
 '       SYS (System) object WM2000 Extensions
 '**************************************************************************************************
 
-enum pl_debug_mode
+enum pl_sys_debug_mode
 	PL_SYS_DBG_SERIAL
 	PL_SYS_DBG_NET
-	PL_SYS_DBG_BT
+	'PL_SYS_DBG_BT
 end enum
 
 syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)

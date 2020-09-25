@@ -109,7 +109,7 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 	#if SUPPORTS_CELL
 		if interface=PL_SOCK_INTERFACE_PPP then
 			sock.targetinterface=PL_SOCK_INTERFACE_PPP
-			goto l1
+			goto dns_l1
 		end if
 	#endif
 
@@ -119,7 +119,7 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 	
 	dns_connect=EN_STATUS_DNS_INVALID_INTERFACE
 	exit function 'invalid interface specified	
-l1:	
+dns_l1:	
 	sock.targetip=dns_server_ip
 	if dns_port=0 then
 		sock.targetport=DNS_SERVER_PORT

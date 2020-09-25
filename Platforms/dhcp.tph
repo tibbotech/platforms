@@ -2,17 +2,17 @@
 '       Internal DHCP server support
 '**************************************************************************************************
 
-enum en_dhcp_status_codes
-	DHCP_STATUS_OK,							'Success.
-	DHCP_STATUS_OUT_OF_SOCKETS,				'No free sockets available for the library to operate.
-	DHCP_STATUS_INVALID_INTERFACE,			'Unsupported network interface specified (use PL_SOCK_INTERFACE_NET or PL_SOCK_INTERFACE_WLN only).
-	DHCP_STATUS_INSUFFICIENT_BUFFER_SPACE,	'Insufficient number of buffer pages available and the call to callback_dhcp_pre_buffrq() failed to cure the problem.
-	DHCP_STATUS_FAILURE						'Interaction with the DHCP server failed (because there was no reply, the reply was unrecognized, invalid, etc.).
+enum on_dhcp_status_codes
+	ON_DHCP_STATUS_OK,							'Success.
+	ON_DHCP_STATUS_OUT_OF_SOCKETS,				'No free sockets available for the library to operate.
+	ON_DHCP_STATUS_INVALID_INTERFACE,			'Unsupported network interface specified (use PL_SOCK_INTERFACE_NET or PL_SOCK_INTERFACE_WLN only).
+	ON_DHCP_STATUS_INSUFFICIENT_BUFFER_SPACE,	'Insufficient number of buffer pages available and the call to callback_dhcp_pre_buffrq() failed to cure the problem.
+	ON_DHCP_STATUS_FAILURE						'Interaction with the DHCP server failed (because there was no reply, the reply was unrecognized, invalid, etc.).
 end enum
 
 
 
-event(35)  callback_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, ip as string(16), gateway_ip as string(16), netmask as string(16), lease_time as dword)
-event(36)  callback_dhcp_failure(interface as pl_sock_interfaces,failure_code as en_dhcp_status_codes)
+event(35)  on_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, ip as string(16), gateway_ip as string(16), netmask as string(16), lease_time as dword)
+event(36)  on_dhcp_failure(interface as pl_sock_interfaces,failure_code as on_dhcp_status_codes)
 'The user will be in charge of pre clear  of the socket. 
 'event(37)  callback_dhcp_pre_clear_ip(interface as pl_sock_interfaces)  
