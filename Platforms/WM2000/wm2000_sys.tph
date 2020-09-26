@@ -15,10 +15,10 @@ syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
 
 property sys.debugmode 
 '<b>PROPERTY.</b><br><br>
-'Indicates whether the device will use the serial, network, or Bluetooth interface for debugging.<br><br>
+'Indicates whether the device will use the serial or network interface for debugging.<br><br>
 'If this property is set to PL_SYS_DBG_NET, wln.autoconnect must be enabled for debugging to be possible.
-	get = syscall(843) as PL_DEBUG_MODE
-	set = syscall(844) (value as PL_DEBUG_MODE)
+	get = syscall(843) as pl_sys_debug_mode
+	set = syscall(844) (value as pl_sys_debug_mode)
 end property
 
 enum pl_app_num 
@@ -28,7 +28,7 @@ end enum
  
 property sys.defaultapp
 '<b>PROPERTY.</b><br><br>
-'Indicates the default app space the device should load when booting.
+'Indicates the default compiled Tibbo BASIC/C application binary the device should load when booting.
 	get = syscall(871) as pl_app_num
 	set = syscall(872) (app as pl_app_num)
 end property
@@ -42,12 +42,12 @@ syscall(867) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byt
 
 syscall(868) sys.reboottoapp(value as pl_app_num)
 '<b>METHOD.</b><br><br>
-'Reboots the device to the specified app space.
+'Reboots the device and loads the specified compiled Tibbo BASIC/C application binary.
 
 
 
 property sys.timercountmse
-'<b>PROPERTY.</b><br><br>
-'A read-only property that returns the amount of time (in milliseconds) elapsed since the device powered up.
+'<b>R/O PROPERTY.</b><br><br>
+'Returns the amount of time (in milliseconds) elapsed since the device powered up.
 	get = syscall(875) as dword
 end property
