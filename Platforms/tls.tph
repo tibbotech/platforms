@@ -66,8 +66,10 @@ syscall(838) sock.tlsgetdata(maxinplen as word) as string
 'When using TLS, <font color="maroon"><b>sock.getdata</b></font> should <b>never</b> be used to retrieve encrypted data; doing so will result in the corruption of that string of data.<br><br>
 'This method returns a string of decrypted data that was contained in the RX buffer.
 
+#if PLATFORM_ID<>WM2000
 ''--------------------------------------------------------------------
-syscall(839,"35.TDL") sock.tlsbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
+syscall(839) sock.tlsbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
+#endif 
 
 '--------------------------------------------------------------------
 syscall(840) sock.tlspeekdata(maxinplen as word) as string
