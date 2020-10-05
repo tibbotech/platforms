@@ -1,9 +1,6 @@
 
 #if PLATFORM_ID = WM2000
- uint32_t baudrate_tbl[] = {
-        110, 300, 1200, 2400, 4800, 9600, 19200,
-        38400, 57600, 115200, 230400, 460800, 921600
-    };
+
 enum  pl_ser_baud
 
     PL_SER_BAUD_110    =  16384, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 300.
