@@ -95,14 +95,14 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 	#if NET_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_NET then
 			sock.targetinterface=PL_SOCK_INTERFACE_NET
-			goto l1
+			goto dns_l1
 		end if
 	#endif
 	
 	#if WLN_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_WLN then
 			sock.targetinterface=PL_SOCK_INTERFACE_WLN
-			goto l1
+			goto dns_l1
 		end if
 	#endif
 

@@ -82,7 +82,7 @@ public sub ssi_release(ssi_num as byte)
 
 	'restore this SSI channel to its default state (except mapping)
 	ssi.enabled=NO
-	ssi.baudrate= PL_SSI_BAUDRATES_100kHz
+	ssi.baudrate= PL_SSI_BAUD_100kHz
 	ssi.direction=PL_SSI_DIRECTION_RIGHT
 	ssi.mode=PL_SSI_MODE_0
 	ssi.zmode=PL_SSI_ZMODE_ALWAYS_ENABLED
