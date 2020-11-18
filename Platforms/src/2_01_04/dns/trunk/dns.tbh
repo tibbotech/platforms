@@ -7,6 +7,18 @@
 	#define DNS_DEBUG_PRINT 0
 #endif
 
+#ifndef DNS_DEFAULT_SERVER
+    #define DNS_DEFAULT_SERVER "8.8.8.8"
+#endif
+
+#ifndef DNS_MAX_RETRIES
+    #define DNS_MAX_RETRIES 3
+#endif
+
+#ifndef DNS_REPLY_TIMEOUT
+	#define DNS_REPLY_TIMEOUT 10
+#endif
+
 'Status codes for dns-related operations
 enum en_dns_status_codes	
 	EN_STATUS_DNS_OK,
@@ -19,7 +31,9 @@ enum en_dns_status_codes
 	EN_STATUS_DNS_RECURSIVE_UNAVALIABLE,
 	EN_STATUS_DNS_NAME_ERROR,
 	EN_STATUS_DNS_NO_ANSWER,
-	EN_STATUS_DNS_BAD_ANSWER
+	EN_STATUS_DNS_BAD_ANSWER,
+	EN_STATUS_DNS_REQUEST_IN_PROGRESS,
+	EN_STATUS_DNS_MAX_RETRIES_REACHED
 end enum
 
 enum en_dns_return_type
@@ -33,6 +47,7 @@ end enum
 
 declare function dns_start(dns_sock_num as byte) as en_dns_status_codes
 declare function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as string, dns_port as word) as en_dns_status_codes
+declare function dns_current_domain() as string
 declare sub dns_disconnect()
 declare sub dns_query(byref question as string)
 declare sub dns_proc_data()
