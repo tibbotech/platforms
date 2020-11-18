@@ -382,3 +382,10 @@ property bt.flowcontrol
 end property
 
 #endif
+
+
+'--------------------------------------------------------------------
+syscall(876) bt.disconnect()
+'<b>METHOD.</b>
+'<br><br>
+'Requests that the BLE interface terminate the active connection.

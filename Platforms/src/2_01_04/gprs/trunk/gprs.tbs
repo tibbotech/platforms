@@ -5,7 +5,7 @@
 
 include "global.tbh"
 
-#if SUPPORTS_CELL '##################################################
+#if SUPPORTS_GPRS '##################################################
 
 '--------------------------------------------------------------------
 const GPRS_MAX_APN_LEN=24
@@ -18,7 +18,7 @@ const GPRS_PPP_BUFF_SIZE=GPRS_PAYLOAD_SIZE+1
 const GPRS_SER_BUFF_SIZE=GPRS_PAYLOAD_SIZE*2+1
 const GPRS_STD_TOUT=8
 const GPRS_ECHO_TOUT=60
-const GPRS_POST_RESET_TOUT=10
+const GPRS_POST_RESET_TOUT=60
 const GPRS_MAX_CMD_TRIES=5
 
 const GPRS_PPP_ESC_CHAR=&h7D
@@ -427,7 +427,7 @@ public sub gprs_proc_ser_data()
 		
 		case GPRS_AT_AT:
 			if gprs_reply=GPRS_REPLY_OK then
-				gprs_next_phase()	
+				gprs_next_phase()
 			end if
 		
 		case GPRS_AT_IPR:
@@ -1203,13 +1203,6 @@ sub gprs_init()
 		io.num=GPRS_POWER
 		io.state=HIGH
 		io.enabled=YES
-		
-		io.num=GPRS_SDWN
-		io.state=HIGH
-		io.enabled=YES
-		
-		io.num=GPRS_STATUS
-		io.enabled=NO
 	#endif
 end sub
 

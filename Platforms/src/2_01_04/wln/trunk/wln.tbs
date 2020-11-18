@@ -213,6 +213,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 		end if
 	#endif
 	
+	#if PLATFORM_ID<>WM2000
 	x=wln_get_info(WLN_INFO_ELEMENT_REQUIRED_BUFFERS,str(security_mode))
 		
 	if x>sys.freebuffpages then
@@ -223,6 +224,7 @@ public function wln_start(byref ap_name as string,security_mode as pl_wln_securi
 			goto wln_start_error
 		end if
 	end if
+	#endif
 
 
 	#if WLN_WPA and GA1000

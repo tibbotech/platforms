@@ -1,0 +1,33 @@
+
+#if PLATFORM_ID = WM2000
+
+enum  pl_ser_baud
+
+    PL_SER_BAUD_110    =  16384, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 300.
+    PL_SER_BAUD_300    =   8192, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 600.
+    PL_SER_BAUD_1200   =   4096, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 1200.	
+    PL_SER_BAUD_2400   =   2048, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 2400.	
+	PL_SER_BAUD_4800   =   1024, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 4800.	
+	PL_SER_BAUD_9600   =    512, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 9600.
+    PL_SER_BAUD_19200  =    256, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 19200.
+    PL_SER_BAUD_38400  =    128, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 38400.
+    PL_SER_BAUD_57600  =     64, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 57600.
+	PL_SER_BAUD_115200 =     32, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 115200.
+	PL_SER_BAUD_230400 =     16, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 230600.
+    PL_SER_BAUD_460800 =      8, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 460800.
+    PL_SER_BAUD_921600 =      4  '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 921600.
+end enum
+
+property ser.baudrate
+'<b>PROPERTY (WORD), DEFAULT VALUE= "platform-dependent, results in 9600 bps". </b><br><br>
+'Sets/returns the baudrate "divisor value" for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
+'Actual baudrade is calculated as follows: (9600*<font color="maroon"><b>ser.div9600</b></font>)/<font color="maroon"><b>ser.baudrate</b></font>.
+'<br><br> 
+'The <font color="maroon"><b>ser.div9600 </b></font>read-only property returns the value <font color="maroon"><b>ser.baudrate </b></font>must 
+'be set to in order to obtain 9600 bps on a particular device under present operating confitions. This property is only relevant when the 
+'serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
+    get = syscall(104,"80.TDL"+) as pl_ser_baud
+    set = syscall(105,"34.TDL"+) (value as pl_ser_baud)
+end property
+
+#endif 
