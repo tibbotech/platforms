@@ -18,13 +18,14 @@ const DNS_SERVER_PORT=53
 
 const DNS_TX_BUF_SIZE=1
 const DNS_RX_BUF_SIZE=2
-const DNS_CONNECTION_TIMEOUT=10
-const DNS_REPLY_TIMEOUT=20
 
 dim dns_init_flag as word
 dim dns_sock, dns_name_len as byte
 dim dns_id as string(2)
-dim dns_conn_tmr, dns_rpl_tmr as byte
+dim dns_rpl_tmr as byte=0
+dim dns_domain as string=""
+dim dns_current_retries as byte=0
+
 
 #if DNS_DEBUG_PRINT
 declare sub dns_debug_print_status(status as en_dns_status_codes)
@@ -95,21 +96,21 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 	#if NET_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_NET then
 			sock.targetinterface=PL_SOCK_INTERFACE_NET
-			goto dns_l1
+			goto l1
 		end if
 	#endif
 	
 	#if WLN_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_WLN then
 			sock.targetinterface=PL_SOCK_INTERFACE_WLN
-			goto dns_l1
+			goto l1
 		end if
 	#endif
 
-	#if SUPPORTS_CELL
+	#if CELLULAR_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_PPP then
 			sock.targetinterface=PL_SOCK_INTERFACE_PPP
-			goto dns_l1
+			goto l1
 		end if
 	#endif
 
@@ -119,8 +120,18 @@ function dns_connect(interface as pl_sock_interfaces, byref dns_server_ip as str
 	
 	dns_connect=EN_STATUS_DNS_INVALID_INTERFACE
 	exit function 'invalid interface specified	
-dns_l1:	
-	sock.targetip=dns_server_ip
+l1:	
+	if dns_domain<>"" then
+		dns_connect=EN_STATUS_DNS_REQUEST_IN_PROGRESS
+		exit function
+	end if
+	
+    if dns_server_ip="" then
+        sock.targetip=dns_server_ip
+    else
+        sock.targetip=DNS_DEFAULT_SERVER
+    end if
+	
 	if dns_port=0 then
 		sock.targetport=DNS_SERVER_PORT
 	else
@@ -131,9 +142,8 @@ dns_l1:
 		dim s as string
 		dns_debugprint("conn to "+sock.targetip+":"+str(sock.targetport))
 	#endif
-	
+	dns_current_retries=0
 	sock.connect
-	dns_conn_tmr=DNS_CONNECTION_TIMEOUT	
 end function
 
 sub dns_disconnect()
@@ -148,7 +158,9 @@ sub dns_disconnect()
 	#if DNS_DEBUG_PRINT
 		dns_debugprint("disc from "+sock.targetip+":"+str(sock.targetport))
 	#endif
-	dns_conn_tmr=0
+	dns_rpl_tmr=0
+	dns_domain=""
+	sock.rxclear()
 	sock.close()	
 end sub
 
@@ -156,7 +168,7 @@ sub dns_query(byref query_name as string)
 	dim dns_query_question as string
 	dim query_flag as word
 	dim pos1, pos2, l as byte
-
+	
 	if dns_init_flag<>DNS_INIT_SIGNATURE then
 		#if DNS_DEBUG_PRINT
 			dns_debug_print_status(EN_STATUS_DNS_NOT_STARTED)
@@ -165,7 +177,18 @@ sub dns_query(byref query_name as string)
 		exit sub
 	end if
 	
-	'generate an radom id
+	dns_current_retries=dns_current_retries+1
+	if dns_current_retries>DNS_MAX_RETRIES then
+		callback_dns_failure(EN_STATUS_DNS_MAX_RETRIES_REACHED)
+		dns_disconnect()
+		exit sub
+	end if
+	#if DNS_DEBUG_PRINT
+		if dns_current_retries > 1 then
+			dns_debugprint("Retrying")
+		end if
+	#endif
+	'generate an random id
 	dns_id=random(2)
 	
 	'construct the flag
@@ -185,6 +208,7 @@ sub dns_query(byref query_name as string)
 		end if
 		dns_query_question=dns_query_question+chr(l)+mid(query_name,pos2+1,l)		
 	loop while pos1>0
+    dns_domain=query_name
 	
 	'end with chr(0)
 	dns_query_question=dns_query_question+chr(0)
@@ -195,10 +219,10 @@ sub dns_query(byref query_name as string)
 	'query structure id(2)+flag(2)+number of question(2)+number of answer RRs(2)+number of authority RRs(2)+number of additional RRs(2)+query name(?)+query type(2)+query class(2)
 	dns_query_question=dns_id+chr(query_flag/256)+chr(query_flag mod 256)+chr(DNS_NUMBER_QUESTION/256)+chr(DNS_NUMBER_QUESTION mod 256)+chr(0)+chr(0)+chr(0)+chr(0)+chr(0)+chr(0)+dns_query_question+chr(DNS_QUERY_TYPE/256)+chr(DNS_QUERY_TYPE mod 256)+chr(DNS_QUERY_CLASS/256)+chr(DNS_QUERY_CLASS mod 256)
 
+	dns_rpl_tmr=DNS_REPLY_TIMEOUT
 	sock.num=dns_sock
 	sock.setdata(dns_query_question)
 	sock.send
-    dns_rpl_tmr=DNS_REPLY_TIMEOUT
 	
 end sub
 
@@ -212,6 +236,7 @@ sub dns_stop()
 		exit sub
 	end if
 	
+	dns_disconnect()
 	dns_init_flag=""
 	'release dns port
 	sock.num=dns_sock
@@ -363,8 +388,8 @@ sub dns_proc_data()
 		
 		callback_dns_answer_acquired(answer_type,s)
 	next j
-    dns_rpl_tmr=0
 	callback_dns_ok()
+    dns_disconnect()
 end sub
 
 public sub dns_proc_timer()
@@ -378,24 +403,17 @@ public sub dns_proc_timer()
 			if dns_rpl_tmr=0 then
 				#if DNS_DEBUG_PRINT
 					dns_debug_print_status(EN_STATUS_DNS_REPLY_TIMEOUT)
-				#endif		
-				callback_dns_failure(EN_STATUS_DNS_REPLY_TIMEOUT)
+				#endif
+				dns_query(dns_domain)
 				exit sub
 			end if
 		end if	
-	else
-		if dns_conn_tmr>0 then
-			dns_conn_tmr=dns_conn_tmr-1
-			if dns_conn_tmr=0 then
-				#if DNS_DEBUG_PRINT
-					dns_debug_print_status(EN_STATUS_DNS_CONNECTION_TIMEOUT)
-				#endif		
-				callback_dns_failure(EN_STATUS_DNS_CONNECTION_TIMEOUT)
-				exit sub
-			end if
-		end if
 	end if
 end sub
+
+function dns_current_domain() as string
+    dns_current_domain=dns_domain
+end function
 
 #if DNS_DEBUG_PRINT
 sub dns_debug_print_status(status as en_dns_status_codes)
