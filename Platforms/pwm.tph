@@ -10,27 +10,26 @@ property pwm.num
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0.</b><br><br>
 'Sets or returns the number of the currently selected PWM channel.<br><br>
 'PWM inputs are mapped to regular GPIO lines, and such mapping is platform-specific. For more information, see the pl_pwm_num enum of your platform.<br><br>
-'After changing the channel, discard the first result returned by adc.getdata.
     get = syscall(857) as pl_pwm_num
     set = syscall(858) (num as pl_pwm_num)
 end property
 
 '--------------------------------------------------------------------
 property pwm.frequency
-'<b>PROPERTY (WORD), DEFAULT VALUE=1. </b><br><br>
+'<b>PROPERTY (REAL), DEFAULT VALUE=1. </b><br><br>
 'Indicates the frequency of modulation for the currently selected PWM channel.<br><br>
-'The unit for the value range is hertz, meaning the usable range is from 1Hz to 20Khz.
-    get = syscall(859) as word
-    set = syscall(860) (value as word)
+'The unit for the value range is hertz, meaning the usable range is from 30Hz to 20KHz.
+    get = syscall(859) as real
+    set = syscall(860) (value as real)
 end property
 
 '--------------------------------------------------------------------
 property pwm.dutycycle
-'<b>PROPERTY (WORD), DEFAULT VALUE=0. </b><br><br>
+'<b>PROPERTY (REAL), DEFAULT VALUE=0. </b><br><br>
 'Indicates the duty cycle for the currently selected PWM channel.<br><br>
 'The duty cycle is the proportion of “on” time for the channel, where 0 is always off and 100 is always on.
-    get = syscall(861) as byte
-    set = syscall(862) (value as byte)
+    get = syscall(861) as real
+    set = syscall(862) (value as real)
 end property
 
 '--------------------------------------------------------------------
@@ -50,7 +49,6 @@ syscall(873) pwm.update()
 'Updates the frequency and duty cycle for the currently selected PWM channel.
 
 
-syscall(875) pwm.updateall()
+syscall(874) pwm.updateall()
 '<b>METHOD. </b><br><br>
 'Updates the frequency and duty cycle for all enabled PWM channels.
-
