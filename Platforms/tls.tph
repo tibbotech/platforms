@@ -9,11 +9,11 @@
 '--------------------------------------------------------------------
 enum pl_tls_result
 '<b>ENUM. </b><br><br> Contains a list of constants related to possible TLS errors.
-    PL_TLS_SUCCESS,   
-    PL_TLS_ERROR_RNG,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize random number generator.  
-    PL_TLS_ERROR_CTX,      '<b>PLATFORM CONSTANT. </b><br><br> Unable to initialize TLS context.   
-    PL_TLE_ERROR_CERT      '<b>PLATFORM CONSTANT. </b><br><br> Unable to load certificate for trusted authority.
-    PL_TLS_ERROR_NOBUFF    '<b>PLATFORM CONSTANT. </b><br><br> Not enought memory.
+    PL_TLS_SUCCESS,
+    PL_TLS_ERROR_IN_USE,    '<b>PLATFORM CONSTANT.</b><br><br> TLS resources tied to other socket.
+    PL_TLS_ERROR_CERT,      '<b>PLATFORM CONSTANT.</b><br><br> Unable to use certificate.
+    PL_TLS_ERROR_INTERNAL   '<b>PLATFORM CONSTANT.</b><br><br> Internal error.
+    PL_TLS_ERROR_NO_BUFF    '<b>PLATFORM CONSTANT.</b><br><br> Not enough memory.
 end enum
 
 
@@ -31,7 +31,7 @@ syscall(834) sock.tlsinit(offset as dword) as pl_tls_result
 '<li>3 - PL_TLS_ERROT_CERT - Unable to load certificate for trusted authority.</li></ul>
 
 '--------------------------------------------------------------------
-syscall(835) sock.tlshandshake(byref server_name as string ) as accepted_rejected
+syscall(835) sock.tlshandshake(byref server_name as string ) as pl_tls_result
 '<b>METHOD. </b><br><br>
 'Establishes a secure connection with the designated server.
 'This method's sole parameter, <em>server_name</em>, takes <b>only</b> a fully qualified domain name (i.e., everything between the protocol and the path), 
@@ -40,7 +40,7 @@ syscall(835) sock.tlshandshake(byref server_name as string ) as accepted_rejecte
 'This method returns either accepted or rejected.
 
 '--------------------------------------------------------------------
-syscall(836) sock.tlsdeinit()
+syscall(836) sock.tlsdeinit() as accepted_rejected
 '<b>METHOD. </b><br><br>
 'Clears all TLS-related memory, including certificates and buffers. 
 'Before calling this method, the socket should have already been closed as normal.<br><br>
@@ -55,7 +55,7 @@ syscall(837) sock.tlssetdata(byref txdata as string) as word
 'Sending the contents of the TX buffer remains the function of <font color="maroon"><b>sock.send</b></font>, which should be called after placing the encrypted data in the buffer.<br><br>
 'If the amount of encrypted data exceeds the TX buffer's capacity, <font color="maroon"><b>sock.tlssetdata</b></font> will truncate the data into segments. 
 'In such a case, your project will require logic to sequentially set the data and send it until the transmission is complete.<br><br>
-'This method returns the number of bytes sent.
+'This method returns the number of bytes sent. 
 
 '--------------------------------------------------------------------
 syscall(838) sock.tlsgetdata(maxinplen as word) as string
@@ -86,7 +86,7 @@ property sock.tlstxfree
 'Indicates the amount of available space in the TX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>).
 'The amount of space remaining in the TX buffer is calculated by subtracting the size of the encrypted data placed in the buffer and overhead from the overall capacity.<br><br>
 'For asynchronous data processing, use the <font color="maroon"><b>sock.notifysent</b></font> method to generate the <font color="teal"><b>on_sock_data_sent</b></font> event once the TX buffer gains the necessary free space.
-    get = syscall(841,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(841) as BUFF_SIZE_TYPE
 end property
 
 '--------------------------------------------------------------------
@@ -94,5 +94,11 @@ property sock.tlspeeklen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'Indicates the total number of bytes waiting in the RX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>) that can be accessed via <font color="maroon"><b>sock.tlspeekdata</b></font>.
 'The returned value is for encrypted data.
-    get = syscall(842,"36.TDL"+) as BUFF_SIZE_TYPE
+    get = syscall(842) as BUFF_SIZE_TYPE
 end property
+
+'--------------------------------------------------------------------
+property sock.tlscurrentnum
+'<b>R/O PROPERTY (BYTE), DEFAULT VALUE=255 (Not in use). </b><br><br>
+'Indicates which socket is using available TLS resources.
+    get = syscall(877) as BYTE
