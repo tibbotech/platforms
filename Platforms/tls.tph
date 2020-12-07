@@ -12,8 +12,8 @@ enum pl_tls_result
     PL_TLS_SUCCESS,
     PL_TLS_ERROR_IN_USE,    '<b>PLATFORM CONSTANT.</b><br><br> TLS resources tied to other socket.
     PL_TLS_ERROR_CERT,      '<b>PLATFORM CONSTANT.</b><br><br> Unable to use certificate.
-    PL_TLS_ERROR_INTERNAL   '<b>PLATFORM CONSTANT.</b><br><br> Internal error.
     PL_TLS_ERROR_NO_BUFF    '<b>PLATFORM CONSTANT.</b><br><br> Not enough memory.
+    PL_TLS_ERROR_INTERNAL   '<b>PLATFORM CONSTANT.</b><br><br> Internal error.
 end enum
 
 
@@ -26,9 +26,11 @@ syscall(834) sock.tlsinit(offset as dword) as pl_tls_result
 'Note that as only one TLS context can exist at a time, calling the method while a secure connection already exists will break that link.<br><br>
 'This method returns one of the following enums:<ul> 
 '<li>0 - PL_TLS_SUCCESS - Initialization was completed successfully.</li>
-'<li>1 - PL_TLS_ERROR_RNG - Unable to initialize random number generator.</li> 
-'<li>2 - PL_TLS_ERROR_CTX - Unable to initialize TLS context.</li>
-'<li>3 - PL_TLS_ERROT_CERT - Unable to load certificate for trusted authority.</li></ul>
+'<li>1 - PL_TLS_ERROR_IN_USE - The tls resources are used by another socket.</li> 
+'<li>2 - PL_TLS_ERROR_CERT - Unable to use certificate.</li>
+'<li>3 - PL_TLS_ERROR_NO_BUFF - Unable to use tls not enough buffers allocated.</li></ul>
+'<li>4 - PL_TLS_ERROR_INTERNAL - Internal Error.</li></ul>
+
 
 '--------------------------------------------------------------------
 syscall(835) sock.tlshandshake(byref server_name as string ) as pl_tls_result
@@ -102,3 +104,4 @@ property sock.tlscurrentnum
 '<b>R/O PROPERTY (BYTE), DEFAULT VALUE=255 (Not in use). </b><br><br>
 'Indicates which socket is using available TLS resources.
     get = syscall(877) as BYTE
+end property

@@ -73,7 +73,7 @@ enum pl_sock_state
                                 '<br><br>Applies both to UDP and TCP.
     PL_SST_EST_AOPENED,         '<b>PLATFORM CONSTANT. </b><br><br> Connection is established (it was an active open).
                                 '<br><br>Applies both to UDP and TCP.
-    PL_TLS_EST = &h82, 		    'PLATFORM CONSTANT. Connection is established (it was an active open) and tls handshake is complete.
+    PL_SST_TLS_EST = &h82, 		'PLATFORM CONSTANT. Connection is established (it was an active open) and tls handshake is complete.
                 				'Applies both to UDP and TCP.			
     PL_SST_PC=&hA0,             '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
                                 '<br><br>Applies only to TCP. 
