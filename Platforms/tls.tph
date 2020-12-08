@@ -10,6 +10,7 @@
 enum pl_tls_result
 '<b>ENUM. </b><br><br> Contains a list of constants related to possible TLS errors.
     PL_TLS_SUCCESS,
+    PL_TLS_REJECTED,        
     PL_TLS_ERROR_IN_USE,    '<b>PLATFORM CONSTANT.</b><br><br> TLS resources tied to other socket.
     PL_TLS_ERROR_CERT,      '<b>PLATFORM CONSTANT.</b><br><br> Unable to use certificate.
     PL_TLS_ERROR_NO_BUFF    '<b>PLATFORM CONSTANT.</b><br><br> Not enough memory.
