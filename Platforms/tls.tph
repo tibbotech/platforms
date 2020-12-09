@@ -84,7 +84,7 @@ syscall(840) sock.tlspeekdata(maxinplen as word) as string
 'This method returns a string of decrypted data that was contained in the RX buffer.
 
 '--------------------------------------------------------------------
-property sock.tlstxfree
+property !sock.tlstxfree
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'Indicates the amount of available space in the TX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>).
 'The amount of space remaining in the TX buffer is calculated by subtracting the size of the encrypted data placed in the buffer and overhead from the overall capacity.<br><br>
