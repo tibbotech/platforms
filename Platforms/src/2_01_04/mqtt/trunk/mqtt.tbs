@@ -109,11 +109,12 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	#if SUPPORTS_TLS
 		sock.tlsdeinit()
 		#if PLATFORM_ID <> WM2000
-			sock.tlsbuffrq(38)	
+			sock.tlsbuffrq(39)	
+			sys.buffalloc()
 		#endif
 		#ifdef MQTT_CER_FILE
 			romfile.open(MQTT_CER_FILE)
-			sock.tlsinit(romfile.offset)  'check return state
+			dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
 		#else
 			sock.tlsinit(0)
 		#endif
@@ -143,11 +144,11 @@ function mqtt_get_packet_identifier() as string(2)
 end function
 
 sub mqtt_sock_setdata(byref txdata as string)
-#if SUPPORTS_TLS
+if mqtt_encrypted then
 	sock.tlssetdata(txdata)
-#else
+else
 	sock.setdata(txdata)
-#endif
+end if
 end sub
 
 function mqtt_sock_getdata(byref maxinplen as word) as string
@@ -408,38 +409,33 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 		exit sub 
 	end if
 	
-	select case newstatesimple
-	case PL_SSTS_CLOSED:
+	select case newstate
+	case PL_SST_CLOSED:
 		if mqtt_state<>EN_MQTT_STATES_IDLE then
 				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
 		end if
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Lost server connection.")
 		#endif
-	case PL_SSTS_EST:
+	case PL_SST_EST_AOPENED:
 		if mqtt_encrypted=false then
 			mqtt_send_login()
 			mqtt_state=EN_MQTT_STATES_CONNECTED
 		else
-			if newstate=PL_SST_EST_AOPENED then
-				if mqtt_server_address<>mqtt_server_ip then
-					sock.tlshandshake(mqtt_server_address)
-				else
-					dim result as pl_tls_result = sock.tlshandshake("")
-					sys.debugprint(str(result))
-				end if
-				mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
-			else if newstate = PL_SST_TLS_EST then
-				mqtt_send_login()
-				mqtt_state=EN_MQTT_STATES_CONNECTED
+			if mqtt_server_address<>mqtt_server_ip then
+				sock.tlshandshake(mqtt_server_address)
+			else
+				dim result as pl_tls_result = sock.tlshandshake("")
 			end if
+			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 		end if
+	case PL_SST_TLS_EST:
+		mqtt_send_login()
+		mqtt_state=EN_MQTT_STATES_CONNECTED
 	end select
 	
-	
-
-	
 end sub
+
 
 sub mqtt_proc_data()
 'Event procedure, call it from the on_sock_data_arrival event handler.
@@ -448,8 +444,14 @@ sub mqtt_proc_data()
 	if sock.num<>mqtt_sock_num then exit sub
 
 	dim pos as byte = 2
-	dim buf as string = sock.peekdata(2)
-		
+	dim buf as string
+	if mqtt_encrypted then
+		buf = sock.tlspeekdata(2)
+	else
+		buf = sock.peekdata(2)
+	end if
+	
+	
 	if (len(buf) < 2) then
 		exit sub
 	end if
@@ -457,9 +459,18 @@ sub mqtt_proc_data()
 	'total sequence length
 	dim length as word = asc(right(buf,1))
 	if (length > 127) then pos = pos + 1
-		
-	if (length + pos <= sock.rxlen) then
-		buf = sock.getdata(length + pos)
+	dim rxbufflen as dword
+	if mqtt_encrypted then
+		rxbufflen=sock.tlspeeklen
+	else 
+		rxbufflen=sock.rxlen
+	end if
+	if (length + pos <= rxbufflen) then
+		if mqtt_encrypted then
+			buf = sock.tlsgetdata(length + pos)
+		else
+			buf = sock.getdata(length + pos)		
+		end if
 	else
 		exit sub	
 	end if
@@ -486,11 +497,11 @@ sub mqtt_proc_data()
 						callback_mqtt_notif(mid(buf,3,length),right(buf,len(buf)-length-2-((qos<>QOS_AT_MOST_ONCE)*2)))
 						if (qos = QOS_AT_LEAST_ONCE) then
 							buf = chr(PUBACK) + chr(2) + mid(buf,length+3,2)
-							sock.setdata(buf)
+							mqtt_sock_setdata(buf)
 							sock.send
 						else if (qos = QOS_EXACTLY_ONCE) then
 							buf = chr(PUBREC) + chr(2) + mid(buf,length+3,2)
-							sock.setdata(buf)
+							mqtt_sock_setdata(buf)
 							sock.send
 						end if
 		
@@ -502,14 +513,14 @@ sub mqtt_proc_data()
 							mqtt_debug_print("Publish rec.")
 						#endif
 						buf=chr(PUBREL+2) + chr(2) + buf
-						sock.setdata(buf)
+						mqtt_sock_setdata(buf)
 						sock.send
 		
 		case PUBREL:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rel.")
 						#endif
 						buf=chr(PUBCOMP) + chr(2) + buf
-						sock.setdata(buf)
+						mqtt_sock_setdata(buf)
 						sock.send						
 		
 		case PUBCOMP:	#if MQTT_DEBUG_PRINT=1
