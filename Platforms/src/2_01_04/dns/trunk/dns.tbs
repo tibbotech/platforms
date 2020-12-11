@@ -126,7 +126,7 @@ l1:
 		exit function
 	end if
 	
-    if dns_server_ip="" then
+    if dns_server_ip<>"" then
         sock.targetip=dns_server_ip
     else
         sock.targetip=DNS_DEFAULT_SERVER
@@ -142,6 +142,7 @@ l1:
 		dim s as string
 		dns_debugprint("conn to "+sock.targetip+":"+str(sock.targetport))
 	#endif
+	dns_connect=EN_STATUS_DNS_OK
 	dns_current_retries=0
 	sock.connect
 end function
