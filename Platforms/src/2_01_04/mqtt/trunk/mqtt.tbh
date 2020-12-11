@@ -22,7 +22,7 @@
 #endif
 
 #ifndef MQTT_CONNECTION_TIMER
-	#define MQTT_CONNECTION_TIMER 10
+	#define MQTT_CONNECTION_TIMER 30
 #endif
 
 #if SUPPORTS_TLS
@@ -68,8 +68,6 @@ declare sub mqtt_sub(byref topic as string, qos as en_qos_choices)
 declare sub mqtt_unsub(byref topic as string)
 'API procedure, unsubscribes the device from the specified topic.<br><br>
 '<b>topic</b>- message to unsubscribe from.
-
-declare sub mqtt_dns_ok()
 
 declare sub mqtt_dns_answer_acquired(return_type as en_dns_return_type, byref return_string as string)
 
