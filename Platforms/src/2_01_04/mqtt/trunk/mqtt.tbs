@@ -80,6 +80,7 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	mqtt_sock_num=sock_get("MQTT")
     mqtt_target_interface=target_interface
 	mqtt_server_port=dst_port
+	mqtt_server_address=server
     mqtt_user=user
     mqtt_pw=password
 	mqtt_encrypted=encrypted
@@ -87,35 +88,14 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	sock.num=mqtt_sock_num
 	sock.targetinterface=target_interface
 	sock.targetport=dst_port
-	mqtt_server_address=server
 	sock.protocol=PL_SOCK_PROTOCOL_TCP
 	sock.inconmode = PL_SOCK_INCONMODE_ANY_IP_ANY_PORT
 	sock.gendataarrivalevent=YES
 	sock.reconmode=PL_SOCK_RECONMODE_3
 	sock.connectiontout=0
 	
-	dim is_ip_address as boolean=true
-	dim b as byte
-	for b=1 to len(server)
-        dim s as string=mid(server,b,1)
-        dim ascii as word=asc(s)
-        if ascii>=46 and ascii<=57 then
-        else
-            is_ip_address=false
-            exit for
-        end if
-    next b
 
-    if is_ip_address = true then
-        mqtt_server_ip=mqtt_server_address
-        mqtt_connect()
-    else
-        if dns_connect(mqtt_target_interface,"",0) = EN_STATUS_DNS_OK then
-            dns_query(mqtt_server_address)
-        end if        
-    end if
-	
-	
+
 	if sys.freebuffpages<MQTT_RX_BUFF+MQTT_TX_BUFF then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Insufficient buffer memory.")
@@ -126,7 +106,26 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	sock.txbuffrq(MQTT_TX_BUFF)
 	sys.buffalloc()
 	
+	#if SUPPORTS_TLS
+		sock.tlsdeinit()
+		#if PLATFORM_ID <> WM2000
+			sock.tlsbuffrq(38)	
+		#endif
+		#ifdef MQTT_CER_FILE
+			romfile.open(MQTT_CER_FILE)
+			sock.tlsinit(romfile.offset)  'check return state
+		#else
+			sock.tlsinit(0)
+		#endif
+		sock.rxclear()
+		sock.txclear()
+	#endif
+	
+	
+	mqtt_connect()
+	
 end sub
+
 
 function mqtt_build_remaining_length(size as dword) as string(2)
 	mqtt_build_remaining_length = ""
@@ -175,7 +174,7 @@ sub mqtt_send_login()
 	dim buf as string
 	dim client_id, user_id, password as string	
 	dim size as dword=0
-	if ((mqtt_user = "") or (mqtt_pw = "")) then
+	if mqtt_user = "" then
 		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&h02)+chr(0)+chr(&h3c)+chr(0)+chr(len(mqtt_client_id))+mqtt_client_id
 		buf=chr(CONNECT)+mqtt_build_remaining_length(len(buf)) + buf
 		mqtt_sock_setdata(buf)		
@@ -215,24 +214,27 @@ function mqtt_connect() as ok_ng
 	end if
 	
 	sock.num=mqtt_sock_num
-	sock.targetip=mqtt_server_ip
-	sock.targetport=mqtt_server_port
 	
-	#if SUPPORTS_TLS
-		sock.tlsdeinit()
-		#if PLATFORM_ID <> WM2000
-			sock.tlsbuffrq(38)	
-			sys.buffalloc
-		#endif
-		#ifdef MQTT_CER_FILE
-			romfile.open(MQTT_CER_FILE)
-			sock.tlsinit(romfile.offset)  'check return state
-		#else
-			sock.tlsinit(0)
-		#endif
-		sock.rxclear()
-		sock.txclear()		
-	#endif
+	dim is_ip_address as boolean=true
+	dim b as byte
+	for b=1 to len(mqtt_server_address)
+        dim s as string=mid(mqtt_server_address,b,1)
+        dim ascii as word=asc(s)
+        if ascii>=46 and ascii<=57 then
+        else
+            is_ip_address=false
+            exit for
+        end if
+    next b
+
+    if is_ip_address = true then
+        mqtt_server_ip=mqtt_server_address
+		sock.targetip=mqtt_server_ip
+    else
+        if dns_connect(mqtt_target_interface,"",0) = EN_STATUS_DNS_OK then
+            dns_query(mqtt_server_address)
+        end if        
+    end if
 	
 	sock.connect()
 	mqtt_state=EN_MQTT_STATES_CONNECTING
@@ -380,7 +382,7 @@ sub mqtt_proc_timer()
 	
 	select case mqtt_state
 	case EN_MQTT_STATES_NOT_CONNECTED:
-		
+		mqtt_connect()
 	case EN_MQTT_STATES_DNS_NOT_COMPLETE:
 		
 	case EN_MQTT_STATES_CONNECTING:
@@ -406,29 +408,35 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 		exit sub 
 	end if
 	
-	select case newstate
-'	case PL_SST_CLOSED:
-'		if mqtt_state<>EN_MQTT_STATES_IDLE then
-'			mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
-'		end if
-	case PL_SST_EST_AOPENED
-		if mqtt_encrypted=false then
-			mqtt_send_login()
-			mqtt_state=EN_MQTT_STATES_CONNECTED
-		end if
-	case PL_SST_TLS_EST:
-		
-	end select
-	
-	
-	if mqtt_state=EN_MQTT_STATES_LOGGED_IN and newstatesimple<>PL_SSTS_EST then
+	select case newstatesimple
+	case PL_SSTS_CLOSED:
 		if mqtt_state<>EN_MQTT_STATES_IDLE then
-			mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
 		end if
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Lost server connection.")
 		#endif
-	end if
+	case PL_SSTS_EST:
+		if mqtt_encrypted=false then
+			mqtt_send_login()
+			mqtt_state=EN_MQTT_STATES_CONNECTED
+		else
+			if newstate=PL_SST_EST_AOPENED then
+				if mqtt_server_address<>mqtt_server_ip then
+					sock.tlshandshake(mqtt_server_address)
+				else
+					dim result as pl_tls_result = sock.tlshandshake("")
+					sys.debugprint(str(result))
+				end if
+				mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
+			else if newstate = PL_SST_TLS_EST then
+				mqtt_send_login()
+				mqtt_state=EN_MQTT_STATES_CONNECTED
+			end if
+		end if
+	end select
+	
+	
 
 	
 end sub
@@ -529,15 +537,14 @@ sub mqtt_dns_answer_acquired(return_type as en_dns_return_type, byref return_str
 	if(return_type=EN_DNS_RET_IP) then
         if dns_current_domain() = mqtt_server_address then
             mqtt_server_ip = ddstr(return_string)
+			sock.num = mqtt_sock_num
+			sock.targetip = mqtt_server_ip
+			sock.connect()
+			mqtt_state=EN_MQTT_STATES_CONNECTING
+			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
         end if
 	end if
 	
-end sub
-
-sub mqtt_dns_ok()
-    if dns_current_domain() = mqtt_server_address then
-        mqtt_connect()
-    end if
 end sub
 
 #if MQTT_DEBUG_PRINT=1
@@ -659,3 +666,4 @@ end sub
 	end sub
 
 #endif
+ 
