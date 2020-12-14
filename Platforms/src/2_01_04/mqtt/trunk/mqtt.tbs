@@ -176,6 +176,31 @@ sub mqtt_send_login()
 	sock.send()
 end sub
 
+sub mqtt_connect_socket()
+	sock.num=mqtt_sock_num
+	sock.targetip=mqtt_server_ip
+	if mqtt_encrypted=true then
+	#if SUPPORTS_TLS
+		sock.tlsdeinit()
+		#if PLATFORM_ID <> WM2000
+			sock.tlsbuffrq(39)	
+			sys.buffalloc()
+		#endif
+		#ifdef MQTT_CER_FILE
+			romfile.open(MQTT_CER_FILE)
+			dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
+		#else
+			sock.tlsinit(0)
+		#endif
+		sock.rxclear()
+		sock.txclear()
+		#endif
+	end if
+	sock.connect()
+	mqtt_state=EN_MQTT_STATES_CONNECTING
+	mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
+end sub
+
 function mqtt_connect() as ok_ng
 'API function, instructs the library to connect to the MQTT server (broker).<br><br>
 '<b>dst_ip</b>- the IP address of the MQTT server,<br>
@@ -193,10 +218,7 @@ function mqtt_connect() as ok_ng
 		exit function
 	end if
 	
-	sock.num=mqtt_sock_num
-	
-
-	
+	sock.num=mqtt_sock_num	
 	dim is_ip_address as boolean=true
 	dim b as byte
 	for b=1 to len(mqtt_server_address)
@@ -209,36 +231,15 @@ function mqtt_connect() as ok_ng
         end if
     next b
 
-    if is_ip_address = true then
-        mqtt_server_ip=mqtt_server_address
-		sock.targetip=mqtt_server_ip
-    else
+    if is_ip_address = false then
         if dns_connect(mqtt_target_interface,"",0) = EN_STATUS_DNS_OK then
-            dns_query(mqtt_server_address)
-        end if        
-    end if
+            dns_query(mqtt_server_address)	
+		end if
+	else
+		mqtt_server_ip=mqtt_server_address
+		mqtt_connect_socket()
+	end if	
 	
-		if mqtt_encrypted=true then
-		#if SUPPORTS_TLS
-			sock.tlsdeinit()
-			#if PLATFORM_ID <> WM2000
-				sock.tlsbuffrq(39)	
-				sys.buffalloc()
-			#endif
-			#ifdef MQTT_CER_FILE
-				romfile.open(MQTT_CER_FILE)
-				dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
-			#else
-				sock.tlsinit(0)
-			#endif
-			sock.rxclear()
-			sock.txclear()
-		#endif
-	end if
-
-	sock.connect()
-	mqtt_state=EN_MQTT_STATES_CONNECTING
-    mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 end function
 
 sub mqtt_disconnect()
@@ -375,8 +376,6 @@ end sub
 sub mqtt_proc_timer()
 'Event procedure, call it from the on_sys_timer() event handler.
 
-	sock.num=mqtt_sock_num
-	
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then exit sub
 	
 	if mqtt_state=EN_MQTT_STATES_LOGGED_IN then 
@@ -429,7 +428,8 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 			mqtt_state=EN_MQTT_STATES_CONNECTED
 		else
 			if mqtt_server_address<>mqtt_server_ip then
-				sock.tlshandshake(mqtt_server_address)
+				dim hsres as pl_tls_result = sock.tlshandshake(mqtt_server_address)
+				sys.debugprint(str(hsres))
 			else
 				sock.tlshandshake("")
 			end if
@@ -554,12 +554,8 @@ sub mqtt_dns_answer_acquired(return_type as en_dns_return_type, byref return_str
 	
 	if(return_type=EN_DNS_RET_IP) then
         if dns_current_domain() = mqtt_server_address then
-            mqtt_server_ip = ddstr(return_string)
-			sock.num = mqtt_sock_num
-			sock.targetip = mqtt_server_ip
-			sock.connect()
-			mqtt_state=EN_MQTT_STATES_CONNECTING
-			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
+            mqtt_server_ip = ddstr(return_string) 
+			mqtt_connect_socket()
         end if
 	end if
 	
