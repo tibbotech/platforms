@@ -30,8 +30,7 @@
 		#error "SSL certerfication file undefined"
 	#endif
 #endif
- 
-'connection interval retry in half seconds
+
 #ifndef MQTT_RECONNECT_TIME
     #define MQTT_RECONNECT_TIME 20
 #endif

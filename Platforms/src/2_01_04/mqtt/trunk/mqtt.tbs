@@ -93,9 +93,6 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	sock.gendataarrivalevent=YES
 	sock.reconmode=PL_SOCK_RECONMODE_3
 	sock.connectiontout=0
-	
-
-
 	if sys.freebuffpages<MQTT_RX_BUFF+MQTT_TX_BUFF then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Insufficient buffer memory.")
@@ -105,24 +102,6 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	sock.rxbuffrq(MQTT_RX_BUFF)
 	sock.txbuffrq(MQTT_TX_BUFF)
 	sys.buffalloc()
-	
-	#if SUPPORTS_TLS
-		sock.tlsdeinit()
-		#if PLATFORM_ID <> WM2000
-			sock.tlsbuffrq(39)	
-			sys.buffalloc()
-		#endif
-		#ifdef MQTT_CER_FILE
-			romfile.open(MQTT_CER_FILE)
-			dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
-		#else
-			sock.tlsinit(0)
-		#endif
-		sock.rxclear()
-		sock.txclear()
-	#endif
-	
-	
 	mqtt_connect()
 	
 end sub
@@ -216,6 +195,8 @@ function mqtt_connect() as ok_ng
 	
 	sock.num=mqtt_sock_num
 	
+
+	
 	dim is_ip_address as boolean=true
 	dim b as byte
 	for b=1 to len(mqtt_server_address)
@@ -237,6 +218,24 @@ function mqtt_connect() as ok_ng
         end if        
     end if
 	
+		if mqtt_encrypted=true then
+		#if SUPPORTS_TLS
+			sock.tlsdeinit()
+			#if PLATFORM_ID <> WM2000
+				sock.tlsbuffrq(39)	
+				sys.buffalloc()
+			#endif
+			#ifdef MQTT_CER_FILE
+				romfile.open(MQTT_CER_FILE)
+				dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
+			#else
+				sock.tlsinit(0)
+			#endif
+			sock.rxclear()
+			sock.txclear()
+		#endif
+	end if
+
 	sock.connect()
 	mqtt_state=EN_MQTT_STATES_CONNECTING
     mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
@@ -259,7 +258,6 @@ sub mqtt_disconnect()
 	mqtt_sock_setdata(buf)
 	sock.send
 	sock.num = current_sock
-	mqtt_state=EN_MQTT_STATES_IDLE 
 	
 end sub
 
@@ -381,25 +379,32 @@ sub mqtt_proc_timer()
 	
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then exit sub
 	
-	select case mqtt_state
-	case EN_MQTT_STATES_NOT_CONNECTED:
-		mqtt_connect()
-	case EN_MQTT_STATES_DNS_NOT_COMPLETE:
-		
-	case EN_MQTT_STATES_CONNECTING:
+	if mqtt_state=EN_MQTT_STATES_LOGGED_IN then 
+		mqtt_ping()
+	else
 		mqtt_connection_counter=mqtt_connection_counter-1
 		if mqtt_connection_counter=0 then
-			mqtt_connect()
-			#if MQTT_DEBUG_PRINT=1
-				mqtt_debug_print("Connection timed out. Reconnecting...")
-			#endif
+			select case mqtt_state
+			case EN_MQTT_STATES_NOT_CONNECTED:
+				mqtt_connect()
+				#if MQTT_DEBUG_PRINT=1
+					mqtt_debug_print("Retrying connection...")
+				#endif
+			case EN_MQTT_STATES_CONNECTING:
+				mqtt_connect()
+				#if MQTT_DEBUG_PRINT=1
+					mqtt_debug_print("Connection timed out. Reconnecting...")
+				#endif
+			case EN_MQTT_STATES_CONNECTED:
+				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				mqtt_connection_counter=MQTT_RECONNECT_TIME*2
+				#if MQTT_DEBUG_PRINT=1
+					mqtt_debug_print("Unable to log in to server...")
+				#endif		
+			end select
 		end if
-	case EN_MQTT_STATES_CONNECTED:
-		
-	case EN_MQTT_STATES_LOGGED_IN:
-		mqtt_ping()
-	end select
-		
+	end if
+			
 end sub
 
 
@@ -410,13 +415,14 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 	end if
 	
 	select case newstate
-	case PL_SST_CLOSED:
+	case PL_SST_CLOSED, PL_SST_CL_PCLOSED:
 		if mqtt_state<>EN_MQTT_STATES_IDLE then
-				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
-		end if
-		#if MQTT_DEBUG_PRINT=1
+			mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+			mqtt_connection_counter=MQTT_RECONNECT_TIME*2
+			#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Lost server connection.")
-		#endif
+			#endif
+		end if
 	case PL_SST_EST_AOPENED:
 		if mqtt_encrypted=false then
 			mqtt_send_login()
@@ -425,7 +431,7 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 			if mqtt_server_address<>mqtt_server_ip then
 				sock.tlshandshake(mqtt_server_address)
 			else
-				dim result as pl_tls_result = sock.tlshandshake("")
+				sock.tlshandshake("")
 			end if
 			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 		end if
@@ -488,6 +494,7 @@ sub mqtt_proc_data()
 						#endif
 						mqtt_ping_counter=MQTT_PING_TIMER*2
 						mqtt_state=EN_MQTT_STATES_LOGGED_IN
+						mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 						callback_mqtt_connect_ok()
 		
 		case PUBLISH:	length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
