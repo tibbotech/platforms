@@ -188,7 +188,7 @@ sub mqtt_connect_socket()
 		#endif
 		#ifdef MQTT_CER_FILE
 			romfile.open(MQTT_CER_FILE)
-			dim tlsinit as pl_tls_result=sock.tlsinit(romfile.offset)  'check return state
+			sock.tlsinit(romfile.offset)
 		#else
 			sock.tlsinit(0)
 		#endif
@@ -428,8 +428,7 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 			mqtt_state=EN_MQTT_STATES_CONNECTED
 		else
 			if mqtt_server_address<>mqtt_server_ip then
-				dim hsres as pl_tls_result = sock.tlshandshake(mqtt_server_address)
-				sys.debugprint(str(hsres))
+				sock.tlshandshake(mqtt_server_address)
 			else
 				sock.tlshandshake("")
 			end if
