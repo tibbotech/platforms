@@ -187,8 +187,8 @@ sub mqtt_connect_socket()
 			sys.buffalloc()
 		#endif
 		#ifdef MQTT_CER_FILE
-			romfile.open(MQTT_CER_FILE)
-			sock.tlsinit(romfile.offset)
+  			romfile.open(MQTT_CER_FILE)
+			sock.tlsinit(romfile.offset)  'check return state
 		#else
 			sock.tlsinit(0)
 		#endif
@@ -411,10 +411,10 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 	
 	if sock.num<>mqtt_sock_num then 
 		exit sub 
-	end if
+	end if 
 	
 	select case newstate
-	case PL_SST_CLOSED, PL_SST_CL_PCLOSED:
+	case PL_SST_CLOSED, PL_SST_CL_PCLOSED,PL_SST_CL_PRESET_EST:
 		if mqtt_state<>EN_MQTT_STATES_IDLE then
 			mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
 			mqtt_connection_counter=MQTT_RECONNECT_TIME*2
