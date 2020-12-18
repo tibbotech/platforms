@@ -93,7 +93,7 @@ property !sock.tlstxfree
 end property
 
 '--------------------------------------------------------------------
-property sock.tlspeeklen
+property sock.tlsrxlen
 '<b>R/O PROPERTY (WORD | DWORD), DEFAULT VALUE=0 (0 bytes). </b><br><br>
 'Indicates the total number of bytes waiting in the RX buffer of the current socket (<font color="maroon"><b>sock.num</b></font>) that can be accessed via <font color="maroon"><b>sock.tlspeekdata</b></font>.
 'The returned value is for encrypted data.

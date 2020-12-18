@@ -15,4 +15,4 @@ end enum
 event(35)  on_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, ip as string(16), gateway_ip as string(16), netmask as string(16), lease_time as dword)
 event(36)  on_dhcp_failure(interface as pl_sock_interfaces,failure_code as on_dhcp_status_codes)
 'The user will be in charge of pre clear  of the socket. 
-'event(37)  callback_dhcp_pre_clear_ip(interface as pl_sock_interfaces)  
+'event(37)  callback_dhcp_pre_clear_ip(interface as pl_sock_interfaces)
