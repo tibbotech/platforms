@@ -39,6 +39,21 @@ enum en_mqtt_states
 	
 end enum
 
+enum en_mqtt_proc_data_states
+	
+	EN_MQTT_PD_STATES_READING_HEADER
+	
+	
+end enum
+
+type mqtt_proc_data_variable
+
+	mqtt_message_type as byte
+	mqtt_qos as en_qos_choices
+	
+end type
+
+dim mqtt_proc_data_variables as mqtt_proc_data_variable
 dim mqtt_init_flag as word
 dim mqtt_packet_identifier as word
 dim mqtt_sock_num as byte
@@ -448,45 +463,45 @@ sub mqtt_proc_data()
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then exit sub
 	if sock.num<>mqtt_sock_num then exit sub
 
-	dim pos as byte = 2
-	dim buf as string
-	if mqtt_encrypted then
-		buf = sock.tlspeekdata(2)
-	else
-		buf = sock.peekdata(2)
-	end if
-	
+	dim buf as string = mqtt_sock_peekdata(5)
+
 	
 	if (len(buf) < 2) then
 		exit sub
 	end if
-
-	'total sequence length
-	dim length as word = asc(right(buf,1))
-	if (length > 127) then pos = pos + 1
-	dim rxbufflen as dword
-	if mqtt_encrypted then
-		rxbufflen=sock.tlspeeklen
-	else 
-		rxbufflen=sock.rxlen
-	end if
-	if (length + pos <= rxbufflen) then
-		if mqtt_encrypted then
-			buf = sock.tlsgetdata(length + pos)
-		else
-			buf = sock.getdata(length + pos)		
-		end if
-	else
-		exit sub	
-	end if
-
-	dim head as byte = asc(left(buf,1))
-	dim qos as en_qos_choices = (head and &h06) shr 1
-	head = (head and &hF0)
 	
-	buf = right(buf,length)
+	dim tmr as dword
+	dim index as byte=2
+	dim multiplier as dword=1
+	dim length as word=0
+	dim encodedByte as byte
+	dim fixed_header_length as word = 1
+	dim continuation_bit as boolean
+	do
+		encodedByte=asc(mid(buf,index,1))
+		length=length+(encodedByte and 127) * multiplier
+		multiplier=multiplier * 128
+		index=index+1
+		continuation_bit = (encodedByte and 128) <> 0
+		if index>len(buf) and continuation_bit then exit sub 
+		fixed_header_length = fixed_header_length + 1
+	loop while continuation_bit
 
-	select case (head)
+	mqtt_proc_data_variables.mqtt_message_type=asc(left(buf,1))
+	mqtt_proc_data_variables.mqtt_qos = (mqtt_proc_data_variables.mqtt_message_type and &h06) shr 1
+	mqtt_proc_data_variables.mqtt_message_type= (mqtt_proc_data_variables.mqtt_message_type and &hF0)
+	
+	tmr=sys.timercountms
+	while sock.txfree<200 and sys.timercountms-tmr<MQTT_TIMEOUT
+	wend
+
+	if (length+fixed_header_length)<255	 then
+		buf = mqtt_sock_getdata(length+fixed_header_length)	
+	else
+		mqtt_sock_getdata(fixed_header_length)
+	end if
+	
+	select case (mqtt_proc_data_variables.mqtt_message_type)
 		
 		case CONNACK:	#if MQTT_DEBUG_PRINT=1		
 							mqtt_debug_print("Connected to server.")
@@ -496,16 +511,55 @@ sub mqtt_proc_data()
 						mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 						callback_mqtt_connect_ok()
 		
-		case PUBLISH:	length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
+		case PUBLISH:	
+		
+'						length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
+						dim got_topic as boolean = false
+						while length>0
+'							buf=mqtt_sock_getdata(length)
+							if got_topic=false then
+								dim topic_length as string = mqtt_sock_getdata(2)
+								dim bytes as byte(2) = topic_length
+								dim llength as word= (bytes(0) shl 8) or bytes(1)
+
+
+								length=length-2
+								mqtt_debug_print("Notification: topic="+mid(buf,3,length))
+								got_topic=true
+							end if
+							mqtt_debug_print("Notification: topic="+mid(buf,3,length))
+							length=length-len(buf)
+							
+						wend
+						
 						#if MQTT_DEBUG_PRINT=1
-							mqtt_debug_print("Notification: topic="+mid(buf,3,length)+", data="+right(buf,len(buf)-length-2-((qos<>QOS_AT_MOST_ONCE)*2)))
+							mqtt_debug_print("Notification: topic="+mid(buf,3,length)+", data="+right(buf,len(buf)-length-2-((mqtt_proc_data_variables.mqtt_qos<>QOS_AT_MOST_ONCE)*2)))
 						#endif
-						callback_mqtt_notif(mid(buf,3,length),right(buf,len(buf)-length-2-((qos<>QOS_AT_MOST_ONCE)*2)))
-						if (qos = QOS_AT_LEAST_ONCE) then
+						callback_mqtt_notif(mid(buf,3,length),right(buf,len(buf)-length-2-((mqtt_proc_data_variables.mqtt_qos<>QOS_AT_MOST_ONCE)*2)),255)
+						if (mqtt_proc_data_variables.mqtt_qos = QOS_AT_LEAST_ONCE) then
 							buf = chr(PUBACK) + chr(2) + mid(buf,length+3,2)
 							mqtt_sock_setdata(buf)
 							sock.send
-						else if (qos = QOS_EXACTLY_ONCE) then
+						else if (mqtt_proc_data_variables.mqtt_qos = QOS_EXACTLY_ONCE) then
+							buf = chr(PUBREC) + chr(2) + mid(buf,length+3,2)
+							mqtt_sock_setdata(buf)
+							sock.send
+						end if
+		
+		
+						mqtt_sock_getdata(fixed_header_length)
+						buf = mqtt_sock_getdata(length)
+						length = length - len(buf)
+'						length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
+						#if MQTT_DEBUG_PRINT=1
+							mqtt_debug_print("Notification: topic="+mid(buf,3,length)+", data="+right(buf,len(buf)-length-2-((mqtt_proc_data_variables.mqtt_qos<>QOS_AT_MOST_ONCE)*2)))
+						#endif
+						callback_mqtt_notif(mid(buf,3,length),right(buf,len(buf)-length-2-((mqtt_proc_data_variables.mqtt_qos<>QOS_AT_MOST_ONCE)*2)),255)
+						if (mqtt_proc_data_variables.mqtt_qos = QOS_AT_LEAST_ONCE) then
+							buf = chr(PUBACK) + chr(2) + mid(buf,length+3,2)
+							mqtt_sock_setdata(buf)
+							sock.send
+						else if (mqtt_proc_data_variables.mqtt_qos = QOS_EXACTLY_ONCE) then
 							buf = chr(PUBREC) + chr(2) + mid(buf,length+3,2)
 							mqtt_sock_setdata(buf)
 							sock.send
@@ -581,7 +635,7 @@ end sub
 			#endif
 			exit sub
 		end if
-		if mqtt_cur_state<>ms_connected then exit sub
+		if mqtt_state<>EN_MQTT_STATES_LOGGED_IN then exit sub
 			
 		if mqtt_packet_length<>0 then
 			#if MQTT_DEBUG_PRINT=1
@@ -622,7 +676,7 @@ end sub
 				buf_len=buf_len-tx_free
 			end if		
 			sock.send
-			mqtt_timer_record=0
+'			mqtt_timer_record=0
 			tmr=sys.timercountms
 		wend
 		
@@ -642,7 +696,7 @@ end sub
 			#endif
 			exit sub
 		end if
-		if mqtt_cur_state<>ms_connected then exit sub
+		if mqtt_state<>EN_MQTT_STATES_LOGGED_IN then exit sub
 
 		mqtt_packet_length=mqtt_packet_length-len(data)
 		if mqtt_packet_length < 0 then
@@ -670,7 +724,7 @@ end sub
 				length=length-tx_free
 			end if		
 			sock.send
-			mqtt_timer_record=0
+'			mqtt_timer_record=0
 			tmr=sys.timercountms
 		wend
 		
