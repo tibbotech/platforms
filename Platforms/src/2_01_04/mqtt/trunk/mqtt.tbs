@@ -42,17 +42,20 @@ end enum
 enum en_mqtt_proc_data_states
 	
 	EN_MQTT_PD_STATES_READING_HEADER,
-	EN_MQTT_PD_STATES_READING_PAYLOAD
+	EN_MQTT_PD_STATES_READING_PAYLOAD,
+	EN_MQTT_PD_STATES_READING_PAYLOAD_DATA
 	
 end enum
 
 type mqtt_proc_data_variable
 
 	message_type as byte
+	topic_length as word
 	topic as string
 	qos as en_qos_choices
 	remaining_length as word
 	fixed_header_length as word
+	packet_identifier as string
 	
 end type
 
@@ -307,6 +310,7 @@ sub mqtt_publish(byref topic as string, byref data as string, qos as en_qos_choi
 	end if
 	
 	buf=chr(PUBLISH+1+(qos*2))+mqtt_build_remaining_length(len(buf)) + buf
+'	buf=chr(&h03+1+(qos*2))+mqtt_build_remaining_length(len(buf)) + buf
 
 	sock.num=mqtt_sock_num
 	mqtt_sock_setdata(buf)
@@ -479,6 +483,9 @@ sub mqtt_proc_data()
 		dim encodedByte as byte
 		dim continuation_bit as boolean
 		mqtt_proc_data_variables.fixed_header_length = 1
+		mqtt_proc_data_variables.remaining_length=0
+		mqtt_proc_data_variables.topic_length=0
+		mqtt_proc_data_variables.packet_identifier=""
 		do
 			encodedByte=asc(mid(buf,index,1))
 			mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length+(encodedByte and 127) * multiplier
@@ -487,6 +494,7 @@ sub mqtt_proc_data()
 			continuation_bit = (encodedByte and 128) <> 0
 			if index>len(buf) and continuation_bit then exit sub 
 			mqtt_proc_data_variables.fixed_header_length = mqtt_proc_data_variables.fixed_header_length + 1
+			
 		loop while continuation_bit
 
 		mqtt_proc_data_variables.message_type=asc(left(buf,1))
@@ -503,6 +511,9 @@ sub mqtt_proc_data()
 			mqtt_sock_getdata(mqtt_proc_data_variables.fixed_header_length)
 		end if
 		
+		proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD
+		buf = right(buf,len(buf)-2)
+		
 	end if
 	
 
@@ -516,56 +527,43 @@ sub mqtt_proc_data()
 						mqtt_state=EN_MQTT_STATES_LOGGED_IN
 						mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 						callback_mqtt_connect_ok()
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
-		case PUBLISH:	if proc_data_state=EN_MQTT_PD_STATES_READING_HEADER then
-							dim topic_length_bytes as byte(2) = mqtt_sock_getdata(2)
-							dim topic_length_word as word= (topic_length_bytes(0) shl 8) or topic_length_bytes (1)
-							mqtt_proc_data_variables.topic=mqtt_sock_getdata(topic_length_word)
-							mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-2
-							proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD
-						end if
-						
-						
-						
-						mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-len(buf)
-							
-						
-						#if MQTT_DEBUG_PRINT=1
-							mqtt_debug_print("Notification: topic="+mid(buf,3,mqtt_proc_data_variables.remaining_length)+", data="+right(buf,len(buf)-mqtt_proc_data_variables.remaining_length-2-((mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE)*2)))
-						#endif
-						callback_mqtt_notif(mid(buf,3,mqtt_proc_data_variables.remaining_length),right(buf,len(buf)-mqtt_proc_data_variables.remaining_length-2-((mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE)*2)),255)
-						if (mqtt_proc_data_variables.qos = QOS_AT_LEAST_ONCE) then
-							buf = chr(PUBACK) + chr(2) + mid(buf,mqtt_proc_data_variables.remaining_length+3,2)
-							mqtt_sock_setdata(buf)
-							sock.send
-						else if (mqtt_proc_data_variables.qos = QOS_EXACTLY_ONCE) then
-							buf = chr(PUBREC) + chr(2) + mid(buf,mqtt_proc_data_variables.remaining_length+3,2)
-							mqtt_sock_setdata(buf)
-							sock.send
-						end if
-		
-		
-						mqtt_sock_getdata(mqtt_proc_data_variables.fixed_header_length)
-						buf = mqtt_sock_getdata(mqtt_proc_data_variables.remaining_length)
-						mqtt_proc_data_variables.remaining_length = mqtt_proc_data_variables.remaining_length - len(buf)
-'						length=asc(mid(buf,1,1))*256 +asc(mid(buf,2,1))
-						#if MQTT_DEBUG_PRINT=1
-							mqtt_debug_print("Notification: topic="+mid(buf,3,mqtt_proc_data_variables.remaining_length)+", data="+right(buf,len(buf)-mqtt_proc_data_variables.remaining_length-2-((mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE)*2)))
-						#endif
-						callback_mqtt_notif(mid(buf,3,mqtt_proc_data_variables.remaining_length),right(buf,len(buf)-mqtt_proc_data_variables.remaining_length-2-((mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE)*2)),255)
-						if (mqtt_proc_data_variables.qos = QOS_AT_LEAST_ONCE) then
-							buf = chr(PUBACK) + chr(2) + mid(buf,mqtt_proc_data_variables.remaining_length+3,2)
-							mqtt_sock_setdata(buf)
-							sock.send
-						else if (mqtt_proc_data_variables.qos = QOS_EXACTLY_ONCE) then
-							buf = chr(PUBREC) + chr(2) + mid(buf,mqtt_proc_data_variables.remaining_length+3,2)
-							mqtt_sock_setdata(buf)
-							sock.send
-						end if
-		
+		case PUBLISH:	select case proc_data_state
+						case EN_MQTT_PD_STATES_READING_PAYLOAD:
+							dim peekdata as string=mqtt_sock_peekdata(2)
+							if len(peekdata)<2 then exit sub
+							dim topic_length_bytes as byte(2)=mqtt_sock_getdata(2)
+							mqtt_proc_data_variables.topic_length=(topic_length_bytes(0) shl 8) or topic_length_bytes(1)
+							peekdata=mqtt_sock_peekdata(mqtt_proc_data_variables.topic_length)
+							if len(peekdata)<mqtt_proc_data_variables.topic_length then exit sub
+							mqtt_proc_data_variables.topic=mqtt_sock_getdata(mqtt_proc_data_variables.topic_length)
+							if mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE then
+								mqtt_proc_data_variables.packet_identifier=mqtt_sock_getdata(2)
+							end if
+							mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-mqtt_proc_data_variables.topic_length-len(mqtt_proc_data_variables.packet_identifier)-2
+							proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD_DATA
+						case EN_MQTT_PD_STATES_READING_PAYLOAD_DATA:
+							buf=mqtt_sock_getdata(mqtt_proc_data_variables.remaining_length)						
+							mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-len(buf)						
+							#if MQTT_DEBUG_PRINT=1
+								mqtt_debug_print("Notification: topic="+mqtt_proc_data_variables.topic+", data="+buf)
+							#endif
+							callback_mqtt_notif(mqtt_proc_data_variables.topic,buf,mqtt_proc_data_variables.remaining_length)
+							if mqtt_proc_data_variables.remaining_length=0 then
+								if mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE then
+									buf = chr(PUBACK) + chr(2) + mqtt_proc_data_variables.packet_identifier
+									mqtt_sock_setdata(buf)
+									sock.send
+								end if				
+							proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
+							end if							
+						end select		
+												
 		case PUBACK:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish ack.")
 						#endif
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case PUBREC:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rec.")
@@ -573,30 +571,36 @@ sub mqtt_proc_data()
 						buf=chr(PUBREL+2) + chr(2) + buf
 						mqtt_sock_setdata(buf)
 						sock.send
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case PUBREL:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rel.")
 						#endif
 						buf=chr(PUBCOMP) + chr(2) + buf
 						mqtt_sock_setdata(buf)
-						sock.send						
+						sock.send		
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case PUBCOMP:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish comp.")
 						#endif
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case SUBACK:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Subscribe ack.")
 						#endif
 						callback_mqtt_sub_ok()
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case UNSUBACK:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Unsubscribe ack.")
 						#endif
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 		
 		case PINGRESP:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Ping response.")
 						#endif
+						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 	end select
 
 end sub
