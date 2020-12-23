@@ -179,11 +179,11 @@ end property
 
 '--------------------------------------------------------------------
 property sock.state
-'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0-PL_SST_CLOSED (connection is closed). </b><br><br>
-'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) returns "detailed" current socket state
-'(as opposed to <font color="teal"><b>on_sock_event </b></font>that retuns detailed state at the moment of a particular <font color="teal">
-'<b>on_sock_event </b></font>event generation).See <font color="olive"><b>pl_sock_state </b></font>constants for state descriptions.<br><br>
-'Another read-only property- <font color="maroon"><b>sock.statesimple</b></font>- returns "simplified" socket state.
+'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE = 0 - PL_SST_CLOSED (connection is closed). </b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), returns the "detailed" current socket state
+'(as opposed to the <font color="teal"><b>sock.event</b></font> property, which retuns the "detailed" state at the moment of the <font color="teal"><b>on_sock_event</b></font> handler's generation).
+'See <font color="olive"><b>pl_sock_state</b></font> constants for state descriptions.<br><br>
+'Another set of read-only properties - <font color="maroon"><b>sock.eventsimple</b></font> and <font color="maroon"><b>sock.statesimple</b></font> - return "simplified" socket states.
   
     get = syscall(224) as pl_sock_state
 end property
@@ -428,21 +428,17 @@ end property
 
 '--------------------------------------------------------------------
 property sock.splittcppackets
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO. </b><br><br>
-'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) selects how TCP data should be processed:
-' <font color="olive"><b>0- NO </b></font>(normal processing), <font color="olive"><b>1- YES </b></font>(additional degree of control over
-'individual TCP packets). When this property is set to <font color="olive"><b>1- YES </b></font>your program gets an additional degree of 
-'control over TCP. <br><br>
-'For incoming  TCP data, the program can know the size of individual incoming packets (this will be reported by the <font color="teal"><b>
-'on_sock_tcp_packet_arrival </b></font>event).<br><br>
-'For outgoing TCP data, no packet will be sent out at all unless entire contents of the TX buffer can be sent. Therefore, by executing 
-'<font color="maroon"><b>sock.send </b></font> and waiting for <font color="maroon"><b>sock.txlen</b></font>=0 your program can make sure that 
-'the packet sent will have exactly the size you needed. <br><br>
-'The property is only relevant when <font color="maroon"><b>sock.inbandcommands</b></font>= <font color="olive"><b>0- NO</b></font>. With 
-'inband commands enabled, the socket will always behave as if the <font color="maroon"><b>sock.splittcppackets</b></font>= <font color="olive">
-'<b>0- NO</b></font>. <br><br>
-'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple</b></font>
-'<> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>). <br>
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = 0 - NO.</b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), specifies whether the program will have additional control over the size of TCP packets being received and transmitted: 
+'<font color="olive"><b>0 - NO</b></font> (normal processing), <font color="olive"><b>1 - YES</b></font> (additional degree of control over individual TCP packets). 
+'When this property is set to <font color="olive"><b>1 - YES</b></font>, your program gets an additional degree of control over TCP. <br><br>
+'For incoming TCP data, the program can know the size of individual incoming packets (this will be reported by the <font color="teal"><b>on_sock_tcp_packet_arrival</b></font> event).<br><br>
+'For outgoing TCP data, no packet will be sent out at all unless entire contents of the TX buffer can be sent. Therefore, by executing <font color="maroon"><b>sock.send</b></font> 
+'and waiting for <font color="maroon"><b>sock.txlen</b></font> = 0, your program can make sure that the packet sent will have exactly the size you needed.<br><br>
+'The property is only relevant when <font color="maroon"><b>sock.inbandcommands</b></font> = <font color="olive"><b>0 - NO</b></font>. 
+'With inband commands enabled, the socket will always behave as if <font color="maroon"><b>sock.splittcppackets</b></font> = <font color="olive"><b>0 - NO</b></font>.<br><br>
+'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple</b></font> <> <font color="olive"><b>0 - PL_SSTS_CLOSED</b></font>).<br><br>
+'Do not enable the split packet mode for a socket using TLS encryption.  
     get = syscall(65,"36.TDL"+) as no_yes
     set = syscall(251,"36.TDL"+) (splitpackets as no_yes)
 end property
@@ -517,17 +513,17 @@ end property
 
 '--------------------------------------------------------------------
 property sock.inbandcommands
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (inband commands disabled). </b><br><br>
-'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) specifies whether inband command passing
-'is allowed: <font color="olive"><b>0- NO</b></font> (inband commands are not allowed), <font color="olive"><b>1- YES </b></font>(inband 
-'commands are allowed). <br><br>
-'Inband commands are messages passedwithin the TCP data stream. Each message has to be formatted in a specific way- see the <font color="maroon">
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = 0 - NO (inband commands disabled).</b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), specifies whether inband command passing is allowed: 
+'<font color="olive"><b>0 - NO</b></font> (inband commands are not allowed), <font color="olive"><b> 1 - YES </b></font>(inband commands are allowed). <br><br>
+'Inband commands are messages passed within the TCP data stream. Each message has to be formatted in a specific way - see the <font color="maroon">
 '<b>sock.escchar </b></font> and <font color="maroon"><b>sock.endchar </b></font> properties. <br><br>
-'Inband commands are not possible for UDP communications so this setting is irrelevant when <font color="maroon"><b>sock.protocol</b></font>=
-'<font color="olive"><b>1- PL_SOCK_PROTOCOL_UDP</b></font>. <br><br>
+'Inband commands are not possible for UDP communications so this setting is irrelevant when <font color="maroon"><b>sock.protocol</b></font> = 
+'<font color="olive"><b>1 - PL_SOCK_PROTOCOL_UDP</b></font>. <br><br>
 'Inband messaging will work even when redirection (buffer shorting) is enabled for the socket (see the <font color="maroon"><b>sock.redir 
 '</b></font>method). The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>
-'sock.statesimple</b></font><> <font color="olive"><b>0- PL_SSTS_CLOSED</b></font>).
+'sock.statesimple</b></font> <> <font color="olive"><b>0 - PL_SSTS_CLOSED</b></font>).<br><br>
+'Do not enable inband commands for a socket using TLS encryption.
     get = syscall(38,"36.TDL"+) as no_yes
     set = syscall(39,"36.TDL"+) (inbandcommands as no_yes)
 end property
@@ -1126,13 +1122,13 @@ syscall(94,"35.TDL") sock.tx2buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYP
 '--------------------------------------------------------------------
 syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
 '<b>METHOD. </b><br><br>
-'For the selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>) redirects the data being RXed to the TX buffer
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), redirects the data being RXed to the TX buffer
 'of the same socket, different socket, or another object that supports compatible buffers.<br><br>
-'The redir argument, as well as the value returned by this method are of "<font color="olive"><b>enum pl_redir</b></font>" type. The 
-'<font color="olive"><b>pl_redir </b></font>defines a set of inter-object constants that include all possible redirections for this platform.
-'Specifying redir value of <font color="olive"><b>0- PL_REDIR_NONE </b></font> cancels redirection.<br><br>
-'This method returns actual redirection result: <font color="olive"><b>0- PL_REDIR_NONE </b></font>if redirection failed or the
-'same value as the one that was passed in the redir argument if redirection was successful.
+'The redir argument, as well as the value returned by this method are of "<font color="olive"><b>enum pl_redir</b></font>" type. 
+'The <font color="olive"><b>pl_redir</b></font> defines a set of inter-object constants that include all possible redirections for this platform.
+'Specifying a redir value of <font color="olive"><b>0 - PL_REDIR_NONE</b></font> cancels redirection.<br><br>
+'This method returns actual redirection result: <font color="olive"><b>0 - PL_REDIR_NONE</b></font> if redirection failed or the same value as the one that was passed in the redir argument if redirection was successful.<br><br>
+'Do not enable buffer redirection for a socket using TLS encryption.  
 
 '--------------------------------------------------------------------
 property sock.inconenabledmaster
@@ -1166,26 +1162,14 @@ end property
 
 '--------------------------------------------------------------------
 property sock.sinkdata
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- NO (normal data processing). </b><br><br>
-'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>)
-'specifies whether the incoming data should be discarded.
-'<br><br>
-'Setting this property to
-'<font color="olive"><b>1- YES </b></font>
-'causes the socket to automatically discard all incoming data without passing it to your application.
-'<br><br>
-'The <font color="teal"><b>on_sock_data_arrival </b></font>
-'event will not be generated, reading
-'<font color="maroon"><b>sock.rxlen </b></font>
-'will always return zero, and so on. No data will be reaching its destination even in case of buffer redirection
-'(see <font color="maroon"><b>sock.redir</b></font>).
-'<br><br>
-'Inband commands
-'(see <font color="maroon"><b>sock.unband</b></font>)
-'will still be extracted from the incoming data stream and processed.
-'<font color="maroon"><b>Sock.connectiontout </b></font>and
-'<font color="maroon"><b>sock.toutcounter </b></font>
-'will work correctly as well. 
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = 0 - NO (normal data processing).</b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), specifies whether the incoming data should be discarded.<br><br>
+'Setting this property to <font color="olive"><b>1 - YES</b></font> causes the socket to automatically discard all incoming data without passing it to your application.<br><br>
+'The <font color="teal"><b>on_sock_data_arrival</b></font> event will not be generated, reading <font color="maroon"><b>sock.rxlen</b></font> will always return zero, and so on. 
+'No data will be reaching its destination even in case of buffer redirection (see <font color="maroon"><b>sock.redir</b></font>).<br><br>
+'Inband commands (see <font color="maroon"><b>sock.unband</b></font>) will still be extracted from the incoming data stream and processed.
+'<font color="maroon"><b>Sock.connectiontout</b></font> and <font color="maroon"><b>sock.toutcounter</b></font> will work correctly as well.<br><br>
+'Do not enable data sinking for a socket using TLS encryption.
     get = syscall(3,"36.TDL"+) as no_yes
     set= syscall(4,"36.TDL"+) (value as no_yes)
 end property
@@ -1298,22 +1282,15 @@ event(24)  on_sock_postdata
 
 '--------------------------------------------------------------------
 event(4)  on_sock_data_arrival
-'<b>EVENT of the sock object. </b><br><br> 
-'Generated when at least one data byte is present in the RX buffer of the socket (i.e. for this socket the <font color="maroon"><b>
-'sock.rxlen</b></font>>0). When the event handler for this event is entered the <font color="maroon"><b>sock.num </b></font>property is
-'automatically switched to the socket for which this event was generated.<br><br>
-'Another <font color="teal"><b>on_sock_data_arrival </b></font>event on a particular socket is never generated until the previous 
-'one is processed. Use <font color="maroon"><b>sock.getdata </b></font>method to extract the data from the RX buffer.<br><br>
-'For TCP protocol (<font color="maroon"><b>sock.protocol</b></font>= <font color="olive"><b>1- PL_SOCK_PROTOCOL_TCP</b></font>), there is 
-'no separation into individual packets and you get all arriving data as a "stream". You don't have to process all data in the RX buffer at 
-'once. If you exit the <font color="teal"><b>on_sock_data_arrival </b></font>event handler while there is still some unprocessed 
-'data in the RX buffer another <font color="teal"><b>on_sock_data_arrival </b></font>event will be generated immediately.<br><br>
-'For UDP protocol (<font color="maroon"><b>sock.protocol</b></font>= <font color="olive"><b>0- PL_SOCK_PROTOCOL_UDP</b></font>), the RX 
-'buffer preserves datagram boundaries. Each time you enter the <font color="teal"><b>on_sock_data_arrival </b></font>event handler
-'you get to process next UDP datagram. If you do not process entire datagram contents the unread portion of the datagram is discarded once 
-'you exit the event handler.<br><br>
-'This event is not generated for a particular socket when buffer redirection is set for this socket through the <font color="maroon"><b>
-'sock.redir </b></font>method.
+'<b>EVENT of the sock object.</b><br><br> 
+'This event is generated when at least one data byte is present in the RX buffer of the socket (i.e., for this socket, <font color="maroon"><b>sock.rxlen</b></font> > 0).<br><br>
+'When the event handler for this event is entered, the <font color="maroon"><b>sock.num</b></font> property is automatically switched to the socket for which this event was generated. 
+'Another <font color="teal"><b>on_sock_data_arrival</b></font> event on a particular socket is never generated until the previous one is processed.
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+'<br><br><u>When the socket is using TLS</u>, this event is generated when at least one data byte is present in the TLS RX buffer of the socket (i.e., for this socket, <font color="maroon"><b>sock.tlsrxlen</b></font> > 0).<br><br>
+'Like in non-encrypted communications, <font color="maroon"><b>sock.num</b></font> is automatically switched to the socket for which the event was generated and no other <font color="teal"><b>on_sock_data_arrival</b></font> event will be generated until the previous one is processed. 
+'Exiting the <font color="teal"><b>on_sock_data_arrival</b></font> event handler while there is still unprocessed data in the TLS RX buffer will result in another <font color="teal"><b>on_sock_data_arrival</b></font> event being generated immediately. 
+'The contents of the RX buffer are not taken into account and the event is not triggered even if the RX buffer is not empty.
 
 '--------------------------------------------------------------------
 event(5)  on_sock_event(newstate as pl_sock_state,newstatesimple as pl_sock_state_simple)
