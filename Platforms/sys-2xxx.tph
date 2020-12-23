@@ -134,7 +134,7 @@ end property
 '--------------------------------------------------------------------
 property sys.timercount
 '<b>R/O PROPERTY (WORD). </b><br><br>
-'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches 65,535 it rolls over to 0.<br><br>
+'Returns the time (in half-second intervals) elapsed since the device powered up. Once the value of this timer reaches 65535, it rolls over to 0.<br><br>
 'See also <font color="teal"><b>on_sys_timer </b></font> event.
     get = syscall(136) as word
 end property
@@ -142,7 +142,7 @@ end property
 '--------------------------------------------------------------------
 property sys.timercount32
 '<b>R/O PROPERTY (DWORD). </b><br><br>
-'Returns the time (in half-second intervals) elapsed since the device powered up. Once this timer reaches &hFFFFFFFF it rolls over to 0.<br><br>
+'Returns the time (in half-second intervals) elapsed since the device powered up. Once the value of this timer reaches &hFFFFFFFF it rolls over to 0.<br><br>
 'See also <font color="teal"><b>on_sys_timer </b></font> event.
     get = syscall(594) as dword
 end property
@@ -150,7 +150,7 @@ end property
 '--------------------------------------------------------------------
 property sys.timercountms
 '<b> PROPERTY (DWORD). </b><br><br>
-'Returns the amount of time (in milliseconds) elapsed since the device powered up.<br><br>
+'Returns the amount of time (in milliseconds) elapsed since the device powered up. Once the value of this timer reaches &hFFFFFFFF, it rolls over to 0.<br><br>
 'Care should be exercised, because this property is not read-only.
     get = syscall(595) as dword
     set = syscall(596) (value as dword)
@@ -203,13 +203,14 @@ syscall(295,"74.TDL") sys.setserialnum(byref str as string) as ok_ng
 
 '--------------------------------------------------------------------
 syscall(543,"74.TDL") sys.debugprint(byref str as string)
-'<b>METHOD. </b><br><br>
-'Sends (prints) a string to the TIDE's console output.
-'<br><br>
-'This method only works when the
-'<font color="maroon"><b>sys.runmode</b></font>= <font color="olive"><b>1- PL_SYS_MODE_DEBUG</b></font>.
-'The method allows you to trace the execution of your debug application by
-'printing messages in the console output pane of TIDE. 
+'<b>METHOD.</b><br><br>
+'Sends (prints) a string to the TIDE's console output.<br><br>
+'The method allows you to trace the execution of your debug application by printing messages in the console output pane of TIDE. 
+'This method only works when the <font color="maroon"><b>sys.runmode</b></font> = <font color="olive"><b>1 - PL_SYS_MODE_DEBUG</b></font>.
+#if PLATFORM_ID=WM2000
+'<br><br>With the introduction of wireless debugging on the WM2000, you also need to take into account performance degradation due to UDP communications over Wi-Fi. 
+'If you have a significant amount of debug messages, TIDE must wait for replies from your device for each one, which can lead to slow performance.
+#endif
 
 '--------------------------------------------------------------------
 syscall(576,"101.TDL") !sys.profile() as string

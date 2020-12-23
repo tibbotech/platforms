@@ -80,9 +80,9 @@ end enum
 
 '--------------------------------------------------------------------
 property wln.mac
-'<b>R/O PROPERTY (STRING), DEFAULT VALUE= "as preset during device production". </b><br><br>
-'Returns current MAC (hardware) address of the device. You cannot use the <font color="maroon"><b>net.mac </b></font>property to set the new MAC
-'address, but this address can be changed indirectly, by writing to a special area of the EEPROM (see <font color="maroon"><b>stor.setdata </b></font>and
-'<font color="maroon"><b>stor.base</b></font>s).
+'<b>R/O PROPERTY (STRING), DEFAULT VALUE = "as preset during device production." </b><br><br>
+'Returns current MAC (hardware) address of the device. You cannot use the <font color="maroon"><b>net.mac</b></font> property to set the new MAC
+'address, but this address can be changed indirectly, by writing to a special area of the EEPROM (see <font color="maroon"><b>stor.setdata</b></font> and
+'<font color="maroon"><b>stor.base</b></font>).
     get = syscall(470,TDL_72) as string   
 end property

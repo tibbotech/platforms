@@ -41,7 +41,7 @@ syscall(178,"30.TDL") beep.play(byref pattern as string, patint as pl_beep_int)
 'The patint argument determines if this method's invocation is allowed to interrupt another pattern that is already playing. 
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID=EM1000
+#if PLATFORM_ID=EM1000 or PLATFORM_ID=NB1010 or PLATFORM_ID=NB1010W or PLATFORM_ID=NB1010N or PLATFORM_ID=EM1000W or PLATFORM_ID=EM1000N or PLATFORM_ID=EM1206W or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -53,30 +53,13 @@ property beep.divider
 'PLL off: F = 5'529'600 / beep.divider.
 '<br><br>
 'The optimal buzzer frequency depends on the buzzer model.
-'The recommended divider value for EM1000EV and EM1000TEV kits is 21600.
+'The recommended divider value for this platform is 21600.
     get = syscall(179) as word
     set = syscall(180) (value as word)
 end property
 #endif
 
-#if PLATFORM_ID=EM1202
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM1202W or PLATFORM_ID=EM1202N
+#if PLATFORM_ID=EM1202 or PLATFORM_ID=EM1202W or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206 or PLATFORM_ID=T1000W or PLATFORM_ID=EM1001 or PLATFORM_ID=EM1001W or PLATFORM_ID=EM1001N
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -93,41 +76,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=EM1206
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=T1000W
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=KLM601
+#if PLATFORM_ID=KLM601 or PLATFORM_ID=KLM106_32
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -142,92 +91,7 @@ property beep.divider
 end property
 #endif 
 
-#if PLATFORM_ID=KLM106_32
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=NB1010
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=NB1010W or PLATFORM_ID=NB1010N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM1000W or PLATFORM_ID=EM1000N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-'The recommended divider value for EM1000EV and EM1000TEV kits is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM1206W or PLATFORM_ID=EM1206N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-'The recommended divider value for the EM1206EV kit is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=DS1102W or PLATFORM_ID=DS1102N
+#if PLATFORM_ID=DS1102W or PLATFORM_ID=DS1102N or PLATFORM_ID=DS1101W or PLATFORM_ID=DS1101N
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -244,122 +108,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=DS1101W or PLATFORM_ID=DS1101N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 16203.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=TPP2W or PLATFORM_ID=TPP2N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=TPP3W or PLATFORM_ID=TPP3N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 21600.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM1001
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM1001W or PLATFORM_ID=EM1001N
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=EM2000W
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows (assuming full-speed operation):
-'<br><br>
-'F = 30'000'000 / beep.divider.
-'<br><br>
-'The optimal buzzer frequency depends on the buzzer model.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=TPP2WG2
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows (assuming full-speed operation):
-'<br><br>
-'F = 30'000'000 / beep.divider.
-'<br><br>
-'The recommended divider value for this platform is 11111.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=TPP3WG2
+#if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -385,7 +134,7 @@ end property
 
 #if PLATFORM_ID=WM2000
 property beep.frequency
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'<b>PROPERTY (WORD), DEFAULT VALUE = 1.</b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the line).
 '<br><br>
 'The optimal buzzer frequency depends on the buzzer model.

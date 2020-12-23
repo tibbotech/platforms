@@ -216,14 +216,15 @@ end enum
 #endif 
 '--------------------------------------------------------------------
 property wln.domain
-'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 0- PL_WLN_DOMAIN_FCC. </b>
-'<br><br>
-'Selects the domain (area of the world) in which this device is operating. This defines the list of channels on which the Wi-Fi interface
-'will be allowed to active-scan (wln.activescan) or associate (wln.associate) with wireless networks.
-'<br><br>
-'Passive scanning (wln.scan) is performed on all channels of enabled bands (wln.band), regardless of the value of wln.domain.
-'<br><br>
-'This property can't be changed while the Wi-Fi hardware is operational (wln.enabled= 1- YES).
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = 0 - PL_WLN_DOMAIN_FCC.</b><br><br>
+'Sets or returns the domain (area of the world) in which this device is operating. This defines the list of channels on which the Wi-Fi interface
+'will be allowed to active-scan (<font color="maroon"><b>wln.activescan</b></font>) or associate (<font color="maroon"><b>wln.associate</b></font>) with wireless networks.<br><br>
+'Passive scanning (<font color="maroon"><b>wln.scan</b></font>) is performed on all channels of enabled bands (<font color="maroon"><b>wln.band</b></font>), 
+'regardless of the value of <font color="maroon"><b>wln.domain</b></font>.<br><br>
+'This property can't be changed while the Wi-Fi hardware is operational (<font color="maroon"><b>wln.enabled</b></font> = <font color="olive"><b>1 - YES</b></font>).
+#if PLATFORM_ID=WM2000
+'<br><br>As this is a Device Configuration Block (DCB) property, changing its value requires that the device be restarted for the changes to take effect.
+#endif
     get = syscall(480,TDL_72) as pl_wln_domains
     set = syscall(481,TDL_72) (value as pl_wln_domains)
 end property
@@ -583,6 +584,11 @@ syscall(475,TDL_71) wln.networkstart(byref ssid as string,channel as byte) as ac
 '<br><br>
 'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time. 
 'Completion does not imply success -- the result has to be verified by reading the state of the wln.associationstate R/O property.
+#if PLATFORM_ID=WM2000
+'<br><br>On this platform, <font color="maroon"><b>wln.networkstart</b></font> is not available if <font color="maroon"><b>wln.autoconnect</b></font> is enabled. 
+'If <font color="maroon"><b>wln.autoconnect</b></font> is disabled, <font color="maroon"><b>wln.networkstart</b></font> is only available at boot 
+'and requires that <font color="maroon"><b>wln.dhcp<b></font> be enabled to function.
+#endif
 
 '--------------------------------------------------------------------
 syscall(476,TDL_71) wln.networkstop() as accepted_rejected
@@ -590,28 +596,38 @@ syscall(476,TDL_71) wln.networkstop() as accepted_rejected
 '<br><br>
 'Causes the Wi-Fi interface to commence the termination of its own network.
 '<br><br>
-'Network termination process is a task. As such, wln.networkstop will be rejected (return 1- REJECTED) if another task is currently in progress.
-'The task will also be rejected if the Wi-Fi hardware is not operational (wln.enabled=0- NO) or the Wi-Fi interface is not currently running own network (wln.assiciationstate <> 2- PL_WLN_OWN_NETWORK).
-'<br><br>
-'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time.
+'Network termination process is a task. As such, <font color="maroon"><b>wln.networkstop</b></font> will be rejected 
+'(return <font color="olive"><b>1 - REJECTED</b></font>) if another task is currently in progress.
+'The task will also be rejected if the Wi-Fi hardware is not operational (<font color="maroon"><b>wln.enabled</b></font> = <font color="olive"><b>0 - NO</b></font>) 
+'or the Wi-Fi interface is not currently running its own network (<font color="maroon"><b>wln.assiciationstate</b></font> <> <font color="olive"><b>2 - PL_WLN_OWN_NETWORK</b></font>).<br><br>
+'The task is completed when <font color="maroon"><b>wln.task</b></font> becomes <font color="olive"><b>0 - PL_WLN_TASK_IDLE</b></font>. 
+'The <font color="teal"><b>on_wln_task_complete</b></font> event is also generated at that time.
+#if PLATFORM_ID=WM2000
+'<br><br>On this platform, <font color="maroon"><b>wln.networkstop</b></font> is not available if <font color="maroon"><b>wln.autoconnect</b></font> is enabled.
+#endif
 
 '--------------------------------------------------------------------
 enum pl_wln_events 
     PL_WLN_EVENT_DISABLED,      '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
     PL_WLN_EVENT_DISASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
+    #if PLATFORM_ID = WM2000
+    PL_WLN_EVENT_ASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been associated to the wireless network.
+    #endif 
 end enum
 
 event(23)  on_wln_event(wln_event as pl_wln_events)
-'<b>EVENT of the wln object.</b>
-'<br><br>
-'Generated when the wln. object detects disassociation from the wireless network, the Wi-Fi interface is disabled by calling wln.disable,
-'or the Wi-Fi hardware is disconnected, powered-down, reset, or have malfunctioned.
-'<br><br>
-'<b>Wln_event </b>-- registered event (DISABLED or DISASSOCIATED).
-'<br><br>
-'Multiple on_wln_event events may be waiting in the event queue.
-'For this reason the doevents statement will be skipped (not executed) if encountered within the event handler
+'<b>EVENT of the wln object.</b><br><br>
+'Generated when the wln. object detects disassociation from the wireless network, the Wi-Fi interface is disabled by calling <font color="maroon"><b>wln.disable</b></font>,
+'or the Wi-Fi hardware is disconnected, powered-down, reset, or have malfunctioned.<br><br>
+'<b>Wln_event </b>-- registered event (DISABLED or DISASSOCIATED).<br><br>
+'Multiple on_wln_event events may be waiting in the event queue. For this reason, the doevents statement will be skipped (not executed) if encountered within the event handler
 'for this event or the body of any procedure in the related call chain.
+#if PLATFORM_ID=WM2000
+'<br><br>On this platform, if <font color="maroon"><b>wln.autoconnect</b></font> is set to <font color="olive"><b>1 - YES</b></font>, 
+'association with a wireless network will trigger the generation of the <font color="teal"><b>on_wln_event</b></font> 
+'handler with <font color="olive"><b>PL_WLN_EVENT_ASSOCIATED</b></font> as the value of the <i>wln_event</i> parameter. 
+'If <font color="maroon"><b>wln.autoconnect</b></font> is set to <font color="olive"><b>0 - NO</b></font>, association with the network will not trigger the event handler's generation.
+#endif
 
 '--------------------------------------------------------------------
 enum pl_wln_tasks 
@@ -956,17 +972,20 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 
 property wln.autodhcp
 '<b>PROPERTY.</b><br><br>
-'Indicates whether wln.dhcp should be called when wln.autoconnect is enabled.<br><br>
-'This property is mostly backwards-compatible with the DHCP library, but is more specific about parameters. DHCP callbacks — whose names remain the same — must still be handled.
+'Indicates whether <font color="maroon"><b>wln.dhcp</b></font> is enabled at boot: 
+'<font color="olive"><b>0 - NO</b></font> (<font color="maroon"><b>wln.dhcp</b></font> is not enabled at boot), <font color="olive"><b>1 - YES</b></font> (<font color="maroon"><b>wln.dhcp</b></font> is enabled at boot)<br><br>
+'As this is a Device Configuration Block (DCB) property, changing its value requires that the device be restarted for the changes to take effect.
     get = syscall(869) as no_yes
 	set = syscall(870)  (value as no_yes)
 end property
 
 property wln.dhcp
-'<b>R/O PROPERTY (ENUM, BYTE), DEFAULT VALUE= 1- DHCP_ON (when the module associates, DHCP will start).</b><br><br>
+'<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE = 1 - YES (TiOS will handle DHCP negotiation and triggers event handlers).</b><br><br>
 'Indicates whether DHCP is enabled.<br><br>
-'This property replaces the functions of the DHCP library and is enabled automatically by wln.autodhcp.<br>
-'If wln.autoconnect is disabled, wln.dhcp must be called before wln.boot to enable DHCP functionality in the traditional Wi-Fi operating mode.
+'This property replaces the functions of the DHCP library and delegates them to the internal process of TiOS. 
+'If <font color="maroon"><b>wln.autodhcp</b></font> is set to <font color="olive"><b>1 - YES</b></font>, <font color="maroon"><b>wln.dhcp</b></font> will be enabled automatically at boot.<br><br>
+'If <font color="maroon"><b>wln.autoconnect</b></font> is disabled, <font color="maroon"><b>wln.dhcp</b></font> must be called before <font color="maroon"><b>wln.boot</b></font> to enable DHCP functionality in the traditional Wi-Fi operating mode.<br><br>
+'If you disable the DHCP client (<font color="maroon"><b>wln.dhcp</b></font> = <font color="olive"><b>0 - NO</b></font>) and disassociate from a network, it will remain disabled when you reconnect and no DHCP events will be generated.
 	get = syscall(845) as byte
 	set = syscall(846) (value as no_yes)
 end property
@@ -974,9 +993,13 @@ end property
 ''--------------------------------------------------------------------
 property wln.autoconnect
 '<b>PROPERTY.</b><br><br>
-'Determines whether the device will automatically initialize all connectivity hardware and attempt to associate with a designated Wi-Fi network, maintain the connection, and reconnect if disconnected.<br><br>
-'This property is read at boot and must be enabled to enter Wi-Fi debug mode.<br>
-'This property requires wln.autoconnectssid and wln.autoconnectpassword to provide the desired Wi-Fi network SSID and password, respectively. After altering either of those properties, the device must be rebooted for the changes to take effect.
+'Indicates whether the device will automatically initialize all connectivity hardware and attempt to associate with a designated Wi-Fi network, maintain the connection, and reconnect if disconnected.<br><br>
+'This property is read at boot and must be set to <font color="olive"><b>1 - YES<b></font> to enable wireless debugging (<font color="maroon"><b>sys.debugmode<b></font> = <font color="olive"><b>PL_SYS_DBG_NET</b></font>).<br><br>
+'This property requires <font color="maroon"><b>wln.autoconnectssid</b></font> and <font color="maroon"><b>wln.autoconnectpassword</b></font> to provide the desired Wi-Fi network SSID and password, respectively. 
+'After altering either of those properties, the device must be rebooted for the changes to take effect.<br><br>
+'When <font color="maroon"><b>wln.autoconnect</b></font> is enabled, association with a wireless network will trigger the generation of the <font color="teal"><b>on_wln_event</b></font> handler 
+'with <font color="olive"><b>PL_WLN_EVENT_ASSOCIATED</b></font> as the value of the <i>wln_event</i> parameter. 
+'If <font color="maroon"><b>wln.autoconnect</b></font> is set to <font color="olive"><b>0 - NO</b></font>, association with the network will not trigger the event handler's generation.
 	get = syscall(847) as no_yes
 	set = syscall(848) (value as no_yes)
 end property
@@ -984,8 +1007,9 @@ end property
 ''--------------------------------------------------------------------
 property wln.autoconnectssid 
 '<b>PROPERTY.</b><br><br>
-'Contains the SSID of the network with which the device will attempt to connect when wln.autoconnect is called.<br><br>
-'The 32-character limit was imposed because that is the maximum length allowed for an SSID in the WPA specification.
+'Sets or returns the SSID of the network with which the device will attempt to connect when <font color="maroon"><b>wln.autoconnect</b></font> is called.<br><br>
+'The 32-character limit was imposed because that is the maximum length allowed for an SSID in the WPA specification.<br><br>
+'As this is a Device Configuration Block (DCB) property, changing its value requires that the device be restarted for the changes to take effect.
     get = syscall(849) as string
 	set = syscall(850)  (byref value as string)
 end property
@@ -994,8 +1018,9 @@ end property
 ''--------------------------------------------------------------------
 property wln.autoconnectpassword
 '<b>PROPERTY.</b><br><br>
-'Contains the password of the network with which the device will attempt to connect when wln.autoconnect is called.
-'The 63-character limit was imposed because that is the maximum length allowed for a password in the WPA specification.  
+'Sets or returns the password of the network with which the device will attempt to connect when <font color="maroon"><b>wln.autoconnect</b></font> is called.<br><br>
+'The 63-character limit was imposed because that is the maximum length allowed for a password in the WPA specification.<br><br>
+'As this is a Device Configuration Block (DCB) property, changing its value requires that the device be restarted for the changes to take effect.
     get = syscall(851) as string
 	set = syscall(852)  (byref value as string)
 end property
