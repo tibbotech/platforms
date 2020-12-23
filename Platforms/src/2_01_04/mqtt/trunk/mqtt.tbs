@@ -8,22 +8,6 @@ const MQTT_STAMP="MQTT> "
 const MQTT_CR_LF=chr(13)+chr(10)
 const MQTT_TIMEOUT=2000
 
-'Message Types
-const CONNECT		=&h10
-const CONNACK		=&h20
-const PUBLISH		=&h30
-const PUBACK		=&h40
-const PUBREC 		=&h50
-const PUBREL		=&h60
-const PUBCOMP 		=&h70
-const SUBSCRIBE		=&h80
-const SUBACK		=&h90
-const UNSUBSCRIBE 	=&hA0
-const UNSUBACK 		=&hB0
-const PINGREQ 		=&hC0
-const PINGRESP 		=&hD0
-const DISCONNECT 	=&hE0
-
 'mqtt protocol string
 const MQTT_LEVEL	=&h04
 const MQTT_PROTOCOL	="MQTT"
@@ -39,6 +23,25 @@ enum en_mqtt_states
 	
 end enum
 
+enum en_mqtt_message_types
+
+	CONNECT=&h10
+	CONNACK=&h20
+	PUBLISH=&h30
+	PUBACK=&h40
+	PUBREC=&h50
+	PUBREL=&h60
+	PUBCOMP=&h70
+	SUBSCRIBE=&h80
+	SUBACK=&h90
+	UNSUBSCRIBE=&hA0
+	UNSUBACK=&hB0
+	PINGREQ=&hC0
+	PINGRESP=&hD0
+	DISCONNECT=&hE0
+	
+end enum
+
 enum en_mqtt_proc_data_states
 	
 	EN_MQTT_PD_STATES_READING_HEADER,
@@ -49,7 +52,7 @@ end enum
 
 type mqtt_proc_data_variable
 
-	message_type as byte
+	message_type as en_mqtt_message_types
 	topic_length as word
 	topic as string
 	qos as en_qos_choices
@@ -470,13 +473,11 @@ sub mqtt_proc_data()
 	
 	if mqtt_init_flag<>MQTT_INIT_SIGNATURE then exit sub
 	if sock.num<>mqtt_sock_num then exit sub
-
 	dim buf as string = mqtt_sock_peekdata(5)
-	
-	if (len(buf) < 2) then exit sub
 	
 	if proc_data_state=EN_MQTT_PD_STATES_READING_HEADER then
 		
+		if (len(buf) < 2) then exit sub
 		dim tmr as dword
 		dim index as byte=2
 		dim multiplier as dword=1
@@ -496,28 +497,23 @@ sub mqtt_proc_data()
 			mqtt_proc_data_variables.fixed_header_length = mqtt_proc_data_variables.fixed_header_length + 1
 			
 		loop while continuation_bit
-
+		proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD
 		mqtt_proc_data_variables.message_type=asc(left(buf,1))
-		mqtt_proc_data_variables.qos = (mqtt_proc_data_variables.message_type and &h06) shr 1
-		mqtt_proc_data_variables.message_type= (mqtt_proc_data_variables.message_type and &hF0)
-		
+		mqtt_proc_data_variables.qos=(mqtt_proc_data_variables.message_type and &h06) shr 1
+		mqtt_proc_data_variables.message_type=(mqtt_proc_data_variables.message_type and &hF0)
 		tmr=sys.timercountms
 		while sock.txfree<200 and sys.timercountms-tmr<MQTT_TIMEOUT
-		wend
-
-		if (mqtt_proc_data_variables.remaining_length+mqtt_proc_data_variables.fixed_header_length)<255	 then
-			buf = mqtt_sock_getdata(mqtt_proc_data_variables.remaining_length+mqtt_proc_data_variables.fixed_header_length)	
-		else
-			mqtt_sock_getdata(mqtt_proc_data_variables.fixed_header_length)
-		end if
-		
-		proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD
-		buf = right(buf,len(buf)-2)
+		wend	
+		mqtt_sock_getdata(mqtt_proc_data_variables.fixed_header_length)		
 		
 	end if
-	
 
-	
+	if mqtt_proc_data_variables.message_type<>PUBLISH then
+		buf = mqtt_sock_peekdata(mqtt_proc_data_variables.remaining_length)	
+		if len(buf)<>mqtt_proc_data_variables.remaining_length and len(buf)<255 then exit sub
+		mqtt_proc_data_variables.packet_identifier = mqtt_sock_getdata(mqtt_proc_data_variables.remaining_length)		
+	end if
+		
 	select case (mqtt_proc_data_variables.message_type)
 		
 		case CONNACK:	#if MQTT_DEBUG_PRINT=1		
@@ -556,7 +552,7 @@ sub mqtt_proc_data()
 									mqtt_sock_setdata(buf)
 									sock.send
 								end if				
-							proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
+								proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
 							end if							
 						end select		
 												
@@ -568,7 +564,7 @@ sub mqtt_proc_data()
 		case PUBREC:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rec.")
 						#endif
-						buf=chr(PUBREL+2) + chr(2) + buf
+						buf=chr(PUBREL+2) + chr(2) + mqtt_proc_data_variables.packet_identifier
 						mqtt_sock_setdata(buf)
 						sock.send
 						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
@@ -576,7 +572,7 @@ sub mqtt_proc_data()
 		case PUBREL:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rel.")
 						#endif
-						buf=chr(PUBCOMP) + chr(2) + buf
+						buf=chr(PUBCOMP) + chr(2) + mqtt_proc_data_variables.packet_identifier
 						mqtt_sock_setdata(buf)
 						sock.send		
 						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
