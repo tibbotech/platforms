@@ -599,6 +599,9 @@ syscall(476,TDL_71) wln.networkstop() as accepted_rejected
 enum pl_wln_events 
     PL_WLN_EVENT_DISABLED,      '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
     PL_WLN_EVENT_DISASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
+    #if PLATFORM_ID = WM2000
+    PL_WLN_EVENT_ASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been associated to the wireless network.
+    #endif 
 end enum
 
 event(23)  on_wln_event(wln_event as pl_wln_events)
