@@ -175,6 +175,14 @@ function mqtt_sock_peekdata (byref maxinplen as word) as string
 #endif
 end function
 
+function mqtt_sock_peeklen() as dword
+#if SUPPORTS_TLS
+	mqtt_sock_peeklen=sock.tlsrxlen
+#else
+	mqtt_sock_peeklen=sock.rxlen
+#endif
+end function
+
 sub mqtt_send_login()
 	dim buf as string
 	dim client_id, user_id, password as string	
@@ -460,7 +468,7 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 			end if
 			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 		end if
-	case PL_SST_TLS_EST:
+	case PL_SST_EST_TLS:
 		mqtt_send_login()
 		mqtt_state=EN_MQTT_STATES_CONNECTED
 	end select
@@ -527,12 +535,10 @@ sub mqtt_proc_data()
 		
 		case PUBLISH:	select case proc_data_state
 						case EN_MQTT_PD_STATES_READING_PAYLOAD:
-							dim peekdata as string=mqtt_sock_peekdata(2)
-							if len(peekdata)<2 then exit sub
+							if mqtt_sock_peeklen()<2 then exit sub
 							dim topic_length_bytes as byte(2)=mqtt_sock_getdata(2)
 							mqtt_proc_data_variables.topic_length=(topic_length_bytes(0) shl 8) or topic_length_bytes(1)
-							peekdata=mqtt_sock_peekdata(mqtt_proc_data_variables.topic_length)
-							if len(peekdata)<mqtt_proc_data_variables.topic_length then exit sub
+							if mqtt_sock_peeklen()<mqtt_proc_data_variables.topic_length then exit sub
 							mqtt_proc_data_variables.topic=mqtt_sock_getdata(mqtt_proc_data_variables.topic_length)
 							if mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE then
 								mqtt_proc_data_variables.packet_identifier=mqtt_sock_getdata(2)
