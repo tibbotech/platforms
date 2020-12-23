@@ -1291,6 +1291,7 @@ event(4)  on_sock_data_arrival
 'Like in non-encrypted communications, <font color="maroon"><b>sock.num</b></font> is automatically switched to the socket for which the event was generated and no other <font color="teal"><b>on_sock_data_arrival</b></font> event will be generated until the previous one is processed. 
 'Exiting the <font color="teal"><b>on_sock_data_arrival</b></font> event handler while there is still unprocessed data in the TLS RX buffer will result in another <font color="teal"><b>on_sock_data_arrival</b></font> event being generated immediately. 
 'The contents of the RX buffer are not taken into account and the event is not triggered even if the RX buffer is not empty.
+#endif
 
 '--------------------------------------------------------------------
 event(5)  on_sock_event(newstate as pl_sock_state,newstatesimple as pl_sock_state_simple)
