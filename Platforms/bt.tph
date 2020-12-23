@@ -388,4 +388,4 @@ end property
 syscall(876) bt.disconnect()
 '<b>METHOD.</b>
 '<br><br>
-'Requests that the BLE interface terminate the active connection.
+'Causes the BLE interface to terminate the active connection.
