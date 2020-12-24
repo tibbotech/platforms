@@ -2,15 +2,6 @@
 '       Internal DHCP server support
 '**************************************************************************************************
 
-enum on_dhcp_status_codes
-	ON_DHCP_STATUS_OK,							'Success.
-	ON_DHCP_STATUS_OUT_OF_SOCKETS,				'No free sockets available for the library to operate.
-	ON_DHCP_STATUS_INVALID_INTERFACE,			'Unsupported network interface specified (use PL_SOCK_INTERFACE_NET or PL_SOCK_INTERFACE_WLN only).
-	ON_DHCP_STATUS_INSUFFICIENT_BUFFER_SPACE,	'Insufficient number of buffer pages available and the call to callback_dhcp_pre_buffrq() failed to cure the problem.
-	ON_DHCP_STATUS_FAILURE						'Interaction with the DHCP server failed (because there was no reply, the reply was unrecognized, invalid, etc.).
-end enum
-
-
 '---------------------------------------------------------------------
 event(35)  on_sys_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, ip as string(16), gateway_ip as string(16), netmask as string(16), lease_time as dword)
 '<b>EVENT of the sys object.</b></br><br>
@@ -18,7 +9,7 @@ event(35)  on_sys_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, ip a
 'This event handler is generated when the DHCP negotiation is completed successfully.
 
 '---------------------------------------------------------------------
-event(36)  on_sys_dhcp_failure(interface as pl_sock_interfaces,failure_code as on_dhcp_status_codes)
+event(36)  on_sys_dhcp_failure(interface as pl_sock_interfaces)
 '<b>EVENT of the sys object.</b></br><br>
 'Informs of the failure to procure configuration parameters from the DHCP server.<br><br>
 'This event handler is fired every time DHCP fails to obtain an IP address.<br><br>
