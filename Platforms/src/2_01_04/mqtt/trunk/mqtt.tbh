@@ -118,3 +118,4 @@ declare sub callback_mqtt_sub_ok()
 #endif
 
 declare sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_sock_state_simple)
+declare sub mqtt_send_data(data as string)
