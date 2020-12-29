@@ -211,8 +211,7 @@ sub mqtt_connect_socket()
   			romfile.open(MQTT_CER_FILE)
 			sock.tlsinit(romfile.offset)  'check return state
 		#else
-			dim s as pl_tls_result=sock.tlsinit(0)
-			sys.debugprint(str(s))
+			sock.tlsinit(0)
 		#endif
 		sock.rxclear()
 		sock.txclear()
@@ -454,7 +453,6 @@ sub mqtt_proc_data()
 		while sock.txfree<200 and sys.timercountms-tmr<MQTT_TIMEOUT
 		wend	
 		mqtt_sock_getdata(mqtt_proc_data_variables.fixed_header_length)		
-		
 	end if
 
 	if mqtt_proc_data_variables.message_type<>PUBLISH then
