@@ -385,7 +385,7 @@ end property
 
 
 '--------------------------------------------------------------------
-syscall(876) bt.disconnect()
+syscall(876) bt.disconnect() as accepted_rejected
 '<b>METHOD.</b>
 '<br><br>
 'Causes the BLE interface to terminate the active connection.
