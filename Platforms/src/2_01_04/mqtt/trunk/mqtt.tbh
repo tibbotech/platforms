@@ -5,14 +5,6 @@
 	#define MQTT_LARGE_PACKETS 0
 #endif
 
-#ifndef MQTT_SSL
-	#define MQTT_SSL 0
-#endif
-
-#ifndef MQTT_DEBUG_PRINT
-	#define MQTT_DEBUG_PRINT 0
-#endif
-
 #ifndef MQTT_DEBUG_PRINT
 	#define MQTT_DEBUG_PRINT 0
 #endif
@@ -25,9 +17,23 @@
 	#define MQTT_TX_BUFF 16
 #endif
 
-#ifndef MQTT_APP_CLIENT_ID
-	#error "A unique client ID string for your app must be defined to use MQTT"
-#endif 
+#ifndef MQTT_PING_TIMER
+	#define MQTT_PING_TIMER 30
+#endif
+
+#ifndef MQTT_CONNECTION_TIMER
+	#define MQTT_CONNECTION_TIMER 30
+#endif
+
+#if SUPPORTS_TLS
+	#ifndef SUPPORTS_TLS
+		#error "SSL certerfication file undefined"
+	#endif
+#endif
+
+#ifndef MQTT_RECONNECT_TIME
+    #define MQTT_RECONNECT_TIME 20
+#endif
 
 enum en_qos_choices
 	QOS_AT_MOST_ONCE=0,
@@ -35,20 +41,18 @@ enum en_qos_choices
 	QOS_EXACTLY_ONCE=2
 end enum
 
-declare sub mqtt_start()
+
+
+declare sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string,dst_port as word,byref user as string,byref password as string,byref client_id as string, encrypted as boolean)
 'API procedure, starts the MQTT library.
 'MUST be called first, before any other procedure in this library is used.
 
-declare function mqtt_connect(byref dst_ip as string,dst_port as word,byref user as string,byref password as string,keep_alive as byte) as ok_ng
+declare function mqtt_connect() as ok_ng
 'API function, instructs the library to connect to the MQTT server (broker).<br><br>
 '<b>dst_ip</b>- the IP address of the MQTT server,<br>
 '<b>dst_port</b>- target port on the MATT server,<br>
 '<b>user</b> and <b>password</b>- MQTT server login credentials,<br>
 '<b>keep_alive</b>- the interval, in seconds, at which the server will ping this device.<br><br>
-'Returns OK if executed successfully.
-
-declare function mqtt_reconnect()as ok_ng
-'API function, instructs the library to reconnect to the MQTT server (broker) using connection parameters previously supplied with mqtt_connect().<br>
 'Returns OK if executed successfully.
 
 declare sub mqtt_disconnect()
@@ -65,6 +69,8 @@ declare sub mqtt_sub(byref topic as string, qos as en_qos_choices)
 declare sub mqtt_unsub(byref topic as string)
 'API procedure, unsubscribes the device from the specified topic.<br><br>
 '<b>topic</b>- message to unsubscribe from.
+
+declare sub mqtt_dns_answer_acquired(return_type as en_dns_return_type, byref return_string as string)
 
 declare sub mqtt_proc_timer()
 'Event procedure, call it from the on_sys_timer() event handler.
@@ -83,10 +89,6 @@ declare sub callback_mqtt_connect_lost()
 declare sub callback_mqtt_sub_ok()
 'MQTT callback procedure. Must be implemented elsewhere in the user's program.
 'Called on the subscriber when the MQTT server confirms the requested subscription.
-
-declare sub sock_setdata(byref txdata as string)
-declare function sock_getdata(byref maxinplen as word) as string
-declare function sock_peekdata(byref maxinplen as word) as string
 
 #if MQTT_LARGE_PACKETS 
 
@@ -115,3 +117,5 @@ declare function sock_peekdata(byref maxinplen as word) as string
 
 #endif
 
+declare sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_sock_state_simple)
+declare sub mqtt_send_data(data as string)
