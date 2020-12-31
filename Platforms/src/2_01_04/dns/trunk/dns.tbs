@@ -126,11 +126,7 @@ l1:
 		exit function
 	end if
 	
-<<<<<<< HEAD
-    if dns_server_ip <> "" then
-=======
     if dns_server_ip<>"" then
->>>>>>> a5bf182f0cf019b6caca15aeaf7404f0e4db4e13
         sock.targetip=dns_server_ip
     else
         sock.targetip=DNS_DEFAULT_SERVER
@@ -400,10 +396,6 @@ end sub
 public sub dns_proc_timer()
 	if dns_init_flag<>DNS_INIT_SIGNATURE then exit sub
 	sock.num=dns_sock
-<<<<<<< HEAD
-	
-=======
->>>>>>> a5bf182f0cf019b6caca15aeaf7404f0e4db4e13
 	if dns_rpl_tmr>0 then
 		dns_rpl_tmr=dns_rpl_tmr-1
 		if dns_rpl_tmr=0 then
