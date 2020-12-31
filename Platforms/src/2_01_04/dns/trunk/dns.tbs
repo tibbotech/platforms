@@ -126,7 +126,11 @@ l1:
 		exit function
 	end if
 	
+<<<<<<< HEAD
     if dns_server_ip <> "" then
+=======
+    if dns_server_ip<>"" then
+>>>>>>> a5bf182f0cf019b6caca15aeaf7404f0e4db4e13
         sock.targetip=dns_server_ip
     else
         sock.targetip=DNS_DEFAULT_SERVER
@@ -142,6 +146,7 @@ l1:
 		dim s as string
 		dns_debugprint("conn to "+sock.targetip+":"+str(sock.targetport))
 	#endif
+	dns_connect=EN_STATUS_DNS_OK
 	dns_current_retries=0
 	sock.connect
 end function
@@ -394,9 +399,11 @@ end sub
 
 public sub dns_proc_timer()
 	if dns_init_flag<>DNS_INIT_SIGNATURE then exit sub
-
 	sock.num=dns_sock
+<<<<<<< HEAD
 	
+=======
+>>>>>>> a5bf182f0cf019b6caca15aeaf7404f0e4db4e13
 	if dns_rpl_tmr>0 then
 		dns_rpl_tmr=dns_rpl_tmr-1
 		if dns_rpl_tmr=0 then

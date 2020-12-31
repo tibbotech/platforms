@@ -385,7 +385,8 @@ end property
 
 
 '--------------------------------------------------------------------
-syscall(876) bt.disconnect()
-'<b>METHOD.</b>
-'<br><br>
-'Causes the BLE interface to terminate the active connection.
+syscall(876) bt.disconnect() as accepted_rejected
+'<b>METHOD.</b><br><br>
+'Causes the BLE interface to terminate the active connection.<br><br>
+'The <font color="maroon"><b>bt.enabled</b></font> read-only property must be <font color="olive"><b>1 - YES</b></font> for <font color="maroon"><b>bt.disconnect</b></font> to be accepted. 
+'If there is no Bluetooth connection established, calling <font color="maroon"><b>bt.disconnect</b></font> will have no effect.

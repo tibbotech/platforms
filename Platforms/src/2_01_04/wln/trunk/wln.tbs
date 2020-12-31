@@ -17,9 +17,11 @@ const WLN_CR_LF=chr(13)+chr(10)
 
 #if PLATFORM_ID = WM2000
 #define WLN_REQ_BUFFERS 0
+#else 
+#define WLN_REQ_BUFFERS 1
 #endif 
 
-#if GA1000 
+#if GA1000
 	
 	const WLN_FIRMWARE_FILE="ga1000fw.bin"
 	const WLN_SOCK_GET_SIGNATURE_KAL="WKAL"
