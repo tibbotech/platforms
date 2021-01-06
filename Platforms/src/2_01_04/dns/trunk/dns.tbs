@@ -144,7 +144,6 @@ l1:
 	#endif
 	dns_connect=EN_STATUS_DNS_OK
 	dns_current_retries=0
-	sock.connect
 end function
 
 sub dns_disconnect()
@@ -222,6 +221,7 @@ sub dns_query(byref query_name as string)
 
 	dns_rpl_tmr=DNS_REPLY_TIMEOUT
 	sock.num=dns_sock
+	sock.connect
 	sock.setdata(dns_query_question)
 	sock.send
 	
