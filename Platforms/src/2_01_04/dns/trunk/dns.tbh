@@ -16,7 +16,7 @@
 #endif
 
 #ifndef DNS_REPLY_TIMEOUT
-	#define DNS_REPLY_TIMEOUT 10
+	#define DNS_REPLY_TIMEOUT 30
 #endif
 
 'Status codes for dns-related operations
