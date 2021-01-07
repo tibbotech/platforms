@@ -99,6 +99,14 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	#if MQTT_DEBUG_PRINT=1
 		mqtt_debug_print("---START---")
 	#endif
+
+	#if TLS_AVAILABLE=0
+		if encrypted=true then
+			mqtt_debug_print("Device does not support TLS")
+			exit sub
+		end if
+	#endif
+		
 	mqtt_init_flag=MQTT_INIT_SIGNATURE
 	mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
 	mqtt_packet_identifier=0
@@ -150,7 +158,9 @@ end function
 
 function mqtt_sock_getdata(byref maxinplen as word) as string
 if mqtt_encrypted then
+#if TLS_AVAILABLE
 	mqtt_sock_getdata=sock.tlsgetdata(maxinplen)
+#endif
 else
 	mqtt_sock_getdata=sock.getdata(maxinplen)
 end if
@@ -158,11 +168,9 @@ end function
 
 function mqtt_sock_peekdata (byref maxinplen as word) as string
 if mqtt_encrypted=true then
+#if TLS_AVAILABLE
 	mqtt_sock_peekdata =sock.tlspeekdata(maxinplen)
-	if 0 then
-		mqtt_sock_peekdata = sock.tlsgetdata(maxinplen)
-		sys.debugprint(mqtt_sock_peekdata)
-	end if
+#endif
 else
 	mqtt_sock_peekdata  =sock.peekdata(maxinplen)
 end if
@@ -170,7 +178,9 @@ end function
 
 function mqtt_sock_peeklen() as dword
 if mqtt_encrypted=true then
+#if TLS_AVAILABLE
 	mqtt_sock_peeklen=sock.tlsrxlen
+#endif
 else
 	mqtt_sock_peeklen=sock.rxlen
 end if
@@ -201,20 +211,20 @@ sub mqtt_connect_socket()
 	sock.num=mqtt_sock_num
 	sock.targetip=mqtt_server_ip
 	if mqtt_encrypted=true then
-	#if SUPPORTS_TLS
-		sock.tlsdeinit()
-		#if PLATFORM_ID <> WM2000
-			sock.tlsbuffrq(39)	
-			sys.buffalloc()
-		#endif
-		#ifdef MQTT_CER_FILE
-  			romfile.open(MQTT_CER_FILE)
-			sock.tlsinit(romfile.offset)  'check return state
-		#else
-			sock.tlsinit(0)
-		#endif
-		sock.rxclear()
-		sock.txclear()
+		#if TLS_AVAILABLE
+			sock.tlsdeinit()
+			#if PLATFORM_ID <> WM2000
+				sock.tlsbuffrq(39)	
+				sys.buffalloc()
+			#endif
+			#ifdef MQTT_CER_FILE
+				romfile.open(MQTT_CER_FILE)
+				sock.tlsinit(romfile.offset)  'check return state
+			#else
+				sock.tlsinit(0)
+			#endif
+			sock.rxclear()
+			sock.txclear()
 		#endif
 	end if
 	sock.connect()
@@ -400,11 +410,13 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 			mqtt_send_login()
 			mqtt_state=EN_MQTT_STATES_CONNECTED
 		else
+#if TLS_AVAILABLE
 			if mqtt_server_address<>mqtt_server_ip then
 				sock.tlshandshake(mqtt_server_address)
 			else
 				sock.tlshandshake("")
 			end if
+#endif
 			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 		end if
 	case PL_SST_EST_TLS:
@@ -563,9 +575,11 @@ sub mqtt_send_data(data as string)
 	tmr=sys.timercountms
 	while length>0 and sys.timercountms-tmr<MQTT_TIMEOUT
 		if mqtt_encrypted=true then
+#if TLS_AVAILABLE
 			dim b as byte=sock.tlssetdata(data)
 			length=length-b
 			data=right(data,len(data)-length)
+#endif
 		else
 			dim tx_free as word = sock.txfree/2
 			if length<=tx_free then
