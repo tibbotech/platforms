@@ -242,6 +242,7 @@ function mqtt_connect() as ok_ng
 	sock.num=mqtt_sock_num	
 	dim is_ip_address as boolean=true
 	dim b as byte
+	mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 	for b=1 to len(mqtt_server_address)
         dim s as string=mid(mqtt_server_address,b,1)
         dim ascii as word=asc(s)
