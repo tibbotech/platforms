@@ -51,27 +51,8 @@ function luis_start(byref bt_name as string) as en_luis_status_codes
 	#endif
 	
 	if wln.enabled = NO then
-		wln.csmap=LUIS_BT_CS
-		io.num=LUIS_BT_CS
-		io.enabled=YES
-		wln.dimap=LUIS_BT_DI
-		wln.domap=LUIS_BT_DO
-		io.num=LUIS_BT_DO
-		io.enabled=YES
-		wln.clkmap=LUIS_BT_CLK
-		io.num=LUIS_BT_CLK
-		io.enabled=YES
-		io.num=LUIS_BT_RST
-		io.enabled=YES
-		wln.disable
-		
-		io.num=LUIS_BT_RST
-		io.state=LOW
-		luis_delay_ms(1)
-		io.state=HIGH
-		
-		sys.buffalloc()
-		
+	
+		luis_wln_init()		
 		wln.boot(0)
 	else
 		#if LUIS_DEBUG_PRINT
@@ -117,6 +98,33 @@ function luis_start(byref bt_name as string) as en_luis_status_codes
 	end if
 	
 end function
+
+sub luis_wln_init()			
+	
+#if PLATFORM_ID<>WM2000
+		wln.csmap=LUIS_BT_CS
+		io.num=LUIS_BT_CS
+		io.enabled=YES
+		wln.dimap=LUIS_BT_DI
+		wln.domap=LUIS_BT_DO
+		io.num=LUIS_BT_DO
+		io.enabled=YES
+		wln.clkmap=LUIS_BT_CLK
+		io.num=LUIS_BT_CLK
+		io.enabled=YES
+		io.num=LUIS_BT_RST
+		io.enabled=YES
+		wln.disable
+		
+		io.num=LUIS_BT_RST
+		io.state=LOW
+		luis_delay_ms(1)
+		io.state=HIGH
+		
+		sys.buffalloc()
+#endif
+
+end sub
 
 sub luis_on_bt_event(bt_event as enum pl_bt_events)
 	if luis_init_flag<>LUIS_INIT_SIGNATURE or wln.enabled=NO then
@@ -283,10 +291,11 @@ public sub luis_proc_bt_cmd(byref cmd_str as string)
 
 	case "E": 'reboot -------------------------------------------
 		wln.disable()
+#if PLATFORM_ID<>WM2000
 		io.num=LUIS_BT_RST
 		io.state=LOW
+#endif
 		sys.reboot()
-	
 	case else
 		goto reply_err
 	
