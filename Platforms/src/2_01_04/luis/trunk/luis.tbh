@@ -99,3 +99,6 @@ declare sub callback_luis_bt_disabled()
 declare sub callback_luis_buzz_command()
 'Callback procedure, indicates that the buzz ("B") command was received from the host.<br/>
 'Procedure body has to be created elsewhere in the project (externally with respect to the library).
+
+declare sub luis_wln_init()
+'Initializes the wireless module.
