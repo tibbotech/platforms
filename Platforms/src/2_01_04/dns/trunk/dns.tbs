@@ -228,15 +228,13 @@ sub dns_query(byref query_name as string)
 end sub
 
 sub dns_stop()
-
-	if dns_init_flag<>DNS_INIT_SIGNATURE then
-		#if DNS_DEBUG_PRINT
-			dns_debug_print_status(EN_STATUS_DNS_NOT_STARTED)
-		#endif	
-		callback_dns_failure(EN_STATUS_DNS_NOT_STARTED)
-		exit sub
-	end if
-	
+	#if DNS_DEBUG_PRINT
+		if dns_init_flag<>DNS_INIT_SIGNATURE then
+				dns_debug_print_status(EN_STATUS_DNS_NOT_STARTED)
+			
+			exit sub
+		end if
+	#endif	
 	dns_disconnect()
 	dns_init_flag=""
 	'release dns port
@@ -257,6 +255,8 @@ sub dns_proc_data()
 	dim number_answer as word
 	dim answer_type as en_dns_return_type
 
+	if sock.num<>dns_sock then exit sub
+
 	if dns_init_flag<>DNS_INIT_SIGNATURE then
 		#if DNS_DEBUG_PRINT
 			dns_debug_print_status(EN_STATUS_DNS_NOT_STARTED)
@@ -264,9 +264,7 @@ sub dns_proc_data()
 		callback_dns_failure(EN_STATUS_DNS_NOT_STARTED)
 		exit sub
 	end if
-	
-	if sock.num<>dns_sock then exit sub
-	
+		
 	'compare id
 	s=sock.getdata(2)
 	if s<>dns_id then
@@ -389,8 +387,8 @@ sub dns_proc_data()
 		
 		callback_dns_answer_acquired(answer_type,s)
 	next j
-	callback_dns_ok()
     dns_disconnect()
+	callback_dns_ok()
 end sub
 
 public sub dns_proc_timer()

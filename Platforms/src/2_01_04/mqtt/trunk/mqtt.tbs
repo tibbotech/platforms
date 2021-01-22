@@ -73,8 +73,8 @@ dim mqtt_ping_counter as word
 dim mqtt_server_port as word
 dim mqtt_server_address as string
 dim mqtt_server_ip as string(15)
-dim mqtt_user as string(30)
-dim mqtt_pw	as string(23)
+dim mqtt_user as string
+dim mqtt_pw	as string
 dim mqtt_packet_length as long
 dim mqtt_client_id as string=""
 dim mqtt_target_interface as pl_sock_interfaces
@@ -183,6 +183,7 @@ sub mqtt_send_login()
 	if mqtt_user = "" then
 		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&h02)+chr(0)+chr(&h3c)+chr(0)+chr(len(mqtt_client_id))+mqtt_client_id
 		buf=chr(CONNECT)+mqtt_build_remaining_length(len(buf)) + buf
+		mqtt_send_data(buf)
 	else
 		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&hc2)+chr(0)+chr(&h3c)
 		size=size+len(buf)
@@ -191,10 +192,14 @@ sub mqtt_send_login()
 		user_id=chr(0)+chr(len(mqtt_user)) + mqtt_user 
 		size=size+len(user_id)
 		password=chr(0)+chr(len(mqtt_pw)) + mqtt_pw
-		size=size+len(password)
-		buf=chr(CONNECT)+mqtt_build_remaining_length(size)+buf+client_id+user_id+password
+		size=size+len(password)		
+		
+		mqtt_send_data(chr(CONNECT)+mqtt_build_remaining_length(size))
+		mqtt_send_data(buf)
+		mqtt_send_data(client_id)
+		mqtt_send_data(user_id)
+		mqtt_send_data(password)
 	end if
-	mqtt_send_data(buf)
 end sub
 
 sub mqtt_connect_socket()
@@ -358,12 +363,12 @@ sub mqtt_proc_timer()
 		if mqtt_connection_counter=0 then
 			select case mqtt_state
 			case EN_MQTT_STATES_NOT_CONNECTED:
-				mqtt_connect()
+				mqtt_connect_socket()
 				#if MQTT_DEBUG_PRINT=1
 					mqtt_debug_print("Retrying connection...")
 				#endif
 			case EN_MQTT_STATES_CONNECTING:
-				mqtt_connect()
+				mqtt_connect_socket()
 				#if MQTT_DEBUG_PRINT=1
 					mqtt_debug_print("Connection timed out. Reconnecting...")
 				#endif
