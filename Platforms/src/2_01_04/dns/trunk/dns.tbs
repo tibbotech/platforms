@@ -387,8 +387,9 @@ sub dns_proc_data()
 		
 		callback_dns_answer_acquired(answer_type,s)
 	next j
-    dns_disconnect()
+    
 	callback_dns_ok()
+	dns_disconnect()
 end sub
 
 public sub dns_proc_timer()
