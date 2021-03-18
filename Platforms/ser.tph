@@ -365,6 +365,8 @@ property ser.baudrate
     set = syscall(105,"34.TDL"+) (value as word)
 end property
 
+#elif PLATFORM_ID=LTPP3 or PLATFORM_ID=WM2000
+
 #else
 
 property ser.baudrate
