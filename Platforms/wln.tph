@@ -206,7 +206,7 @@ syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 'if the Wi-Fi interface is not currently associated (wln.associationstate <> 1- PL_WLN_ASSOCIATED).
 
 
-#if PLATFORM_ID <> WM2000
+#if PLATFORM_ID <> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
 '--------------------------------------------------------------------
 enum pl_wln_domains 
     PL_WLN_DOMAIN_FCC,  '<b>PLATFORM CONSTANT.</b><br><br> FCC (US), default. GA1000: channels 1-11 of the 2.4GHz range; WA2000: the same plus channels 52-64, 100-140, 149-165 of the 5.0GHz range.
@@ -538,7 +538,7 @@ property wln.ip
 end property
 
 
-#if PLATFORM_ID<> WM2000
+#if PLATFORM_ID<> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
 '--------------------------------------------------------------------
 property wln.mac
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
@@ -968,7 +968,7 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 #endif
 
 
-#if PLATFORM_ID=WM2000
+#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
 
 property wln.autodhcp
 '<b>PROPERTY.</b><br><br>

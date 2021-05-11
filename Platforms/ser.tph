@@ -351,7 +351,7 @@ end property
 
 '--------------------------------------------------------------------
 
-#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>WM2000 and PLATFORM_ID<>EM2000W and PLATFORM_ID<>TPP2WG2 and PLATFORM_ID<>TPP3WG2  and PLATFORM_ID<>EM510W
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>WM2000 and PLATFORM_ID<>EM2000W and PLATFORM_ID<>TPP2WG2 and PLATFORM_ID<>TPP3WG2 and PLATFORM_ID<>EM510W and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
 
 property ser.baudrate
 '<b>PROPERTY (WORD), DEFAULT VALUE= "platform-dependent, results in 9600 bps". </b><br><br>
@@ -365,7 +365,7 @@ property ser.baudrate
     set = syscall(105,"34.TDL"+) (value as word)
 end property
 
-#elif PLATFORM_ID=LTPP3 or PLATFORM_ID=WM2000
+#elif PLATFORM_ID=LTPP3 or PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID = WS1102
 
 #else
 

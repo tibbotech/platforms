@@ -1,6 +1,4 @@
 
-#if PLATFORM_ID = WM2000
-
 enum  pl_ser_baud
 
     PL_SER_BAUD_110    =  16384, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 300.
@@ -29,5 +27,3 @@ property ser.baudrate
     get = syscall(104,"80.TDL"+) as pl_ser_baud
     set = syscall(105,"34.TDL"+) (value as pl_ser_baud)
 end property
-
-#endif 
