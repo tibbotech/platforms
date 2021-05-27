@@ -52,23 +52,22 @@ enum pl_io_num
 				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
 				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
 
-	PL_IO_NUM_2_CTS,	'<b>PLATFORM CONSTANT.</b><br><br> 
+	PL_IO_NUM_2_CTS_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 2 (P0.2), also the interrupt line 0. In RS232 and RS422 mode this line is used as serial CTS input. 
 				'This line is not used in RS485 (half-duplex) mode. 
 
-	PL_IO_NUM_3_RTS,	'<b>PLATFORM CONSTANT.</b><br><br> 
+	PL_IO_NUM_3_RTS_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	In RS232 and RS422 mode this line is used as serial RTS output. 
 				'This line is used in RS485 (half-duplex) mode as direction control. 
 
+	PL_IO_NUM_4,	'<b>PLATFORM CONSTANT. </b><br><br>
+				'Not implemented.
 
-	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT. </b><br><br>
-				'General-purpose I/O line 4 (P0.4). Not connected in this platform.
-
-	PL_IO_NUM_5_EXPANDER_SCL,		'<b>PLATFORM CONSTANT.</b><br><br>
+	PL_IO_NUM_5_EXPANDER_SCL,	'<b>PLATFORM CONSTANT.</b><br><br>
 				'General-purpose I/O line 5 (P0.5). This line is used as SCL in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
 				'the wireless signal LEDs and the current serial port mode of the hardware. 
 
-	PL_IO_NUM_6_EXPANDER_SDA,		'<b>PLATFORM CONSTANT.</b><br><br>
+	PL_IO_NUM_6_EXPANDER_SDA,	'<b>PLATFORM CONSTANT.</b><br><br>
 				'General-purpose I/O line 6 (P0.6). This line is used as SDA in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
 				'the wireless signal LEDs and the current serial port mode of the hardware. 
 
@@ -86,7 +85,7 @@ enum pl_io_num
 				'the line is automatically configured to be a n output. Line configuration is still "manual" in all other cases.<br><br>
 				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
 
-	PL_IO_NUM_9_BUZZER,			'<b>PLATFORM CONSTANT.</b><br><br>
+	PL_IO_NUM_9_BUZZER,	'<b>PLATFORM CONSTANT.</b><br><br>
 				'General-purpose I/O line 9 (P1.1). This output is driving a buzzer. 
 
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
