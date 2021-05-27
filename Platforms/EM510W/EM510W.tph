@@ -39,7 +39,7 @@ end enum
 '--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 0 (P0.0), aslo the interrupt line 0.<br><br>
+				'General-purpose I/O line 0 (P0.0), also the interrupt line 0.<br><br>
 
 	PL_IO_NUM_1_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 1 (P0.1), also the interrupt line 1.<br><br>
@@ -63,7 +63,7 @@ enum pl_io_num
 				'General-purpose I/O line 7 (P0.7). 	
 
 	PL_IO_NUM_8_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 8 , aslo the RX/W1in/din input of the serial port 0.<br><br>
+				'General-purpose I/O line 8 , also the RX/W1in/din input of the serial port 0.<br><br>
 				'When this serial port is in the UART mode
 				'(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled

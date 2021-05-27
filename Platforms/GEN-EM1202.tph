@@ -31,7 +31,7 @@ enum pl_io_num
                         'General-purpose I/O line 7 (P0.7).
 
     PL_IO_NUM_8_RX0,    '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'General-purpose I/O line 8 (P1.0), aslo the RX/W1in/din input of the serial port 0.<br><br>
+                        'General-purpose I/O line 8 (P1.0), also the RX/W1in/din input of the serial port 0.<br><br>
                         'When this serial port is in the UART mode
                         '(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
                         'and is enabled
@@ -49,7 +49,7 @@ enum pl_io_num
                         'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer.              
 
     PL_IO_NUM_10_RX1,   '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'General-purpose I/O line 10 (P1.2), aslo the RX/W1in/din input of the serial port 1.<br><br>
+                        'General-purpose I/O line 10 (P1.2), also the RX/W1in/din input of the serial port 1.<br><br>
                         'When this serial port is in the UART mode
                         '(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
                         'and is enabled
@@ -67,7 +67,7 @@ enum pl_io_num
                         'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer.              
 
     PL_IO_NUM_12_RX2,   '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'General-purpose I/O line 12 (P1.4), aslo the RX/W1in/din input of the serial port 2.<br><br>
+                        'General-purpose I/O line 12 (P1.4), also the RX/W1in/din input of the serial port 2.<br><br>
                         'When this serial port is in the UART mode
                         '(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
                         'and is enabled
@@ -85,7 +85,7 @@ enum pl_io_num
                         'Closing the serial port or changing its mode to some other mode restores original configuration of the output buffer.              
 
     PL_IO_NUM_14_RX3,   '<b>PLATFORM CONSTANT.</b><br><br> 
-                        'General-purpose I/O line 14 (P1.6), aslo the RX/W1in/din input of the serial port 3.<br><br>
+                        'General-purpose I/O line 14 (P1.6), also the RX/W1in/din input of the serial port 3.<br><br>
                         'When this serial port is in the UART mode
                         '(<font color="maroon"><b>ser.mode</b></font>= <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
                         'and is enabled
