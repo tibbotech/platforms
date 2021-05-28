@@ -6,10 +6,6 @@
 	#define TBL_DEBUG_PRINT 0
 #endif
 
-#ifndef TBL_AGGREGATE_HASH
-	#define TBL_AGGREGATE_HASH 0
-#endif
-
 #ifndef TBL_DESCRIPTOR_FILE
 	#define TBL_DESCRIPTOR_FILE "tables.txt"
 #endif

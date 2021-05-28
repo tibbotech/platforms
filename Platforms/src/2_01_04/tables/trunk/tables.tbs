@@ -16,18 +16,10 @@ const TBL_ELEMENT_END=29
 const TBL_ELEMENT_NAME_VALUE_SEPARATOR=30
 const TBL_INIT_SIGNATURE=&h54F1
 
-#if TBL_AGGREGATE_HASH
-	#if TBL_MAX_RECORD_SIZE>9
-		#define TBL_MAX_FIELD_VALUE_LEN TBL_MAX_RECORD_SIZE-9
-	#else
-		#define TBL_MAX_FIELD_VALUE_LEN 0
-	#endif
+#if TBL_MAX_RECORD_SIZE>9
+    #define TBL_MAX_FIELD_VALUE_LEN TBL_MAX_RECORD_SIZE-9
 #else
-	#if TBL_MAX_RECORD_SIZE>1
-		#define TBL_MAX_FIELD_VALUE_LEN TBL_MAX_RECORD_SIZE-1
-	#else
-		#define TBL_MAX_FIELD_VALUE_LEN 0
-	#endif
+    #define TBL_MAX_FIELD_VALUE_LEN 0
 #endif
 
 '------------------------------------------------------------------------------
@@ -46,9 +38,8 @@ declare sub tbl_debug_print_error(byref debug_str as string,status_code as en_tb
 declare sub tbl_debugprint(byref print_data as string)
 declare sub tbl_mod_hash(byref d as dword)
 
-#if TBL_AGGREGATE_HASH
-	declare function tbl_set_md5() as dword
-#endif
+declare function tbl_set_md5() as dword
+
 
 '------------------------------------------------------------------------------
 dim tbl_info_index as byte
@@ -149,11 +140,7 @@ public function tbl_start() as en_tbl_status_codes
 
 	if TBL_MAX_FIELD_VALUE_LEN=0 then
 		#if TBL_DEBUG_PRINT
-			#if TBL_AGGREGATE_HASH
-				tbl_debugprint("ERROR: TBL_MAX_RECORD_SIZE is too small, You need to increase TBL_MAX_RECORD_SIZE to at least 16.")
-			#else
-				tbl_debugprint("ERROR: TBL_MAX_RECORD_SIZE is too small, You need to increase TBL_MAX_RECORD_SIZE to at least 2.")
-			#endif
+			tbl_debugprint("ERROR: TBL_MAX_RECORD_SIZE is too small, You need to increase TBL_MAX_RECORD_SIZE to at least 16.")
 		#endif
 		tbl_info_index=0
 		tbl_start=EN_TBL_STATUS_WRONG_DEFINE
@@ -182,9 +169,7 @@ public function tbl_start() as en_tbl_status_codes
 	max_fld_name_len=0
 	max_record_size=0
 	tbl_fld_offset=0
-	#if TBL_AGGREGATE_HASH
-		tbl_fld_offset=tbl_fld_offset+2
-	#endif
+    tbl_fld_offset=tbl_fld_offset+2
 
 	s=strgen(TBL_MAX_RECORD_SIZE-1,chr(TBL_NULL))
 	tbl_record_string=TBL_ACTIVE_FLAG+s
@@ -313,31 +298,29 @@ public function tbl_start() as en_tbl_status_codes
 		if i<>0 and i<j then goto no_field_found
 
 		tbl_item.field_num_offset=field_index
-		#if TBL_AGGREGATE_HASH
-			field_item.field_name ="MD5"
-			field_item.field_type=asc("U")
-			field_item.key=no
-			field_item.p1=0
-			field_item.p2=4294967295 
-			field_item.romaddr_def=0
-			record_size=record_size+4
-			if field_index<TBL_MAX_TOTAL_NUM_FIELDS then
-				tbl_field_info(field_index)=field_item
-			end if
-			field_index=field_index+1
+        field_item.field_name ="MD5"
+        field_item.field_type=asc("U")
+        field_item.key=no
+        field_item.p1=0
+        field_item.p2=4294967295 
+        field_item.romaddr_def=0
+        record_size=record_size+4
+        if field_index<TBL_MAX_TOTAL_NUM_FIELDS then
+            tbl_field_info(field_index)=field_item
+        end if
+        field_index=field_index+1
 
-			field_item.field_name ="UID"
-			field_item.field_type=asc("U")
-			field_item.key=yes
-			field_item.p1=0
-			field_item.p2=2147483647 
-			field_item.romaddr_def=0	
-			record_size=record_size+4
-			if field_index<TBL_MAX_TOTAL_NUM_FIELDS then
-				tbl_field_info(field_index)=field_item
-			end if
-			field_index=field_index+1
-		#endif
+        field_item.field_name ="UID"
+        field_item.field_type=asc("U")
+        field_item.key=yes
+        field_item.p1=0
+        field_item.p2=2147483647 
+        field_item.romaddr_def=0	
+        record_size=record_size+4
+        if field_index<TBL_MAX_TOTAL_NUM_FIELDS then
+            tbl_field_info(field_index)=field_item
+        end if
+        field_index=field_index+1
 		
 		'addr of the fields for current table should not exceed the addr of the next table, unless the current table is the last table
 		while (j<>0 and j<i) or (i=0 and j>0)
@@ -1206,7 +1189,7 @@ finish:
 end function
 
 '------------------------------------------------------------------------------
-#if TBL_AGGREGATE_HASH
+
 public function tbl_get_hash() as string
 'tbl_select() must be used
 'API procedure, a selected data file is required, returns the current hash value of the selected data file.
@@ -1232,7 +1215,6 @@ public function tbl_get_hash() as string
 	end if
 	tbl_get_hash=lstri(hash_val)
 end function
-#endif
 
 '------------------------------------------------------------------------------
 public function tbl_record_sg(byref rec_num as word, op as en_tbl_rdwr) as en_tbl_status_codes
@@ -1343,7 +1325,6 @@ public function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 	
 	if fd.ready=NO then goto tbl_fail
 	
-#if TBL_AGGREGATE_HASH
 	'if hash is enabled, the new hash will be calculated and stored to the file attribute
 	dim md5_val as dword
 	dim result as en_tbl_status_codes
@@ -1356,7 +1337,7 @@ public function tbl_record_add(uid as string(32)) as en_tbl_status_codes
 		end if
 		md5_val=tbl_set_md5()
 	end if
-#endif
+
 	if tbl_info(tbl_info_index).clean_start=NO then
 		if tbl_check_key_violation(0)=YES then goto tbl_key_violate
 	end if
@@ -1433,9 +1414,7 @@ fd_error:
 	end select
 	 
 tbl_ok:
-	#if TBL_AGGREGATE_HASH				
-		tbl_mod_hash(md5_val)
-	#endif
+	tbl_mod_hash(md5_val)
 	'set the pointer to the record position (it might be the last record, or the first deleted record position)
 	tbl_record_add=EN_TBL_STATUS_OK
 	goto finish
@@ -1490,14 +1469,12 @@ public function tbl_record_edit(byref rec_num as word) as en_tbl_status_codes
 		exit function
 	end if
 	
-#if TBL_AGGREGATE_HASH
 	dim md5_val,md5_val_old as dword
 	dim md5_string as string(16)
 	tbl_record_edit=tbl_field_sg("MD5",md5_string,EN_TBL_GET)
 	if tbl_record_edit<>EN_TBL_STATUS_OK then goto finish
 	md5_val_old=lval(md5_string)
 	md5_val=tbl_set_md5()
-#endif
 
 	'check for key violation
 	key_violation_found=tbl_check_key_violation(w)	
@@ -1517,10 +1494,8 @@ public function tbl_record_edit(byref rec_num as word) as en_tbl_status_codes
 	
 	tbl_record_edit=tbl_record_sg(rec_num,EN_TBL_SET)
 	if tbl_record_edit=EN_TBL_STATUS_OK then
-#if TBL_AGGREGATE_HASH
 	tbl_mod_hash(md5_val_old)
 	tbl_mod_hash(md5_val)
-#endif
 	end if
 
 finish:
@@ -1653,12 +1628,10 @@ fd_error:
 	end select
 	
 tbl_ok:
-#if TBL_AGGREGATE_HASH
 	dim md5_val as dword
 	tbl_record_sg(rec_num,EN_TBL_GET)
 	md5_val=tbl_set_md5()
 	tbl_mod_hash(md5_val)
-#endif
 	tbl_record_delete=EN_TBL_STATUS_OK
 	goto finish
 tbl_fail:
@@ -1741,9 +1714,7 @@ fd_error:
 	end select
 	
 tbl_ok:
-#if TBL_AGGREGATE_HASH=1
 	tbl_set_md5()
-#endif
 	tbl_record_undelete=EN_TBL_STATUS_OK
 	goto finish
 tbl_fail:
@@ -2544,11 +2515,7 @@ public function tbl_get_num_fields(byref table_name_or_num as string) as byte
 		exit function
 	end if
 	
-	tbl_get_num_fields=tbl_info(i).num_of_fields
-	
-	#if TBL_AGGREGATE_HASH
-		tbl_get_num_fields=tbl_get_num_fields-2
-	#endif
+	tbl_get_num_fields=tbl_info(i).num_of_fields		tbl_get_num_fields=tbl_get_num_fields-2
 end function
 
 '------------------------------------------------------------------------------
@@ -2576,10 +2543,9 @@ public function tbl_get_field_info(byref table_name_or_num as string, field_inde
 		#endif
 		exit function	
 	end if
+    
+    field_index=field_index+2
 	
-	#if TBL_AGGREGATE_HASH
-		field_index=field_index+2
-	#endif
 	
 	tbl_get_field_info=EN_TBL_STATUS_OK
 	w=field_index
@@ -2717,7 +2683,7 @@ finish:
 end function
 
 '------------------------------------------------------------------------------
-#if TBL_AGGREGATE_HASH
+
 function tbl_set_md5() as dword
 'Calculate the MD5 of tbl_record_string, store it in the table, and also modify the table hash.
 	
@@ -2759,7 +2725,6 @@ function tbl_set_md5() as dword
 	tbl_field_sg("MD5",sfldval,EN_TBL_SET)
 	tbl_set_md5=lval(sfldval)
 end function
-#endif
 
 '------------------------------------------------------------------------------
 function tbl_field_find(field_name as string, byref field_index as word) as en_tbl_status_codes
@@ -2826,9 +2791,7 @@ function tbl_check_key_violation(byref key_ptr as word) as no_yes
 
 		'search for same key
 		daddr_offset=1	'offset for active_flag(1byte)
-#if TBL_AGGREGATE_HASH
 	daddr_offset=daddr_offset+8		'offset for uid(4bytes) + offset for md5(4bytes)
-#endif
 	daddr1=1+daddr_offset
 find_key:	
 		daddr1=fd.find(daddr1,skeyfield,1,FORWARD,tbl_info(tbl_info_index).rec_size,PL_FD_FIND_EQUAL)
@@ -2867,7 +2830,9 @@ function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4
 	rc=mid(s,1,2)
 	ts=mid(s,3,7)
 	hash=mid(s,10,4)
-
+    sys.debugprint("Hash:" + hash)
+    sys.debugprint("rc:" + rc)
+    sys.debugprint("ts:" + ts)
 	if op=EN_TBL_GET then
 		select case attri_name
 		case "RC":
@@ -2917,7 +2882,6 @@ function tbl_active_rc_sg(byref rec_count as word,op as en_tbl_rdwr) as pl_fd_st
 end function
 
 '------------------------------------------------------------------------------
-#if TBL_AGGREGATE_HASH
 sub tbl_mod_hash(byref d as dword)
 'Update the hash value that is stored in the file attribute.
 
@@ -2940,10 +2904,8 @@ sub tbl_mod_hash(byref d as dword)
 	'store the new hash value to the file attribute
 	tbl_attributes_sg(tbl_selected_file_name,"HASH",hash,EN_TBL_SET)
 end sub
-#endif
 
 '------------------------------------------------------------------------------
-#if TBL_AGGREGATE_HASH
 function tbl_generate_uid(byref id_string as string) as en_tbl_status_codes
 
 	dim result as en_tbl_status_codes
@@ -2971,7 +2933,6 @@ function tbl_generate_uid(byref id_string as string) as en_tbl_status_codes
 		#endif
 	end if	
 end function
-#endif
 
 '-------------------------------------------------------------
 function tbl_get_descriptor_field(line_end_pos as word, byref field_start_pos as word) as string
@@ -3036,3 +2997,34 @@ end sub
 public sub tbl_set_to_clean_start(op as no_yes)
 	tbl_info(tbl_info_index).clean_start=op
 end sub
+
+function get_tbl_hash(byref tbl_name as string) as string
+'extact the table name from the contain, and return proper response string which contents the hash of the target table.
+	
+	dim hash as string(4)
+	dim msw, lsw as word
+	dim hash_val as dword
+    dim record_count as word
+
+	if tbl_select(tbl_name,tbl_name)<>EN_TBL_STATUS_OK then
+		sys.debugprint("Error selecting table\r\n")
+		exit function
+	end if
+	
+    if tbl_active_rc_sg(record_count,EN_TBL_GET)<>PL_FD_STATUS_OK then
+        sys.debugprint("Error getting record count")
+    end if 
+
+	if record_count=0 then 
+		get_tbl_hash=0
+	else
+		fd.transactionstart()
+		tbl_attributes_sg(tbl_name,"HASH",hash,EN_TBL_GET)
+		fd.transactioncommit()
+		msw=asc(left(hash,1))*256+asc(mid(hash,2,1))
+		lsw=asc(mid(hash,3,1))*256+asc(mid(hash,4,1))
+		hash_val=msw*65536+lsw
+	end if
+	get_tbl_hash=lstri(hash_val)
+
+end function
