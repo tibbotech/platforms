@@ -137,12 +137,12 @@ enum pl_io_port_num
 	PL_IO_PORT_NUM_0,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'8-bit port 0, contains I/O lines 0-7. This is a virtual port.<br><br>
 				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)), each one of the port's eight lines is handled individually,
-				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in state writing and reading.
+				'starting with line P0.0 and ending with line P0.7. Hence, there is a small rolling delay in writing and reading of the line states.
 
 	PL_IO_PORT_NUM_1	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 1, contains I/O lines 8-11. This is a virtual port.<br><br>
+				'8-bit port 1, contains I/O lines 8 and 9. This is a virtual port.<br><br>
 				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)), each one of the port's four lines is handled individually,
-				'starting with line 0 and ending with line 1. Hence, there is a small rolling delay in state writing and reading.
+				'starting with line P1.0 and ending with line P1.1. Hence, there is a small rolling delay in writing and reading of the line states.
 end enum
 
 '--------------------------------------------------------------------
