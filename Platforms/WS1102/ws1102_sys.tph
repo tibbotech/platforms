@@ -29,7 +29,7 @@ end property
 
 enum pl_app_num 
 	PL_APP_NUM_0    'APP 0 will be launching after the power-up (reboot). 
-	PL_APP_NUM_1    'APP 1 will be launching after the power-up (reboot), unless overridden to APP0 by pulling the MD line low. 
+	PL_APP_NUM_1    'APP 1 will be launching after the power-up (reboot), unless overridden to APP0 by pressing the MD button. 
 end enum
  
 property sys.defaultapp

@@ -37,49 +37,6 @@ enum pl_sock_interfaces
 end enum
 
 '--------------------------------------------------------------------
-enum pl_adc_num 
-	PL_ADC_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'ADC channel 0 (mapped to GPIO line 4).
-
-	PL_ADC_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'ADC channel 1 (mapped to GPIO line 5).
-
-	PL_ADC_NUM_2		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'ADC channel 2 (mapped to GPIO line 6).
-
-end enum
-
-'--------------------------------------------------------------------
-enum pl_pwm_num 
-	PL_PWM_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 0 (mapped to GPIO line 0).
-
-	PL_PWM_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 1 (mapped to GPIO line 1).
-
-	PL_PWM_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 2 (mapped to GPIO line 2).
-
-	PL_PWM_NUM_3,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 3 (mapped to GPIO line 3).
-				
-	PL_PWM_NUM_4,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 4 (mapped to GPIO line 4).
-
-	PL_PWM_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 5 (mapped to GPIO line 5).
-
-	PL_PWM_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 6 (mapped to GPIO line 6).
-
-	PL_PWM_NUM_7,		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 7 (mapped to GPIO line 7).
-
-	PL_PWM_NUM_8		'<b>PLATFORM CONSTANT.</b><br><br> 
-				'PWM channel 8 (mapped to GPIO line 8).				
-end enum
-
-'--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 0 (P0.0), also the RX/W1in/din input of serial port 0.<br><br>
@@ -95,37 +52,41 @@ enum pl_io_num
 				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
 				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
 
-	PL_IO_NUM_2_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 2 (P0.2), also the interrupt line 0.
+	PL_IO_NUM_2_CTS_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 2 (P0.2), also the interrupt line 0. In RS232 and RS422 mode this line is used as serial CTS input. 
+				'This line is not used in RS485 (half-duplex) mode. 
 
-	PL_IO_NUM_3_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	
+	PL_IO_NUM_3_RTS_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	In RS232 and RS422 mode this line is used as serial RTS output. 
+				'This line is used in RS485 (half-duplex) mode as direction control. 
 
-	PL_IO_NUM_4,		'<b>PLATFORM CONSTANT. </b><br><br>
-				'General-purpose I/O line 4 (P0.4).
+	PL_IO_NUM_4,	'<b>PLATFORM CONSTANT. </b><br><br>
+				'Not implemented.
 
-	PL_IO_NUM_5,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 5 (P0.5).
+	PL_IO_NUM_5_EXPANDER_SCL,	'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 5 (P0.5). This line is used as SCL in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
+				'the wireless signal LEDs and the current serial port mode of the hardware. 
 
-	PL_IO_NUM_6,		'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 6 (P0.6).
+	PL_IO_NUM_6_EXPANDER_SDA,	'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 6 (P0.6). This line is used as SDA in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
+				'the wireless signal LEDs and the current serial port mode of the hardware. 
 
-	PL_IO_NUM_7_RX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 7 (P0.7), also the RX/W1in/din input of serial port 1 or RX of the debug serial port.<br><br>
+	PL_IO_NUM_7_RX1_DSR,	'<b>PLATFORM CONSTANT.</b><br><br> 
+				'General-purpose I/O line 7 (P0.7) also the RX/W1in/din input of serial port 1 or RX of the debug serial port.<br><br>
 				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
 				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
 				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
 
-	PL_IO_NUM_8_TX1,	'<b>PLATFORM CONSTANT.</b><br><br> 
+	PL_IO_NUM_8_TX1_DTR,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 8 (P1.0), also the TX/W1out/dout output of serial port 1 or TX of the debug serial port.<br><br>
 				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
 				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
-				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+				'the line is automatically configured to be a n output. Line configuration is still "manual" in all other cases.<br><br>
 				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
 
-	PL_IO_NUM_9,			'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 9 (P1.1).
+	PL_IO_NUM_9_BUZZER,	'<b>PLATFORM CONSTANT.</b><br><br>
+				'General-purpose I/O line 9 (P1.1). This output is driving a buzzer. 
 
 	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
@@ -161,18 +122,15 @@ end enum
 '--------------------------------------------------------------------
 include "..\GEN.tph"
 include "..\sys-2xxx.tph"
-include "..\WM2000\wm2000_ser.tph"
-include "..\WM2000\wm2000_sys.tph"
-include "..\WM2000\wm2000_wln.tph"
+include "ws1101_ser.tph"
+include "ws1101_sys.tph"
+include "ws1101_wln.tph"
 include "..\IO-1xxx.tph"
 
-include "..\ADC.tph"
 include "..\BEEP.tph"
 include "..\BT.tph"
 include "..\dhcp.tph"
 include "..\FD.tph"
-include "..\KP.tph"
-include "..\PWM.tph"
 include "..\RTC.tph"
 include "..\SSI.tph"
 include "..\WLN.tph"
