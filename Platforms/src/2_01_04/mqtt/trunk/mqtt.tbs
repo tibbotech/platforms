@@ -213,11 +213,12 @@ sub mqtt_send_login()
 end sub
 
 sub mqtt_connect_socket()
-	sock.num=mqtt_sock_num
-	sock.targetip=mqtt_server_ip
+
 	if mqtt_encrypted=true then
 		#if TLS_AVAILABLE
+			sock.num=sock.tlscurrentnum
 			sock.tlsdeinit()
+			sock.num=mqtt_sock_num
 			#if PLATFORM_ID <> WM2000
 				sock.tlsbuffrq(39)	
 				sys.buffalloc()
@@ -232,6 +233,8 @@ sub mqtt_connect_socket()
 			sock.txclear()
 		#endif
 	end if
+	sock.num=mqtt_sock_num
+	sock.targetip=mqtt_server_ip	
 	sock.connect()
 	mqtt_state=EN_MQTT_STATES_CONNECTING
 	mqtt_connection_counter=MQTT_CONNECTION_TIMER*2

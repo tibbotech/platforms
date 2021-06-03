@@ -39,56 +39,58 @@ end enum
 '--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0_RX0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 0 (P0.0), also the RX/W1in/din input of serial port 0.<br><br>
-				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
-				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
+				'General-purpose I/O line 0 (P0.0), also the RX/W1in/din input of the serial port 0.<br><br>
+				'When this serial port 0 is in the UART mode (ser.mode = 0- PL_SER_MODE_UART) 
+				'and is enabled (ser.enabled = 1- YES),
 				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
-				'Closing the serial port or changing its mode restores the output buffer's original configuration.
+				'Closing the serial port 0 or changing its mode restores the output buffer's original configuration.
 
 	PL_IO_NUM_1_TX0,'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 1 (P0.1), also the TX/W1out/dout output of serial port 0.<br><br>
-				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
-				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
+				'General-purpose I/O line 1 (P0.1), also the TX/W1out/dout output of the serial port 0.<br><br>
+				'When this serial port 0 is in the UART mode (ser.mode = 0- PL_SER_MODE_UART) 
+				'and is enabled (ser.enabled = 1- YES),
 				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
-				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
+				'Closing the serial port 0 or changing its mode restores the output buffer's original configuration. 
 
 	PL_IO_NUM_2_CTS_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 2 (P0.2), also the interrupt line 0. In RS232 and RS422 mode this line is used as serial CTS input. 
-				'This line is not used in RS485 (half-duplex) mode. 
+				'General-purpose I/O line 2 (P0.2), also the interrupt line 0. In the RS232 and RS422 modes, this line is used as the CTS input of the serial port 0. 
+				'The line has no use in the RS485 (half-duplex) mode. 
 
 	PL_IO_NUM_3_RTS_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	In RS232 and RS422 mode this line is used as serial RTS output. 
-				'This line is used in RS485 (half-duplex) mode as direction control. 
+				'General-purpose I/O line 3 (P0.3), also the interrupt line 1.	In the RS232 and RS422 modes, this line is used as the RTS output of the serial port 0. 
+				'In the RS485 (half-duplex) mode, this line is used as the direction control line. 
 
 	PL_IO_NUM_4,	'<b>PLATFORM CONSTANT. </b><br><br>
-				'Not implemented.
+				'On the WS1102 device this line is not in use.
 
 	PL_IO_NUM_5_EXPANDER_SCL,	'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 5 (P0.5). This line is used as SCL in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
-				'the wireless signal LEDs and the current serial port mode of the hardware. 
+				'General-purpose I/O line 5 (P0.5). This line is used as the SCL line of the I2C port. The I2C port is connected to the MCP23008 IO expander. IO lines of the expander are used to select 
+				'the mode of the serial port (RS232, RS422, or RS485), and also to control the blue LED bar (consisting of five LEDs). 
 
 	PL_IO_NUM_6_EXPANDER_SDA,	'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 6 (P0.6). This line is used as SDA in I2C communications with an MCP23008 IO expander. This IO expander is used to control 
-				'the wireless signal LEDs and the current serial port mode of the hardware. 
+				'General-purpose I/O line 6 (P0.6). This line is used as the SDA line of the I2C port. The I2C port is connected to the MCP23008 IO expander. IO lines of the expander are used to select 
+				'the mode of the serial port (RS232, RS422, or RS485), and also to control the blue LED bar (consisting of five LEDs). 
 
 	PL_IO_NUM_7_RX1_DSR,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 7 (P0.7) also the RX/W1in/din input of serial port 1 or RX of the debug serial port.<br><br>
-				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
-				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
+				'General-purpose I/O line 7 (P0.7), also the RX/W1in/din input of serial port 1, and the RX line of the debug serial port.
+                'In the RS232 mode, this line is used as the DSR input of the serial port 0. The line is unused in the RS422 and RS485 modes.<br><br>
+                'Enabling the serial debugging makes the serial port 1 unavailable to Tibbo BASIC/C applications (it won't be possible to set ser.num = 1; the property will stay at 0).<br><br>
+                'When the serial debugging is disabled, the serial port 1 is in the UART mode (ser.mode = 0- PL_SER_MODE_UART), and is enabled (ser.enabled = 1- YES),
 				'the line is automatically configured to be an input. Line configuration is still "manual" in all other cases.<br><br>
-				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
+				'Closing the serial port 1 or changing its mode restores the output buffer's original configuration. 
 
 	PL_IO_NUM_8_TX1_DTR,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 8 (P1.0), also the TX/W1out/dout output of serial port 1 or TX of the debug serial port.<br><br>
-				'When this serial port is in UART mode (<font color="maroon"><b>ser.mode</b></font> = <font color="olive"><b>0- PL_SER_MODE_UART </b></font>) 
-				'and is enabled (<font color="maroon"><b>ser.enabled</b></font> = <font color="olive"><b>1- YES</b></font>),
-				'the line is automatically configured to be a n output. Line configuration is still "manual" in all other cases.<br><br>
-				'Closing the serial port or changing its mode restores the output buffer's original configuration. 
+				'General-purpose I/O line 8 (P1.0), also the TX/W1out/dout output of serial port 1, and the TX line of the debug serial port.
+                'In the RS232 mode, this line is used as the DTR output of the serial port 0. The line is unused in the RS422 and RS485 modes.<br><br>
+				'Enabling the serial debugging makes the serial port 1 unavailable to Tibbo BASIC/C applications (it won't be possible to set ser.num = 1; the property will stay at 0).<br><br>
+                'When the serial debugging is disabled, the serial port 1 is in the UART mode (ser.mode = 0- PL_SER_MODE_UART), and is enabled (ser.enabled = 1- YES),
+				'the line is automatically configured to be an output. Line configuration is still "manual" in all other cases.<br><br>
+				'Closing the serial port 1 or changing its mode restores the output buffer's original configuration. 
 
 	PL_IO_NUM_9_BUZZER,	'<b>PLATFORM CONSTANT.</b><br><br>
-				'General-purpose I/O line 9 (P1.1). This output is driving a buzzer. 
+				'General-purpose I/O line 9 (P1.1), also a square wave output controlled by the beep. object. This output is driving a buzzer. 
 
-	PL_IO_NULL		'<b>PLATFORM CONSTANT.</b><br><br>
+	PL_IO_NULL	'<b>PLATFORM CONSTANT.</b><br><br>
 				'This is a NULL line that does not physically exist.
 				'The state of this line is always detected as LOW. Setting this line has no effect.
 end enum
@@ -98,12 +100,12 @@ enum pl_io_port_num
 	PL_IO_PORT_NUM_0,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'8-bit port 0, contains I/O lines 0-7. This is a virtual port.<br><br>
 				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)), each one of the port's eight lines is handled individually,
-				'starting with line 0 and ending with line 7. Hence, there is a small rolling delay in state writing and reading.
+				'starting with line P0.0 and ending with line P0.7. Hence, there is a small rolling delay in writing and reading of the line states.
 
 	PL_IO_PORT_NUM_1	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'8-bit port 1, contains I/O lines 8-11. This is a virtual port.<br><br>
+				'8-bit port 1, contains I/O lines 8 and 9. This is a virtual port.<br><br>
 				'During reads (io.portget, io.portstate(g)) and writes (io.portset, io.portstate(s)), each one of the port's four lines is handled individually,
-				'starting with line 0 and ending with line 1. Hence, there is a small rolling delay in state writing and reading.
+				'starting with line P1.0 and ending with line P1.1. Hence, there is a small rolling delay in writing and reading of the line states.
 end enum
 
 '--------------------------------------------------------------------
