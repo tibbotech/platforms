@@ -3,9 +3,10 @@
 '**************************************************************************************************
 
 enum pl_sys_debug_mode
-	PL_SYS_DBG_SERIAL
-	PL_SYS_DBG_NET
-	'PL_SYS_DBG_BT
+	PL_SYS_DBG_SERIAL   'Debugging through the serial port. In this mode, lines PL_IO_NUM_7_RX1 and PL_IO_NUM_8_TX1 cease to work as the device's GPIO lines and become the RX and TX lines of the debug serial port.
+                        'The serial port 1 is also disabled (attempting to set ser.num = 1 will have no effect and the property value will remain at 0).
+	PL_SYS_DBG_NET      'Debugging through the Wi-Fi port. This debugging method only works when the automatic association with a Wi-Fi network (access point) is enabled (wln.autoconnect = 1- YES),
+                        'and the Wi-Fi interface is correctly configured for the target Wi-Fi network (see wln.autoconnectssid, wln.autoconnectpassword).
 end enum
 
 syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
@@ -27,8 +28,8 @@ property sys.debugmode
 end property
 
 enum pl_app_num 
-	PL_APP_NUM_0
-	PL_APP_NUM_1
+	PL_APP_NUM_0    'APP 0 will be launching after the power-up (reboot). 
+	PL_APP_NUM_1    'APP 1 will be launching after the power-up (reboot), unless overridden to APP0 by pulling the MD line low. 
 end enum
  
 property sys.defaultapp
@@ -62,3 +63,6 @@ property sys.timercountmse
 'See also <font color="teal"><b>on_sys_timer </b></font> event.
 	get = syscall(875) as dword
 end property
+
+
+syscall(878) hmac256(byref key as string,byref payload as string, byref result as string)

@@ -132,9 +132,9 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=WM2000
+#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
 property beep.frequency
-'<b>PROPERTY (WORD), DEFAULT VALUE = 1.</b><br><br>
+'<b>PROPERTY (WORD), DEFAULT VALUE = 1000.</b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the line).
 '<br><br>
 'The optimal buzzer frequency depends on the buzzer model.

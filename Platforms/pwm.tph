@@ -16,7 +16,7 @@ end property
 
 '--------------------------------------------------------------------
 property pwm.frequency
-'<b>PROPERTY (REAL), DEFAULT VALUE = 1.</b><br><br>
+'<b>PROPERTY (REAL), DEFAULT VALUE = 1000.</b><br><br>
 'For the currently selected PWM channel (selection is made through <font color="maroon"><b>pwm.num</b></font>), indicates the frequency of modulation.<br><br>
 'The unit for the value range is hertz, meaning the usable range is from 30Hz to 20kHz. 
 'After setting or modifying the duty cycle of any given PWM channel, you need to call <font color="maroon"><b>pwm.update</b></font> or <font color="maroon"><b>pwm.updateall</b></font> for the changes to take effect.

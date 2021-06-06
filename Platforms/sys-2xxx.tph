@@ -223,7 +223,7 @@ syscall(19) !sys.sw() as string
 
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID <> WM2000
+#if PLATFORM_ID <> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
 syscall(598) sys.sleep()
 
 '--------------------------------------------------------------------
