@@ -73,12 +73,13 @@ dim mqtt_ping_counter as word
 dim mqtt_server_port as word
 dim mqtt_server_address as string
 dim mqtt_server_ip as string(15)
-dim mqtt_user as string(30)
-dim mqtt_pw	as string(23)
+dim mqtt_user as string
+dim mqtt_pw	as string
 dim mqtt_packet_length as long
 dim mqtt_client_id as string=""
 dim mqtt_target_interface as pl_sock_interfaces
 dim mqtt_encrypted as boolean
+dim mqtt_unresponed_ping_count as byte=0
 
 #if MQTT_DEBUG_PRINT=1
 	declare sub mqtt_debug_print(data as string)
@@ -125,7 +126,7 @@ sub mqtt_start(target_interface as pl_sock_interfaces, byref server as string, d
 	sock.inconmode = PL_SOCK_INCONMODE_ANY_IP_ANY_PORT
 	sock.gendataarrivalevent=YES
 	sock.reconmode=PL_SOCK_RECONMODE_3
-	sock.connectiontout=0
+	sock.connectiontout=MQTT_PING_TIMER*2+20
 	if sys.freebuffpages<MQTT_RX_BUFF+MQTT_TX_BUFF then
 		#if MQTT_DEBUG_PRINT=1
 			mqtt_debug_print("Insufficient buffer memory.")
@@ -193,6 +194,7 @@ sub mqtt_send_login()
 	if mqtt_user = "" then
 		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&h02)+chr(0)+chr(&h3c)+chr(0)+chr(len(mqtt_client_id))+mqtt_client_id
 		buf=chr(CONNECT)+mqtt_build_remaining_length(len(buf)) + buf
+		mqtt_send_data(buf)
 	else
 		buf=chr(&h0)+chr(len(MQTT_PROTOCOL))+MQTT_PROTOCOL+chr(MQTT_LEVEL)+chr(&hc2)+chr(0)+chr(&h3c)
 		size=size+len(buf)
@@ -201,18 +203,23 @@ sub mqtt_send_login()
 		user_id=chr(0)+chr(len(mqtt_user)) + mqtt_user 
 		size=size+len(user_id)
 		password=chr(0)+chr(len(mqtt_pw)) + mqtt_pw
-		size=size+len(password)
-		buf=chr(CONNECT)+mqtt_build_remaining_length(size)+buf+client_id+user_id+password
+		size=size+len(password)		
+		
+		mqtt_send_data(chr(CONNECT)+mqtt_build_remaining_length(size))
+		mqtt_send_data(buf)
+		mqtt_send_data(client_id)
+		mqtt_send_data(user_id)
+		mqtt_send_data(password)
 	end if
-	mqtt_send_data(buf)
 end sub
 
 sub mqtt_connect_socket()
-	sock.num=mqtt_sock_num
-	sock.targetip=mqtt_server_ip
+
 	if mqtt_encrypted=true then
 		#if TLS_AVAILABLE
+			sock.num=sock.tlscurrentnum
 			sock.tlsdeinit()
+			sock.num=mqtt_sock_num
 			#if PLATFORM_ID <> WM2000
 				sock.tlsbuffrq(39)	
 				sys.buffalloc()
@@ -227,6 +234,8 @@ sub mqtt_connect_socket()
 			sock.txclear()
 		#endif
 	end if
+	sock.num=mqtt_sock_num
+	sock.targetip=mqtt_server_ip	
 	sock.connect()
 	mqtt_state=EN_MQTT_STATES_CONNECTING
 	mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
@@ -346,12 +355,19 @@ sub mqtt_ping()
 	
 	mqtt_ping_counter=mqtt_ping_counter-1
 	if mqtt_ping_counter=0 then
+		sock.num=mqtt_sock_num
 		if sock.rxlen=0 then
 			#if MQTT_DEBUG_PRINT=1
 				mqtt_debug_print("Ping.")
 			#endif
 			mqtt_send_data(chr(PINGREQ)+chr(0))
 			mqtt_ping_counter=MQTT_PING_TIMER*2
+			mqtt_unresponed_ping_count=mqtt_unresponed_ping_count+1
+			if mqtt_unresponed_ping_count>3 then
+				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				mqtt_debug_print("PING is unresponsive, disconnecting...")
+				sock.discard()
+			end if
 		end if
 	end if
 
@@ -365,26 +381,30 @@ sub mqtt_proc_timer()
 	if mqtt_state=EN_MQTT_STATES_LOGGED_IN then 
 		mqtt_ping()
 	else
-		mqtt_connection_counter=mqtt_connection_counter-1
-		if mqtt_connection_counter=0 then
-			select case mqtt_state
-			case EN_MQTT_STATES_NOT_CONNECTED:
-				mqtt_connect()
-				#if MQTT_DEBUG_PRINT=1
-					mqtt_debug_print("Retrying connection...")
-				#endif
-			case EN_MQTT_STATES_CONNECTING:
-				mqtt_connect()
-				#if MQTT_DEBUG_PRINT=1
-					mqtt_debug_print("Connection timed out. Reconnecting...")
-				#endif
-			case EN_MQTT_STATES_CONNECTED:
-				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
-				mqtt_connection_counter=MQTT_RECONNECT_TIME*2
-				#if MQTT_DEBUG_PRINT=1
-					mqtt_debug_print("Unable to log in to server...")
-				#endif		
-			end select
+		if mqtt_connection_counter>0 then
+			mqtt_connection_counter=mqtt_connection_counter-1
+			if mqtt_connection_counter=0 then
+				select case mqtt_state
+				case EN_MQTT_STATES_NOT_CONNECTED:
+					mqtt_connect_socket()
+					#if MQTT_DEBUG_PRINT=1
+						mqtt_debug_print("Retrying connection...")
+					#endif
+				case EN_MQTT_STATES_CONNECTING:
+					mqtt_connect_socket()
+					#if MQTT_DEBUG_PRINT=1
+						mqtt_debug_print("Connection timed out. Reconnecting...")
+					#endif
+				case EN_MQTT_STATES_CONNECTED:
+					mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+					mqtt_connection_counter=MQTT_RECONNECT_TIME*2
+					#if MQTT_DEBUG_PRINT=1
+						mqtt_debug_print("Unable to log in to server...")
+					#endif		
+				end select
+			end if
+		else
+			mqtt_connection_counter=MQTT_CONNECTION_TIMER*2
 		end if
 	end if
 			
@@ -551,6 +571,7 @@ sub mqtt_proc_data()
 							mqtt_debug_print("Ping response.")
 						#endif
 						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
+						mqtt_unresponed_ping_count=0
 	end select
 
 end sub
@@ -577,16 +598,28 @@ sub mqtt_send_data(data as string)
 	while length>0 and sys.timercountms-tmr<MQTT_TIMEOUT
 		if mqtt_encrypted=true then
 #if TLS_AVAILABLE
+			if sock.state<>PL_SST_EST_TLS then
+				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				mqtt_debug_print("unable to send, disconnected")
+				exit sub
+			end if
+			
 			dim b as byte=sock.tlssetdata(data)
 			length=length-b
 			data=right(data,len(data)-length)
 #endif
+
 		else
+			if sock.statesimple<>PL_SSTS_EST then
+				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				mqtt_debug_print("unable to send, disconnected")
+				exit sub
+			end if		
 			dim tx_free as word = sock.txfree/2
 			if length<=tx_free then
 				sock.setdata(data)
 				length=0
-			else
+			else 
 				sock.setdata(left(data,tx_free))
 				data=right(data,len(data)-tx_free)
 				length=length-tx_free
