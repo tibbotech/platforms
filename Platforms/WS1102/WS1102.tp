@@ -1,0 +1,32 @@
+[platform]
+description=WS1102
+version=WS1102-4.01
+rom=1728512
+ram=59392
+codebits=24
+databits=32
+sector=4096
+
+
+[transport1]
+name=udp_winpcap
+description=WinPCap (non-broadcast) UDP Transport
+device=taiko.winpcapdevice
+browsedlg=em202ui.browsedlg
+
+[transport2]
+name=udp_broadcast
+description=Broadcast UDP Transport
+device=taiko.udpdevice
+browsedlg=em202ui.browsedlg
+
+[transport3]
+name=serial
+description=Taiko Serial Transport
+device=taiko.serialdevice
+browsedlg=taiko.serialportsdlg
+params=921600
+
+[defineimports]
+import1=../GEN.tp
+

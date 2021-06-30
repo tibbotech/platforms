@@ -49,6 +49,9 @@
 #define NB1010N 42
 #define EM510W  43
 #define WM2000  44
+#define WS1101  45
+#define WS1102  46
+
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1
