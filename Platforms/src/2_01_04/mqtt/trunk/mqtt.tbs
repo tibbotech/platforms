@@ -608,6 +608,7 @@ sub mqtt_send_data(data as string)
 			length=length-b
 			data=right(data,len(data)-length)
 #endif
+
 		else
 			if sock.statesimple<>PL_SSTS_EST then
 				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
