@@ -543,7 +543,7 @@ syscall(291,"53.TDL") sha1(byref str as string,byref input_hash as string,sha1_m
 'The sha1 method can be invoked repeatedly in order to process the data of any size.
 '<br><br>
 'See also:
-'<font color="teal"><b>md5</b</font>.
+'<font color="teal"><b>md5</b></font>.
 
 '--------------------------------------------------------------------
 syscall(253,"52.TDL") random(len as byte) as string
@@ -663,10 +663,39 @@ syscall(585,"45.TDL") !lshl(byref val as dword, num_bits as byte) as dword
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
-syscall(586,"02.TDL") !strtobin(byref dst, byref src as string, size as byte)
+syscall(586,"02.TDL") strtobin(byref dst, byref src as string, size as byte)
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Deserializes the binary representation of data contained in a string.
+'<br><br>
+'<b>dst</b> -- The deserialized data.
+'<br>
+'<b>src</b> -- A string containing the binary representation of the data.
+'<br>
+'<b>size</b> -- The size of the source data.
+'<br><br>
+'This function is designed to deserialize data that has been transmitted from another Tibbo programmable device. Make sure to assign <b>dst</b> the same type as the original data.
+
+'<br><br>
+'See also:
+'<font color="teal"><b>bintostr</b</font>.
 
 '--------------------------------------------------------------------
-syscall(587,"03.TDL") !bintostr(byref dst as string, byref src, size as byte)
+syscall(587,"03.TDL") bintostr(byref dst as string, byref src, size as byte)
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Serializes data into its binary representation, which is contained in a string.
+'<br><br>
+'<b>dst</b> -- A string containing the binary representation of the data.
+'<br>
+'<b>src</b> -- The original data to be serialized.
+'<br>
+'<b>size</b> -- The size of the source data.
+'<br><br>
+'This conversion is intended to facilitate the transmission of data to another Tibbo programmable device, on which the <font color="teal"><b>strtobin</b></font> function can be used to deserialize the data.
+'<br><br>
+'Keep in mind that in Tibbo BASIC, strings are limited to 255 characters.
+'<br><br>
+'See also:
+'<font color="teal"><b>strtobin</b></font>.
 
 '--------------------------------------------------------------------
 syscall(422,"88.TDL") !debug.tx(byref s as string)
@@ -675,3 +704,16 @@ syscall(422,"88.TDL") !debug.tx(byref s as string)
 '--------------------------------------------------------------------
 syscall(423,"88.TDL") !debug.rx() as string
 '<b>METHOD.</b>
+
+'--------------------------------------------------------------------
+#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
+syscall(878) hmac256(byref key as string,byref payload as string, byref result as string)
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the hash-based message authentication code (HMAC) of a data string to be transmitted.
+'<br><br>
+'<b>key</b> -- Encryption key. Can be up to 255 characters long.
+'<br>
+'<b>payload</b> -- The unencrypted data to be transmitted.
+'<br>
+'<b>result</b> -- The calculated HMAC of the payload is saved in this variable.
+#endif
