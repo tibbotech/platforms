@@ -673,7 +673,9 @@ syscall(586,"02.TDL") strtobin(byref dst, byref src as string, size as byte)
 '<br>
 '<b>size</b> -- The size of the source data.
 '<br><br>
-'This function is designed to deserialize data that has been transmitted from another Tibbo programmable device. Make sure to assign <b>dst</b> the same type as the original data.
+'Make sure to assign <b>dst</b> the same type as the original data.
+'<br><br>
+'This function is designed to deserialize data that has been transmitted from another Tibbo programmable device or saved in a file for a reboot or long-term storage.
 
 '<br><br>
 'See also:
@@ -691,6 +693,7 @@ syscall(587,"03.TDL") bintostr(byref dst as string, byref src, size as byte)
 '<b>size</b> -- The size of the source data.
 '<br><br>
 'This conversion is intended to facilitate the transmission of data to another Tibbo programmable device, on which the <font color="teal"><b>strtobin</b></font> function can be used to deserialize the data.
+'This process can also be used to store data into a file -- a great way to preserve data for a reboot or long-term storage.
 '<br><br>
 'Keep in mind that in Tibbo BASIC, strings are limited to 255 characters.
 '<br><br>
