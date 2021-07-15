@@ -62,6 +62,3 @@ property sys.timercountmse
 'See also <font color="teal"><b>on_sys_timer </b></font> event.
 	get = syscall(875) as dword
 end property
-
-
-syscall(878) hmac256(byref key as string,byref payload as string, byref result as string)
