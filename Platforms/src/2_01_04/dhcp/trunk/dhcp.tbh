@@ -55,7 +55,7 @@ declare sub dhcp_set_link_disconnect_behavior(interface as pl_sock_interfaces, b
 declare sub dhcp_proc_timer()
 declare sub dhcp_proc_data()
 
-declare sub callback_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, byref ip as string, byref gateway_ip as string, byref netmask as string, lease_time as dword)
+declare sub callback_dhcp_ok(renew as no_yes, interface as pl_sock_interfaces, byref ip as string, byref gateway_ip as string, byref netmask as string, byref dns1 as string, byref dns2 as string, lease_time as dword)
 'Callback procedure, informs of the successul procurement of configuration parameters from the DHCP server.
 'Procedure body has to be created elsewhere in the project (externally with respect to the library).
 
