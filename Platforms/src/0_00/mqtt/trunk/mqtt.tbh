@@ -25,9 +25,9 @@
 	#define MQTT_CONNECTION_TIMER 30
 #endif
 
-#if SUPPORTS_TLS
-	#ifndef SUPPORTS_TLS
-		#error "SSL certerfication file undefined"
+#if MQTT_CER_FILE
+	#if TLS_AVAILABLE=0
+		#error "MQTT certification file defined but TLS_AVAILABLE not true"
 	#endif
 #endif
 
