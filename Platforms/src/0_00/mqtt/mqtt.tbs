@@ -447,6 +447,26 @@ sub mqtt_sock_event(newstate as enum pl_sock_state, newstatesimple as enum pl_so
 	
 end sub
 
+sub mqtt_publish_reply()
+	dim buf as string
+	if mqtt_proc_data_variables.remaining_length=0 then
+		if mqtt_proc_data_variables.qos=QOS_AT_LEAST_ONCE then
+			#if MQTT_DEBUG_PRINT=1
+				mqtt_debug_print("Publish ack.")
+			#endif 
+			buf = chr(PUBACK) + chr(2) + mqtt_proc_data_variables.packet_identifier
+			mqtt_send_data(buf)
+		else if	mqtt_proc_data_variables.qos=QOS_EXACTLY_ONCE then
+			#if MQTT_DEBUG_PRINT=1
+				mqtt_debug_print("Publish rec.")
+			#endif 
+			buf=chr(PUBREC) + chr(2) + mqtt_proc_data_variables.packet_identifier
+			mqtt_send_data(buf)
+		end if		
+		proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
+	end if		
+end sub
+
 
 sub mqtt_proc_data()
 'Event procedure, call it from the on_sock_data_arrival event handler.
@@ -515,7 +535,14 @@ sub mqtt_proc_data()
 								mqtt_proc_data_variables.packet_identifier=mqtt_sock_getdata(2)
 							end if
 							mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-mqtt_proc_data_variables.topic_length-len(mqtt_proc_data_variables.packet_identifier)-2
-							proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD_DATA
+							if mqtt_proc_data_variables.remaining_length=0 then
+								#if MQTT_DEBUG_PRINT=1
+									mqtt_debug_print("Notification: topic="+mqtt_proc_data_variables.topic+", NO DATA SENT")
+								#endif
+								mqtt_publish_reply()
+							else	
+								proc_data_state=EN_MQTT_PD_STATES_READING_PAYLOAD_DATA
+							end if
 						case EN_MQTT_PD_STATES_READING_PAYLOAD_DATA:
 							buf=mqtt_sock_getdata(mqtt_proc_data_variables.remaining_length)						
 							mqtt_proc_data_variables.remaining_length=mqtt_proc_data_variables.remaining_length-len(buf)						
@@ -523,13 +550,7 @@ sub mqtt_proc_data()
 								mqtt_debug_print("Notification: topic="+mqtt_proc_data_variables.topic+", data="+buf)
 							#endif
 							callback_mqtt_notif(mqtt_proc_data_variables.topic,buf,mqtt_proc_data_variables.remaining_length)
-							if mqtt_proc_data_variables.remaining_length=0 then
-								if mqtt_proc_data_variables.qos<>QOS_AT_MOST_ONCE then
-									buf = chr(PUBACK) + chr(2) + mqtt_proc_data_variables.packet_identifier
-									mqtt_send_data(buf)
-								end if				
-								proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
-							end if							
+							mqtt_publish_reply()
 						end select		
 												
 		case PUBACK:	#if MQTT_DEBUG_PRINT=1
@@ -546,7 +567,7 @@ sub mqtt_proc_data()
 		
 		case PUBREL:	#if MQTT_DEBUG_PRINT=1
 							mqtt_debug_print("Publish rel.")
-						#endif
+						#endif 
 						buf=chr(PUBCOMP) + chr(2) + mqtt_proc_data_variables.packet_identifier
 						mqtt_send_data(buf)		
 						proc_data_state=EN_MQTT_PD_STATES_READING_HEADER
