@@ -365,7 +365,9 @@ sub mqtt_ping()
 			mqtt_unreplied_ping_count=mqtt_unreplied_ping_count+1
 			if mqtt_unreplied_ping_count>3 then
 				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				#if MQTT_DEBUG_PRINT
 				mqtt_debug_print("PING is unresponsive, disconnecting...")
+				#endif 
 				sock.discard()
 			end if
 		end if
@@ -600,7 +602,9 @@ sub mqtt_send_data(data as string)
 #if TLS_AVAILABLE
 			if sock.state<>PL_SST_EST_TLS then
 				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				#if MQTT_DEBUG_PRINT=1
 				mqtt_debug_print("unable to send, disconnected")
+				#endif
 				exit sub
 			end if
 			
@@ -612,7 +616,9 @@ sub mqtt_send_data(data as string)
 		else
 			if sock.statesimple<>PL_SSTS_EST then
 				mqtt_state=EN_MQTT_STATES_NOT_CONNECTED
+				#if MQTT_DEBUG_PRINT=1
 				mqtt_debug_print("unable to send, disconnected")
+				#endif 
 				exit sub
 			end if		
 			dim tx_free as word = sock.txfree/2

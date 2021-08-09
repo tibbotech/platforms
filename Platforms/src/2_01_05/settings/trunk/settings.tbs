@@ -199,7 +199,9 @@ public function stg_start_with_params(init as no_yes) as en_stg_status_codes
 	max_len_of_str_rep=0 'will keep the largest string length required to represent setting value
 	nvmem_offset_ctr=1 'will count offset in the NV MEM (addresses start from 1).
 	ramarr_offset_ctr=0 'will count offset in the RAM array (addresses start from 0).
-
+	#if STG_DEBUG_PRINT 
+		stg_debugprint("Loading: " + STG_DESCRIPTOR_FILE)
+	#endif
 	romfile.open(STG_DESCRIPTOR_FILE)				'this file is a setting descriptor table
 	if romfile.size=0 then
 		#if STG_DEBUG_PRINT
