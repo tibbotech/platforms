@@ -153,4 +153,5 @@ declare sub wln_delay_ms(ms as dword)
 declare sub wln_init()
 declare sub wln_init_gpio()
 declare sub wln_reset()
+declare sub wln_autoconnect(enable as boolean)
 #endif '#############################################################

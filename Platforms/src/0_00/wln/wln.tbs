@@ -15,6 +15,8 @@ const WLN_ASSOCIATION_HOLDOFF_CONST=6 'waiting time in (0.5 sec intervals) until
 const WLN_STAMP="WLN> "
 const WLN_CR_LF=chr(13)+chr(10)
 
+dim wln_connect_enabled  as boolean = true
+
 #if PLATFORM_ID = WM2000
 #define WLN_REQ_BUFFERS 0
 #else 
@@ -532,7 +534,11 @@ public sub wln_proc_timer()
 	if wln_init_flag<>WLN_INIT_SIGNATURE or wln.enabled=NO then
 		exit sub
 	end if
-
+	
+	if wln_connect_enabled <> true  then
+		exit sub
+	end if
+	
 	if wln.associationstate=PL_WLN_NOT_ASSOCIATED then
 		if wln_scan_and_assoc_in_prog=NO then
 			if wln_association_holdoff_timer>0 then
@@ -1891,3 +1897,8 @@ end sub
 #endif
 
 #endif '#############################################################
+
+
+sub wln_autoconnect(enable as boolean)
+	wln_connect_enabled = enable
+end sub
