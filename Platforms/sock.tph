@@ -438,7 +438,7 @@ property sock.splittcppackets
 'The property is only relevant when <font color="maroon"><b>sock.inbandcommands</b></font> = <font color="olive"><b>0 - NO</b></font>. 
 'With inband commands enabled, the socket will always behave as if <font color="maroon"><b>sock.splittcppackets</b></font> = <font color="olive"><b>0 - NO</b></font>.<br><br>
 'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple</b></font> <> <font color="olive"><b>0 - PL_SSTS_CLOSED</b></font>).<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 'Do not enable the split packet mode for a socket using TLS encryption.
 #endif  
     get = syscall(65,"36.TDL"+) as no_yes
@@ -525,7 +525,7 @@ property sock.inbandcommands
 'Inband messaging will work even when redirection (buffer shorting) is enabled for the socket (see the <font color="maroon"><b>sock.redir 
 '</b></font>method). The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>
 'sock.statesimple</b></font> <> <font color="olive"><b>0 - PL_SSTS_CLOSED</b></font>).<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 'Do not enable inband commands for a socket using TLS encryption.
 #endif
     get = syscall(38,"36.TDL"+) as no_yes
@@ -1132,7 +1132,7 @@ syscall(81,"24.TDL") sock.redir(redir as pl_redir) as pl_redir
 'The <font color="olive"><b>pl_redir</b></font> defines a set of inter-object constants that include all possible redirections for this platform.
 'Specifying a redir value of <font color="olive"><b>0 - PL_REDIR_NONE</b></font> cancels redirection.<br><br>
 'This method returns actual redirection result: <font color="olive"><b>0 - PL_REDIR_NONE</b></font> if redirection failed or the same value as the one that was passed in the redir argument if redirection was successful.<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 'Do not enable buffer redirection for a socket using TLS encryption.  
 #endif
 
@@ -1175,7 +1175,7 @@ property sock.sinkdata
 'No data will be reaching its destination even in case of buffer redirection (see <font color="maroon"><b>sock.redir</b></font>).<br><br>
 'Inband commands (see <font color="maroon"><b>sock.unband</b></font>) will still be extracted from the incoming data stream and processed.
 '<font color="maroon"><b>Sock.connectiontout</b></font> and <font color="maroon"><b>sock.toutcounter</b></font> will work correctly as well.<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 'Do not enable data sinking for a socket using TLS encryption.
 #endif
     get = syscall(3,"36.TDL"+) as no_yes
@@ -1293,12 +1293,12 @@ event(4)  on_sock_data_arrival
 '<b>EVENT of the sock object.</b><br><br> 
 'When the event handler for this event is entered, the <font color="maroon"><b>sock.num</b></font> property is automatically switched to the socket for which this event was generated. 
 'Another <font color="teal"><b>on_sock_data_arrival</b></font> event on a particular socket is never generated until the previous one is processed.<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 '<u>For sockets not using TLS:</u><br><br>
 #endif
 'This event is generated when at least one data byte is present in the RX buffer of the socket (i.e., for this socket, <font color="maroon"><b>sock.rxlen</b></font> > 0).
 'Use the <font color="maroon"><b>sock.getdata</b></font> method to extract the data from the RX buffer.<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
 '<u>For a socket using TLS:</u><br><br>
 'This event is generated when at least one data byte is present in the TLS RX buffer of the socket (i.e., for this socket, <font color="maroon"><b>sock.tlsrxlen</b></font> > 0).
 'Use the <font color="maroon"><b>sock.tlsgetdata</b></font> method to extract the data from the TLS RX buffer.

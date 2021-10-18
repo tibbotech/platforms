@@ -51,7 +51,7 @@
 #define WM2000  44
 #define WS1101  45
 #define WS1102  46
-
+#define TPP3WG3 47
 
 #define LCD_DISABLED 0
 #define LCD_ENABLED 1

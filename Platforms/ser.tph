@@ -281,7 +281,7 @@ enum  pl_ser_baud
     PL_SER_BAUD_460800 =     26 '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 460800.
 end enum
 
-#elif PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 
+#elif PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=TPP3WG3
 
 enum  pl_ser_baud
     PL_SER_BAUD_110    =  545455, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 110.
@@ -351,7 +351,7 @@ end property
 
 '--------------------------------------------------------------------
 
-#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>WM2000 and PLATFORM_ID<>EM2000W and PLATFORM_ID<>TPP2WG2 and PLATFORM_ID<>TPP3WG2 and PLATFORM_ID<>EM510W and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
+#if PLATFORM_ID<>LTPP3 and PLATFORM_ID<>WM2000 and PLATFORM_ID<>EM2000W and PLATFORM_ID<>TPP2WG2 and PLATFORM_ID<>TPP3WG2 and PLATFORM_ID<>EM510W and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102 and PLATFORM_ID<>TPP3WG3
 
 property ser.baudrate
 '<b>PROPERTY (WORD), DEFAULT VALUE= "platform-dependent, results in 9600 bps". </b><br><br>
