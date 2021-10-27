@@ -58,7 +58,9 @@ function luis_start(byref bt_name as string) as en_luis_status_codes
 	#endif
 	
 	if wln.enabled = NO then
-		wln_init()
+		#if PLATFORM_ID <> WM2000
+			wln_init()
+		#endif
 		wln.boot(0)
 	else
 		#if LUIS_DEBUG_PRINT
@@ -371,8 +373,4 @@ end sub
 
 sub luis_stop()
 	luis_init_flag=0
-end sub
-
-sub on_bt_overrun()
-	sys.debugprint("Overflow\r\n")
 end sub
