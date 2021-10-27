@@ -758,4 +758,15 @@ syscall(878) hmac256(byref key as string,byref payload as string, byref result a
 '<b>payload</b> -- The unencrypted data to be transmitted.
 '<br>
 '<b>result</b> -- The calculated HMAC of the payload is saved in this variable.
+
+syscall(879) es256(byref key as string,byref payload as string, byref result as string)
+'<b>PLATFORM SYSCALL. </b><br><br>
+'Calculates the elliptic curve signature of a data string to be transmitted.
+'<br><br>
+'<b>key</b> -- Encryption key. Can be up to 255 characters long.
+'<br>
+'<b>payload</b> -- The unencrypted data to be transmitted.
+'<br>
+'<b>result</b> -- The calculated signature of the payload is saved in this variable.
+
 #endif
