@@ -1,8 +1,8 @@
 [platform]
 description=TPP3(G3) Board
 version=TPP3W(G3)-4.00
-rom=786432
-ram=66816
+rom=1310720
+ram=132352
 codebits=24
 databits=32
 sector=131072
