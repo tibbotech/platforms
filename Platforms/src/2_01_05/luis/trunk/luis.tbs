@@ -21,6 +21,12 @@ enum en_luis_html_send_states
 	EN_LUIS_HTML_SEND_PART2
 end enum
 
+enum en_luis_data_parse_states
+	READY,
+	LUIS_STX_FOUND,
+	LUIS_CR_FOUND
+end enum
+
 '--------------------------------------------------------------------------------
 declare sub luis_debugprint(byref print_data as string)
 declare sub luis_delay_ms(delay as integer)
@@ -34,7 +40,10 @@ dim luis_html_placeholder_start as dword
 dim luis_html_placeholder_end as dword
 dim luis_html_read_pointer as dword
 dim luis_html_send_state as en_luis_html_send_states
+dim luis_data_parse_state as en_luis_data_parse_states
 dim luis_chunk_size as dword
+dim luis_bt_cmd_str as string
+dim luis_delim as byte
 
 '================================================================================
 function luis_start(byref bt_name as string) as en_luis_status_codes
@@ -304,45 +313,50 @@ send:
 reply_null:
 end function
 
+
 function luis_on_bt_data_arrival() as en_luis_status_codes
-	dim x,y as byte
 	dim reply as string
 	const LUIS_MAX_CMD_LEN = STG_MAX_SETTING_VALUE_LEN + STG_MAX_SETTING_NAME_LEN + 3
-	dim bt_cmd_str as string(255)
+	
 	luis_on_bt_data_arrival=EN_LUIS_STATUS_OK
 	
 	if luis_init_flag<>LUIS_INIT_SIGNATURE then
 		luis_on_bt_data_arrival=EN_LUIS_STATUS_NOT_STARTED
 		exit function
 	end if
-
-	bt_cmd_str=bt_cmd_str+bt.getdata(255-len(bt_cmd_str))
 	
-	x=instr(1,bt_cmd_str,chr(LUIS_STX),1)
-	'this will prevent the string to overflow with garbage
-	if len(bt_cmd_str)=LUIS_MAX_CMD_LEN then
-		y=instr(1,bt_cmd_str,chr(LUIS_CR),1)
-		if x=0 or y=0 then
-			bt_cmd_str=""
-			bt.setdata("C")
-			bt.send()
-			exit function
+	select case luis_data_parse_state
+	case READY:
+	
+		luis_bt_cmd_str=bt.getdata(1)
+		if luis_bt_cmd_str=chr(LUIS_STX) then
+			luis_data_parse_state=LUIS_STX_FOUND
 		end if
-	end if
+		
+	case LUIS_STX_FOUND:
 	
-	while x<>0
-		'we've got STX
-		bt_cmd_str=right(bt_cmd_str,len(bt_cmd_str)+1-x) 'cut out everything to the left of STX
-		x=instr(1,bt_cmd_str,chr(LUIS_CR),1) 'look for command end
-		if x=0 then exit function
-		reply=luis_proc_cmd(mid(bt_cmd_str,2,x-2))
+		luis_bt_cmd_str=bt.peekdata(255)
+		luis_delim=instr(1,luis_bt_cmd_str,chr(LUIS_CR),1)
+		if luis_delim=0 then 
+			exit function
+		else
+			luis_data_parse_state=LUIS_CR_FOUND
+		end if
+		
+	case LUIS_CR_FOUND:
+	
+		luis_bt_cmd_str=bt.getdata(luis_delim)
+		luis_bt_cmd_str=left(luis_bt_cmd_str,len(luis_bt_cmd_str)-1)
+		reply=luis_proc_cmd(luis_bt_cmd_str)
 		if reply<>"" then
 			bt.setdata(reply)
 			bt.send()
+			luis_bt_cmd_str=""
 		end if
-		bt_cmd_str=right(bt_cmd_str,len(bt_cmd_str)-x)
-		x=instr(1,bt_cmd_str,chr(LUIS_STX),1)
-	wend
+		luis_data_parse_state=READY
+
+	end select
+
 end function
 
 #if LUIS_DEBUG_PRINT
