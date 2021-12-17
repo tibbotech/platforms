@@ -12,7 +12,7 @@ object ssi
 #if PLATFORM_ID = WM2000
 enum  pl_ssi_baud
 
-	PL_SSI_BAUD_100kHz = 100, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
+	PL_SSI_BAUD_100kHz = 100 '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
 	
 end enum
 
