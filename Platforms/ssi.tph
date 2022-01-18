@@ -9,23 +9,20 @@ object ssi
 'The ssi. object implements up to four serial synchronous interfaces (SSI) on the general-purpose I/O lines of your device.
 'Examples of such interfaces are SPI, I2C, clock/data, and numerous variations on these interfaces.
 
-#if PLATFORM_ID = WM2000
+#if SYS_VER=510
+
 enum  pl_ssi_baud
 
-	
-	PL_SSI_BAUD_1MHz = 6, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 1MHz.
-	PL_SSI_BAUD_900kHz = 7, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 900kHz.
-	PL_SSI_BAUD_800kHz = 9, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 800kHz.
-	PL_SSI_BAUD_400kHz = 24, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 400kHz.
-	PL_SSI_BAUD_300kHz = 34, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 300kHz.
-	PL_SSI_BAUD_200kHz = 54, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 200kHz.
-	PL_SSI_BAUD_100kHz = 114, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
-	PL_SSI_BAUD_90kHz = 127, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 90kHz.
-	PL_SSI_BAUD_80kHz = 144, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 80kHz.
-	PL_SSI_BAUD_70kHz = 165, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 70kHz.
-	PL_SSI_BAUD_60kHz = 194, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 60kHz.
-	PL_SSI_BAUD_50kHz = 234 '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
-	
+	PL_SSI_BAUD_400kHz = 5, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 400kHz.
+	PL_SSI_BAUD_300kHz = 7, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 300kHz.
+	PL_SSI_BAUD_200kHz = 11, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 200kHz.
+	PL_SSI_BAUD_100kHz = 23, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
+	PL_SSI_BAUD_90kHz = 25, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 90kHz.
+	PL_SSI_BAUD_80kHz = 29, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 80kHz.
+	PL_SSI_BAUD_70kHz = 33, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 70kHz.
+	PL_SSI_BAUD_60kHz = 39, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 60kHz.
+	PL_SSI_BAUD_50kHz = 47 '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
+
 end enum
 
 #elif SYS_VER=1000
@@ -62,6 +59,33 @@ enum  pl_ssi_baud
 	PL_SSI_BAUD_70kHz = 165, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 70kHz.
 	PL_SSI_BAUD_60kHz = 194, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 60kHz.
 	PL_SSI_BAUD_50kHz = 234 '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
+	
+end enum
+
+#elif SYS_VER=2500
+
+enum  pl_ssi_baud
+
+	PL_SSI_BAUD_100kHz = 0, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
+	
+end enum
+
+#elif SYS_VER=3000
+
+enum  pl_ssi_baud
+
+	PL_SSI_BAUD_1MHz = 9, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 1MHz.
+	PL_SSI_BAUD_900kHz = 11, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 900kHz.
+	PL_SSI_BAUD_800kHz = 14, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 800kHz.
+	PL_SSI_BAUD_400kHz = 36, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 400kHz.
+	PL_SSI_BAUD_300kHz = 51, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 300kHz.
+	PL_SSI_BAUD_200kHz = 81, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 200kHz.
+	PL_SSI_BAUD_100kHz = 171, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 100kHz.
+	PL_SSI_BAUD_90kHz = 191, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 90kHz.
+	PL_SSI_BAUD_80kHz = 216, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 80kHz.
+	PL_SSI_BAUD_70kHz = 248, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 70kHz.
+	PL_SSI_BAUD_60kHz = 291, '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 60kHz.
+	PL_SSI_BAUD_50kHz = 351 '<b>PLATFORM CONSTANT.</b> The value that will set the baud to the closest value below 50kHz.
 	
 end enum
 

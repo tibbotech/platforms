@@ -2,8 +2,11 @@
 '       SYS (System) object
 '**************************************************************************************************
 
-#define SYS_VER 1000
+#define SYS_VER 510
 
-#define SYS_VER_SUPPORTS_PROFILE 1
-#define SYS_VER_SUPPORTS_LOWPOWER 1
+#define SYS_VER_SUPPORTS_MS 1 
+#define SYS_VER_SUPPORTS_MONITOR 1
+#define SYS_VER_SUPPORTS_TRIG 1
+#define SYS_VER_SUPPORTS_TIMERCOUNT32 1
+#define SYS_VER_SUPPORTS_BUFFER_DEBUG 1
 #define SYS_VER_SUPPORTS_SERIALNUM 1
