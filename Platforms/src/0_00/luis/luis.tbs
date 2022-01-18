@@ -58,7 +58,7 @@ function luis_start(byref bt_name as string) as en_luis_status_codes
 	#endif
 	
 	if wln.enabled = NO then
-		#if PLATFORM_ID <> WM2000
+		#if SYS_VER<>2500
 			wln_init()
 		#endif
 		wln.boot(0)

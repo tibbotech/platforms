@@ -70,7 +70,7 @@ syscall(838) sock.tlsgetdata(maxinplen as word) as string
 'The amount of data in the TLS RX buffer (see <font color="maroon"><b>sock.tlsrxlen</b></font>), the capacity of the "receiving" string variable, and the limit set by the <i>maxinplen</i> parameter.<br><br>
 'When using TLS, <font color="maroon"><b>sock.getdata</b></font> should <b>never</b> be used, because attempting to retrieve the data from the RX buffer will likely result in the collapse of the secure connection.
 
-#if PLATFORM_ID<>WM2000
+#if SYS_VER<>2500
 ''--------------------------------------------------------------------
 syscall(839) sock.tlsbuffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b><br><br>

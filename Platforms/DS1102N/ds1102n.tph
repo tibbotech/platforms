@@ -9,7 +9,7 @@
 #define BUFF_PAGE_TYPE byte
 #define BUFF_SIZE_TYPE word
 #define COPY_FIRMWARE 1
-
+#define NPLAT 1
 
 '--------------------------------------------------------------------
 enum pl_io_num 

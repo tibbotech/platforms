@@ -285,7 +285,7 @@ sub dhcp_proc_one_interface(interface as pl_sock_interfaces)
 	#if WLN_AVAILABLE
 		if interface=PL_SOCK_INTERFACE_WLN then
 			if dhcp_phase(dhcp_i)<>DHCP_PHASE_OFF then
-#if PLATFORM_ID = WM2000
+#if SYS_VER=2500
 				if wln.associationstate=PL_WLN_NOT_ASSOCIATED then
 #else 
 				if wln_check_association()=PL_WLN_NOT_ASSOCIATED then

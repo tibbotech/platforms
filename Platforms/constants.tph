@@ -69,7 +69,7 @@ enum pl_redir
 'ENUM. Contains the list of constants that define redirection of data (buffer shorting) between two objects of current
 'platform that support buffers: the ser object and the sock object. Buffer shorting is enabled/disabled through the
 'ser.redir and sock.redir methods.
-    #if PLATFORM_ID = WM2000 or PLATFORM_ID = WS1101 or PLATFORM_ID = WS1102
+    #if SYS_VER=2500
    
     PL_REDIR_NONE=0,    'INTER-OBJECT CONSTANT. Cancels redirection for the serial port or socket.
     PL_REDIR_SER,       'INTER-OBJECT CONSTANT. Redirects RX data of the serial port or socket to the TX buffer of the serial port 0.

@@ -76,21 +76,6 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=KLM601 or PLATFORM_ID=KLM106_32
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif 
-
 #if PLATFORM_ID=DS1102W or PLATFORM_ID=DS1102N or PLATFORM_ID=DS1101W or PLATFORM_ID=DS1101N
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
@@ -108,7 +93,22 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2
+#if PLATFORM_ID=KLM601 or PLATFORM_ID=KLM106_32
+property beep.divider
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the buzzer frequency (frequency of the square wave output on the CO line).
+'<br><br>
+'The output frequency depends on sys.currentpll and is calculated as follows:
+'<br><br>
+'PLL on: F = 44'236'800 / beep.divider.
+'<br><br>
+'PLL off: F = 5'529'600 / beep.divider.
+    get = syscall(179) as word
+    set = syscall(180) (value as word)
+end property
+#endif 
+
+#if SYS_VER=2000 or SYS_VER=3000
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
@@ -123,16 +123,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=SIMULATOR
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif
-
-#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
+#if SYS_VER=2500
 property beep.frequency
 '<b>PROPERTY (WORD), DEFAULT VALUE = 1000.</b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the line).
@@ -142,3 +133,14 @@ property beep.frequency
     set = syscall(180) (value as word)
 end property
 #endif
+
+
+#if PLATFORM_ID=SIMULATOR
+property beep.divider
+'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
+'Defines the buzzer frequency.
+    get = syscall(179) as word
+    set = syscall(180) (value as word)
+end property
+#endif
+

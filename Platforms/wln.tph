@@ -124,7 +124,7 @@ syscall(451,TDL_70) wln.boot(offset as dword) as ok_ng
 '<br><br>
 'Finally, the method will fail if the Wi-Fi hardware is already booted and operational.
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 syscall(503,"35.TDL") wln.buffrq(numpages as BUFF_PAGE_TYPE) as BUFF_PAGE_TYPE
 '<b>METHOD.</b>
@@ -206,7 +206,7 @@ syscall(492,TDL_71) wln.disassociate() as accepted_rejected
 'if the Wi-Fi interface is not currently associated (wln.associationstate <> 1- PL_WLN_ASSOCIATED).
 
 
-#if PLATFORM_ID <> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 enum pl_wln_domains 
     PL_WLN_DOMAIN_FCC,  '<b>PLATFORM CONSTANT.</b><br><br> FCC (US), default. GA1000: channels 1-11 of the 2.4GHz range; WA2000: the same plus channels 52-64, 100-140, 149-165 of the 5.0GHz range.
@@ -222,7 +222,7 @@ property wln.domain
 'Passive scanning (<font color="maroon"><b>wln.scan</b></font>) is performed on all channels of enabled bands (<font color="maroon"><b>wln.band</b></font>), 
 'regardless of the value of <font color="maroon"><b>wln.domain</b></font>.<br><br>
 'This property can't be changed while the Wi-Fi hardware is operational (<font color="maroon"><b>wln.enabled</b></font> = <font color="olive"><b>1 - YES</b></font>).
-#if PLATFORM_ID=WM2000
+#if SYS_VER=2500
 '<br><br>As this is a Device Configuration Block (DCB) property, changing its value requires that the device be restarted for the changes to take effect.
 #endif
     get = syscall(480,TDL_72) as pl_wln_domains
@@ -230,7 +230,7 @@ property wln.domain
 end property
 
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 property wln.domap
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= PL_IO_NULL (NULL line). </b>
@@ -288,7 +288,7 @@ end enum
 
 #if SYS_VER = 1000 or PLATFORM_ID=EM500W    'T1000 Based Devices and EM500W
 
-#if PLATFORM_ID=EM1000N or PLATFORM_ID=EM1001N or PLATFORM_ID=EM1202N or PLATFORM_ID=EM1206N or PLATFORM_ID=TPP2N or PLATFORM_ID=TPP3N or PLATFORM_ID=DS1101N or PLATFORM_ID=DS1102N
+#if NPLAT=1
 '--------------------------------------------------------------------
 syscall(601,TDL_90) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
@@ -413,7 +413,7 @@ declare sub wln.disable()
 
 #elif SYS_VER=2000
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 syscall(780) wln.getmoduletype() as pl_wln_module_types
 '<b>R/O PROPERTY (BYTE, ENUM). </b><br><br>
@@ -445,7 +445,7 @@ property wln.fwversion
     get = syscall(791) as string
 end property
 
-#else ' PLATFORM_ID = WM2000
+#else ' SYS_VER = 2500
 
 '--------------------------------------------------------------------
 syscall(780) wln.getmoduletype() as pl_wln_module_types
@@ -470,7 +470,7 @@ syscall(777) wln.disable()
 '<br><br>
 'You can enable the wln. object again by resetting the Wi-Fi module and calling wln.boot.
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 syscall(786) wln.setupgraderegion(region as pl_wln_upgrade_regions)
 '<b>METHOD. </b><br><br>
@@ -538,7 +538,7 @@ property wln.ip
 end property
 
 
-#if PLATFORM_ID<> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
+#if SYS_VER <> 2500
 '--------------------------------------------------------------------
 property wln.mac
 '<b>PROPERTY (STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b>
@@ -584,7 +584,7 @@ syscall(475,TDL_71) wln.networkstart(byref ssid as string,channel as byte) as ac
 '<br><br>
 'The task is completed when wln.task becomes 0- PL_WLN_TASK_IDLE. The on_wln_task_complete event is also generated at that time. 
 'Completion does not imply success -- the result has to be verified by reading the state of the wln.associationstate R/O property.
-#if PLATFORM_ID=WM2000
+#if SYS_VER=2500
 '<br><br>On this platform, <font color="maroon"><b>wln.networkstart</b></font> is not available if <font color="maroon"><b>wln.autoconnect</b></font> is enabled. 
 'If <font color="maroon"><b>wln.autoconnect</b></font> is disabled, <font color="maroon"><b>wln.networkstart</b></font> is only available at boot 
 'and requires that <font color="maroon"><b>wln.dhcp<b></font> be enabled to function.
@@ -602,7 +602,7 @@ syscall(476,TDL_71) wln.networkstop() as accepted_rejected
 'or the Wi-Fi interface is not currently running its own network (<font color="maroon"><b>wln.assiciationstate</b></font> <> <font color="olive"><b>2 - PL_WLN_OWN_NETWORK</b></font>).<br><br>
 'The task is completed when <font color="maroon"><b>wln.task</b></font> becomes <font color="olive"><b>0 - PL_WLN_TASK_IDLE</b></font>. 
 'The <font color="teal"><b>on_wln_task_complete</b></font> event is also generated at that time.
-#if PLATFORM_ID=WM2000
+#if SYS_VER=2500
 '<br><br>On this platform, <font color="maroon"><b>wln.networkstop</b></font> is not available if <font color="maroon"><b>wln.autoconnect</b></font> is enabled.
 #endif
 
@@ -610,7 +610,7 @@ syscall(476,TDL_71) wln.networkstop() as accepted_rejected
 enum pl_wln_events 
     PL_WLN_EVENT_DISABLED,      '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi hardware has been disconnected, powered-down, reset, or is malfunctioning.
     PL_WLN_EVENT_DISASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been disassociated from the wireless network.
-    #if PLATFORM_ID = WM2000
+    #if SYS_VER=2500
     PL_WLN_EVENT_ASSOCIATED  '<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface has been associated to the wireless network.
     #endif 
 end enum
@@ -622,7 +622,7 @@ event(23)  on_wln_event(wln_event as pl_wln_events)
 '<b>Wln_event </b>-- registered event (DISABLED or DISASSOCIATED).<br><br>
 'Multiple on_wln_event events may be waiting in the event queue. For this reason, the doevents statement will be skipped (not executed) if encountered within the event handler
 'for this event or the body of any procedure in the related call chain.
-#if PLATFORM_ID=WM2000
+#if SYS_VER=2500
 '<br><br>On this platform, if <font color="maroon"><b>wln.autoconnect</b></font> is set to <font color="olive"><b>1 - YES</b></font>, 
 'association with a wireless network will trigger the generation of the <font color="teal"><b>on_wln_event</b></font> 
 'handler with <font color="olive"><b>PL_WLN_EVENT_ASSOCIATED</b></font> as the value of the <i>wln_event</i> parameter. 
@@ -771,7 +771,7 @@ property wln.scanresultssid
     get = syscall(495,TDL_72) as string
 end property
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER<>2500
 '--------------------------------------------------------------------
 property wln.scanresultwpainfo
 '<b>R/O PROPERTY (STRING), DEFAULT VALUE= "".</b>
@@ -968,7 +968,7 @@ syscall(741) wln.seteapttls(byref ca_cert as string, byref identify as string, b
 #endif
 
 
-#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
+#if SYS_VER=2500
 
 property wln.autodhcp
 '<b>PROPERTY.</b><br><br>

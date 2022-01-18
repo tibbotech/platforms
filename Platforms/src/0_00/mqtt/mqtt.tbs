@@ -220,7 +220,7 @@ sub mqtt_connect_socket()
 			sock.num=sock.tlscurrentnum
 			sock.tlsdeinit()
 			sock.num=mqtt_sock_num
-			#if PLATFORM_ID <> WM2000
+			#if SYS_VER<>2500
 				sock.tlsbuffrq(39)	
 				sys.buffalloc()
 			#endif

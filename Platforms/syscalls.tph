@@ -568,9 +568,9 @@ syscall(549,"09.TDL") insert(byref dest_str as string,pos as byte,byref insert_s
 'Dest_str length can increase as a result of this operation (but not beyond declared string capacity). This will happen if the insertion position does
 'not allow the source_str to fit within the current length of the dest_string.
 
+
+#if SYS_VER<>500
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>EM500W
-#if PLATFORM_ID<>DS1100
 syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Encrypts data in 16-byte blocks according to the AES128 algorithm. Returns encrypted data (which will consist of complete 16-character blocks).
@@ -581,12 +581,8 @@ syscall(463,"83.TDL") aes128enc(byref key as string,byref plain as string) as st
 '<br><br>
 'Not supported on the EM500W platform.
 '<b>See also: </b>aes128dec, rc4.
-#endif
-#endif
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID<>EM500W
-    #if PLATFORM_ID<>DS1100
 syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as string
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Decrypts data in 16-byte blocks according to the AES128 algorithm. Returns decrypted data (which will consist of complete 16-character blocks).
@@ -598,7 +594,7 @@ syscall(464,"84.TDL") aes128dec(byref key as string,byref cypher as string) as s
 'Not supported on the EM500W platform.
 '<br><br>
 '<b>See also: </b>aes128dec, rc4.
-    #endif
+
 #endif
 
 '--------------------------------------------------------------------
@@ -748,7 +744,7 @@ syscall(423,"88.TDL") !debug.rx() as string
 '<b>METHOD.</b>
 
 '--------------------------------------------------------------------
-#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
+#if SYS_VER=2500
 syscall(878) hmac256(byref key as string,byref payload as string, byref result as string)
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Calculates the hash-based message authentication code (HMAC) of a data string to be transmitted.

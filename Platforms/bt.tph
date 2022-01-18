@@ -313,7 +313,7 @@ property bt.connected
     get = syscall(797) as no_yes
 end property
 
-#if PLATFORM_ID <> WM2000
+#if SYS_VER <> 2500
 '--------------------------------------------------------------------
 property bt.mac
 '<b>PROPERTY(STRING), DEFAULT VALUE= "0.0.0.0.0.0". </b><br><br>
