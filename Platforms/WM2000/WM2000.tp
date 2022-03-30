@@ -1,6 +1,6 @@
 [platform]
 description=WM2000 Module
-version=WM2000-4.01
+version=WM2000-4.02
 rom=1728512
 ram=59392
 codebits=24
