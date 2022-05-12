@@ -2118,21 +2118,17 @@ public function tbl_field_sg(byref field_name as string,byref field_value as str
 					s=chr(0)+chr(0)+s	'2 bytes mincount
 					if td_binstr_to_str(s)<>OK then goto tbl_invalid
 					field_value=mid(s,9,4)
-
 				case EN_TBL_DT_TIME2:	'2 bytes mincount + 1 byte second
 					s=chr(0)+chr(0)+s
 					if td_binstr_to_str(s)<>OK then goto tbl_invalid
 					field_value=mid(s,9,6)
-
 				case EN_TBL_DT_TIME3:	'2 byte mincount + 1 byte second + 2 byte milisecond
 					s=chr(0)+chr(0)+s
 					if td_binstr_to_str(s)<>OK then goto tbl_invalid
 					field_value=mid(s,9,9)
-
 				case EN_TBL_DT_DATE,EN_TBL_DT_DATE_TIME1,EN_TBL_DT_DATE_TIME2,EN_TBL_DT_ALL:
 					if td_binstr_to_str(s)<>OK then goto tbl_invalid
 					field_value=s
-
 				end select
 			#endif
 		case `B`:	'byte type
@@ -2716,6 +2712,41 @@ finish:
 	end if
 end function
 
+public function tbl_schema_check(byref table_name_or_num as string,  byref file_name as string) as en_tbl_status_codes
+'A fast check of the file data integrating of the all table by reading the last record
+	dim tbl_result as en_tbl_status_codes
+	dim field_data as tbl_field_type
+	dim field_num, i as byte
+	dim s as string
+	dim schema_string as string=""
+	
+	tbl_result=tbl_select(table_name_or_num, file_name)
+	if tbl_result<>EN_TBL_STATUS_OK then goto finish
+	field_num=tbl_get_num_fields(table_name_or_num)
+	for i=0 to field_num-1
+		tbl_get_field_info(table_name_or_num,i,field_data)
+		schema_string=schema_string+chr(field_data.field_type)+chr(field_data.p1)+chr(field_data.p2)		
+	next i
+	schema_string=hex(strsum(schema_string))
+	schema_string=right(schema_string,len(schema_string)-2)
+	schema_string=strgen(4-len(schema_string),"0")+schema_string
+	
+	tbl_attributes_sg(file_name,"SCHM",s,EN_TBL_GET)
+	'if schem stamp is null, file hasn't been initialized with schem stamp
+	if s="" then
+		tbl_attributes_sg(file_name,"SCHM",schema_string,EN_TBL_SET)
+	else
+		if schema_string<>s then tbl_result=EN_TBL_STATUS_FAILURE
+	end if
+	tbl_close(file_name)
+finish:
+	tbl_schema_check=tbl_result
+	if fd.ready=NO then tbl_schema_check=EN_TBL_STATUS_FAILURE
+	if tbl_schema_check<>EN_TBL_STATUS_OK then 
+		callback_tbl_error(tbl_schema_check)
+	end if
+end function
+
 '------------------------------------------------------------------------------
 #if TBL_AGGREGATE_HASH
 function tbl_set_md5() as dword
@@ -2853,11 +2884,12 @@ end function
 
 '------------------------------------------------------------------------------
 function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4), byref attri_val as string, op as en_tbl_rdwr) as pl_fd_status_codes
-	dim s as string(13)
+	dim s as string(17)
 	dim hash as string(4)
 	dim ts as string(7)
 	dim rc as string(2)
-
+	dim schema as string(4)
+	
 	if tbl_file_name="" then
 		tbl_attributes_sg=PL_FD_STATUS_NOT_FOUND
 		exit function
@@ -2867,7 +2899,8 @@ function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4
 	rc=mid(s,1,2)
 	ts=mid(s,3,7)
 	hash=mid(s,10,4)
-
+	schema=mid(s,14,4)
+	
 	if op=EN_TBL_GET then
 		select case attri_name
 		case "RC":
@@ -2876,6 +2909,8 @@ function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4
 			attri_val=ts			
 		case "HASH":
 			attri_val=hash
+		case "SCHM":
+			attri_val=schema
 		case else
 			attri_val=s
 		end select
@@ -2883,14 +2918,17 @@ function tbl_attributes_sg(byref tbl_file_name as string, attri_name as string(4
 		if rc="" then rc=strgen(2,chr(TBL_NULL))
 		if ts="" then ts=strgen(7,chr(TBL_NULL))
 		if hash="" then hash=strgen(4,chr(TBL_NULL))
+		if schema="" then hash=strgen(4,chr(TBL_NULL))
 		
 		select case attri_name
 		case "RC":
-			s=attri_val+ts+hash
+			s=attri_val+ts+hash+schema
 		case "TS":
-			s=rc+attri_val+hash
+			s=rc+attri_val+hash+schema
 		case "HASH":
-			s=rc+ts+attri_val
+			s=rc+ts+attri_val+schema
+		case "SCHM":
+			s=rc+ts+hash+attri_val
 		case else
 			s=strgen(11,chr(TBL_NULL))
 		end select
