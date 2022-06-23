@@ -149,6 +149,7 @@ declare function tbl_get_max_field_size(byref table_name_or_num as string) as by
 declare function tbl_replace(byref old_file_name as string, byref new_file_name as string) as en_tbl_status_codes
 declare function tbl_select(byref table_name_or_num as string, byref file_name as string) as en_tbl_status_codes
 declare function tbl_select_for_read(byref table_name_or_num as string, byref file_name as string) as en_tbl_status_codes
+declare function tbl_schema_check(byref table_name_or_num as string,  byref file_name as string) as en_tbl_status_codes
 
 	declare function tbl_clear() as en_tbl_status_codes
 	declare function tbl_get_hash() as string
