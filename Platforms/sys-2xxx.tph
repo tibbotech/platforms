@@ -202,7 +202,11 @@ syscall(295,"74.TDL") sys.setserialnum(byref str as string) as ok_ng
 'The Entire 128-byte serial number can be obtained through the <font color="maroon"><b>sys.serialnum </b></font>R/O property.
 
 '--------------------------------------------------------------------
+#if RETARGET_DEBUG_PRINT=1
+syscall(543,"74.TDL") sys.trace(byref str as string)
+#else 
 syscall(543,"74.TDL") sys.debugprint(byref str as string)
+#endif 
 '<b>METHOD.</b><br><br>
 'Sends (prints) a string to the TIDE's console output.<br><br>
 'The method allows you to trace the execution of your debug application by printing messages in the console output pane of TIDE. 
