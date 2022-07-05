@@ -172,3 +172,11 @@ value=EM510W
 [define1.option41]
 description=WM2000
 value=WM2000
+
+[define1.option42]
+description=WS1101
+value=WS1101
+
+[define1.option43]
+description=WS11012
+value=WS1102

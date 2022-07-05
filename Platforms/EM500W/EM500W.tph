@@ -28,7 +28,7 @@ end enum
 '--------------------------------------------------------------------
 enum pl_io_num 
 	PL_IO_NUM_0_INT0,	'<b>PLATFORM CONSTANT.</b><br><br> 
-				'General-purpose I/O line 0 (P0.0), aslo the interrupt line 0.<br><br>
+				'General-purpose I/O line 0 (P0.0), also the interrupt line 0.<br><br>
 
 	PL_IO_NUM_1_INT1,	'<b>PLATFORM CONSTANT.</b><br><br> 
 				'General-purpose I/O line 1 (P0.1), also the interrupt line 1.<br><br>

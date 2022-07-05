@@ -1,0 +1,88 @@
+enum pl_wln_domains 
+    PL_WLN_DOMAIN_FCC=0,    '<b>PLATFORM CONSTANT.</b><br><br> United States Federal Communications Commission — special value that refers to PL_WLN_DOMAIN_US
+    PL_WLN_DOMAIN_EU=1,     '<b>PLATFORM CONSTANT.</b><br><br> European Union — special value that refers to PL_WLN_DOMAIN_FR
+    PL_WLN_DOMAIN_JAPAN=2,  '<b>PLATFORM CONSTANT.</b><br><br> Japan — special value that refers to PL_WLN_DOMAIN_JP
+    PL_WLN_DOMAIN_AG,       '<b>PLATFORM CONSTANT.</b><br><br> Antigua and Barbuda
+    PL_WLN_DOMAIN_AR,       '<b>PLATFORM CONSTANT.</b><br><br> Argentina 
+    PL_WLN_DOMAIN_AW,       '<b>PLATFORM CONSTANT.</b><br><br> Aruba
+    PL_WLN_DOMAIN_AU,       '<b>PLATFORM CONSTANT.</b><br><br> Australia
+    PL_WLN_DOMAIN_AT,       '<b>PLATFORM CONSTANT.</b><br><br> Austria
+    PL_WLN_DOMAIN_BS,       '<b>PLATFORM CONSTANT.</b><br><br> Bahamas
+    PL_WLN_DOMAIN_BB,       '<b>PLATFORM CONSTANT.</b><br><br> Barbados
+    PL_WLN_DOMAIN_BM,       '<b>PLATFORM CONSTANT.</b><br><br> Bermuda
+    PL_WLN_DOMAIN_BR,       '<b>PLATFORM CONSTANT.</b><br><br> Brazil
+    PL_WLN_DOMAIN_BE,       '<b>PLATFORM CONSTANT.</b><br><br> Belgium
+    PL_WLN_DOMAIN_BG,       '<b>PLATFORM CONSTANT.</b><br><br> Bulgaria
+    PL_WLN_DOMAIN_CA,       '<b>PLATFORM CONSTANT.</b><br><br> Canada
+    PL_WLN_DOMAIN_KY,       '<b>PLATFORM CONSTANT.</b><br><br> Cayman Islands
+    PL_WLN_DOMAIN_CL,       '<b>PLATFORM CONSTANT.</b><br><br> Chile
+    PL_WLN_DOMAIN_CN,       '<b>PLATFORM CONSTANT.</b><br><br> China
+    PL_WLN_DOMAIN_CO,       '<b>PLATFORM CONSTANT.</b><br><br> Colombia
+    PL_WLN_DOMAIN_CR,       '<b>PLATFORM CONSTANT.</b><br><br> Costa Rica
+    PL_WLN_DOMAIN_CY,       '<b>PLATFORM CONSTANT.</b><br><br> Cyprus
+    PL_WLN_DOMAIN_CZ,       '<b>PLATFORM CONSTANT.</b><br><br> Czech Republic
+    PL_WLN_DOMAIN_DK,       '<b>PLATFORM CONSTANT.</b><br><br> Denmark
+    PL_WLN_DOMAIN_DO,       '<b>PLATFORM CONSTANT.</b><br><br> Dominican Republic
+    PL_WLN_DOMAIN_EC,       '<b>PLATFORM CONSTANT.</b><br><br> Ecuador
+    PL_WLN_DOMAIN_SV,       '<b>PLATFORM CONSTANT.</b><br><br> El Salvador
+    PL_WLN_DOMAIN_FI,       '<b>PLATFORM CONSTANT.</b><br><br> Finland
+    PL_WLN_DOMAIN_FR,       '<b>PLATFORM CONSTANT.</b><br><br> France
+    PL_WLN_DOMAIN_DE,       '<b>PLATFORM CONSTANT.</b><br><br> Germany
+    PL_WLN_DOMAIN_GR,       '<b>PLATFORM CONSTANT.</b><br><br> Greece
+    PL_WLN_DOMAIN_GU,       '<b>PLATFORM CONSTANT.</b><br><br> Guam
+    PL_WLN_DOMAIN_GT,       '<b>PLATFORM CONSTANT.</b><br><br> Guatemala
+    PL_WLN_DOMAIN_HT,       '<b>PLATFORM CONSTANT.</b><br><br> Haiti
+    PL_WLN_DOMAIN_HN,       '<b>PLATFORM CONSTANT.</b><br><br> Honduras
+    PL_WLN_DOMAIN_HK,       '<b>PLATFORM CONSTANT.</b><br><br> Hong Kong
+    PL_WLN_DOMAIN_HU,       '<b>PLATFORM CONSTANT.</b><br><br> Hungary
+    PL_WLN_DOMAIN_IS,       '<b>PLATFORM CONSTANT.</b><br><br> Iceland
+    PL_WLN_DOMAIN_IN,       '<b>PLATFORM CONSTANT.</b><br><br> India
+    PL_WLN_DOMAIN_ID,       '<b>PLATFORM CONSTANT.</b><br><br> Indonesia
+    PL_WLN_DOMAIN_IE,       '<b>PLATFORM CONSTANT.</b><br><br> Ireland
+    PL_WLN_DOMAIN_IL,       '<b>PLATFORM CONSTANT.</b><br><br> Israel
+    PL_WLN_DOMAIN_IT,       '<b>PLATFORM CONSTANT.</b><br><br> Italy
+    PL_WLN_DOMAIN_JP,       '<b>PLATFORM CONSTANT.</b><br><br> Japan
+    PL_WLN_DOMAIN_JO,       '<b>PLATFORM CONSTANT.</b><br><br> Jordan
+    PL_WLN_DOMAIN_LV,       '<b>PLATFORM CONSTANT.</b><br><br> Latvia
+    PL_WLN_DOMAIN_LI,       '<b>PLATFORM CONSTANT.</b><br><br> Liechtenstein
+    PL_WLN_DOMAIN_LT,       '<b>PLATFORM CONSTANT.</b><br><br> Lithuania
+    PL_WLN_DOMAIN_LU,       '<b>PLATFORM CONSTANT.</b><br><br> Luxembourg
+    PL_WLN_DOMAIN_MY,       '<b>PLATFORM CONSTANT.</b><br><br> Malaysia
+    PL_WLN_DOMAIN_MT,       '<b>PLATFORM CONSTANT.</b><br><br> Malta
+    PL_WLN_DOMAIN_MA,       '<b>PLATFORM CONSTANT.</b><br><br> Morocco
+    PL_WLN_DOMAIN_MX,       '<b>PLATFORM CONSTANT.</b><br><br> Mexico
+    PL_WLN_DOMAIN_NL,       '<b>PLATFORM CONSTANT.</b><br><br> Netherlands
+    PL_WLN_DOMAIN_NZ,       '<b>PLATFORM CONSTANT.</b><br><br> New Zealand
+    PL_WLN_DOMAIN_NO,       '<b>PLATFORM CONSTANT.</b><br><br> Norway
+    PL_WLN_DOMAIN_PE,       '<b>PLATFORM CONSTANT.</b><br><br> Peru
+    PL_WLN_DOMAIN_PT,       '<b>PLATFORM CONSTANT.</b><br><br> Portugal
+    PL_WLN_DOMAIN_PL,       '<b>PLATFORM CONSTANT.</b><br><br> Poland
+    PL_WLN_DOMAIN_RO,       '<b>PLATFORM CONSTANT.</b><br><br> Romania
+    PL_WLN_DOMAIN_RU,       '<b>PLATFORM CONSTANT.</b><br><br> Russia
+    PL_WLN_DOMAIN_SA,       '<b>PLATFORM CONSTANT.</b><br><br> Saudi Arabia
+    PL_WLN_DOMAIN_CS,       '<b>PLATFORM CONSTANT.</b><br><br> Serbia and Montenegro
+    PL_WLN_DOMAIN_SG,       '<b>PLATFORM CONSTANT.</b><br><br> Singapore
+    PL_WLN_DOMAIN_SK,       '<b>PLATFORM CONSTANT.</b><br><br> Slovakia
+    PL_WLN_DOMAIN_SI,       '<b>PLATFORM CONSTANT.</b><br><br> Slovenia
+    PL_WLN_DOMAIN_ZA,       '<b>PLATFORM CONSTANT.</b><br><br> South Africa
+    PL_WLN_DOMAIN_KR,       '<b>PLATFORM CONSTANT.</b><br><br> South Korea
+    PL_WLN_DOMAIN_ES,       '<b>PLATFORM CONSTANT.</b><br><br> Spain
+    PL_WLN_DOMAIN_SE,       '<b>PLATFORM CONSTANT.</b><br><br> Sweden
+    PL_WLN_DOMAIN_CH,       '<b>PLATFORM CONSTANT.</b><br><br> Switzerland
+    PL_WLN_DOMAIN_TW,       '<b>PLATFORM CONSTANT.</b><br><br> Taiwan
+    PL_WLN_DOMAIN_TR,       '<b>PLATFORM CONSTANT.</b><br><br> Turkey
+    PL_WLN_DOMAIN_GB,       '<b>PLATFORM CONSTANT.</b><br><br> United Kingdom
+    PL_WLN_DOMAIN_UA,       '<b>PLATFORM CONSTANT.</b><br><br> Ukraine
+    PL_WLN_DOMAIN_AE,       '<b>PLATFORM CONSTANT.</b><br><br> United Arab Emirates
+    PL_WLN_DOMAIN_US,       '<b>PLATFORM CONSTANT.</b><br><br> United States
+    PL_WLN_DOMAIN_VE        '<b>PLATFORM CONSTANT.</b><br><br> Venezuela
+end enum
+
+'--------------------------------------------------------------------
+property wln.mac
+'<b>R/O PROPERTY (STRING), DEFAULT VALUE = "as preset during device production." </b><br><br>
+'Returns current MAC (hardware) address of the device. You cannot use the <font color="maroon"><b>net.mac</b></font> property to set the new MAC
+'address, but this address can be changed indirectly, by writing to a special area of the EEPROM (see <font color="maroon"><b>stor.setdata</b></font> and
+'<font color="maroon"><b>stor.base</b></font>).
+    get = syscall(470,TDL_72) as string   
+end property

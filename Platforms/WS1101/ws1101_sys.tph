@@ -1,0 +1,64 @@
+'**************************************************************************************************
+'       SYS (System) object WM2000 Extensions
+'**************************************************************************************************
+
+enum pl_sys_debug_mode
+	PL_SYS_DBG_SERIAL
+	PL_SYS_DBG_NET
+	'PL_SYS_DBG_BT
+end enum
+
+syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
+'<b>METHOD.</b><br><br>
+'Enters a low-power state and reboots the device at the specified date and time.<br><br>
+'This method will block execution of your code until the device is rebooted either manually or by the external sleep hardware (see the Programmable Hardware Manual). 
+'This external sleep hardware is scheduled to reboot the device by specifying the date and time as the number of days (<i>daycount</i>), minutes (<i>mincount</i>), and seconds (<i>seconds</i>) since 1-JAN-2000. 
+'If improperly configured, the device might not "wake" at the desired date and time.<br><br>
+'Note that the device will boot to the compiled Tibbo BASIC/C application binary specified by <font color="maroon"><b>sys.defaultapp</b></font>.
+
+property sys.debugmode 
+'<b>PROPERTY.</b><br><br>
+'Indicates whether the device will use the serial or network interface for debugging: 
+'<font color="olive"><b>0 - PL_SYS_DBG_SERIAL<b></font> (serial interface), <font color="olive"><b>1 - PL_SYS_DBG_NET<b></font> (Wi-Fi interface).<br><br>
+'If this property is set to <font color="olive"><b>0 - PL_SYS_DBG_NET<b></font>, <font color="maroon"><b>wln.autoconnect</b></font> must be enabled for debugging to be possible.<br><br>
+'As this is a Device Configuration Block (DCB) property, changing its values requires that the device be restarted for the changes to take effect.
+	get = syscall(843) as pl_sys_debug_mode
+	set = syscall(844) (value as pl_sys_debug_mode)
+end property
+
+enum pl_app_num 
+	PL_APP_NUM_0
+	PL_APP_NUM_1
+end enum
+ 
+property sys.defaultapp
+'<b>PROPERTY.</b><br><br>
+'Indicates the default compiled Tibbo BASIC/C application binary the device should load when booting.<br><br>
+'As this is a Device Configuration Block (DCB) property, changing its values requires that the device be restarted for the changes to take effect.
+	get = syscall(871) as pl_app_num
+	set = syscall(872) (app as pl_app_num)
+end property
+
+
+syscall(865) !sys.getsmcs() as string
+
+syscall(866) !sys.eraseapps(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte, both as no_yes) as accepted_rejected
+
+syscall(867) !sys.restoredefaults(cs0 as byte,cs1 as byte,cs2 as byte,cs3 as byte) as accepted_rejected
+
+syscall(868) sys.reboottoapp(value as pl_app_num)
+'<b>METHOD.</b><br><br>
+'Reboots the device and loads the specified compiled Tibbo BASIC/C application binary:
+'<font color="olive"><b>0 - PL_APP_NUM_0</b></font> (APP0), <font color="olive"><b>1 - PL_APP_NUM_1</b></font> (APP1).<br><br>
+'Like <font color="maroon"><b>sys.reboot</b></font>, this method will reboot the device, which will behave as after any other reboot: 
+'enter PAUSE mode if your program was compiled for debugging, or start execution if the program was compiled for release. 
+'However, <font color="maroon"><b>sys.reboottoapp</b></font> specifies which compiled Tibbo BASIC/C application binary to load at boot.<br><br>
+'The PLL mode will change after the reboot if you requested the changed through <font color="maroon"><b>sys.newpll</b></font> method.
+
+
+property sys.timercountmse
+'<b>R/O PROPERTY.</b><br><br>
+'Returns the amount of time (in milliseconds) elapsed since the device powered up. Once the value of this timer reaches &hFFFFFFFF, it rolls over to 0.<br><br>
+'See also <font color="teal"><b>on_sys_timer </b></font> event.
+	get = syscall(875) as dword
+end property
