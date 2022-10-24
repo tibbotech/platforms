@@ -366,8 +366,8 @@ syscall(829,"91.TDL") atan2( y as float, x as float) as float
 #if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2
 
 '--------------------------------------------------------------------
-syscall(893) sys.delayms(t as dword) 
+syscall(893) sys.delayms(ms as dword) 
 '<b>PLATFORM SYSCALL. </b><br><br>
-'Delays for at least the specified number of millisencods.
+'Delays for at least the specified number of milliseconds.
 
 #endif 

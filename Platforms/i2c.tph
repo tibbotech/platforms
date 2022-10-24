@@ -12,8 +12,8 @@ enum i2c_ack_nack
 end enum 
 
 enum i2c_state
-	I2C_STARTED=0, 
-	I2C_IDLE=1,
+	I2C_IDLE=0,
+	I2C_STARTED=1, 
 	I2C_STRETCHING_ERROR=2,
 	I2C_ARBITRATION_ERROR=3
 end enum
