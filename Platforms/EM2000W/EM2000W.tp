@@ -1,6 +1,6 @@
 [platform]
 description=EM2000 Module
-version=EM2000W-4.00
+version=EM2000W-4.01
 rom=786432
 ram=66816
 codebits=24
