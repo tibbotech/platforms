@@ -8,6 +8,7 @@
 
 #define PLATFORM_ID 17
 
+#define BUFF_PAGE_TYPE_SIZE 8
 #define BUFF_PAGE_TYPE byte
 #define BUFF_SIZE_TYPE word
 

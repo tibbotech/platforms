@@ -8,13 +8,17 @@
 
 #define PLATFORM_ID 27
 
+#define BUFF_PAGE_TYPE_SIZE 16
 #define BUFF_PAGE_TYPE word
 #define BUFF_SIZE_TYPE dword
+
+
 #define EXTENDED_SOCK 1
 #define SER_7BIT_LIMITATION 1
 #define PLATFORM_TYPE_32 1
 #define COPY_FIRMWARE 1
 #define EXTENDED_FD 1
+   
 
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
@@ -48,3 +52,4 @@ include "..\GEN-ST.tph"
 include "..\WLN.tph"
 include "..\BT.tph"
 include "..\tls.tph"
+

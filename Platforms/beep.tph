@@ -93,21 +93,6 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=KLM601 or PLATFORM_ID=KLM106_32
-property beep.divider
-'<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
-'Defines the buzzer frequency (frequency of the square wave output on the CO line).
-'<br><br>
-'The output frequency depends on sys.currentpll and is calculated as follows:
-'<br><br>
-'PLL on: F = 44'236'800 / beep.divider.
-'<br><br>
-'PLL off: F = 5'529'600 / beep.divider.
-    get = syscall(179) as word
-    set = syscall(180) (value as word)
-end property
-#endif 
-
 #if SYS_VER=2000 or SYS_VER=3000
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>

@@ -32,7 +32,7 @@ syscall(543,"74.TDL") sys.debugprint(byref str as string)
 '<br><br>On platform with wireless debugging, you also need to take into account performance degradation due to UDP communications over Wi-Fi. 
 'If you have a significant amount of debug messages, TIDE must wait for replies from your device for each one, which can lead to slow performance.
 
-#if BUFF_PAGE_TYPE=byte
+#if BUFF_PAGE_TYPE_SIZE=8
 
     '--------------------------------------------------------------------
     property sys.freebuffpages
@@ -44,7 +44,7 @@ syscall(543,"74.TDL") sys.debugprint(byref str as string)
         get = syscall(84,"33.TDL"+) as byte
     end property
 
-#elif BUFF_PAGE_TYPE=word
+#elif BUFF_PAGE_TYPE_SIZE=16
 
     '--------------------------------------------------------------------
     property sys.freebuffpages
@@ -134,7 +134,7 @@ property sys.timercount
     get = syscall(136) as word
 end property
 
-#if BUFF_PAGE_TYPE=byte
+#if BUFF_PAGE_TYPE=8
 '--------------------------------------------------------------------
 property sys.totalbuffpages
 '<b>R/O PROPERTY (BYTE). </b><br><br>
@@ -144,7 +144,7 @@ property sys.totalbuffpages
     get = syscall(83,"33.TDL"+) as byte
 end property
 
-#elif BUFF_PAGE_TYPE=word
+#elif BUFF_PAGE_TYPE=16
 
 '--------------------------------------------------------------------
 property sys.totalbuffpages
