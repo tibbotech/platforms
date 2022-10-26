@@ -368,6 +368,5 @@ syscall(829,"91.TDL") atan2( y as float, x as float) as float
 '--------------------------------------------------------------------
 syscall(893) sys.delayms(ms as dword) 
 '<b>PLATFORM SYSCALL. </b><br><br>
-'Delays for at least the specified number of milliseconds.
-
+'Delays the system for at least ms milliseconds.
 #endif 
