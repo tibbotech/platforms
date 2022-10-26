@@ -78,7 +78,7 @@ syscall(890) i2c.write(b as byte) as I2C_ACK_NACK
 '1 - NACK: The data byte was not received successfully<br>
 
 '--------------------------------------------------------------------
-syscall(891) i2c.read(nack as I2C_ACK_NACK) as byte
+syscall(891) i2c.read(ack_bit as I2C_ACK_NACK) as byte
 '<b>METHOD.</b><br><br>
 'Reads one byte from the currently selected I2C channel (selection is made through i2c.channel).
 'The parameter is the acknowledge bit to send to the target I2C peripheral after reading 8 bits of data(enum i2c_ack_nack):<br><br>
