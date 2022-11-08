@@ -14,9 +14,9 @@ const STG_INIT_SIGNATURE=&hB5A2
 
 '--------------------------------------------------------------------------------
 type en_sdr_type
-	name as string(5) 'name
+	name as string(STG_MAX_SETTING_NAME_LEN) 'name
 	storage as byte
-	stype as string(1)
+	stype as byte
 	members as byte
 	p1 as word
 	p2 as word
@@ -283,11 +283,11 @@ public function stg_start_with_params(init as no_yes) as en_stg_status_codes
 		end if
 
 		if len(s)<>1 then goto unknown_setting_type
-		select case s
-		case "B"
-		case "W"
-		case "S"
-		case "D"
+		select case asc(s)
+		case `B`
+		case `W`
+		case `S`
+		case `D`
 		case else
 unknown_setting_type:
 			#if STG_DEBUG_PRINT
@@ -500,9 +500,9 @@ p2_too_large:
 		end if
 		
 		if len(s)<>1 then goto unknown_init_mode
-		select case s
-		case "I"
-		case "A"
+		select case asc(s)
+		case `I`
+		case `A`
 		case else
 unknown_init_mode:
 			#if STG_DEBUG_PRINT
