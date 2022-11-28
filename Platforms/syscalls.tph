@@ -325,6 +325,10 @@ syscall(296,"44.TDL") !fstr(byref num as real) as string
 '<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
 
 '--------------------------------------------------------------------
+syscall(296,"44.TDL") fstr(byref num as real) as string
+'<b>INTRINSIC PLATFORM SYSCALL. </b><br><br>
+
+'--------------------------------------------------------------------
 enum ftostr_mode
     FTOSTR_MODE_AUTO,   'Choose between plain and mantissa/exponent format automatically. Format that results in the
                         'shortest string will be selected.
