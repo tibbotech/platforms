@@ -87,5 +87,5 @@ syscall(891) i2c.read(ack_bit as I2C_ACK_NACK) as byte
 property i2c.state
 '<b>PROPERTY (ENUM, BYTE). DEFAULT VALUE= 0- I2C_IDLE.</b><br><br>
 'Returns the state (enum i2c_state) of the currently selected I2C channel (selection is made through i2c.channel).
-	    get = syscall(892) as I2C_STATE
+	    get = syscall(892) as i2c_state
 end property
