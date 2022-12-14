@@ -73,7 +73,8 @@ syscall(488,TDL_71) wln.associate(byref bssid as string, byref ssid as string, c
 enum pl_wln_association_states 
     PL_WLN_NOT_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is idle.
     PL_WLN_ASSOCIATED,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is associated with a wireless network.
-    PL_WLN_OWN_NETWORK      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is running its own ad-hoc network.   
+    PL_WLN_OWN_NETWORK,      '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is running its own ad-hoc network.   
+    PL_WLN_ASSOCIATION_INPROG '<b>PLATFORM CONSTANT.</b><br><br> The Wi-Fi interface is in the process of associating with a wireless network.
 end enum
 
 property wln.associationstate
