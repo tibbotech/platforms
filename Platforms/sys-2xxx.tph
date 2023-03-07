@@ -156,6 +156,9 @@ property sys.timercountms
     set = syscall(596) (value as dword)
 end property
 
+
+
+
 '--------------------------------------------------------------------
 property sys.onsystimerperiod
 '<b>PROPERTY (ENUM, BYTE), DEFAULT VALUE= 50 (0.5 seconds). </b><br><br>
@@ -362,11 +365,19 @@ syscall(829,"91.TDL") atan2( y as float, x as float) as float
 'Calculates the square root.
 
 
-
 #if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2
 
 '--------------------------------------------------------------------
 syscall(893) sys.delayms(ms as dword) 
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Delays the system for at least ms milliseconds.
-#endif 
+
+'--------------------------------------------------------------------
+property sys.timercountmse
+'<b>R/O PROPERTY.</b><br><br>
+'Returns the amount of time (in milliseconds) elapsed since the device powered up. Once the value of this timer reaches &hFFFFFFFF, it rolls over to 0.<br><br>
+'See also <font color="teal"><b>on_sys_timer </b></font> event.
+	get = syscall(875) as dword
+end property
+
+#endif
