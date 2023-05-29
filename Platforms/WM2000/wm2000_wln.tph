@@ -89,7 +89,6 @@ end property
 
 
 
-//wm2000_wln.tph
 property wln.autodhcpip
 	get = syscall(882) as string
 	set = syscall(883) (byref ip_str as string)
