@@ -86,3 +86,20 @@ property wln.mac
 '<font color="maroon"><b>stor.base</b></font>).
     get = syscall(470,TDL_72) as string   
 end property
+
+
+
+//wm2000_wln.tph
+property wln.autodhcpip
+	get = syscall(882) as string
+	set = syscall(883) (byref ip_str as string)
+end property
+
+property wln.autodhcphn 
+	get = syscall(884) as string
+	set = syscall(885)  (byref value as string)
+end property
+
+syscall(887) wln.settlscert(byref cert, len as word)
+
+syscall(886) wln.gettlscert(byref cert, len as word)
