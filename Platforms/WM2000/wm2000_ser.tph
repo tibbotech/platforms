@@ -27,3 +27,10 @@ property ser.baudrate
     get = syscall(104,"80.TDL"+) as pl_ser_baud
     set = syscall(105,"34.TDL"+) (value as pl_ser_baud)
 end property
+
+
+property ser.rawbaud
+  get = syscall(889) as dword
+  set = syscall(890) (value as dword)
+end property
+#endif
