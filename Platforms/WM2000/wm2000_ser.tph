@@ -33,4 +33,3 @@ property ser.rawbaud
   get = syscall(889) as dword
   set = syscall(890) (value as dword)
 end property
-#endif

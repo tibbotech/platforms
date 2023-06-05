@@ -381,6 +381,8 @@ property ser.baudrate
     set = syscall(105,"34.TDL"+) (value as pl_ser_baud)
 end property
 
+#endif
+
 '--------------------------------------------------------------------
 enum pl_ser_parity
 '<b>ENUM. </b><br><br> 
