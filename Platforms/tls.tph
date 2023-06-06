@@ -113,5 +113,13 @@ end property
 #if PLATFORM_ID=WM2000
 
 syscall(888) sock.tlsinitfromarray(byref cert,len as word) as pl_tls_result
+'<b>METHOD.</b><br><br>
+'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), initializes all resources required for establishing a TLS connection.<br><br>
+'This method initializes the certificate authority (CA) - based on the certificate stored in the array - and the TLS context for the selected socket. 
+'If <font color="maroon"><b>sock.tlsinitfromarray</b></font> is called after TLS has already been initialized on the current socket (<font color="maroon"><b>sock.tlscurrentnum</b></font> = <font color="maroon"><b>sock.num</b></font>), 
+'it will return <font color="olive"><b>PL_TLS_REJECTED</b></font>. If called after TLS has already been initialized on a different socket (<font color="maroon"><b>sock.num</b></font> <> <font color="maroon"><b>sock.tlscurrentnum</b></font>), 
+'it will return <font color="olive"><b>PL_TLS_ERROR_IN_USE</b></font>.<br><br>
+'<font color="olive"><b>PL_TLS_ERROR_CERT</b></font> will be returned if the certificate can't be parsed because it is not an X.509 certificate or because is uses an unsupported cypher suite.
+
 
 #endif 

@@ -90,15 +90,40 @@ end property
 
 
 property wln.autodhcpip
+'<b>PROPERTY (STRING). </b><br><br>
+'Sets/returns desired IP address that will be requested during DHCP discovery from the dcb.
+'However, it's important to note that this does not guarantee that the DHCP server will assign the requested address to the device.
+'Changing this setting at runtime also requires a reboot.
+'<br><br>
 	get = syscall(882) as string
 	set = syscall(883) (byref ip_str as string)
 end property
 
 property wln.autodhcphn 
+'<b>PROPERTY (STRING). </b><br><br>
+'Sets/returns desired desired hostname for DHCP from the dcb.
+'The DHCPhostname setting allows the device to report its hostname when acquiring a DHCP address from the server. This feature helps identify the device on the network.
+'Changing this setting at runtime requires a reboot in order for it to take effect.
+'<br><br>
 	get = syscall(884) as string
 	set = syscall(885)  (byref value as string)
 end property
 
 syscall(887) wln.settlscert(byref cert, len as word)
+'<b>METHOD.</b>
+'<br><br>
+'This method stores the certificate as an array in dcb.
+'<br><br>
+'<b>len </b>--
+'length of the certificate
+'<br><br>
+
 
 syscall(886) wln.gettlscert(byref cert, len as word)
+'<b>METHOD.</b>
+'<br><br>
+'This method retrieves the certificate as an array from dcb.
+'<br><br>
+'<b>len </b>--
+'length of the certificate
+'<br><br>
