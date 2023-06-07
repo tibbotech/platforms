@@ -1,19 +1,19 @@
 
 enum  pl_ser_baud
 
-    PL_SER_BAUD_110    =  16384, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 300.
-    PL_SER_BAUD_300    =   8192, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 600.
+    PL_SER_BAUD_110    =  44683, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 300.
+    PL_SER_BAUD_300    =  16384, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 600.
     PL_SER_BAUD_1200   =   4096, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 1200.	
     PL_SER_BAUD_2400   =   2048, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 2400.	
 	PL_SER_BAUD_4800   =   1024, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 4800.	
 	PL_SER_BAUD_9600   =    512, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 9600.
     PL_SER_BAUD_19200  =    256, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 19200.
     PL_SER_BAUD_38400  =    128, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 38400.
-    PL_SER_BAUD_57600  =     64, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 57600.
-	PL_SER_BAUD_115200 =     32, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 115200.
-	PL_SER_BAUD_230400 =     16, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 230600.
-    PL_SER_BAUD_460800 =      8, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 460800.
-    PL_SER_BAUD_921600 =      4  '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 921600.
+    PL_SER_BAUD_57600  =     85, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 57600.
+	PL_SER_BAUD_115200 =     42, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 115200.
+	PL_SER_BAUD_230400 =     21, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 230600.
+    PL_SER_BAUD_460800 =     10, '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 460800.
+    PL_SER_BAUD_921600 =      5  '<b>PLATFORM CONSTANT.</b> The value that will set the baudrate to 921600.
 end enum
 
 property ser.baudrate
@@ -26,4 +26,15 @@ property ser.baudrate
 'serial port is in the UART mode (<font color="maroon"><b>ser.mode </b></font>= <font color="olive"><b>0- PL_SER_MODE_UART</b></font>).
     get = syscall(104,"80.TDL"+) as pl_ser_baud
     set = syscall(105,"34.TDL"+) (value as pl_ser_baud)
+end property
+
+
+property ser.baudratex
+'<b>PROPERTY (DWORD), DEFAULT VALUE= 0 . </b><br><br>
+'Sets/returns the baudrate for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
+'Actual baudrade is closest baudrate available based on hardware<font color="maroon"><b>ser.baudratex</b></font>.
+'to set baudrate use either ser.baudratex or ser.baudrate. Do not use both at the same time.
+'<br><br> 
+  get = syscall(912) as dword
+  set = syscall(913) (value as dword)
 end property

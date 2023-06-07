@@ -753,7 +753,7 @@ syscall(423,"88.TDL") !debug.rx() as string
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1101 or PLATFORM_ID=WS1102
-syscall(878) hmac256(byref key as string,byref payload as string, byref result as string)
+syscall(901) hmac256(byref key as string,byref payload as string, byref result as string)
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Calculates the hash-based message authentication code (HMAC) of a data string to be transmitted.
 '<br><br>
@@ -763,7 +763,7 @@ syscall(878) hmac256(byref key as string,byref payload as string, byref result a
 '<br>
 '<b>result</b> -- The calculated HMAC of the payload is saved in this variable.
 
-syscall(879) es256(byref key as string,byref payload as string, byref result as string)
+syscall(902) es256(byref key as string,byref payload as string, byref result as string)
 '<b>PLATFORM SYSCALL. </b><br><br>
 'Calculates the elliptic curve signature of a data string to be transmitted.
 '<br><br>
