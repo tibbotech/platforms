@@ -29,7 +29,12 @@ property ser.baudrate
 end property
 
 
-property ser.rawbaud
-  get = syscall(889) as dword
-  set = syscall(890) (value as dword)
+property ser.baudratex
+'<b>PROPERTY (DWORD), DEFAULT VALUE= 0 . </b><br><br>
+'Sets/returns the baudrate for the selected serial port (selection is made through <font color="maroon"><b>ser.num</b></font>).
+'Actual baudrade is closest baudrate available based on hardware<font color="maroon"><b>ser.baudratex</b></font>.
+'to set baudrate use either ser.baudratex or ser.baudrate. Do not use both at the same time.
+'<br><br> 
+  get = syscall(912) as dword
+  set = syscall(913) (value as dword)
 end property

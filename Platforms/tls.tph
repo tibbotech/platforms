@@ -112,7 +112,7 @@ end property
 
 #if PLATFORM_ID=WM2000
 
-syscall(888) sock.tlsinitfromarray(byref cert,len as word) as pl_tls_result
+syscall(911) sock.tlsinitfromarray(byref cert,len as word) as pl_tls_result
 '<b>METHOD.</b><br><br>
 'For the currently selected socket (selection is made through <font color="maroon"><b>sock.num</b></font>), initializes all resources required for establishing a TLS connection.<br><br>
 'This method initializes the certificate authority (CA) - based on the certificate stored in the array - and the TLS context for the selected socket. 
