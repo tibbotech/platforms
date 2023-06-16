@@ -110,7 +110,7 @@ property sock.tlscurrentnum
     get = syscall(877) as byte
 end property
 
-#if PLATFORM_ID=WM2000
+#if PLATFORM_ID=WM2000 or PLATFORM_ID=WS1102
 
 syscall(911) sock.tlsinitfromarray(byref cert,len as word) as pl_tls_result
 '<b>METHOD.</b><br><br>
