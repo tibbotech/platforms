@@ -438,7 +438,7 @@ property sock.splittcppackets
 'The property is only relevant when <font color="maroon"><b>sock.inbandcommands</b></font> = <font color="olive"><b>0 - NO</b></font>. 
 'With inband commands enabled, the socket will always behave as if <font color="maroon"><b>sock.splittcppackets</b></font> = <font color="olive"><b>0 - NO</b></font>.<br><br>
 'The program won't be able to change the value of this property when the socket is not idle (<font color="maroon"><b>sock.statesimple</b></font> <> <font color="olive"><b>0 - PL_SSTS_CLOSED</b></font>).<br><br>
-#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3
+#if PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=EM2000W or PLATFORM_ID=WM2000 or PLATFORM_ID=TPP3WG3 or PLATFORM_ID=TPP2WG3 or PLATFORM_ID=TPP3WG3
 'Do not enable the split packet mode for a socket using TLS encryption.
 #endif  
     get = syscall(65,"36.TDL"+) as no_yes
