@@ -1,6 +1,6 @@
 [platform]
 description=TPP3(G2) Board
-version=TPP3W(G2)-4.01
+version=TPP3W(G2)-4.02
 rom=786432
 ram=66816
 codebits=24
