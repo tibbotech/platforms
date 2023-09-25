@@ -1,12 +1,12 @@
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-'			TPP2W-G2 WITH WI-FI INTERFACE
+'			TPP2W-G3 WITH WI-FI INTERFACE
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #define __notdl
 
-#define PLATFORM_ID 25
+#define PLATFORM_ID 48
 
 #define BUFF_PAGE_TYPE word
 #define BUFF_SIZE_TYPE dword
@@ -21,7 +21,6 @@
 #define COPY_FIRMWARE 1
 #define EXTENDED_FD 1
 
-
 '--------------------------------------------------------------------
 #if OBJECT_FD=FD_ENABLED
 	#define __cfgstr "<FD>"
@@ -34,6 +33,21 @@ enum pl_sock_interfaces
 	PL_SOCK_INTERFACE_WLN,		'<b>PLATFORM CONSTANT.</b><br><br>Wi-Fi interface.
 	PL_SOCK_INTERFACE_PPP=3,	'<b>PLATFORM CONSTANT.</b><br><br>PPP interface on a serial port.
 	PL_SOCK_INTERFACE_PPPOE		'<b>PLATFORM CONSTANT.</b><br><br>PPPoE interface.
+end enum
+
+'--------------------------------------------------------------------
+enum pl_adc_num 
+	PL_ADC_NUM_0,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 0 (mapped to I/O line 40).
+
+	PL_ADC_NUM_1,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 1 (mapped to I/O line 41).
+
+	PL_ADC_NUM_2,		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 2 (mapped to I/O line 42).
+
+	PL_ADC_NUM_3		'<b>PLATFORM CONSTANT.</b><br><br> 
+				'ADC channel 3 (mapped to I/O line 43).
 end enum
 
 '--------------------------------------------------------------------
@@ -303,7 +317,7 @@ include "..\GEN.tph"
 include "..\SYS-2xxx.tph"
 include "..\NET.tph"
 include "..\PPPOE.tph"
-include "..\io-2xxx.tph"
+include "..\IO-1xxx.tph"
 include "..\BEEP.tph"
 include "..\RTC.tph"
 include "..\LCD.tph"
@@ -312,6 +326,7 @@ include "..\SSI.tph"
 include "..\FD.tph"
 include "..\TPRAM.tph"
 include "..\WLN.tph"
-include "..\BT.tph"
+include "..\ADC.tph"
+include "..\bt.tph"
 include "..\tls.tph"
 include "..\i2c.tph"

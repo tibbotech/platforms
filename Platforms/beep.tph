@@ -108,7 +108,7 @@ property beep.divider
 end property
 #endif
 
-#if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2
+#if PLATFORM_ID=EM2000W or PLATFORM_ID=TPP2WG2 or PLATFORM_ID=TPP3WG2 or PLATFORM_ID=TPP2WG3 or PLATFORM_ID=TPP3WG3
 property beep.divider
 '<b>PROPERTY (WORD), DEFAULT VALUE= 1. </b><br><br>
 'Defines the buzzer frequency (frequency of the square wave output on the CO line).
