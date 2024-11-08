@@ -7,6 +7,7 @@ enum pl_sys_debug_mode
                         'The serial port 1 is also disabled (attempting to set ser.num = 1 will have no effect and the property value will remain at 0).
 	PL_SYS_DBG_NET      'Debugging through the Wi-Fi port. This debugging method only works when the automatic association with a Wi-Fi network (access point) is enabled (wln.autoconnect = 1- YES),
                         'and the Wi-Fi interface is correctly configured for the target Wi-Fi network (see wln.autoconnectssid, wln.autoconnectpassword).
+	PL_SYS_DBG_NONE
 end enum
 
 syscall(598) sys.sleep(daycount as word, mincount as word, seconds as byte)
