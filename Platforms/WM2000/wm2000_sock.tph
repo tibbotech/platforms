@@ -1,0 +1,12 @@
+
+enum pl_retx_time 
+	PL_RETX_50    '500 milli seconds retransmission time, expressed in 10ms intervals
+	PL_RETX_200   '2 seconds retransmission time, expressed in 10ms intervals
+end enum
+
+property sock.retxtime
+'<b>PROPERTY.</b><br><br>
+'Indicates the retransmission time, expressed in 10ms intervals.<br><br>
+	get = syscall(914) as pl_retx_time
+	set = syscall(915) (retx_time as pl_retx_time)
+end property

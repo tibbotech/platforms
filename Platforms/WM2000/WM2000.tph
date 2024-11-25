@@ -163,6 +163,7 @@ include "..\sys-2xxx.tph"
 include "wm2000_ser.tph"
 include "wm2000_sys.tph"
 include "wm2000_wln.tph"
+include "wm2000_sock.tph"
 include "..\IO-1xxx.tph"
 
 include "..\ADC.tph"
