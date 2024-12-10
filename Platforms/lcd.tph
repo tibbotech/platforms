@@ -853,4 +853,18 @@ property !lcd.buffsize
     get = syscall(355,"57.TDL"+) as word
 end property
 
+'--------------------------------------------------------------------
+enum pl_lcd_data_width
+	PL_LCD_DATA_WIDTH_18    '18 data lines between lcd controller and the LCD panel.
+	PL_LCD_DATA_WIDTH_24    '24 data lines between lcd controller and the LCD panel.
+end enum
+
+property lcd.datawidth
+'<b>PROPERTY.</b><br><br>
+'Indicates the number of data lines between lcd controller and the LCD panel.<br><br>
+	get = syscall(914) as pl_lcd_data_width
+	set = syscall(915) (data_width as pl_lcd_data_width)
+end property
+
+
 #endif
