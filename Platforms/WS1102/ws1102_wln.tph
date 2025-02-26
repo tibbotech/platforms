@@ -124,3 +124,9 @@ syscall(910) wln.settlscert(byref cert, len as word)
 '<b>len </b>--
 'length of the certificate
 '<br><br>
+
+syscall(924) wln.disablewifiradio()
+'<b>METHOD. </b><br><br>
+'<br><br>
+'turn wifi radio off
+'<br><br>
