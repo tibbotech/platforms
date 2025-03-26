@@ -1,0 +1,45 @@
+'**************************************************************************************************
+'       SYS (System) object TPP2W(G3) Extensions
+'**************************************************************************************************
+
+property sys.boardtemp
+'<b>R/O PROPERTY. </b><br><br>
+'Returns the floating point value expressing the board temperature in deg. C.
+'In case of hardware failure this syscall will return 255 to signal the failure.
+    get = syscall(918) as real
+end property
+
+
+syscall(919) sys.configaccel() as ok_ng
+'<b>METHOD.</b><br><br>
+'<br><br>
+'configure accelerometer sensor .
+'<br><br>
+'The method will return 0- OK if the accelerometer was configured successfully.
+'<br><br>
+'This method will fail (return 1- NG) if hardware is malfunctioned.
+
+syscall(923) sys.captureaccel()
+'<b>METHOD. </b><br><br>
+'measure the acceleration along the three axes (X, Y, Z) of the accelerometer.
+'<br><br>
+'This function reads the current acceleration values from the accelerometer and stores the measurements for each axis.
+'<br><br>
+
+property sys.readaccelx
+'<b>R/O PROPERTY. </b><br><br>
+'Returns the signed short integer value of x-axis in mg.
+    get = syscall(920) as short
+end property
+
+property sys.readaccely
+'<b>R/O PROPERTY. </b><br><br>
+'Returns the signed short integer value of y-axis in mg.
+    get = syscall(921) as short
+end property
+
+property sys.readaccelz
+'<b>R/O PROPERTY. </b><br><br>
+'Returns the signed short integer value of z-axis in mg.
+    get = syscall(922) as short
+end property
