@@ -4,42 +4,104 @@
 
 property sys.boardtemp
 '<b>R/O PROPERTY. </b><br><br>
-'Returns the floating point value expressing the board temperature in deg. C.
-'In case of hardware failure this syscall will return 255 to signal the failure.
+'Reads the current temperature from the onboard temperature sensor
+'<br><br>
+'<b>Returns </b>--
+'<br>
+'Valid temperature: A floating-point value representing the temperature in Celsius.
+'<br>
+'Error code: 255 indicates a hardware failure.
+'<br><br>
+'When the temperature sensor is functioning properly, it provides a floating-point value that represents the board's temperature in degrees Celsius.
+'If there is a hardware issue, the value 255 is returned.This serves as an error code to indicate that the sensor failed 
+'to provide a valid temperature reading. 
     get = syscall(918) as real
 end property
 
 
 syscall(919) sys.configaccel() as ok_ng
 '<b>METHOD.</b><br><br>
+'Configures the accelerometer sensor, ensuring that the accelerometer is properly set up and ready for data capture.
 '<br><br>
-'configure accelerometer sensor .
+'<b>Returns </b>--
+'<br>
+'0- OK : Indicates that the configuration was successful.
+'<br>
+'1- NG : Indicates failure, such as a hardware malfunction.
 '<br><br>
-'The method will return 0- OK if the accelerometer was configured successfully.
+'Before measuring acceleration along the three axes (X,Y,and Z) with sys.captureaccel, the accelerometer must first be initialized
+'using the sys.configaccel method.
 '<br><br>
-'This method will fail (return 1- NG) if hardware is malfunctioned.
+'<b>See also: </b>
+'sys.captureaccel,
+'sys.readaccelx,
+'sys.readaccely,
+'sys.readaccelz
+
 
 syscall(923) sys.captureaccel()
 '<b>METHOD. </b><br><br>
-'measure the acceleration along the three axes (X, Y, Z) of the accelerometer.
+'Measures and stores the acceleration along the three axes (X, Y, and Z) of the accelerometer.
 '<br><br>
-'This function reads the current acceleration values from the accelerometer and stores the measurements for each axis.
+'Before measuring acceleration along the three axes (X, Y, and Z) with this syscall ,the accelerometer must first be initialized
+'using the sys.configaccel method. The data captured by sys.captureaccel is accessible through sys.readaccelx, sys.readaccely, 
+'and sys.readaccelz. Until sys.captureaccel is executed again, the values for X, Y, and Z axes will remain the same and 
+'will return the previous measurements.
 '<br><br>
+'<b>See also: </b>
+'sys.configaccel,
+'sys.readaccelx,
+'sys.readaccely,
+'sys.readaccelz
+
 
 property sys.readaccelx
 '<b>R/O PROPERTY. </b><br><br>
 'Returns the signed short integer value of x-axis in mg.
+'<br><br>
+'This property should be accessed after executing sys.captureaccel,which updates the most recent X-axis acceleration data. 
+'The value returned by sys.readaccelx is in milligravity (mg) and is updated each time sys.captureaccel is called. 
+'Note that 1 mg is approximately 9.8 mm/s^2.If sys.captureaccel is not called again,sys.readaccelx will continue returning 
+'the previous X-axis value. 
+'<br><br>
+'<b>See also: </b>
+'sys.configaccel,
+'sys.captureaccel,
+'sys.readaccely,
+'sys.readaccelz
     get = syscall(920) as short
 end property
 
 property sys.readaccely
 '<b>R/O PROPERTY. </b><br><br>
 'Returns the signed short integer value of y-axis in mg.
+'<br><br>
+'This property should be accessed after executing sys.captureaccel,which updates the most recent Y-axis acceleration data. 
+'The value returned by sys.readaccely is in milligravity (mg) and is updated each time sys.captureaccel is called. 
+'Note that 1 mg is approximately 9.8 mm/s^2. If sys.captureaccel is not called again,sys.readaccely will continue returning 
+'the previous Y-axis value. 
+'<br><br>
+'<b>See also: </b>
+'sys.configaccel,
+'sys.captureaccel,
+'sys.readaccelx,
+'sys.readaccelz
     get = syscall(921) as short
 end property
 
 property sys.readaccelz
 '<b>R/O PROPERTY. </b><br><br>
 'Returns the signed short integer value of z-axis in mg.
+'<br><br>
+'This property should be accessed after executing sys.captureaccel,which updates the most recent  Z-axis acceleration data. 
+'The value returned by sys.readaccelz is in milligravity (mg) and is updated each time sys.captureaccel is called. 
+'Note that 1 mg is approximately 9.8 mm/s^2. If sys.captureaccel is not called again,sys.readaccelz will continue returning 
+'the previous Z-axis value. 
+'<br><br>
+'<b>See also: </b>
+'sys.configaccel,
+'sys.captureaccel,
+'sys.readaccelx,
+'sys.readaccelz
     get = syscall(922) as short
 end property

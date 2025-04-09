@@ -68,6 +68,23 @@ end enum
 #if PLATFORM_ID <> WM2000
 property sys.extresettype
 '<b>R/O PROPERTY (BYTE, enum pl_sys_ext_reset_type). </b><br><br>
+'Returns the type of external reset that has occurred on the system. 
+'<br><br>
+'<b>Returns </b>--
+'<br>
+'0-PL_SYS_EXT_RESET_TYPE_INTERNAL. The most recent reset was a self-reset.
+'<br>
+'1-PL_SYS_EXT_RESET_TYPE_WATCHDOG. The most recent reset was caused by the watchdog timeout.
+'<br>
+'2-PL_SYS_EXT_RESET_TYPE_POWERUP. The most recent reset was a power-up/power-down reset.
+'<br>
+'3-PL_SYS_EXT_RESET_TYPE_BROWNOUT. The most recent reset was a brown-out reset. 
+'<br>
+'4-PL_SYS_EXT_RESET_TYPE_RSTPIN . The most recent reset was initiated from the RST pin.
+'<br><br>
+'The reset types are represented by an enumeration type, which indicates the source of 
+'the reset, such as a reset caused by the RST pin, watchdog timeout, power-on reset, 
+'or brown-out reset.
     get = syscall(597) as pl_sys_ext_reset_type
 end property
 #endif
@@ -231,35 +248,97 @@ syscall(19) !sys.sw() as string
 
 '--------------------------------------------------------------------
 #if PLATFORM_ID <> WM2000 and PLATFORM_ID <> WS1101 and PLATFORM_ID <> WS1102
-syscall(598) sys.sleep()
+syscall(598) !sys.sleep()
 
 '--------------------------------------------------------------------
-syscall(599) sys.stop()
+syscall(599) !sys.stop()
 
 '--------------------------------------------------------------------
-syscall(600) sys.standby()
+syscall(600) !sys.standby()
 
 
 '--------------------------------------------------------------------
 property sys.wdenabled
+'<b>PROPERTY. </b><br><br>
+'Enables or disables the watchdog timer.
+'<br><br>
+'<b>Value Range </b>--
+'<br>
+'0- NO (default): The watchdog timer is disabled.  
+'<br>
+'1- YES : The watchdog timer is enabled.    
+'<br><br>
+'Once the watchdog timer is enabled by setting sys.wdenabled = YES, it cannot be disabled without a reset, 
+'ensuring that the system is protected against failures by resetting the system.
+'<br><br>
+'<b>See also: </b>
+'sys.wdperiod,
+'sys.wdautoreset,
+'sys.wdreset
     get = syscall(601) as no_yes
     set = syscall(602) (value as no_yes)
 end property
-    
+
 '--------------------------------------------------------------------
 property sys.wdautoreset
+'<b>PROPERTY. </b><br><br>
+'Enables or disables the automatic reloading of the watchdog by TiOS
+'<br><br>
+'<b>Value Range </b>--
+'<br>
+'0- DISABLED 
+'<br>
+'1- ENABLED (default)
+'<br><br>
+'By default, sys.wdautoreset is ENABLED, allowing TiOS to automatically reset the watchdog.
+'If manual control is required, set sys.wdautoreset to DISABLED and use sys.wdreset to reset the watchdog.
+'When the application is not running (PAUSE or BREAK state),TiOS will take care of the watchdog even 
+'if sys.wdautoreset=DISABLED.
+'<br><br>
+'<b>See also: </b>
+'sys.wdperiod,
+'sys.wdenabled,
+'sys.wdreset
     get = syscall(603) as dis_en
     set = syscall(604) (value as dis_en)
 end property
 
 '--------------------------------------------------------------------
 property sys.wdperiod
+'<b>PROPERTY. </b><br><br>
+'Sets the timeout period for the watchdog timer.
+'<br><br>
+'<b>Value Range </b>--
+'<br>
+'0-3000. Default= 3000 (approximately 30 seconds)
+'<br><br>
+'sys.wdperiod property defines the timeout period for the watchdog timer in approximately 10ms intervals.
+'For example: to generate the watchdog timeout of around 2 seconds, set sys.wdperiod to 200.
+'This value should be about twice the projected period of calls to sys.wdreset, 
+'ensuring enough time for the system to reload the watchdog before it triggers a system reset.
+'<br><br>
+'<b>See also: </b>
+'sys.wdenabled,
+'sys.wdautoreset,
+'sys.wdreset
     get = syscall(605) as word
     set = syscall(606) (value as word)
 end property
 
 '--------------------------------------------------------------------
 syscall(607) sys.wdreset()
+'<b>METHOD. </b><br><br>
+'Reloads the watchdog timer, preventing it from expiring and causing a system reset.
+'<br><br>
+'To avoid unexpected resets, sys.wdreset must be called within the configured timeout period.
+'By default, sys.wdautoreset is ENABLED, allowing TiOS to automatically reset the watchdog. 
+'If sys.wdautoreset is DISABLED, the application must manually call sys.wdreset at regular 
+'intervals to prevent a system reset.
+'<br><br>
+'<b>See also: </b>
+'sys.wdenabled,
+'sys.wdautoreset,
+'sys.wdperiod
 
 '--------------------------------------------------------------------
 enum pl_sys_speed_choices
@@ -268,21 +347,33 @@ enum pl_sys_speed_choices
     PL_SYS_SPEED_FULL       '<b>PLATFORM CONSTANT. </b><br><br> Full execution speed.
 end enum
 
-property sys.speed
+property !sys.speed
     get = syscall(608) as pl_sys_speed_choices
     set = syscall(609) (value as pl_sys_speed_choices)
 end property
 
 '--------------------------------------------------------------------
 property sys.hsclock
+'<b>PROPERTY. </b><br><br>
+'Enables or disables the HSE (High-Speed External) oscillator 
+'and the PLL (Phase-Locked Loop).
+'<br><br>
+'<b>Value Range </b>--
+'<br>
+'0- DISABLED 
+'<br>
+'1- ENABLED (default)
+'<br><br>
+'When sys.hsclock is set to ENABLED, it turns on both the HSE oscillator and the PLL. 
+'This allows the system to run at a higher clock frequency derived from the HSE source.
+'When sys.hsclock is set to DISABLED, it turns off the HSE oscillator and PLL, 
+'which reduces the clock frequency to a low-power internal clock source.
     get = syscall(610) as dis_en
     set = syscall(611) (value as dis_en)
 end property
 
-
-
 '--------------------------------------------------------------------
-property sys.wakeupperiod
+property !sys.wakeupperiod
     get = syscall(612) as dword
     set = syscall(613) (value as dword)
 end property
