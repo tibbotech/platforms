@@ -1,0 +1,41 @@
+name: Notify release
+
+on:
+  release:
+    types: [published]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build email body
+        run: |
+          {
+            echo "A new GitHub Release was published."
+            echo ""
+            echo "Repository: ${{ github.repository }}"
+            echo "Release name: ${{ github.event.release.name }}"
+            echo "Tag: ${{ github.event.release.tag_name }}"
+            echo "Created by: ${{ github.actor }}"
+            echo "Release URL: ${{ github.event.release.html_url }}"
+            echo ""
+            echo "Release notes:"
+            echo "${{ github.event.release.body }}"
+          } > email_body.txt
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v17
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "New release: ${{ github.event.release.tag_name }} - ${{ github.repository }}"
+          to: ${{ vars.COMMIT_NOTIFY_RECIPIENTS }}
+          from: GitHub Release Notifier <${{ secrets.MAIL_USERNAME }}>
+          body: file://email_body.txt
