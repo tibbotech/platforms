@@ -75,11 +75,13 @@ enum pl_sock_state
                                 '<br><br>Applies both to UDP and TCP.
     PL_SST_EST_TLS = &h82, 		'PLATFORM CONSTANT. Connection is established (it was an active open) and tls handshake is complete.
                 				'Applies both to UDP and TCP.			
+    PL_SST_EST_TLS_FAILED = &h83, '<b>PLATFORM CONSTANT. </b><br><br> TLS handshake has failed.
     PL_SST_PC=&hA0,             '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is a passive close).
                                 '<br><br>Applies only to TCP. 
     PL_SST_AC=&hC0              '<b>PLATFORM CONSTANT. </b><br><br> Connection is being closed (it is an active close).
                                 '<br><br>Applies only to TCP.
 end enum
+
 
 '--------------------------------------------------------------------
 enum pl_sock_state_simple
